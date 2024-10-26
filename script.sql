@@ -363,3 +363,109 @@ FOR EACH ROW
 EXECUTE PROCEDURE topic_search_update();
 --Create the index for the ts_vectors
 CREATE INDEX topic_search ON Topic USING GIN (search);
+
+
+--Create function to verify that an user only post on groups that he is in
+CREATE FUNCTION verify_group_posts() RETURNS TRIGGER AS $$
+BEGIN 
+    IF NOT EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = GROUP_MEMBERSHIP.userID AND NEW.groupID = GROUP_MEMBERSHIP.groupID AND NEW.groupID IS NOT NULL)
+    RAISE EXCEPTION 'A user can only post on groups to which they belong';
+    END IF
+RETURN NEW;
+END
+$$ LANGUAGE 'plpgsql';
+
+--Create trigger to apply the verify_group_posts() function when the table is updated (TRIGGER 04)
+CREATE TRIGGER verify_group_posts
+    BEFORE INSERT OR UPDATE ON POST
+    FOR EACH ROW
+    EXECUTE PROCEDURE verify_group_posts();
+
+
+
+
+--Create function to verify that an user only comment on groups that he is in
+CREATE FUNCTION verify_group_post_comments() RETURNS TRIGGER AS $$
+BEGIN 
+    IF EXISTS (SELECT * FROM POST,GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID IS NOT NULL)
+    AND NOT EXISTS (SELECT * FROM POST,GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) THEN
+    RAISE EXCEPTION 'A user can only comment on posts from groups to which they belong';
+    END IF
+RETURN NEW;
+END
+$$ LANGUAGE 'plpgsql';
+
+--Create trigger to apply the verify_group_post_comments() function when the table is updated (TRIGGER 05)
+CREATE TRIGGER verify_group_post_comments 
+    BEFORE INSERT OR UPDATE ON COMMENT
+    FOR EACH ROW
+    EXECUTE PROCEDURE verify_group_post_comments();
+
+
+
+--Create function to verify that an user only likes group posts if he is in that group
+CREATE FUNCTION verify_group_post_likes() RETURNS TRIGGER AS $$
+BEGIN 
+    IF EXISTS (SELECT * FROM POST WHERE NEW.postID = postID AND groupID IS NOT NULL) THEN
+    AND NOT EXISTS (SELECT * FROM POST,GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) THEN
+    RAISE EXCEPTION 'A user can only like group posts if he belongs to that group';
+    END IF
+RETURN NEW;
+END
+$$ LANGUAGE 'plpgsql';
+
+--Create trigger to apply the verify_group_post_likes() function when the table is updated (TRIGGER 06)
+CREATE TRIGGER verify_group_post_likes 
+    BEFORE INSERT OR UPDATE ON LIKES
+    FOR EACH ROW
+    EXECUTE PROCEDURE verify_group_post_likes();
+
+--Create function to verify that an user can only like a post once
+CREATE FUNCTION verify_post_likes() RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (SELECT * FROM LIKES WHERE NEW.userID = userID AND NEW.postID = postID AND postID IS NOT NULL) THEN
+    RAISE EXCEPTION 'A user can only like a post once';
+    END IF
+RETURN NEW;
+EBD
+$$ LANGUAGE 'plpgsql';
+
+--Create trigger to apply the verify_post_likes() function when the table is updated (TRIGGER 07)
+CREATE TRIGGER verify_post_likes 
+    BEFORE INSERT OR UPDATE ON LIKES
+    FOR EACH ROW
+    EXECUTE PROCEDURE verify_post_likes();
+
+
+--Create function to verify that an user can only like a comment once
+CREATE FUNCTION verify_comment_likes() RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (SELECT * FROM LIKES WHERE NEW.userID = userID AND NEW.commentID = commentID AND commentID IS NOT NULL) THEN
+    RAISE EXCEPTION 'A user can only like a comment once';
+    END IF
+RETURN NEW;
+EBD
+$$ LANGUAGE 'plpgsql';
+
+--Create trigger to apply the verify_comment_likes() function when the table is updated (TRIGGER 08)
+CREATE TRIGGER verify_comment_likes 
+    BEFORE INSERT OR UPDATE ON LIKES
+    FOR EACH ROW
+    EXECUTE PROCEDURE verify_comment_likes();
+
+
+--Create function to verify that an user cannot request to join if they are already member of that group
+CREATE FUNCTION verify_group_join_request() RETURNS TRIGGER AS $$
+BEGIN 
+    IF EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = userID AND groupID IS NOT NULL) THEN
+    RAISE EXCEPTION 'A user cannot request to join a group that he is already member of';
+    END IF
+RETURN NEW;
+END
+$$ LANGUAGE 'plpgsql';
+
+--Create trigger to apply the verify_group_join_request() function when the table is updated (TRIGGER 09)
+CREATE TRIGGER verify_group_join_request
+    BEFORE INSERT OR UPDATE ON JOIN_GROUP_REQUEST
+    FOR EACH ROW
+    EXECUTE PROCEDURE verify_group_join_request();
