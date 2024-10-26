@@ -2,7 +2,7 @@ CREATE SCHEMA IF NOT EXISTS lbaw2443;
 SET search_path TO lbaw2443;
 
 
--- DROP FOR OLD DATABASE
+---------------------------- DROP FOR OLD DATABASE ---------------------------------------------------
 
 DROP TABLE IF EXISTS USERS CASCADE;
 DROP TABLE IF EXISTS MESSAGE CASCADE;
@@ -23,7 +23,7 @@ DROP TABLE IF EXISTS GROUP_INVITATION CASCADE;
 DROP TABLE IF EXISTS POST_TOPICS CASCADE;
 
 
--- TABLES
+------------------------------ TABLES -----------------------------------------------------------------
 
 CREATE TABLE USERS (
     userID SERIAL PRIMARY KEY,
@@ -224,3 +224,142 @@ CREATE TABLE POST_TOPICS (
     FOREIGN KEY (postID) REFERENCES POST(postID) ON DELETE CASCADE,
     FOREIGN KEY (topicID) REFERENCES TOPIC(topicID) ON DELETE CASCADE
 ); 
+
+------------------  PERFORMANCE INDEXES -----------------------------------------
+
+CREATE INDEX postID_postTopics_idx ON postTopics USING hash (postID);
+
+CREATE INDEX postID_comment_idx ON comment USING hash (postID);
+
+CREATE INDEX receiver_idx ON notification USING hash (receiveriD);
+
+-------------------  FULL TEXT SEARCH -------------------------------------------
+
+--Add column with the pre computed ts_vectors
+ALTER TABLE Users COLUMN search TSVECTOR;
+-- Create function to update the ts_vectors
+CREATE FUNCTION user_search_update() RETURNS TRIGGER AS $$ 
+BEGIN 
+IF TG_OP = 'INSERT' THEN 
+    NEW.search = to_tsvector('english', NEW.userName); 
+END IF; 
+IF TG_OP = 'UPDATE' THEN 
+IF NEW.userName <> OLD.userName THEN 
+        NEW.search = to_tsvector('english', NEW.userName); 
+END IF; 
+END IF; 
+RETURN NEW; 
+END 
+$$ LANGUAGE 'plpgsql';
+--Create trigger to execute the td_vector function when the table is updated
+CREATE TRIGGER user_search_update
+BEFORE INSERT OR UPDATE ON Users
+FOR EACH ROW
+EXECUTE PROCEDURE user_search_update();
+--Create the index for the ts_vectors
+CREATE INDEX user_search ON Users USING GIN (search);
+
+
+
+--Add column with the pre computed ts_vectors
+ALTER TABLE Groups COLUMN search TSVECTOR;
+-- Create function to update the ts_vectors
+CREATE FUNCTION group_search_update() RETURNS TRIGGER AS $$ 
+BEGIN 
+IF TG_OP = 'INSERT' THEN 
+    NEW.search = (setweight(to_tsvector('english', NEW.groupName),'A') || setweight  (to_tsvector('english', NEW.description),'B'));
+END IF; 
+IF TG_OP = 'UPDATE' THEN 
+IF NEW.groupName <> OLD.groupName OR NEW.description <> NEW.description THEN 
+        NEW.search = (setweight(to_tsvector('english', NEW.groupname),'A') || setweight  (to_tsvector('english', NEW.description),'B'));
+END IF; 
+END IF; 
+RETURN NEW; 
+END 
+$$ LANGUAGE 'plpgsql';
+--Create trigger to execute the td_vector function when the table is updated
+CREATE TRIGGER group_search_update
+BEFORE INSERT OR UPDATE ON Groups
+FOR EACH ROW
+EXECUTE PROCEDURE group_search_update();
+--Create the index for the ts_vectors
+CREATE INDEX group_search ON Groups USING GIN (search);
+
+
+
+--Add column with the pre computed ts_vectors
+ALTER TABLE Post COLUMN search TSVECTOR;
+-- Create function to update the ts_vectors
+CREATE FUNCTION post_search_update() RETURNS TRIGGER AS $$ 
+BEGIN 
+IF TG_OP = 'INSERT' THEN 
+    NEW.search = to_tsvector('english', NEW.message); 
+END IF; 
+IF TG_OP = 'UPDATE' THEN 
+IF NEW.message <> OLD.message THEN 
+        NEW.search = to_tsvector('english', NEW.message); 
+END IF; 
+END IF; 
+RETURN NEW; 
+END 
+$$ LANGUAGE 'plpgsql';
+--Create trigger to execute the td_vector function when the table is updated
+CREATE TRIGGER post_search_update
+BEFORE INSERT OR UPDATE ON Post
+FOR EACH ROW
+EXECUTE PROCEDURE post_search_update();
+--Create the index for the ts_vectors
+CREATE INDEX post_search ON Post USING GIN (search);
+
+
+
+--Add column with the pre computed ts_vectors
+ALTER TABLE Comment COLUMN search TSVECTOR;
+-- Create function to update the ts_vectors
+CREATE FUNCTION comment_search_update() RETURNS TRIGGER AS $$ 
+BEGIN 
+IF TG_OP = 'INSERT' THEN 
+    NEW.search = to_tsvector('english', NEW.message); 
+END IF; 
+IF TG_OP = 'UPDATE' THEN 
+IF NEW.message <> OLD.message THEN 
+        NEW.search = to_tsvector('english', NEW.message); 
+END IF; 
+END IF; 
+RETURN NEW; 
+END 
+$$ LANGUAGE 'plpgsql';
+--Create trigger to execute the td_vector function when the table is updated
+CREATE TRIGGER comment_search_update
+BEFORE INSERT OR UPDATE ON Comment
+FOR EACH ROW
+EXECUTE PROCEDURE comment_search_update();
+--Create the index for the ts_vectors
+CREATE INDEX comment_search ON Topic USING GIN (search);
+
+
+
+
+--Add column with the pre computed ts_vectors
+ALTER TABLE Topic COLUMN search TSVECTOR;
+-- Create function to update the ts_vectors
+CREATE FUNCTION topic_search_update() RETURNS TRIGGER AS $$ 
+BEGIN 
+IF TG_OP = 'INSERT' THEN 
+    NEW.search = to_tsvector('english', NEW.name); 
+END IF; 
+IF TG_OP = 'UPDATE' THEN 
+IF NEW.name <> OLD.name THEN 
+        NEW.search = to_tsvector('english', NEW.name); 
+END IF; 
+END IF; 
+RETURN NEW; 
+END 
+$$ LANGUAGE 'plpgsql';
+--Create trigger to execute the td_vector function when the table is updated
+CREATE TRIGGER topic_search_update
+BEFORE INSERT OR UPDATE ON Topic
+FOR EACH ROW
+EXECUTE PROCEDURE topic_search_update();
+--Create the index for the ts_vectors
+CREATE INDEX topic_search ON Topic USING GIN (search);
