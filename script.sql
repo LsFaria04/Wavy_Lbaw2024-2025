@@ -460,3 +460,179 @@ CREATE TRIGGER verify_group_join_request
     BEFORE INSERT OR UPDATE ON JOIN_GROUP_REQUEST
     FOR EACH ROW
     EXECUTE PROCEDURE verify_group_join_request();
+
+
+-- Create function to verify that a comment date is equal to or greater than the post creation date
+CREATE FUNCTION verify_comment_date() RETURNS TRIGGER AS $$
+BEGIN 
+    IF NOT EXISTS (SELECT * FROM POST WHERE NEW.createdDate >= POST.createdDate AND NEW.postID = POST.postID) THEN
+        RAISE EXCEPTION 'A comment date must be equal to or greater than the post creation date';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to apply the verify_comment_date() function when the COMMENT table is updated (TRIGGER 10)
+CREATE TRIGGER verify_comment_date
+    BEFORE INSERT OR UPDATE ON COMMENT
+    FOR EACH ROW
+    EXECUTE FUNCTION verify_comment_date();
+
+
+-- Create function to verify that a like date is equal to or greater than the post creation date
+CREATE FUNCTION verify_like_post_date() RETURNS TRIGGER AS $$
+BEGIN 
+    IF NOT EXISTS (SELECT * FROM POST WHERE NEW.createdDate >= POST.createdDate AND NEW.postID = POST.postID) THEN
+        RAISE EXCEPTION 'A like date must be equal to or greater than the post creation date';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to apply the verify_like_post_date() function when the LIKES table is updated (TRIGGER 11)
+CREATE TRIGGER verify_like_post_date
+    BEFORE INSERT OR UPDATE ON LIKES
+    FOR EACH ROW
+    EXECUTE FUNCTION verify_like_post_date();
+
+
+-- Create function to verify that a like date is equal to or greater than the comment creation date
+CREATE FUNCTION verify_like_comment_date() RETURNS TRIGGER AS $$
+BEGIN 
+    IF NOT EXISTS (SELECT * FROM COMMENT WHERE NEW.createdDate >= COMMENT.createdDate AND NEW.commentID = COMMENT.commentID) THEN
+        RAISE EXCEPTION 'A like date must be equal to or greater than the comment creation date';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to apply the verify_like_comment_date() function when the LIKES table is updated (TRIGGER 12)
+CREATE TRIGGER verify_like_comment_date
+    BEFORE INSERT OR UPDATE ON LIKES
+    FOR EACH ROW
+    EXECUTE FUNCTION verify_like_comment_date();
+
+
+-- Create function to verify that a reply comment date is equal to or greater than the original comment creation date
+CREATE FUNCTION verify_reply_comment_date() RETURNS TRIGGER AS $$
+BEGIN 
+    IF NOT EXISTS (SELECT * FROM COMMENT WHERE NEW.createdDate >= COMMENT.createdDate AND NEW.parentCommentID = COMMENT.commentID) THEN
+        RAISE EXCEPTION 'A reply comment date must be equal to or greater than the original comment creation date';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to apply the verify_reply_comment_date() function when the COMMENT table is updated (TRIGGER 13)
+CREATE TRIGGER verify_reply_comment_date
+    BEFORE INSERT OR UPDATE ON COMMENT
+    FOR EACH ROW
+    EXECUTE FUNCTION verify_reply_comment_date();
+
+
+-- Create function to verify that a group owner only invites users who are not already in that group
+CREATE FUNCTION verify_group_owner_invites() RETURNS TRIGGER AS $$
+BEGIN 
+    IF EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = GROUP_MEMBERSHIP.userID AND NEW.groupID = GROUP_MEMBERSHIP.groupID) THEN
+        RAISE EXCEPTION 'A user can only be invited to a group they are not already in';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to apply the verify_group_owner_invites() function when the GROUP_INVITATION table is updated (TRIGGER 14)
+CREATE TRIGGER verify_group_owner_invites 
+    BEFORE INSERT OR UPDATE ON GROUP_INVITATION
+    FOR EACH ROW
+    EXECUTE FUNCTION verify_group_owner_invites();
+
+
+-- Create function to enforce unique reports per user per post or comment
+CREATE FUNCTION verify_unique_report() RETURNS TRIGGER AS $$
+BEGIN
+    IF EXISTS (
+        SELECT 1
+        FROM USER_REPORTS
+        WHERE userID = NEW.userID
+        AND (
+            (postID IS NOT DISTINCT FROM NEW.postID AND commentID IS NULL)
+            OR 
+            (commentID IS NOT DISTINCT FROM NEW.commentID AND postID IS NULL)
+        )
+    ) THEN
+        RAISE EXCEPTION 'User has already reported this post or comment.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to call the verify_unique_report function before inserting a new report (TRIGGER 15)
+CREATE TRIGGER verify_unique_report
+BEFORE INSERT ON USER_REPORTS
+FOR EACH ROW
+EXECUTE FUNCTION verify_unique_report();
+
+
+-- Create function to verify that a user does not report their own posts
+CREATE FUNCTION verify_user_post_reports() RETURNS TRIGGER AS $$
+BEGIN 
+    IF EXISTS (SELECT 1 FROM POST WHERE NEW.userID = POST.userID AND NEW.postID = POST.postID) THEN
+        RAISE EXCEPTION 'A user cannot report their own posts';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to apply the verify_user_post_reports() function when the USER_REPORTS table is updated (TRIGGER 16)
+CREATE TRIGGER verify_user_post_reports
+    BEFORE INSERT OR UPDATE ON USER_REPORTS
+    FOR EACH ROW
+    EXECUTE FUNCTION verify_user_post_reports();
+
+
+-- Create function to verify that a user does not report their own comments
+CREATE FUNCTION verify_user_comment_reports() RETURNS TRIGGER AS $$
+BEGIN 
+    IF EXISTS (SELECT 1 FROM COMMENT WHERE NEW.userID = COMMENT.userID AND NEW.commentID = COMMENT.commentID) THEN
+        RAISE EXCEPTION 'A user cannot report their own comments';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Create trigger to apply the verify_user_comment_reports() function when the USER_REPORTS table is updated (TRIGGER 17)
+CREATE TRIGGER verify_user_comment_reports
+    BEFORE INSERT OR UPDATE ON USER_REPORTS
+    FOR EACH ROW
+    EXECUTE FUNCTION verify_user_comment_reports();
+
+
+-- Create function to prevent admin users from posting, liking, or commenting
+CREATE FUNCTION prevent_admin_actions()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT isAdmin FROM USERS WHERE userID = NEW.userID) THEN
+        RAISE EXCEPTION 'Admin users are not allowed to post, like, or comment.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to prevent admin users from creating a post (TRIGGER 18)
+CREATE TRIGGER prevent_admin_actions_post
+BEFORE INSERT ON POST
+FOR EACH ROW
+EXECUTE FUNCTION prevent_admin_actions();
+
+-- Trigger to prevent admin users from creating a comment (TRIGGER 18)
+CREATE TRIGGER prevent_admin_actions_comment
+BEFORE INSERT ON COMMENT
+FOR EACH ROW
+EXECUTE FUNCTION prevent_admin_actions();
+
+-- Trigger to prevent admin users from liking a post or comment (TRIGGER 18)
+CREATE TRIGGER prevent_admin_actions_like
+BEFORE INSERT ON LIKES
+FOR EACH ROW
+EXECUTE FUNCTION prevent_admin_actions();
+
