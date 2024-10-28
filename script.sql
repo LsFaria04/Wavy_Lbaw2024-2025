@@ -353,6 +353,82 @@ EXECUTE PROCEDURE topic_search_update();
 CREATE INDEX topic_search ON Topic USING GIN (search);
 
 
+
+CREATE FUNCTION notify_content_owner_on_like()
+RETURNS TRIGGER AS $$
+DECLARE
+    content_owner INTEGER;
+BEGIN
+    -- Check if the like is for a post and get the post owner
+    IF NEW.postID IS NOT NULL THEN
+        SELECT userID INTO content_owner FROM POST WHERE postID = NEW.postID;
+
+    -- If the like is for a comment, get the comment owner
+    ELSIF NEW.commentID IS NOT NULL THEN
+        SELECT userID INTO content_owner FROM COMMENT WHERE commentID = NEW.commentID;
+    END IF;
+
+    -- Insert the notification for the content owner
+    INSERT INTO NOTIFICATION (receiverID, date, seen, likeID)
+    VALUES (content_owner, NEW.createdDate, FALSE, NEW.likeID);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER notify_content_owner_on_like  -- (TRIGGER 01)
+AFTER INSERT ON LIKES
+FOR EACH ROW
+EXECUTE FUNCTION notify_content_owner_on_like();
+
+
+CREATE FUNCTION notify_content_owner_on_comment()
+RETURNS TRIGGER AS $$
+DECLARE
+    content_owner INTEGER;
+BEGIN
+    -- Check if the comment is for a post and get the post owner
+    IF NEW.postID IS NOT NULL THEN
+        SELECT userID INTO content_owner FROM POST WHERE postID = NEW.postID;
+
+    -- If the like is for a comment, get the comment owner
+    ELSIF NEW.parentCommentID IS NOT NULL THEN
+        SELECT userID INTO content_owner FROM COMMENT WHERE commentID = NEW.parentCommentID;
+    END IF;
+
+    -- Insert the notification for the content owner
+    INSERT INTO NOTIFICATION (receiverID, date, seen, commentID)
+    VALUES (content_owner, NEW.createdDate, FALSE, NEW.commentID);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER notify_content_owner_on_comment -- (TRIGGER 02)
+AFTER INSERT ON COMMENT
+FOR EACH ROW
+EXECUTE FUNCTION notify_content_owner_on_comment();
+
+
+
+CREATE OR REPLACE FUNCTION notify_user_on_follow()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Insert a notification for the user being followed
+    INSERT INTO NOTIFICATION (receiverID, date, seen, followID)
+    VALUES (NEW.followeeID, NEW.createdDate, FALSE, NEW.followerID);
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER notify_user_on_follow -- (TRIGGER 03)
+AFTER INSERT ON FOLLOW
+FOR EACH ROW
+EXECUTE FUNCTION notify_user_on_follow();
+
+
 --Create function to verify that an user only post on groups that he is in
 CREATE FUNCTION verify_group_posts() RETURNS TRIGGER AS $$
 BEGIN 
