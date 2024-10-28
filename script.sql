@@ -36,14 +36,8 @@ CREATE TABLE USERS (
     isAdmin BOOLEAN NOT NULL
 );
 
-
-CREATE TABLE ADMIN (
-    adminID SERIAL PRIMARY KEY,
-    adminName VARCHAR(30) UNIQUE NOT NULL,
-    adminEmail TEXT UNIQUE NOT NULL,
-    passwordHash TEXT NOT NULL
-);
-
+--Add column with the pre computed ts_vectors
+ALTER TABLE Users ADD COLUMN search TSVECTOR;
 
 CREATE TABLE MESSAGE (
     messageID SERIAL PRIMARY KEY,
@@ -66,6 +60,8 @@ CREATE TABLE GROUPS (
     FOREIGN KEY (ownerID) REFERENCES USERS(userID) ON DELETE CASCADE
 );
 
+--Add column with the pre computed ts_vectors
+ALTER TABLE Groups ADD COLUMN search TSVECTOR;
 
 CREATE TABLE GROUP_MEMBERSHIP (
     groupID INTEGER NOT NULL,
@@ -98,12 +94,16 @@ CREATE TABLE POST (
     FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE SET NULL
 );
 
+--Add column with the pre computed ts_vectors
+ALTER TABLE Post ADD COLUMN search TSVECTOR;
 
 CREATE TABLE TOPIC (
     topicID SERIAL PRIMARY KEY,
     topicName VARCHAR(30) NOT NULL
 );
 
+--Add column with the pre computed ts_vectors
+ALTER TABLE Topic ADD COLUMN search TSVECTOR;
 
 CREATE TABLE COMMENT (
     commentID SERIAL PRIMARY KEY,
@@ -117,6 +117,9 @@ CREATE TABLE COMMENT (
     FOREIGN KEY (postID) REFERENCES POST(postID) ON DELETE CASCADE,
     FOREIGN KEY (parentCommentID) REFERENCES COMMENT(commentID) ON DELETE CASCADE
 );
+
+--Add column with the pre computed ts_vectors
+ALTER TABLE Comment ADD COLUMN search TSVECTOR;
 
 
 CREATE TABLE LIKES (
@@ -227,7 +230,7 @@ CREATE TABLE POST_TOPICS (
 
 ------------------  PERFORMANCE INDEXES -----------------------------------------
 
-CREATE INDEX postID_postTopics_idx ON postTopics USING hash (postID);
+CREATE INDEX postID_postTopics_idx ON POST_TOPICS USING hash (postID);
 
 CREATE INDEX postID_comment_idx ON comment USING hash (postID);
 
@@ -235,8 +238,6 @@ CREATE INDEX receiver_idx ON notification USING hash (receiveriD);
 
 -------------------  FULL TEXT SEARCH -------------------------------------------
 
---Add column with the pre computed ts_vectors
-ALTER TABLE Users COLUMN search TSVECTOR;
 -- Create function to update the ts_vectors
 CREATE FUNCTION user_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
@@ -260,9 +261,6 @@ EXECUTE PROCEDURE user_search_update();
 CREATE INDEX user_search ON Users USING GIN (search);
 
 
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Groups COLUMN search TSVECTOR;
 -- Create function to update the ts_vectors
 CREATE FUNCTION group_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
@@ -286,9 +284,6 @@ EXECUTE PROCEDURE group_search_update();
 CREATE INDEX group_search ON Groups USING GIN (search);
 
 
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Post COLUMN search TSVECTOR;
 -- Create function to update the ts_vectors
 CREATE FUNCTION post_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
@@ -312,9 +307,6 @@ EXECUTE PROCEDURE post_search_update();
 CREATE INDEX post_search ON Post USING GIN (search);
 
 
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Comment COLUMN search TSVECTOR;
 -- Create function to update the ts_vectors
 CREATE FUNCTION comment_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
@@ -338,10 +330,6 @@ EXECUTE PROCEDURE comment_search_update();
 CREATE INDEX comment_search ON Topic USING GIN (search);
 
 
-
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Topic COLUMN search TSVECTOR;
 -- Create function to update the ts_vectors
 CREATE FUNCTION topic_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
@@ -369,9 +357,10 @@ CREATE INDEX topic_search ON Topic USING GIN (search);
 CREATE FUNCTION verify_group_posts() RETURNS TRIGGER AS $$
 BEGIN 
     IF NOT EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = GROUP_MEMBERSHIP.userID AND NEW.groupID = GROUP_MEMBERSHIP.groupID AND NEW.groupID IS NOT NULL)
-    RAISE EXCEPTION 'A user can only post on groups to which they belong';
-    END IF
-RETURN NEW;
+    THEN 
+		RAISE EXCEPTION 'A user can only post on groups to which they belong';
+    END IF;
+	RETURN NEW;
 END
 $$ LANGUAGE 'plpgsql';
 
@@ -387,11 +376,12 @@ CREATE TRIGGER verify_group_posts
 --Create function to verify that an user only comment on groups that he is in
 CREATE FUNCTION verify_group_post_comments() RETURNS TRIGGER AS $$
 BEGIN 
-    IF EXISTS (SELECT * FROM POST,GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID IS NOT NULL)
-    AND NOT EXISTS (SELECT * FROM POST,GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) THEN
-    RAISE EXCEPTION 'A user can only comment on posts from groups to which they belong';
-    END IF
-RETURN NEW;
+    IF EXISTS (SELECT 1 FROM POST WHERE NEW.postID = POST.postID AND POST.groupID IS NOT NULL)
+    AND NOT EXISTS (SELECT 1 FROM GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) 
+	THEN
+		RAISE EXCEPTION 'A user can only comment on posts from groups to which they belong';
+    END IF;
+	RETURN NEW;
 END
 $$ LANGUAGE 'plpgsql';
 
@@ -406,10 +396,11 @@ CREATE TRIGGER verify_group_post_comments
 --Create function to verify that an user only likes group posts if he is in that group
 CREATE FUNCTION verify_group_post_likes() RETURNS TRIGGER AS $$
 BEGIN 
-    IF EXISTS (SELECT * FROM POST WHERE NEW.postID = postID AND groupID IS NOT NULL) THEN
-    AND NOT EXISTS (SELECT * FROM POST,GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) THEN
-    RAISE EXCEPTION 'A user can only like group posts if he belongs to that group';
-    END IF
+    IF EXISTS (SELECT 1 FROM POST WHERE NEW.postID = postID AND groupID IS NOT NULL)
+    AND NOT EXISTS (SELECT 1 FROM GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) 
+	THEN
+    	RAISE EXCEPTION 'A user can only like group posts if he belongs to that group';
+    END IF;
 RETURN NEW;
 END
 $$ LANGUAGE 'plpgsql';
@@ -425,9 +416,9 @@ CREATE FUNCTION verify_post_likes() RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (SELECT * FROM LIKES WHERE NEW.userID = userID AND NEW.postID = postID AND postID IS NOT NULL) THEN
     RAISE EXCEPTION 'A user can only like a post once';
-    END IF
-RETURN NEW;
-EBD
+    END IF;
+	RETURN NEW;
+END
 $$ LANGUAGE 'plpgsql';
 
 --Create trigger to apply the verify_post_likes() function when the table is updated (TRIGGER 07)
@@ -442,9 +433,9 @@ CREATE FUNCTION verify_comment_likes() RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (SELECT * FROM LIKES WHERE NEW.userID = userID AND NEW.commentID = commentID AND commentID IS NOT NULL) THEN
     RAISE EXCEPTION 'A user can only like a comment once';
-    END IF
-RETURN NEW;
-EBD
+    END IF;
+    RETURN NEW;
+END
 $$ LANGUAGE 'plpgsql';
 
 --Create trigger to apply the verify_comment_likes() function when the table is updated (TRIGGER 08)
@@ -459,8 +450,8 @@ CREATE FUNCTION verify_group_join_request() RETURNS TRIGGER AS $$
 BEGIN 
     IF EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = userID AND groupID IS NOT NULL) THEN
     RAISE EXCEPTION 'A user cannot request to join a group that he is already member of';
-    END IF
-RETURN NEW;
+    END IF;
+    RETURN NEW;
 END
 $$ LANGUAGE 'plpgsql';
 
