@@ -140,9 +140,12 @@ CREATE TABLE MEDIA (
     path TEXT UNIQUE NOT NULL,
     postID INTEGER,
     commentID INTEGER,
-    CHECK ((postID IS NOT NULL AND commentID IS NULL) OR (postID IS NULL AND commentID IS NOT NULL)),
+    userID INTEGER,
+    CHECK ((postID IS NOT NULL AND commentID IS NULL and userID IS NULL) OR (postID IS NULL AND commentID IS NOT NULL and userID IS NULL) OR (postID IS NULL AND commentID IS NULL and userID IS NOT NULL)),
     FOREIGN KEY (postID) REFERENCES POST(postID) ON DELETE CASCADE,
-    FOREIGN KEY (commentID) REFERENCES COMMENT(commentID) ON DELETE CASCADE
+    FOREIGN KEY (commentID) REFERENCES COMMENT(commentID) ON DELETE CASCADE,
+    FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE
+
 );
 
 CREATE TABLE FOLLOW (
@@ -239,7 +242,7 @@ CREATE INDEX receiver_idx ON notification USING hash (receiveriD);
 -------------------  FULL TEXT SEARCH -------------------------------------------
 
 -- Create function to update the ts_vectors
-CREATE FUNCTION user_search_update() RETURNS TRIGGER AS $$ 
+CREATE OR REPLACE FUNCTION user_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
 IF TG_OP = 'INSERT' THEN 
     NEW.search = to_tsvector('english', NEW.userName); 
@@ -262,7 +265,7 @@ CREATE INDEX user_search ON Users USING GIN (search);
 
 
 -- Create function to update the ts_vectors
-CREATE FUNCTION group_search_update() RETURNS TRIGGER AS $$ 
+CREATE OR REPLACE FUNCTION group_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
 IF TG_OP = 'INSERT' THEN 
     NEW.search = (setweight(to_tsvector('english', NEW.groupName),'A') || setweight  (to_tsvector('english', NEW.description),'B'));
@@ -285,7 +288,7 @@ CREATE INDEX group_search ON Groups USING GIN (search);
 
 
 -- Create function to update the ts_vectors
-CREATE FUNCTION post_search_update() RETURNS TRIGGER AS $$ 
+CREATE OR REPLACE FUNCTION post_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
 IF TG_OP = 'INSERT' THEN 
     NEW.search = to_tsvector('english', NEW.message); 
@@ -308,7 +311,7 @@ CREATE INDEX post_search ON Post USING GIN (search);
 
 
 -- Create function to update the ts_vectors
-CREATE FUNCTION comment_search_update() RETURNS TRIGGER AS $$ 
+CREATE OR REPLACE FUNCTION comment_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
 IF TG_OP = 'INSERT' THEN 
     NEW.search = to_tsvector('english', NEW.message); 
@@ -331,7 +334,7 @@ CREATE INDEX comment_search ON Topic USING GIN (search);
 
 
 -- Create function to update the ts_vectors
-CREATE FUNCTION topic_search_update() RETURNS TRIGGER AS $$ 
+CREATE OR REPLACE FUNCTION topic_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
 IF TG_OP = 'INSERT' THEN 
     NEW.search = to_tsvector('english', NEW.name); 
@@ -354,7 +357,7 @@ CREATE INDEX topic_search ON Topic USING GIN (search);
 
 
 
-CREATE FUNCTION notify_content_owner_on_like()
+CREATE OR REPLACE FUNCTION notify_content_owner_on_like()
 RETURNS TRIGGER AS $$
 DECLARE
     content_owner INTEGER;
@@ -382,7 +385,7 @@ FOR EACH ROW
 EXECUTE FUNCTION notify_content_owner_on_like();
 
 
-CREATE FUNCTION notify_content_owner_on_comment()
+CREATE OR REPLACE FUNCTION notify_content_owner_on_comment()
 RETURNS TRIGGER AS $$
 DECLARE
     content_owner INTEGER;
@@ -430,7 +433,7 @@ EXECUTE FUNCTION notify_user_on_follow();
 
 
 --Create function to verify that an user only post on groups that he is in
-CREATE FUNCTION verify_group_posts() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_group_posts() RETURNS TRIGGER AS $$
 BEGIN 
     IF NOT EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = GROUP_MEMBERSHIP.userID AND NEW.groupID = GROUP_MEMBERSHIP.groupID AND NEW.groupID IS NOT NULL)
     THEN 
@@ -450,7 +453,7 @@ CREATE TRIGGER verify_group_posts
 
 
 --Create function to verify that an user only comment on groups that he is in
-CREATE FUNCTION verify_group_post_comments() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_group_post_comments() RETURNS TRIGGER AS $$
 BEGIN 
     IF EXISTS (SELECT 1 FROM POST WHERE NEW.postID = POST.postID AND POST.groupID IS NOT NULL)
     AND NOT EXISTS (SELECT 1 FROM GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) 
@@ -470,7 +473,7 @@ CREATE TRIGGER verify_group_post_comments
 
 
 --Create function to verify that an user only likes group posts if he is in that group
-CREATE FUNCTION verify_group_post_likes() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_group_post_likes() RETURNS TRIGGER AS $$
 BEGIN 
     IF EXISTS (SELECT 1 FROM POST WHERE NEW.postID = postID AND groupID IS NOT NULL)
     AND NOT EXISTS (SELECT 1 FROM GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) 
@@ -488,7 +491,7 @@ CREATE TRIGGER verify_group_post_likes
     EXECUTE PROCEDURE verify_group_post_likes();
 
 --Create function to verify that an user can only like a post once
-CREATE FUNCTION verify_post_likes() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_post_likes() RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (SELECT * FROM LIKES WHERE NEW.userID = userID AND NEW.postID = postID AND postID IS NOT NULL) THEN
     RAISE EXCEPTION 'A user can only like a post once';
@@ -505,7 +508,7 @@ CREATE TRIGGER verify_post_likes
 
 
 --Create function to verify that an user can only like a comment once
-CREATE FUNCTION verify_comment_likes() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_comment_likes() RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (SELECT * FROM LIKES WHERE NEW.userID = userID AND NEW.commentID = commentID AND commentID IS NOT NULL) THEN
     RAISE EXCEPTION 'A user can only like a comment once';
@@ -522,7 +525,7 @@ CREATE TRIGGER verify_comment_likes
 
 
 --Create function to verify that an user cannot request to join if they are already member of that group
-CREATE FUNCTION verify_group_join_request() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_group_join_request() RETURNS TRIGGER AS $$
 BEGIN 
     IF EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = userID AND groupID IS NOT NULL) THEN
     RAISE EXCEPTION 'A user cannot request to join a group that he is already member of';
@@ -539,7 +542,7 @@ CREATE TRIGGER verify_group_join_request
 
 
 -- Create function to verify that a comment date is equal to or greater than the post creation date
-CREATE FUNCTION verify_comment_date() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_comment_date() RETURNS TRIGGER AS $$
 BEGIN 
     IF NOT EXISTS (SELECT * FROM POST WHERE NEW.createdDate >= POST.createdDate AND NEW.postID = POST.postID) THEN
         RAISE EXCEPTION 'A comment date must be equal to or greater than the post creation date';
@@ -556,7 +559,7 @@ CREATE TRIGGER verify_comment_date
 
 
 -- Create function to verify that a like date is equal to or greater than the post creation date
-CREATE FUNCTION verify_like_post_date() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_like_post_date() RETURNS TRIGGER AS $$
 BEGIN 
     IF NOT EXISTS (SELECT * FROM POST WHERE NEW.createdDate >= POST.createdDate AND NEW.postID = POST.postID) THEN
         RAISE EXCEPTION 'A like date must be equal to or greater than the post creation date';
@@ -573,7 +576,7 @@ CREATE TRIGGER verify_like_post_date
 
 
 -- Create function to verify that a like date is equal to or greater than the comment creation date
-CREATE FUNCTION verify_like_comment_date() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_like_comment_date() RETURNS TRIGGER AS $$
 BEGIN 
     IF NOT EXISTS (SELECT * FROM COMMENT WHERE NEW.createdDate >= COMMENT.createdDate AND NEW.commentID = COMMENT.commentID) THEN
         RAISE EXCEPTION 'A like date must be equal to or greater than the comment creation date';
@@ -590,7 +593,7 @@ CREATE TRIGGER verify_like_comment_date
 
 
 -- Create function to verify that a reply comment date is equal to or greater than the original comment creation date
-CREATE FUNCTION verify_reply_comment_date() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_reply_comment_date() RETURNS TRIGGER AS $$
 BEGIN 
     IF NOT EXISTS (SELECT * FROM COMMENT WHERE NEW.createdDate >= COMMENT.createdDate AND NEW.parentCommentID = COMMENT.commentID) THEN
         RAISE EXCEPTION 'A reply comment date must be equal to or greater than the original comment creation date';
@@ -607,7 +610,7 @@ CREATE TRIGGER verify_reply_comment_date
 
 
 -- Create function to verify that a group owner only invites users who are not already in that group
-CREATE FUNCTION verify_group_owner_invites() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_group_owner_invites() RETURNS TRIGGER AS $$
 BEGIN 
     IF EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = GROUP_MEMBERSHIP.userID AND NEW.groupID = GROUP_MEMBERSHIP.groupID) THEN
         RAISE EXCEPTION 'A user can only be invited to a group they are not already in';
@@ -624,7 +627,7 @@ CREATE TRIGGER verify_group_owner_invites
 
 
 -- Create function to enforce unique reports per user per post or comment
-CREATE FUNCTION verify_unique_report() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_unique_report() RETURNS TRIGGER AS $$
 BEGIN
     IF EXISTS (
         SELECT 1
@@ -650,7 +653,7 @@ EXECUTE FUNCTION verify_unique_report();
 
 
 -- Create function to verify that a user does not report their own posts
-CREATE FUNCTION verify_user_post_reports() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_user_post_reports() RETURNS TRIGGER AS $$
 BEGIN 
     IF EXISTS (SELECT 1 FROM POST WHERE NEW.userID = POST.userID AND NEW.postID = POST.postID) THEN
         RAISE EXCEPTION 'A user cannot report their own posts';
@@ -667,7 +670,7 @@ CREATE TRIGGER verify_user_post_reports
 
 
 -- Create function to verify that a user does not report their own comments
-CREATE FUNCTION verify_user_comment_reports() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_user_comment_reports() RETURNS TRIGGER AS $$
 BEGIN 
     IF EXISTS (SELECT 1 FROM COMMENT WHERE NEW.userID = COMMENT.userID AND NEW.commentID = COMMENT.commentID) THEN
         RAISE EXCEPTION 'A user cannot report their own comments';
@@ -684,7 +687,7 @@ CREATE TRIGGER verify_user_comment_reports
 
 
 -- Create function to prevent admin users from posting, liking, or commenting
-CREATE FUNCTION prevent_admin_actions()
+CREATE OR REPLACE FUNCTION prevent_admin_actions()
 RETURNS TRIGGER AS $$
 BEGIN
     IF (SELECT isAdmin FROM USERS WHERE userID = NEW.userID) THEN
