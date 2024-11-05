@@ -745,6 +745,24 @@ BEFORE INSERT ON LIKES
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions();
 
+
+-- Create function to prevent admin users from following other users
+CREATE OR REPLACE FUNCTION prevent_admin_actions_follow()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF (SELECT isAdmin FROM USERS WHERE userID = NEW.followerID) THEN
+        RAISE EXCEPTION 'Admin users are not allowed to follow other users.';
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to prevent admin users from creating a post (TRIGGER 18)
+CREATE TRIGGER prevent_admin_actions_follow
+BEFORE INSERT ON FOLLOW
+FOR EACH ROW
+EXECUTE FUNCTION prevent_admin_actions_follow();
+
 -- Function to add a user to the group if the join request is accepted
 CREATE OR REPLACE FUNCTION add_user_to_group_from_request() RETURNS TRIGGER AS $$
 BEGIN
