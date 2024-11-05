@@ -527,11 +527,15 @@ CREATE TRIGGER verify_comment_likes
 --Create function to verify that an user cannot request to join if they are already member of that group
 CREATE OR REPLACE FUNCTION verify_group_join_request() RETURNS TRIGGER AS $$
 BEGIN 
-    IF EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = userID AND groupID IS NOT NULL) THEN
-    RAISE EXCEPTION 'A user cannot request to join a group that he is already member of';
+    IF EXISTS (
+        SELECT 1 
+        FROM GROUP_MEMBERSHIP 
+        WHERE userID = NEW.userID AND groupID = NEW.groupID
+    ) THEN
+        RAISE EXCEPTION 'A user cannot request to join a group that he is already a member of';
     END IF;
     RETURN NEW;
-END
+END;
 $$ LANGUAGE 'plpgsql';
 
 --Create trigger to apply the verify_group_join_request() function when the table is updated (TRIGGER 09)
