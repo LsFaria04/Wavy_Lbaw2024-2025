@@ -420,7 +420,7 @@ RETURNS TRIGGER AS $$
 BEGIN
     -- Insert a notification for the user being followed
     INSERT INTO NOTIFICATION (receiverID, date, seen, followID)
-    VALUES (NEW.followeeID, NEW.createdDate, FALSE, NEW.followerID);
+    VALUES (NEW.followeeID, NEW.followDate, FALSE, NEW.followerID);
 
     RETURN NEW;
 END;
