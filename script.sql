@@ -336,15 +336,16 @@ CREATE INDEX comment_search ON Topic USING GIN (search);
 -- Create function to update the ts_vectors
 CREATE OR REPLACE FUNCTION topic_search_update() RETURNS TRIGGER AS $$ 
 BEGIN 
-IF TG_OP = 'INSERT' THEN 
-    NEW.search = to_tsvector('english', NEW.name); 
-END IF; 
-IF TG_OP = 'UPDATE' THEN 
-IF NEW.name <> OLD.name THEN 
-        NEW.search = to_tsvector('english', NEW.name); 
-END IF; 
-END IF; 
-RETURN NEW; 
+    IF TG_OP = 'INSERT' THEN 
+        NEW.search := to_tsvector('english', NEW.topicName);  -- Change 'name' to 'topicName'
+    
+    ELSIF TG_OP = 'UPDATE' THEN 
+        IF NEW.topicName <> OLD.topicName THEN  -- Change 'name' to 'topicName'
+            NEW.search := to_tsvector('english', NEW.topicName);  -- Change 'name' to 'topicName'
+        END IF; 
+    END IF; 
+
+    RETURN NEW; 
 END 
 $$ LANGUAGE 'plpgsql';
 --Create trigger to execute the td_vector function when the table is updated
