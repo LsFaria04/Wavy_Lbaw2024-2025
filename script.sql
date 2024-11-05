@@ -480,7 +480,7 @@ CREATE TRIGGER verify_group_post_comments
 CREATE OR REPLACE FUNCTION verify_group_post_likes() RETURNS TRIGGER AS $$
 BEGIN 
     IF EXISTS (SELECT 1 FROM POST WHERE NEW.postID = postID AND groupID IS NOT NULL)
-    AND NOT EXISTS (SELECT 1 FROM GROUP_MEMBERSHIP WHERE NEW.postID = POST.postID AND POST.groupID = GROUP_MEMBERSHIP.groupID AND NEW.userID = GROUP_MEMBERSHIP.userID) 
+    AND NOT EXISTS (SELECT 1 FROM GROUP_MEMBERSHIP WHERE GROUP_MEMBERSHIP.groupID = (SELECT groupID FROM POST WHERE postID = NEW.postID) AND GROUP_MEMBERSHIP.userID = NEW.userID) 
 	THEN
     	RAISE EXCEPTION 'A user can only like group posts if he belongs to that group';
     END IF;
@@ -577,8 +577,10 @@ CREATE TRIGGER verify_comment_date
 -- Create function to verify that a like date is equal to or greater than the post creation date
 CREATE OR REPLACE FUNCTION verify_like_post_date() RETURNS TRIGGER AS $$
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM POST WHERE NEW.createdDate >= POST.createdDate AND NEW.postID = POST.postID) THEN
-        RAISE EXCEPTION 'A like date must be equal to or greater than the post creation date';
+    IF NEW.postID IS NOT NULL THEN
+        IF NEW.createdDate < (SELECT createdDate FROM POST WHERE postID = NEW.postID) THEN
+            RAISE EXCEPTION 'A like date must be equal to or greater than the post creation date';
+        END IF;
     END IF;
     RETURN NEW;
 END;
@@ -594,9 +596,12 @@ CREATE TRIGGER verify_like_post_date
 -- Create function to verify that a like date is equal to or greater than the comment creation date
 CREATE OR REPLACE FUNCTION verify_like_comment_date() RETURNS TRIGGER AS $$
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM COMMENT WHERE NEW.createdDate >= COMMENT.createdDate AND NEW.commentID = COMMENT.commentID) THEN
-        RAISE EXCEPTION 'A like date must be equal to or greater than the comment creation date';
+    IF NEW.commentID IS NOT NULL THEN
+        IF NEW.createdDate < (SELECT createdDate FROM COMMENT WHERE commentID = NEW.commentID) THEN
+            RAISE EXCEPTION 'A like date must be equal to or greater than the comment creation date';
+        END IF;
     END IF;
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
