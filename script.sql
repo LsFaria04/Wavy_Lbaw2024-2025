@@ -435,7 +435,10 @@ EXECUTE FUNCTION notify_user_on_follow();
 --Create function to verify that an user only post on groups that he is in
 CREATE OR REPLACE FUNCTION verify_group_posts() RETURNS TRIGGER AS $$
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM GROUP_MEMBERSHIP WHERE NEW.userID = GROUP_MEMBERSHIP.userID AND NEW.groupID = GROUP_MEMBERSHIP.groupID AND NEW.groupID IS NOT NULL)
+    IF NEW.groupID IS NULL THEN
+        RETURN NEW; 
+    END IF;
+    IF NOT EXISTS (SELECT 1 FROM GROUP_MEMBERSHIP WHERE NEW.userID = GROUP_MEMBERSHIP.userID AND NEW.groupID = GROUP_MEMBERSHIP.groupID AND NEW.groupID IS NOT NULL)
     THEN 
 		RAISE EXCEPTION 'A user can only post on groups to which they belong';
     END IF;
