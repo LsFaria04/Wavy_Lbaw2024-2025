@@ -143,10 +143,10 @@ INSERT INTO MEDIA (path, postID, commentID, userID) VALUES
     ('/media/audio/audio1.mp3', NULL, NULL, 2);    
 
 INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
-    (1, 2, 'Accepted', NOW()),
+    (7, 2, 'Accepted', NOW()),
     (2, 10, 'Pending', NOW()),
     (4, 5, 'Accepted', NOW()),
-    (5, 1, 'Rejected', NOW()),
+    (5, 3, 'Rejected', NOW()),
     (6, 7, 'Accepted', NOW());
 
 INSERT INTO NOTIFICATION (receiverID, date, seen, followID, commentID, likeID) VALUES
