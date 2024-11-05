@@ -719,3 +719,21 @@ BEFORE INSERT ON LIKES
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions();
 
+-- Function to add a user to the group if the join request is accepted
+CREATE OR REPLACE FUNCTION add_user_to_group() RETURNS TRIGGER AS $$
+BEGIN
+    -- Insert the user into GROUP_MEMBERSHIP when the request is accepted
+    IF NEW.state = 'Accepted' THEN
+        INSERT INTO GROUP_MEMBERSHIP (groupID, userID) VALUES (NEW.groupID, NEW.userID)
+        ON CONFLICT (groupID, userID) DO NOTHING;  -- Avoid duplicate entries
+    END IF;
+    RETURN NEW;
+END
+$$ LANGUAGE plpgsql;
+
+-- Trigger to add a user to the group when their join request is accepted (TRIGGER 19)
+CREATE TRIGGER add_user_to_group_trigger
+AFTER INSERT ON JOIN_GROUP_REQUEST
+FOR EACH ROW
+EXECUTE FUNCTION add_user_to_group();
+
