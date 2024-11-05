@@ -72,10 +72,21 @@ VALUES
     (7, 'Practicing my yoga poses today, feeling great!', TRUE, '2024-10-12 07:30:00', NULL),
     (8, 'Can’t wait for my vegetables to be ready for harvest!', TRUE, '2024-10-15 16:40:00', 7), 
     (9, 'Currently working on my novel, it’s coming together!', TRUE, '2024-10-18 20:05:00', NULL), 
-    (10, 'Played at a local café last night, had a blast!', TRUE, '2024-10-20 21:15:00', NULL);  
+    (10, 'Played at a local café last night, had a blast!', TRUE, '2024-10-20 21:15:00', NULL),
+    (5, 'Just completed a challenging workout—feeling accomplished!', TRUE, '2024-11-01 18:15:00', NULL),
+    (2, 'Exploring new music genres to expand my playlist!', TRUE, '2024-01-11 20:45:00', NULL),
+    (3, 'What’s everyone’s favorite movie from the 90s?', TRUE, '2024-01-12 22:00:00', NULL),
+    (4, 'Volunteered at the local animal shelter today—such a rewarding experience!', TRUE, '2024-01-13 17:30:00', NULL),
+    (5, 'Who else is getting excited for the upcoming holiday season?', TRUE, '2024-01-14 12:00:00', NULL),
+    (6, 'Working on my coding skills—any recommendations for resources?', TRUE, '2024-01-15 09:45:00', NULL),
+    (7, 'Just finished a beautiful sunset painting!', TRUE, '2024-02-16 19:00:00', NULL),
+    (8, 'Mewing tournament today at 3pm, do not miss', TRUE, '2024-03-17 14:30:00', NULL),
+    (9, 'Had a fantastic time at the local food festival last night!', TRUE, '2024-04-18 20:00:00', NULL),
+    (3, 'Looking for tips on traveling solo—any experiences to share?', TRUE, '2024-05-19 15:00:00', NULL);
 
 INSERT INTO TOPIC (topicName) 
 VALUES 
+    ('General'),
     ('Technology'),
     ('Health'),
     ('Travel'),
@@ -93,7 +104,24 @@ VALUES
     (3, 'Your painting is amazing! What inspired you?', '2024-01-01 15:00:00', 3, NULL),
     (4, 'I need to try that recipe!', '2024-10-04 15:00:00', 4, NULL),
     (3, 'Can’t wait to see the finished product!', NOW(), 1, NULL),
-    (2, 'I loved the view from the top of the mountain!', '2024-10-04 15:01:00', NULL, 2);
+    (2, 'I loved the view from the top of the mountain!', '2024-10-04 15:01:00', NULL, 2),
+    (2, 'Absolutely stunning! I love your color choices!', '2024-01-01 15:05:00', 3, NULL),
+    (5, 'That sounds delicious! What ingredients did you use?', NOW(), 4, NULL),
+    (7, 'Sounds like a great hike! Where did you go?', NOW(), 1, NULL),
+    (6, 'Can’t wait to hear your novel! What’s it about?', NOW(), 9, NULL),
+    (8, 'What type of vegetables are you growing?', NOW(), 8, NULL),
+    (3, 'I’d love to join you for a hike sometime!', NOW(), 1, NULL),
+    (10, 'You should share more of your music! I’m sure it’s great!', NOW(), 10, NULL),
+    (9, 'I’m working on a similar project! We should compare notes.', NOW(), 9, NULL),
+    (10, 'Your dedication is inspiring! Keep it up!', NOW(), 6, NULL),
+    (4, 'Your yoga practice is inspiring! What’s your favorite pose?', NOW(), 5, NULL),
+    (5, 'Great to see you volunteering! Those animals need love!', NOW(), 14, NULL),
+    (6, 'I’m also looking for solo travel tips! Let’s exchange ideas.', NOW(), 3, NULL),
+    (8, 'Fantastic sunset! Nature’s beauty is unmatched.', NOW(), 17, NULL),
+    (7, 'Good luck with your mewing tournament! Have fun!', NOW(), 18, NULL),
+    (9, 'Food festivals are the best! What did you try?', NOW(), 19, NULL),
+    (10, 'I love this idea! Can’t wait to see what you create.', NOW(), 16, NULL),
+    (4, 'Excited for the holidays! Any plans yet?', NOW(), 15, NULL);
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -157,8 +185,24 @@ INSERT INTO GROUP_INVITATION (groupID, userID, date, state) VALUES
     (8, 3, NOW(), 'Accepted'),
     (2, 1, NOW(), 'Rejected');
 
-INSERT INTO POST_TOPICS (postID, topicID) VALUES
-    (1, 1), 
-    (1, 2),
-    (2, 3), 
-    (3, 1); 
+INSERT INTO POST_TOPICS (postID, topicID) 
+VALUES 
+    (1, 4), 
+    (2, 6), 
+    (3, 5), 
+    (4, 4), 
+    (5, 6), 
+    (6, 3), 
+    (7, 8), 
+    (8, 6), 
+    (9, 9), 
+    (10, 3),
+    (11, 6),
+    (12, 4),
+    (13, 5),
+    (14, 4),
+    (15, 9),
+    (16, 6),
+    (17, 8),
+    (18, 5),
+    (19, 4);
