@@ -763,7 +763,7 @@ FOR EACH ROW
 EXECUTE FUNCTION add_user_to_group_from_request();
 
 -- Function to add a user to the group if the join request is accepted
-CREATE FUNCTION add_user_to_group_from_invitation() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION add_user_to_group_from_invitation() RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.state = 'Accepted' THEN
         INSERT INTO GROUP_MEMBERSHIP (groupID, userID) 
