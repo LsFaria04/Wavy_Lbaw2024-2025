@@ -716,12 +716,12 @@ CREATE TRIGGER verify_user_comment_reports
     EXECUTE FUNCTION verify_user_comment_reports();
 
 
--- Create function to prevent admin users from posting, liking, commenting or follow users
+-- Create function to prevent admin users from posting, liking, or commenting
 CREATE OR REPLACE FUNCTION prevent_admin_actions()
 RETURNS TRIGGER AS $$
 BEGIN
     IF (SELECT isAdmin FROM USERS WHERE userID = NEW.userID) THEN
-        RAISE EXCEPTION 'Admin users are not allowed to post, like, comment or follow other users.';
+        RAISE EXCEPTION 'Admin users are not allowed to post, like, or comment.';
     END IF;
     RETURN NEW;
 END;
@@ -744,13 +744,6 @@ CREATE TRIGGER prevent_admin_actions_like
 BEFORE INSERT ON LIKES
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions();
-
--- Trigger to prevent admin users from following a user (TRIGGER 18)
-CREATE TRIGGER prevent_admin_actions_like
-BEFORE INSERT ON FOLLOW
-FOR EACH ROW
-EXECUTE FUNCTION prevent_admin_actions();
-
 
 -- Function to add a user to the group if the join request is accepted
 CREATE OR REPLACE FUNCTION add_user_to_group_from_request() RETURNS TRIGGER AS $$
