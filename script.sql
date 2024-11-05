@@ -552,12 +552,20 @@ CREATE TRIGGER verify_group_join_request
 -- Create function to verify that a comment date is equal to or greater than the post creation date
 CREATE OR REPLACE FUNCTION verify_comment_date() RETURNS TRIGGER AS $$
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM POST WHERE NEW.createdDate >= POST.createdDate AND NEW.postID = POST.postID) THEN
-        RAISE EXCEPTION 'A comment date must be equal to or greater than the post creation date';
+    IF NEW.postID IS NOT NULL THEN
+        IF NOT EXISTS (SELECT 1 FROM POST WHERE postID = NEW.postID) THEN
+            RAISE EXCEPTION 'Post with ID % does not exist', NEW.postID;
+        END IF;
+
+        IF NEW.createdDate < (SELECT createdDate FROM POST WHERE postID = NEW.postID) THEN
+            RAISE EXCEPTION 'A comment date must be equal to or greater than the post creation date';
+        END IF;
     END IF;
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
+
 
 -- Create trigger to apply the verify_comment_date() function when the COMMENT table is updated (TRIGGER 10)
 CREATE TRIGGER verify_comment_date
@@ -601,14 +609,23 @@ CREATE TRIGGER verify_like_comment_date
 
 
 -- Create function to verify that a reply comment date is equal to or greater than the original comment creation date
-CREATE OR REPLACE FUNCTION verify_reply_comment_date() RETURNS TRIGGER AS $$
+CREATE OR REPLACE FUNCTION verify_reply_comment_date() 
+RETURNS TRIGGER AS $$
 BEGIN 
-    IF NOT EXISTS (SELECT * FROM COMMENT WHERE NEW.createdDate >= COMMENT.createdDate AND NEW.parentCommentID = COMMENT.commentID) THEN
-        RAISE EXCEPTION 'A reply comment date must be equal to or greater than the original comment creation date';
+    IF NEW.parentCommentID IS NOT NULL THEN
+        IF NOT EXISTS (SELECT 1 FROM COMMENT WHERE commentID = NEW.parentCommentID) THEN
+            RAISE EXCEPTION 'Parent comment not found for parentCommentID: %', NEW.parentCommentID;
+        END IF;
+
+        IF NEW.createdDate < (SELECT createdDate FROM COMMENT WHERE commentID = NEW.parentCommentID) THEN
+            RAISE EXCEPTION 'A reply comment date must be equal to or greater than the original comment creation date';
+        END IF;
     END IF;
+
     RETURN NEW;
 END;
-$$ LANGUAGE plpgsql;
+$$ LANGUAGE plpgsql; 
+
 
 -- Create trigger to apply the verify_reply_comment_date() function when the COMMENT table is updated (TRIGGER 13)
 CREATE TRIGGER verify_reply_comment_date
