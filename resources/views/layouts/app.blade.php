@@ -23,14 +23,25 @@
     <body>
         <main>
             <header>
-                <h1><a href="{{ url('/cards') }}">Thingy!</a></h1>
-                @if (Auth::check())
-                    <a class="button" href="{{ url('/logout') }}"> Logout </a> <span>{{ Auth::user()->name }}</span>
-                @endif
+                <h1><a href="{{ url('/home') }}">Wavy!</a></h1>
+                <form>
+                    <input type="search" name = "search bar" placeholder = "Search">
+                </form>
             </header>
             <section id="content">
+                @include('partials.navigation_menu')
+                @include('partials.context_menu')
                 @yield('content')
             </section>
+            <footer>
+                <p>Wavy</p>
+                <ul>
+                    <li><a href = "" >Help</a></li>
+                    <li><a href = "" >About Us</a></li>
+                    <li><a href = "" >Contacts</a></li>
+                    <li><a href = ""> Features</a></li>
+                </ul>
+            </footer>
         </main>
     </body>
 </html>
