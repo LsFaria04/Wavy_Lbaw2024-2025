@@ -22,18 +22,14 @@
     </head>
     <body>
         <main>
-            <header>
-                <h1><a href="{{ url('/home') }}">Wavy!</a></h1>
-                <form>
-                    <input type="search" name = "search bar" placeholder = "Search">
-                </form>
-            </header>
             @include('partials.navigation_menu')
             <section id="content">
                 @yield('content')
             </section>
             @include('partials.context_menu')
-            <footer>
+            
+        </main>
+        <footer>
                 <p>Wavy</p>
                 <ul>
                     <li><a href = "" >Help</a></li>
@@ -42,6 +38,5 @@
                     <li><a href = ""> Features</a></li>
                 </ul>
             </footer>
-        </main>
     </body>
 </html>

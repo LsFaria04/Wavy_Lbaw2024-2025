@@ -23,6 +23,9 @@ use App\Http\Controllers\Auth\RegisterController;
 Route::redirect('/', '/home');
 Route::view('/home', 'pages.home')->name('home');
 
+//Profile
+Route::view('/profile', 'pages.profile')->name('profile');
+
 // Cards
 Route::controller(CardController::class)->group(function () {
     Route::get('/cards', 'list')->name('cards');
