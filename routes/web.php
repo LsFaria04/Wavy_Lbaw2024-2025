@@ -21,7 +21,7 @@ use App\Http\Controllers\Auth\RegisterController;
 
 // Home
 Route::redirect('/', '/home');
-Route::view('/home', 'pages.home');
+Route::view('/home', 'pages.home')->name('home');
 
 // Cards
 Route::controller(CardController::class)->group(function () {

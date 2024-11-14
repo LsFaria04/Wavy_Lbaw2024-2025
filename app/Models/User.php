@@ -26,9 +26,14 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
-        'name',
+        'username',
         'email',
-        'password',
+        'passwordhash',
+        'bio',
+        'state',
+        'visibilitypublic',
+        'isadmin',
+        'search',
     ];
 
     /**
@@ -37,8 +42,9 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $hidden = [
-        'password',
+        'passwordhash',
         'remember_token',
+        'state',
     ];
 
     /**
@@ -50,6 +56,18 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
+    /**
+     * Get the login password to be used by the controller.
+     * 
+     * @var string
+     * 
+     **/
+    public function getAuthPassword()
+    {
+        return $this->passwordhash;
+    }
+
 
     /**
      * Get the cards for a user.

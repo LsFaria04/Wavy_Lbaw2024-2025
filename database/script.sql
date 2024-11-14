@@ -33,7 +33,8 @@ CREATE TABLE USERS (
     email TEXT UNIQUE NOT NULL,
     state TEXT NOT NULL CHECK (state IN ('active', 'suspended', 'deleted')),
     visibilityPublic BOOLEAN NOT NULL,
-    isAdmin BOOLEAN NOT NULL
+    isAdmin BOOLEAN NOT NULL,
+    remember_token VARCHAR(100)
 );
 
 --Add column with the pre computed ts_vectors

@@ -28,11 +28,11 @@
                     <input type="search" name = "search bar" placeholder = "Search">
                 </form>
             </header>
+            @include('partials.navigation_menu')
             <section id="content">
-                @include('partials.navigation_menu')
-                @include('partials.context_menu')
                 @yield('content')
             </section>
+            @include('partials.context_menu')
             <footer>
                 <p>Wavy</p>
                 <ul>
