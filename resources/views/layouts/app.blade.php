@@ -11,8 +11,9 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Styles -->
-        <link href="{{ url('css/milligram.min.css') }}" rel="stylesheet">
-        <link href="{{ url('css/app.css') }}" rel="stylesheet">
+        <!--<link href="{{ url('css/milligram.min.css') }}" rel="stylesheet">!-->
+       <!-- <link href="{{ url('css/app.css') }}" rel="stylesheet"> -->
+        @vite('resources/css/app.css')
         <script type="text/javascript">
             // Fix for Firefox autofocus CSS bug
             // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
@@ -20,18 +21,17 @@
         <script type="text/javascript" src={{ url('js/app.js') }} defer>
         </script>
     </head>
-    <body>
-        <main>
+    <body class="flex flex-col min-h-screen">
+        <main class = "flex flex-row grow">
             @include('partials.navigation_menu')
-            <section id="content">
+            <section id="content" class= "grow flex px-5 pt-5">
                 @yield('content')
             </section>
             @include('partials.context_menu')
             
         </main>
-        <footer>
-                <p>Wavy</p>
-                <ul>
+        <footer class= "flex">
+                <ul class = "flex grow justify-evenly bg-gray-800 text-white">
                     <li><a href = "" >Help</a></li>
                     <li><a href = "" >About Us</a></li>
                     <li><a href = "" >Contacts</a></li>
