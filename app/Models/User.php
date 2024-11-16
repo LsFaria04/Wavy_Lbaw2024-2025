@@ -70,10 +70,11 @@ class User extends Authenticatable
 
 
     /**
-     * Get the cards for a user.
+     * Get the posts for a user.
      */
-    public function cards(): HasMany
+    public function posts(): HasMany
     {
-        return $this->hasMany(Card::class);
+        // If the 'posts' table's foreign key is 'userid', specify it explicitly
+        return $this->hasMany(Post::class, 'userid', 'userid');
     }
 }

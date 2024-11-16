@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 
 use App\Http\Controllers\CardController;
-use App\Http\Controllers\ItemController;
+use App\Http\Controllers\PostController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -39,11 +39,7 @@ Route::controller(CardController::class)->group(function () {
     Route::delete('/api/cards/{card_id}', 'delete');
 });
 
-Route::controller(ItemController::class)->group(function () {
-    Route::put('/api/cards/{card_id}', 'create');
-    Route::post('/api/item/{id}', 'update');
-    Route::delete('/api/item/{id}', 'delete');
-});
+Route::get('/home', [PostController::class, 'showAll'])->name('home');
 
 
 // Authentication
