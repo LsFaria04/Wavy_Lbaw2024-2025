@@ -26,20 +26,29 @@ class SearchController extends Controller
         else {
             switch ($category) {
                 case 'posts':
-                    $posts = Post::where('message', 'ILIKE', '%' . $query . '%')->get();
+                    $posts = Post::where('message', 'ILIKE', '%' . $query . '%')
+                    ->where('visibilitypublic', true)
+                    ->get();
                     break;
                 case 'users':
-                    $users = User::where('username', 'ILIKE', '%' . $query . '%')->get();
+                    $users = User::where('username', 'ILIKE', '%' . $query . '%')
+                    ->where('visibilitypublic', true)
+                    ->get();
                     break;
                 case 'groups':
-                    $groups = Group::where('groupname', 'ILIKE', '%' . $query . '%')->get();
+                    $groups = Group::where('groupname', 'ILIKE', '%' . $query . '%')
+                    ->get();
                     break;
                 default:
-                    $posts = Post::where('ILIKE', '%' . $query . '%')->get();
+                    $posts = Post::where('message', 'ILIKE', '%' . $query . '%')
+                    ->where('visibilitypublic', true)
+                    ->get();
                     break;
             }
         }
+
+        $message = null;
     
-        return view('pages.search', compact('posts', 'users', 'groups', 'query', 'category'));
+        return view('pages.search', compact('message', 'posts', 'users', 'groups', 'query', 'category'));
     }
 }
