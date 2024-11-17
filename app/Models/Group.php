@@ -17,7 +17,7 @@ class Group extends Model
     public $timestamps = false;
 
     protected $fillable = [
-        'group_name',
+        'groupname',
         'description',
         'visibility_public',
         'owner',

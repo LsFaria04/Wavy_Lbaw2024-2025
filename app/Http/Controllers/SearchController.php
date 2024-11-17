@@ -27,16 +27,16 @@ class SearchController extends Controller
         else {
             switch ($category) {
                 case 'posts':
-                    $posts = Post::where('message', 'LIKE', '%' . $query . '%')->get();
+                    $posts = Post::where('message', 'ILIKE', '%' . $query . '%')->get();
                     break;
                 case 'users':
-                    $users = User::where('username', 'LIKE', '%' . $query . '%')->get();
+                    $users = User::where('username', 'ILIKE', '%' . $query . '%')->get();
                     break;
                 case 'groups':
-                    $groups = Group::where('name', 'LIKE', '%' . $query . '%')->get();
+                    $groups = Group::where('groupname', 'ILIKE', '%' . $query . '%')->get();
                     break;
                 default:
-                    $posts = Post::where('message', 'LIKE', '%' . $query . '%')->get();
+                    $posts = Post::where('message', 'ILIKE', '%' . $query . '%')->get();
                     break;
             }
             $message = null;
