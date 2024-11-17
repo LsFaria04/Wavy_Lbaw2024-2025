@@ -40,7 +40,7 @@ Route::controller(CardController::class)->group(function () {
 });
 
 Route::get('/home', [PostController::class, 'showAll'])->name('home');
-
+Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

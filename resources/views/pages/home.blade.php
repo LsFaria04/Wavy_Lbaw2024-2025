@@ -1,32 +1,51 @@
 @extends('layouts.app')
-
 @section('content')
-    <header class="w-3/4 max-w-100 justify-self-center">
-        <form>
-            <input type="search" name="search" placeholder="Search">
-        </form>
-    </header>
+    <div class="flex flex-col items-center w-full"> 
+        <header class="w-3/4 max-w-100 mb-6"> 
+            <form>
+                <input type="search" name="search" placeholder="Search">
+            </form>
+        </header>
+        <section id="timeline" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg">
+            @auth
+            <div class="addPost mb-6 p-4 bg-white rounded-md shadow-sm">
+                <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
+                        <textarea id="message" name="message" rows="3" class="mt-1 block w-full p-2 border rounded-md" placeholder="Write something..."></textarea>
+                    </div>
 
-    <section id="timeline">
-        <!-- Check if there are posts -->
-        @if($posts->isEmpty())
-            <p>No posts found.</p>
-        @else
-            <!-- Loop through posts and display them -->
-            @foreach($posts as $post)
-                <div class="post">
-                    <div class="post-header">
-                        <h3>{{ $post->user->username }}</h3> <!-- Assuming user has a 'username' field -->
-                        <span>{{ $post->createdDate }}</span> <!-- Assuming 'createdDate' is the correct column -->
+                    <div class="mb-4">
+                        <label for="image" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
+                        <input type="file" name="image" id="image" accept="image/*" class="mt-1 block w-full p-2 border rounded-md">
                     </div>
-                    <div class="post-body">
-                        <p>{{ $post->message }}</p> <!-- Display the message of the post -->
+
+                    <div>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Post</button>
                     </div>
-                    <div class="post-footer">
-                        <span>Visibility: {{ $post->visibilityPublic ? 'Public' : 'Private' }}</span>
+                </form>
+            </div>
+            @endauth
+            <!-- Check if there are posts -->
+            @if($posts->isEmpty())
+                <p>No posts found.</p>
+            @else
+                @foreach($posts as $post)
+                    <div class="post mb-4 p-4 bg-white rounded-md shadow-sm">
+                        <div class="post-header mb-2">
+                            <h3 class="font-bold">{{ $post->user->username }}</h3> 
+                            <span class="text-gray-500 text-sm">{{ $post->createddate }}</span> 
+                        </div>
+                        <div class="post-body mb-2">
+                            <p>{{ $post->message }}</p>
+                        </div>
+                        <div class="post-footer text-sm text-gray-600">
+                            <span>Visibility: {{ $post->visibilitypublic ? 'Public' : 'Private' }}</span>
+                        </div>
                     </div>
-                </div>
-            @endforeach
-        @endif
-    </section>
+                @endforeach
+            @endif
+        </section>
+    </div>
 @endsection

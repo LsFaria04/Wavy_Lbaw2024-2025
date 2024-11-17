@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 use App\Models\Post;
 
@@ -13,11 +14,11 @@ class PostController extends Controller
      */
     public function create(Request $request)
     {
-        
+    
         Post::create([
             'userid' => $request->userid,
             'message' => $request->message,
-            'visibilitypublic' => 'true',
+            'visibilitypublic' => $request->visibilitypublic,
             'createddate' => $request->createddate,
             'groupid' => $request->groupid,
         ]);
@@ -25,16 +26,46 @@ class PostController extends Controller
 
     public function showAll()
     {
-        // Retrieve all posts, optionally with related user info (e.g., user name)
-        $posts = Post::with('user')->get();  // Eager load the related user
-    
+        if (Auth::check()){
+            // Retrieve all posts, optionally with related user info (e.g., user name)
+            $posts = Post::with('user')->get();  // Eager load the related user
+        }
+        else {
+            $posts = Post::with('user')->where('visibilitypublic',true)->get();
+        }
         // Return the view and pass the posts data
         return view('pages.home', compact('posts'));
     }
 
     /**
-     * Deletes a specific post.
+     * Stores a new post.
      */
+    public function store(Request $request)
+    {
+    
+        $request->validate([
+            'message' => 'required|string|max:255',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
+        ]);
+
+        
+        $imagePath = null;
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('images', 'public');
+        }
+
+        // Create the post
+        Post::create([
+            'userid' => Auth::id(),
+            'message' => $request->message,
+            'visibilitypublic' => true, 
+            'createddate' => now(),
+            'groupid' => null, 
+        ]);
+        
+        return redirect()->route('home')->with('success', 'Post created successfully!');
+
+    }
 
     public function delete(Request $request, $id)
     {
