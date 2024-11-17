@@ -184,14 +184,16 @@ function addEventListeners() {
   const menuOptions = document.querySelectorAll("#navigation-menu li");
   const menuHeader = document.querySelector("#navigation-menu header");
   const menuArrow = document.querySelector("#navigation-menu header button > svg");
+
+  //Allows the expantion of the menu
   function navigationMenuOperation(){
-    if(navigationMenu.classList.contains("w-1/5")){
-      navigationMenu.classList.remove("w-1/5");
-      navigationMenu.classList.add("w-16");
+    if(navigationMenu.classList.contains("w-60")){
+      navigationMenu.classList.remove("w-60");
+      navigationMenu.classList.add("w-14");
     }
     else{
-      navigationMenu.classList.add("w-1/5");
-      navigationMenu.classList.remove("w-16");
+      navigationMenu.classList.add("w-60");
+      navigationMenu.classList.remove("w-14");
     }
     menuText.forEach(function(element){
       element.classList.toggle("hidden");
@@ -200,7 +202,5 @@ function addEventListeners() {
       option.classList.toggle("gap-3");
     })
     menuArrow.classList.toggle("rotate-180");
-    //menuHeader.classList.toggle("justify-between");
-    //menuHeader.classList.toggle("justify-center");
   }
   
