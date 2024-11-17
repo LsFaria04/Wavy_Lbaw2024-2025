@@ -3,14 +3,8 @@
 @section('content')
     <div class="flex flex-col items-center w-full">
 
-        @if(isset($message))
-            <div class="alert alert-warning mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
-                {{ $message }}
-            </div>
-        @endif
-
         <!-- Form -->
-        <header class="w-3/4 max-w-100 mb-6">
+        <header class="w-full max-w-xl mb-6">
             <form action="{{ route('search') }}" method="GET" id="search-form" class="w-full max-w-3xl mx-auto">
                 <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2 w-full">
                 <input type="hidden" name="category" value="{{ old('category', $category ?? 'posts') }}">
@@ -26,16 +20,15 @@
 
         <!-- Search Results -->
         <section id="search-results" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg">
-            @if($category == 'posts' && !$posts->isEmpty())
+            @if(empty($query))
+            <p class="text-white">Please insert a search term.</p>
+            @elseif($category == 'posts' && !$posts->isEmpty())
                 <h3 class="font-bold text-xl mb-4">Posts</h3>
                 @foreach($posts as $post)
                     <div class="post mb-4 p-4 bg-white rounded-md shadow-sm">
                         <div class="post-header mb-2">
                             <h3 class="font-bold">{{ $post->user->username }}</h3>
                             <span class="text-gray-500 text-sm">{{ $post->createddate }}</span>
-                        </div>
-                        <div class="post-body mb-2">
-                            <p>{{ $post->message }}</p>
                         </div>
                         <div class="post-footer text-sm text-gray-600">
                             <span>Visibility: {{ $post->visibilitypublic ? 'Public' : 'Private' }}</span>

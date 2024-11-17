@@ -1,59 +1,59 @@
-@extends('layouts.app')
-@section('content')
-    <div class="flex flex-col items-center w-full"> 
+    @extends('layouts.app')
+    @section('content')
+        <div class="flex flex-col items-center w-full"> 
 
-        @if(isset($message))
-            <div class="alert alert-warning mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
-                {{ $message }}
-            </div>
-        @endif
-        
-        <header class="w-3/4 max-w-100 mb-6"> 
-        <form action="{{ route('search') }}" method="GET" id="search-form" >
-            <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2">
-        </form>
-        </header>
-
-        <section id="timeline" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg">
-            @auth
-            <div class="addPost mb-6 p-4 bg-white rounded-md shadow-sm">
-                <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    <div class="mb-4">
-                        <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
-                        <textarea id="message" name="message" rows="3" class="mt-1 block w-full p-2 border rounded-md" placeholder="Write something..."></textarea>
-                    </div>
-
-                    <div class="mb-4">
-                        <label for="image" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
-                        <input type="file" name="image" id="image" accept="image/*" class="mt-1 block w-full p-2 border rounded-md">
-                    </div>
-
-                    <div>
-                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Post</button>
-                    </div>
-                </form>
-            </div>
-            @endauth
-            <!-- Check if there are posts -->
-            @if($posts->isEmpty())
-                <p>No posts found.</p>
-            @else
-                @foreach($posts as $post)
-                    <div class="post mb-4 p-4 bg-white rounded-md shadow-sm">
-                        <div class="post-header mb-2">
-                            <h3 class="font-bold">{{ $post->user->username }}</h3> 
-                            <span class="text-gray-500 text-sm">{{ $post->createddate }}</span> 
-                        </div>
-                        <div class="post-body mb-2">
-                            <p>{{ $post->message }}</p>
-                        </div>
-                        <div class="post-footer text-sm text-gray-600">
-                            <span>Visibility: {{ $post->visibilitypublic ? 'Public' : 'Private' }}</span>
-                        </div>
-                    </div>
-                @endforeach
+            @if(isset($message))
+                <div class="alert alert-warning mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+                    {{ $message }}
+                </div>
             @endif
-        </section>
-    </div>
-@endsection
+            
+            <header class="w-full max-w-xl mb-6"> 
+            <form action="{{ route('search') }}" method="GET" id="search-form" >
+                <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2 w-full">
+            </form>
+            </header>
+
+            <section id="timeline" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg">
+                @auth
+                <div class="addPost mb-6 p-4 bg-white rounded-md shadow-sm">
+                    <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+                        @csrf
+                        <div class="mb-4">
+                            <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
+                            <textarea id="message" name="message" rows="3" class="mt-1 block w-full p-2 border rounded-md" placeholder="Write something..."></textarea>
+                        </div>
+
+                        <div class="mb-4">
+                            <label for="image" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
+                            <input type="file" name="image" id="image" accept="image/*" class="mt-1 block w-full p-2 border rounded-md">
+                        </div>
+
+                        <div>
+                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Post</button>
+                        </div>
+                    </form>
+                </div>
+                @endauth
+                <!-- Check if there are posts -->
+                @if($posts->isEmpty())
+                    <p>No posts found.</p>
+                @else
+                    @foreach($posts as $post)
+                        <div class="post mb-4 p-4 bg-white rounded-md shadow-sm">
+                            <div class="post-header mb-2">
+                                <h3 class="font-bold">{{ $post->user->username }}</h3> 
+                                <span class="text-gray-500 text-sm">{{ $post->createddate }}</span> 
+                            </div>
+                            <div class="post-body mb-2">
+                                <p>{{ $post->message }}</p>
+                            </div>
+                            <div class="post-footer text-sm text-gray-600">
+                                <span>Visibility: {{ $post->visibilitypublic ? 'Public' : 'Private' }}</span>
+                            </div>
+                        </div>
+                    @endforeach
+                @endif
+            </section>
+        </div>
+    @endsection

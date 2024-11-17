@@ -16,7 +16,6 @@ class SearchController extends Controller
 
         if (empty($query)) {
             return view('pages.search', [
-                'message' => 'Please insert a search term.',
                 'category' => $category,
                 'posts' => $posts,
                 'users' => $users,
@@ -36,12 +35,11 @@ class SearchController extends Controller
                     $groups = Group::where('groupname', 'ILIKE', '%' . $query . '%')->get();
                     break;
                 default:
-                    $posts = Post::where('message', 'ILIKE', '%' . $query . '%')->get();
+                    $posts = Post::where('ILIKE', '%' . $query . '%')->get();
                     break;
             }
-            $message = null;
         }
     
-        return view('pages.search', compact('message', 'posts', 'users', 'groups', 'query', 'category'));
+        return view('pages.search', compact('posts', 'users', 'groups', 'query', 'category'));
     }
 }
