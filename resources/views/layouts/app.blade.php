@@ -21,22 +21,15 @@
         </script>
     </head>
     <body class="flex flex-col min-h-screen">
-        <main class = "flex flex-row grow">
+        <main class = "flex flex-col grow lg:flex-row">
             @include('partials.navigation_menu')
-            <section id="content" class= "grow flex px-5 pt-5">
+            <section id="content" class= "grow flex flex-col pt-5 ">
                 @yield('content')
                 @yield('scripts')
             </section>
             @include('partials.context_menu')
             
         </main>
-        <footer class= "flex">
-                <ul class = "flex grow justify-evenly bg-gray-800 text-white">
-                    <li><a href = "" >Help</a></li>
-                    <li><a href = "" >About Us</a></li>
-                    <li><a href = "" >Contacts</a></li>
-                    <li><a href = ""> Features</a></li>
-                </ul>
-            </footer>
+        
     </body>
 </html>

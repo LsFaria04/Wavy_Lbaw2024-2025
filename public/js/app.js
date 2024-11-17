@@ -187,13 +187,13 @@ function addEventListeners() {
 
   //Allows the expantion of the menu
   function navigationMenuOperation(){
-    if(navigationMenu.classList.contains("w-60")){
-      navigationMenu.classList.remove("w-60");
-      navigationMenu.classList.add("w-14");
+    if(navigationMenu.classList.contains("lg:w-60")){
+      navigationMenu.classList.remove("lg:w-60");
+      navigationMenu.classList.add("lg:w-14");
     }
     else{
-      navigationMenu.classList.add("w-60");
-      navigationMenu.classList.remove("w-14");
+      navigationMenu.classList.add("lg:w-60");
+      navigationMenu.classList.remove("lg:w-14");
     }
     menuText.forEach(function(element){
       element.classList.toggle("hidden");
@@ -202,5 +202,24 @@ function addEventListeners() {
       option.classList.toggle("gap-3");
     })
     menuArrow.classList.toggle("rotate-180");
+  }
+
+  const contextMenu = document.getElementById('context-menu');
+  const contextMenuArrow = document.querySelector("#context-menu button > svg");
+
+  function contextMenuOperation(){
+    if(contextMenu.classList.contains("w-60")){
+      contextMenu.classList.remove("w-60");
+      contextMenu.classList.add("w-14");
+      contextMenu.classList.remove("max-h-screen");
+      contextMenu.classList.add("h-14");
+    }
+    else{
+      contextMenu.classList.add("w-60");
+      contextMenu.classList.remove("w-14");
+      contextMenu.classList.add("max-h-screen");
+      contextMenu.classList.remove("h-14");
+    }
+    contextMenuArrow.classList.toggle("rotate-180");
   }
   
