@@ -187,13 +187,13 @@ function addEventListeners() {
 
   //Allows the expantion of the menu
   function navigationMenuOperation(){
-    if(navigationMenu.classList.contains("w-60")){
-      navigationMenu.classList.remove("w-60");
-      navigationMenu.classList.add("w-14");
+    if(navigationMenu.classList.contains("sm:w-60")){
+      navigationMenu.classList.remove("sm:w-60");
+      navigationMenu.classList.add("sm:w-14");
     }
     else{
-      navigationMenu.classList.add("w-60");
-      navigationMenu.classList.remove("w-14");
+      navigationMenu.classList.add("sm:w-60");
+      navigationMenu.classList.remove("sm:w-14");
     }
     menuText.forEach(function(element){
       element.classList.toggle("hidden");
