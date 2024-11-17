@@ -1,5 +1,5 @@
-<div id = "navigation-menu" class= "flex justify-items-center flex-row sm:flex-col sm:w-14 sm:max-w-80  w-screen sm:max-h-screen bg-sky-900 p-4 text-white text-nowrap fixed bottom-0 sm:sticky sm:top-0 transition-w ease-in duration-300 ">
-    <header class = " hidden sm:flex items-center justify-between overflow-hidden">
+<div id = "navigation-menu" class= "flex justify-items-center flex-row lg:flex-col lg:w-14 w-screen lg:max-h-screen bg-sky-900 p-4 text-white text-nowrap fixed bottom-0 lg:sticky lg:top-0 transition-w ease-in duration-300 ">
+    <header class = " hidden lg:flex items-center justify-between overflow-hidden">
             <h1 class = "text-xl font-bold">
                 <a href="{{ url('/home') }}" >
                     <span class = "hidden" >Wavy</span>
@@ -14,8 +14,8 @@
             
 
     </header>
-    <nav class = "grow  sm:pt-20">
-        <ul class = "flex justify-center flex-row sm:flex-col gap-16">
+    <nav class = "grow  lg:pt-20">
+        <ul class = "flex justify-center flex-row lg:flex-col gap-16">
             <li class = "test-white font-medium text-lg">
                 <a class = "flex flex-row items-center gap-3" href = "{{ route('home')}}">
                     <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512.001 512.001" style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve" width="20" height="20">
