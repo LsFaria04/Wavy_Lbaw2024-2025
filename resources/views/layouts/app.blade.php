@@ -25,6 +25,7 @@
             @include('partials.navigation_menu')
             <section id="content" class= "grow flex px-5 pt-5">
                 @yield('content')
+                @yield('scripts')
             </section>
             @include('partials.context_menu')
             

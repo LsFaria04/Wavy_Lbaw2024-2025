@@ -1,11 +1,19 @@
 @extends('layouts.app')
 @section('content')
     <div class="flex flex-col items-center w-full"> 
+
+        @if(isset($message))
+            <div class="alert alert-warning mb-4 p-4 bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700">
+                {{ $message }}
+            </div>
+        @endif
+        
         <header class="w-3/4 max-w-100 mb-6"> 
-            <form>
-                <input type="search" name="search" placeholder="Search">
-            </form>
+        <form action="{{ route('search') }}" method="GET" id="search-form" >
+            <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2">
+        </form>
         </header>
+
         <section id="timeline" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg">
             @auth
             <div class="addPost mb-6 p-4 bg-white rounded-md shadow-sm">

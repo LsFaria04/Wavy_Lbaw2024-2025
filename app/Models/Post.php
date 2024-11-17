@@ -40,6 +40,10 @@ class Post extends Model
         'groupid',
     ];
 
+    protected $dates = [
+        'createddate',
+    ];
+
     public function user(): BelongsTo
     {
         // Establishes the belongsTo relationship with User
