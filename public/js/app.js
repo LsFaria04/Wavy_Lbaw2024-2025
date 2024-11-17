@@ -178,4 +178,29 @@ function addEventListeners() {
   }
   
   addEventListeners();
+
+  const navigationMenu = document.getElementById('navigation-menu');
+  const menuText = document.querySelectorAll("#navigation-menu span");
+  const menuOptions = document.querySelectorAll("#navigation-menu li");
+  const menuHeader = document.querySelector("#navigation-menu header");
+  const menuArrow = document.querySelector("#navigation-menu header button > svg");
+  function navigationMenuOperation(){
+    if(navigationMenu.classList.contains("w-1/5")){
+      navigationMenu.classList.remove("w-1/5");
+      navigationMenu.classList.add("w-16");
+    }
+    else{
+      navigationMenu.classList.add("w-1/5");
+      navigationMenu.classList.remove("w-16");
+    }
+    menuText.forEach(function(element){
+      element.classList.toggle("hidden");
+    })
+    menuOptions.forEach(function(option){
+      option.classList.toggle("gap-3");
+    })
+    menuArrow.classList.toggle("rotate-180");
+    //menuHeader.classList.toggle("justify-between");
+    //menuHeader.classList.toggle("justify-center");
+  }
   

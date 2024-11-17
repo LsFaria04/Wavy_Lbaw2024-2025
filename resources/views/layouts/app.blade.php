@@ -11,8 +11,7 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Styles -->
-        <!--<link href="{{ url('css/milligram.min.css') }}" rel="stylesheet">!-->
-       <!-- <link href="{{ url('css/app.css') }}" rel="stylesheet"> -->
+       <link href="{{ url('css/app.css') }}" rel="stylesheet"> 
         @vite('resources/css/app.css')
         <script type="text/javascript">
             // Fix for Firefox autofocus CSS bug
