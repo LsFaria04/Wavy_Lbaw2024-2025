@@ -1,4 +1,4 @@
-<div id = "navigation-menu" class= "transition-w ease-in duration-300 flex justify-items-center flex-col w-14 max-w-80 bg-sky-900 p-4 text-white text-nowrap">
+<div id = "navigation-menu" class= "transition-w ease-in duration-300 flex justify-items-center flex-col w-14 max-w-80 max-h-screen bg-sky-900 p-4 text-white text-nowrap sticky top-0">
     <header class = "flex items-center justify-between overflow-hidden">
             <h1 class = "text-xl font-bold">
                 <a href="{{ url('/home') }}" >
