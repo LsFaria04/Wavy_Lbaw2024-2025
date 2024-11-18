@@ -7,7 +7,7 @@ use App\Http\Controllers\PostController;
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
-
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 
 /*
@@ -26,7 +26,7 @@ Route::redirect('/', '/home');
 Route::view('/home', 'pages.home')->name('home');
 
 //Profile
-Route::view('/profile', 'pages.profile')->name('profile');
+Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile');
 
 // Cards
 Route::controller(CardController::class)->group(function () {
