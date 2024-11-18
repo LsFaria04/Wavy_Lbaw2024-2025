@@ -77,4 +77,12 @@ class User extends Authenticatable
         // If the 'posts' table's foreign key is 'userid', specify it explicitly
         return $this->hasMany(Post::class, 'userid', 'userid');
     }
+
+        /**
+     * Get the comments made by the user.
+     */
+    public function comments(): HasMany
+    {
+        return $this->hasMany(Comment::class, 'userid', 'userid');
+    }
 }
