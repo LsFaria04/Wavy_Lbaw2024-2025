@@ -22,43 +22,12 @@
             <section id="search-results" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg">
                 @if(empty($query))
                 <p class="text-white">Please insert a search term.</p>
-                @elseif($category == 'posts' && !$posts->isEmpty())
-                    <h3 class="font-bold text-xl mb-4">Posts</h3>
-                    @foreach($posts as $post)
-                        <div class="post mb-4 p-4 bg-white rounded-md shadow-sm">
-                            <div class="post-header mb-2">
-                                <h3 class="font-bold">{{ $post->user->username }}</h3>
-                                <span class="text-gray-500 text-sm">{{ $post->createddate }}</span>
-                            </div>
-                            <div class="post-body mb-2">
-                                <p>{{ $post->message }}</p>
-                            </div>
-                        </div>
-                    @endforeach
+                @elseif($category == 'posts'  && !$posts->isEmpty())
+                    @include('partials.searchPosts', ['posts' => $posts])
                 @elseif($category == 'users' && !$users->isEmpty())
-                    <h3 class="font-bold text-xl mb-4">Users</h3>
-                    @foreach($users as $user)
-                        <div class="user mb-4 p-4 bg-white rounded-md shadow-sm">
-                            <div class="user-header mb-2">
-                                <h3 class="font-bold">{{ $user->username }}</h3>
-                            </div>
-                            <div class="user-body mb-2">
-                                <p>{{ $user->bio }}</p>
-                            </div>
-                        </div>
-                    @endforeach
+                    @include('partials.searchUsers', ['users' => $users])
                 @elseif($category == 'groups' && !$groups->isEmpty())
-                    <h3 class="font-bold text-xl mb-4">Groups</h3>
-                    @foreach($groups as $group)
-                        <div class="group mb-4 p-4 bg-white rounded-md shadow-sm">
-                            <div class="group-header mb-2">
-                                <h3 class="font-bold">{{ $group->groupname }}</h3>
-                            </div>
-                            <div class="group-body mb-2">
-                                <p>{{ $group->description }}</p>
-                            </div>
-                        </div>
-                    @endforeach
+                    @include('partials.searchGroups', ['groups' => $groups])
                 @elseif (!empty($query))
                     <p class="text-white">No results matched your search.</p>
                 @endif
