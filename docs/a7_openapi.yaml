@@ -6,7 +6,7 @@ info:
   description: 'Web Resources Specification (A7) for Wavy'
 
 servers:
-  url: http://db.fe.up.pt
+- url: http://db.fe.up.pt
   description: Production server
 
 externalDocs:
@@ -36,7 +36,7 @@ paths:
       summary: 'R102: Login Action'
       description: 'Process the login information submited. Access: NAUTH'
       tags:
-        - 'M02: Authentication'
+        - 'M01: Authentication'
       
       requestBody:
         required: true
@@ -44,14 +44,14 @@ paths:
           application/x-www-form-urlencoded:
             schema:
               type: object
-              proproperties:
+              properties:
                 email:
                   type: string
                 password:
                   type: string
-                required:
-                  - email
-                  - password
+              required:
+                - email
+                - password
       responses:
         '302':
           description: 'Redirect after processing the login'
@@ -59,13 +59,13 @@ paths:
             Location:
               schema:
                 type: string
-                examples:
-                  302Success:
-                    description: 'Login was successfull.'
-                    value: '/home'
-                  303Error:
-                    description: 'The provided credentials do not match our records.'
-                    value: '/login'
+              examples:
+                302Success:
+                  description: 'Login was successfull.'
+                  value: '/home'
+                303Error:
+                  description: 'The provided credentials do not match our records.'
+                  value: '/login'
 
   /logout:
 
@@ -147,28 +147,28 @@ paths:
         - 'M02: Users'
       parameters:
         - in: path
-          name: id
+          name: username
           schema: 
             type: integer
           required: true
     
-    responses:
-      '200':
-        description: 'Everything OK. Show user profile'
-      '404':
-        description: 'Profile Not Found'
+      responses:
+        '200':
+          description: 'Everything OK. Show user profile'
+        '404':
+          description: 'Profile Not Found'
   
   /profile/{userid}:
     put:
-      operationID: R107
+      operationId: R107
       summary: 'R107: Update Profile'
       description: 'Updated the user profile. Access: AUTH, ADMIN'
       tags:
         - 'M02: Users'
 
       parameters:
-        -in: path
-        name: userId
+      - in: path
+        name: userid
         schema:
           type: integer
         required: true
@@ -218,33 +218,34 @@ paths:
           description: 'OK. Show the home page and Timeline.'
   
   /posts/store:
-    operationId: R109
-    summary: 'R109: Store a Post'
-    description: 'Process a post created by an user and store it into the database. Access: AUTH'
-    tags:
-      - 'M03: Posts'
-    
-    requestBody:
-      required: true
-      content:
-        application/x-www-form-urlencoded:
-          schema:
-            type: object
-            proproperties:
-              email:
-                type: string
-              password:
-                type: string
+    post:
+      operationId: R109
+      summary: 'R109: Store a Post'
+      description: 'Process a post created by an user and store it into the database. Access: AUTH'
+      tags:
+        - 'M03: Posts'
+      
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
               required:
                 - email
                 - password
-    responses:
-      '302':
-        description: 'Redirect after processing post created'
-        headers:
-          Location:
-            schema:
-              type: string
+      responses:
+        '302':
+          description: 'Redirect after processing post created'
+          headers:
+            Location:
+              schema:
+                type: string
               examples:
                 302Success:
                   description: 'Post creation was successfull.'
@@ -253,12 +254,12 @@ paths:
 
   /search:
     get:
-      operationId: R109
+      operationId: R110
       summary: 'R109: Search for content, users and groups'
       description: 'Provide quick access to content, users and gorups. Access: NAUTH, AUTH, ADMIN'
     
       tags:
-        - 'M03: Search'
+        - 'M04: Search'
       
       responses: 
         '200':
