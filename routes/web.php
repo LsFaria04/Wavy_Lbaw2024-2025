@@ -27,6 +27,7 @@ Route::view('/home', 'pages.home')->name('home');
 
 //Profile
 Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile');
+Route::put('/profile/{userid}', [ProfileController::class, 'update'])->name('profile.update');
 
 // Cards
 Route::controller(CardController::class)->group(function () {

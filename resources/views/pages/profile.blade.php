@@ -12,31 +12,81 @@
                 <h1 class="text-xl font-bold text-gray-800">{{ $user->username }}</h1>
             </header>
 
+            <!-- Edit Profile Messages -->
+            @if (session('success'))
+                <div class="alert w-full max-w-3xl p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if (session('error'))
+                <div class="alert w-full max-w-3xl p-4 bg-red-100 text-red-800 border border-red-300 rounded-lg">
+                    {{ session('error') }}
+                </div>
+            @endif
+
             <!-- Background Section -->
             <div class="w-full max-w-3xl relative bg-gray-300 h-48 rounded-lg overflow-hidden">
                 <div class="absolute inset-0 bg-cover bg-center">
-                    <!-- Background Image -->
+                    <!-- Background Image To Add -->
                 </div>
             </div>
 
             <!-- Profile Info Section -->
             <div class="w-full max-w-3xl relative bg-white rounded-lg shadow-md">
                 <div class="absolute -top-16 left-4 w-32 h-32 bg-gray-200 rounded-full border-4 border-white overflow-hidden">
-                    <!-- Profile Image -->
+                    <!-- Profile Image To Add -->
                 </div>
 
                 <div class="pt-20 px-6 pb-4">
                     <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
                     <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>
+                    @if(auth()->id() === $user->userid)
+                        <button 
+                            class="absolute top-0 right-0 mt-4 mr-4 px-4 py-2 font-bold bg-gray-800 text-white rounded-2xl"
+                            onclick="toggleEditMenu()">
+                            Edit Profile
+                        </button>
+                    @endif
                 </div>
                 <nav class="flex justify-around border-b">
-                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-700 border-b-2 hover:text-blue-600 text-blue-600 border-blue-600">Posts</button>
-                    <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-700 border-b-2 hover:text-blue-600">Comments</button>
-                    <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-700 border-b-2 hover:text-blue-600">Likes</button>
+                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900 text-sky-900 border-sky-900">Posts</button>
+                    <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Comments</button>
+                    <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Likes</button>
                 </nav>
             </div>
 
-            <!-- Tab Contents -->
+            <!-- Edit Profile Menu -->
+            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+                <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
+                    <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
+                    <form action="{{ route('profile.update', $user->userid) }}" method="POST">
+                        @csrf
+                        @method('PUT')
+                        <div class="mb-4">
+                            <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                            <input type="text" id="username" name="username" value="{{ $user->username }}" class="mt-1 block w-full p-2 border rounded-md" required>
+                        </div>
+                        <div class="mb-4">
+                            <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
+                            <textarea id="bio" name="bio" rows="3" class="mt-1 block w-full p-2 border rounded-md">{{ $user->bio }}</textarea>
+                        </div>
+                        <div class="mb-4">
+                            <label for="visibilitypublic" class="block text-sm font-medium text-gray-700">Profile Visibility</label>
+                            <select id="visibilitypublic" name="visibilitypublic" class="mt-1 block w-full p-2 border rounded-md">
+                                <option value="1" {{ $user->visibilitypublic ? 'selected' : '' }}>Public</option>
+                                <option value="0" {{ !$user->visibilitypublic ? 'selected' : '' }}>Private</option>
+                            </select>
+                        </div>
+                        <div class="flex justify-end space-x-2">
+                            <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500" onclick="toggleEditMenu()">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-md hover:bg-sky-900">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Content Tabs -->
             <div class="w-full max-w-3xl bg-white rounded-lg shadow-md mt-4 p-6">
                 <!-- Posts Section -->
                 <section id="user-posts" class="tab-content">
@@ -83,6 +133,20 @@
 
         @section('scripts')
             <script>
+                function toggleEditMenu() {
+                    const menu = document.getElementById('edit-profile-menu');
+                    menu.classList.toggle('hidden');
+                }
+
+                document.addEventListener('DOMContentLoaded', () => {
+                    const alertBoxes = document.querySelectorAll('.alert');
+                    alertBoxes.forEach(alertBox => {
+                        setTimeout(() => {
+                            alertBox.remove()
+                        }, 3000); // Time before fade-out
+                    });
+                });
+
                 document.addEventListener('DOMContentLoaded', () => {
                     const buttons = document.querySelectorAll('.tab-btn');
                     const sections = document.querySelectorAll('.tab-content');
@@ -93,9 +157,9 @@
 
                             // Toggle active button
                             buttons.forEach(btn => {
-                                btn.classList.remove('text-blue-600', 'border-blue-600');
+                                btn.classList.remove('text-sky-900', 'border-sky-900');
                             });
-                            button.classList.add('text-blue-600', 'border-blue-600');
+                            button.classList.add('text-sky-900', 'border-sky-900');
 
                             // Toggle visible content
                             sections.forEach(section => {

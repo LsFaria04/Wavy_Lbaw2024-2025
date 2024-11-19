@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Gate;
 
 use App\Models\Post;
 use App\Policies\PostPolicy;
+use App\Models\User;
+use App\Policies\UserPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -18,6 +20,7 @@ class AuthServiceProvider extends ServiceProvider
     protected $policies = [
         // Register the Post model with the PostPolicy
         Post::class => PostPolicy::class,
+        User::class => UserPolicy::class,
     ];
 
     /**
