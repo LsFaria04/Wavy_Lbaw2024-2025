@@ -1,4 +1,4 @@
-<aside class= "flex flex-col gap-10 items-center w-14 h-14 max-h-screen bottom-12 bg-sky-900 p-4 text-white fixed top-0 right-0 lg:sticky lg:top-0 overflow-scroll transition-all ease-in duration-300 " id = "context-menu">
+<aside class= "flex flex-col gap-10 items-center w-14 h-14 max-h-screen bottom-12 bg-sky-900 p-4 text-white fixed top-0 right-0 lg:bottom-0 overflow-scroll transition-all ease-in duration-300 " id = "context-menu">
     <button class = "self-start" onclick = "contextMenuOperation()">
         <svg  xmlns="http://www.w3.org/2000/svg" id="Bold" viewBox="0 0 24 24" width="25" height="25">
             <path d="M10.482,19.5a1.5,1.5,0,0,1-1.06-.439L4.836,14.475a3.505,3.505,0,0,1,0-4.95L9.422,4.939a1.5,1.5,0,0,1,2.121,2.122L6.957,11.646a.5.5,0,0,0,0,.708l4.586,4.585A1.5,1.5,0,0,1,10.482,19.5Z" fill = "currentColor"/>

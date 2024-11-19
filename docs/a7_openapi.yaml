@@ -1,0 +1,269 @@
+openapi: 3.0.0
+
+info:
+  version: '1.0'
+  title: 'Wavy s Web API'
+  description: 'Web Resources Specification (A7) for Wavy'
+
+servers:
+  url: http://db.fe.up.pt
+  description: Production server
+
+externalDocs:
+  description: Find more info here.
+  url: https://gitlab.up.pt/lbaw/lbaw2425/lbaw24043/-/wikis/EAP
+
+tags:
+ - name: 'M01: Authentication'
+ - name: 'M02: Users'
+ - name: 'M03: Posts'
+ - name: 'M04: Search'
+ - name: 'M05: Administration'
+
+paths:
+  /login:
+    get:
+      operationId: R101
+      summary: 'R101: Login Page'
+      description: 'Provide the login page. Access: NAUTH'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: 'Everything Ok. Show the Login Page'
+    post:
+      operationId: R102
+      summary: 'R102: Login Action'
+      description: 'Process the login information submited. Access: NAUTH'
+      tags:
+        - 'M02: Authentication'
+      
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              proproperties:
+                email:
+                  type: string
+                password:
+                  type: string
+                required:
+                  - email
+                  - password
+      responses:
+        '302':
+          description: 'Redirect after processing the login'
+          headers:
+            Location:
+              schema:
+                type: string
+                examples:
+                  302Success:
+                    description: 'Login was successfull.'
+                    value: '/home'
+                  303Error:
+                    description: 'The provided credentials do not match our records.'
+                    value: '/login'
+
+  /logout:
+
+    post:
+      operationId: R103
+      summary: 'R103: Logout Action'
+      description: 'Logout the current authenticated user. Access: AUTH, ADMIN'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '302':
+          description: 'Redirect after processing logout.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Successful logout. Redirect to login form.'
+                  value: '/login'
+
+  /register:
+    get:
+      operationId: R104
+      summary: 'R104: Register Page'
+      description: 'Provide new user registration form. Access: NAUTH'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: 'Ok. Show Sign-Up UI'
+
+    post:
+      operationId: R105
+      summary: 'R105: Register Action'
+      description: 'Processes the new user registration form submission. Access: NAUTH'
+      tags:
+        - 'M01: Authentication'
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                password:
+                  type: string
+                email:
+                  type: string
+              required:
+                  - name
+                  - email
+                  - password
+
+      responses:
+        '302':
+          description: 'Redirect after processing the new user information.'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Successful Registration. Redirect to home page.'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed Registration. Redirect to register page.'
+                  value: '/register'
+
+  /profile/{username}:
+    get:
+      operationId: R106
+      summary: 'R106: View User Profile'
+      description: 'Show the user profile. Access: AUTH, ADMIN'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: path
+          name: id
+          schema: 
+            type: integer
+          required: true
+    
+    responses:
+      '200':
+        description: 'Everything OK. Show user profile'
+      '404':
+        description: 'Profile Not Found'
+  
+  /profile/{userid}:
+    put:
+      operationID: R107
+      summary: 'R107: Update Profile'
+      description: 'Updated the user profile. Access: AUTH, ADMIN'
+      tags:
+        - 'M02: Users'
+
+      parameters:
+        -in: path
+        name: userId
+        schema:
+          type: integer
+        required: true
+
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                bio:
+                  type: string
+                visibilityPublic:
+                  type: boolean
+              required:
+                  - username
+                  - visibilityPublic
+      
+      responses:
+        '302':
+          description: 'Redirect after a successfull update. User returns to the profile page'
+          headers:
+            Location:
+              schema:
+                type: string
+              example:
+                302Success:
+                  description: 'Successful update, Redirect to the profile page.'
+                  value: '/profile/{username}'
+                302Failure:
+                  description: 'Failed. Redirect to the profile page without updating.'
+  
+  /home:
+    get:
+      operationId: R108
+      summary: 'R108: Access the home page'
+      description: 'Provide access to the home page and Timeline. Access: NAUTH, AUTH, ADMIN'
+    
+      tags:
+        - 'M02: Users'
+      
+      responses: 
+        '200':
+          description: 'OK. Show the home page and Timeline.'
+  
+  /posts/store:
+    operationId: R109
+    summary: 'R109: Store a Post'
+    description: 'Process a post created by an user and store it into the database. Access: AUTH'
+    tags:
+      - 'M03: Posts'
+    
+    requestBody:
+      required: true
+      content:
+        application/x-www-form-urlencoded:
+          schema:
+            type: object
+            proproperties:
+              email:
+                type: string
+              password:
+                type: string
+              required:
+                - email
+                - password
+    responses:
+      '302':
+        description: 'Redirect after processing post created'
+        headers:
+          Location:
+            schema:
+              type: string
+              examples:
+                302Success:
+                  description: 'Post creation was successfull.'
+                  value: '/home'
+
+
+  /search:
+    get:
+      operationId: R109
+      summary: 'R109: Search for content, users and groups'
+      description: 'Provide quick access to content, users and gorups. Access: NAUTH, AUTH, ADMIN'
+    
+      tags:
+        - 'M03: Search'
+      
+      responses: 
+        '200':
+          description: 'OK. Show the Search results.'
+
+
+
+
