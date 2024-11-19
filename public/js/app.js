@@ -22,6 +22,14 @@ function addEventListeners() {
     let cardCreator = document.querySelector('article.card form.new_card');
     if (cardCreator != null)
       cardCreator.addEventListener('submit', sendCreateCardRequest);
+
+    let categoryButtons = document.querySelectorAll('.category-btn');
+    [].forEach.call(categoryButtons, function(button) {
+        button.addEventListener('click', function() {
+            const category = this.getAttribute('data-category');
+            changeCategory(category);
+        });
+    });
   }
   
   function encodeForAjax(data) {
@@ -222,4 +230,9 @@ function addEventListeners() {
     }
     contextMenuArrow.classList.toggle("rotate-180");
   }
-  
+
+
+  function changeCategory(category) {
+      document.querySelector('input[name="category"]').value = category;
+      document.getElementById('search-form').submit();
+  }

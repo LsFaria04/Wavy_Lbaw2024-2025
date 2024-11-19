@@ -65,14 +65,4 @@
             </section>
         </div>
 
-        @section('scripts')
-            <script>
-                
-                function changeCategory(category) {
-                    document.querySelector('input[name="category"]').value = category;
-                    document.getElementById('search-form').submit();
-                }
-            </script>
-        @endsection
-
     @endsection
