@@ -24,25 +24,28 @@ class SearchController extends Controller
         }
 
         else {
+
+            $queryWithPrefix = $query . ':*';
+
             switch ($category) {
                 case 'posts':
-                    $posts = Post::where('message', 'ILIKE', '%' . $query . '%')
-                    ->where('visibilitypublic', true)
-                    ->get();
+                    $posts = Post::whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                        ->where('visibilitypublic', true)
+                        ->get();
                     break;
                 case 'users':
-                    $users = User::where('username', 'ILIKE', '%' . $query . '%')
-                    ->where('visibilitypublic', true)
-                    ->get();
+                    $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                        ->where('visibilitypublic', true)
+                        ->get();
                     break;
                 case 'groups':
-                    $groups = Group::where('groupname', 'ILIKE', '%' . $query . '%')
-                    ->get();
+                    $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                        ->get();
                     break;
                 default:
-                    $posts = Post::where('message', 'ILIKE', '%' . $query . '%')
-                    ->where('visibilitypublic', true)
-                    ->get();
+                    $posts = Post::whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                        ->where('visibilitypublic', true)
+                        ->get();
                     break;
             }
         }
