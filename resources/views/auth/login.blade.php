@@ -22,10 +22,10 @@
             </label>
             
             <div class = "flex flex-row justify-evenly mt-4">
+                <a class="bg-sky-800 rounded w-32 py-2 text-center shadow text-white font-bold shadow-sky-900 hover:shadow-lg" href="{{ route('register') }}">Register</a>
                 <button class = "bg-sky-800 rounded w-32 py-2  text-white font-bold shadow shadow-sky-900 hover:shadow-lg"type="submit">
                     Login
                 </button>
-                <a class="bg-sky-800 rounded w-32 py-2 text-center shadow text-white font-bold shadow-sky-900 hover:shadow-lg" href="{{ route('register') }}">Register</a>
             </div>
             <div class="mt-4">
             @if ($errors->has('email'))
