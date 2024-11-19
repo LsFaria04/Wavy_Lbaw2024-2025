@@ -38,6 +38,7 @@
                     <!-- Profile Image To Add -->
                 </div>
 
+                <!-- Edit Profile only visble if Account owner -->
                 <div class="pt-20 px-6 pb-4">
                     <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
                     <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>
@@ -49,7 +50,8 @@
                         </button>
                     @endif
                 </div>
-                <nav class="flex justify-around border-b">
+
+                <nav class="flex justify-around">
                     <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900 text-sky-900 border-sky-900">Posts</button>
                     <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Comments</button>
                     <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Likes</button>
@@ -87,7 +89,7 @@
             </div>
 
             <!-- Content Tabs -->
-            <div class="w-full max-w-3xl bg-white rounded-lg shadow-md mt-4 p-6">
+            <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6">
                 <!-- Posts Section -->
                 <section id="user-posts" class="tab-content">
                     @if($user->posts->isEmpty())
@@ -96,7 +98,7 @@
                         </div>
                     @else
                         @foreach($user->posts as $post)
-                            <div class="mb-4 p-4 bg-gray-100 rounded-lg shadow">
+                            <div class="mb-4 p-4 bg-white rounded-md shadow">
                                 <h3 class="font-bold text-gray-800">{{ $post->user->username }}</h3>
                                 <span class="text-sm text-gray-500">{{ $post->createddate }}</span>
                                 <p class="mt-2 text-gray-700">{{ $post->message }}</p>
@@ -113,9 +115,26 @@
                         </div>
                     @else
                         @foreach($user->comments as $comment)
-                            <div class="mb-4 p-4 bg-gray-100 rounded-lg shadow">
-                                <h3 class="font-bold text-gray-800">{{ $comment->username }}</h3>
-                                <span class="text-sm text-gray-500">{{ $comment->createdDate }}</span>
+                            <div class="mb-4 p-4 bg-white rounded-md shadow">
+                                <div class="flex justify-between items-center">
+                                    <h3 class="font-bold text-gray-800">{{ $comment->user->username }}</h3>
+
+                                    <!-- Need to create Post Page, Comment Page -->
+                                    <!-- And Change the <p> "Replying to" to anchors that redirect --> 
+                                    <!-- To those pages -->
+                                    @if($comment->parentcommentid)
+                                        <p class="text-sm hover:text-sky-900">
+                                            <strong>Replying to:</strong>
+                                            {{ $comment->parentcomment->user->username }}
+                                        </p>
+                                    @else
+                                        <p class="text-sm hover:text-sky-900">
+                                            <strong>Replying to:</strong>
+                                            {{ $comment->post->user->username }}
+                                        </p>
+                                    @endif 
+                                </div>
+                                <span class="text-sm text-gray-500">{{ $comment->createddate }}</span>
                                 <p class="mt-2 text-gray-700">{{ $comment->message }}</p>
                             </div>
                         @endforeach
