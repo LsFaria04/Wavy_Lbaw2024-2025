@@ -3,7 +3,7 @@
     @section('content')
         <div class="flex flex-col items-center w-full">
             <!-- Profile Top Section -->
-            <header class="w-full max-w-3xl p-4 bg-white rounded-lg shadow-md flex items-center">
+            <header class="w-full max-w-3xl p-4 bg-white rounded-b-lg shadow-md flex items-center sticky top-0 z-10">
                 <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -26,7 +26,7 @@
             @endif
 
             <!-- Background Section -->
-            <div class="w-full max-w-3xl relative bg-gray-300 h-48 rounded-lg overflow-hidden">
+            <div class="w-full max-w-3xl relative bg-gray-300 h-48 rounded-lg overflow-hidden pt-24">
                 <div class="absolute inset-0 bg-cover bg-center">
                     <!-- Background Image To Add -->
                 </div>
