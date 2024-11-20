@@ -1,13 +1,8 @@
 @extends('layouts.app')
 @section('content')
     <div class="flex flex-col items-center w-full">
-        <header class="w-full max-w-xl mb-6">
-            <form action="{{ route('search') }}" method="GET" id="search-form">
-                <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2 w-full">
-            </form>
-        </header>
 
-        <section id="timeline" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg mx-auto">
+        <section id="timeline" class="p-6 max-w-screen-lg w-full bg-slate-500 rounded-xl shadow-lg mx-auto">
             @auth
                 <div class="addPost mb-6 p-4 bg-white rounded-md shadow-sm">
                     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
