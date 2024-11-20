@@ -30,6 +30,8 @@ function addEventListeners() {
             changeCategory(category);
         });
     });
+
+    document.addEventListener('DOMContentLoaded', fadeAlert);
   }
   
   function encodeForAjax(data) {
@@ -183,6 +185,15 @@ function addEventListeners() {
     new_item.querySelector('a.delete').addEventListener('click', sendDeleteItemRequest);
   
     return new_item;
+  }
+
+  function fadeAlert(){
+    const alertBoxes = document.querySelectorAll('.alert');
+      alertBoxes.forEach(alertBox => {
+          setTimeout(() => {
+              alertBox.remove()
+          }, 3000); 
+        });// Time before fade-out
   }
   
   addEventListeners();

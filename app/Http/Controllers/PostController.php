@@ -47,6 +47,11 @@ class PostController extends Controller
             'message' => 'required|string|max:255',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
         ]);
+        
+        //check if the user is able to post
+        if($request->user()->cannot('create', Post::class)){
+            return redirect()->route('home')->with('error', 'You cannot create a post!');
+        }
 
         
         $imagePath = null;
