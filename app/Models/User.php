@@ -85,4 +85,8 @@ class User extends Authenticatable
     {
         return $this->hasMany(Comment::class, 'userid', 'userid');
     }
+
+    public function getIsAdmin(): bool {
+        return (bool) $this->attributes['isadmin'];
+    }
 }

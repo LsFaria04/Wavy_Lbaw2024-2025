@@ -9,6 +9,8 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\AdminController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -62,3 +64,8 @@ Route::controller(RegisterController::class)->group(function () {
 
 // Search
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+
+// Admin
+Route::get('/admin', [AdminController::class, 'index'])->middleware(['auth', 'isAdmin']);
+
+

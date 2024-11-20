@@ -30,6 +30,10 @@ function addEventListeners() {
             changeCategory(category);
         });
     });
+
+    document.addEventListener('DOMContentLoaded', () => {
+      showSectionAdmin('posts');
+    });
   }
   
   function encodeForAjax(data) {
@@ -236,3 +240,11 @@ function addEventListeners() {
       document.querySelector('input[name="category"]').value = category;
       document.getElementById('search-form').submit();
   }
+
+  function showSectionAdmin(sectionId) {
+    document.querySelectorAll('.tab-section').forEach((el) => {
+        el.classList.add('hidden');
+    });
+
+    document.getElementById(sectionId).classList.remove('hidden');
+}
