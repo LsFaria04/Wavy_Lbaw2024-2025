@@ -20,7 +20,7 @@ class ProfileController extends Controller
         
         try {
             $validatedData = $request->validate([
-                'username' => 'unique:users|required|string|max:250',
+                'username' => 'unique:users|required|string|max:250|alpha_dash',
                 'bio' => 'nullable|string|max:500',
                 'visibilitypublic' => 'required|boolean',
             ]);
