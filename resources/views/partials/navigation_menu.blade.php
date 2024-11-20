@@ -15,7 +15,7 @@
 
     </header>
     <nav class = "grow  lg:pt-20">
-        <ul class = "flex justify-center flex-row lg:flex-col gap-16">
+        <ul class = "flex justify-center flex-row lg:flex-col gap-14 sm:gap-16 overflow-scroll">
             <li class = "test-white font-medium text-lg">
                 <a class = "flex flex-row items-center gap-3" href = "{{ route('home')}}">
                     <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512.001 512.001" style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve" width="20" height="20">
@@ -50,6 +50,15 @@
                             <path d="M12,12a6,6,0,1,1,6-6A6.006,6.006,0,0,1,12,12Zm0-9a3,3,0,1,0,3,3A3,3,0,0,0,12,3Z" fill = "currentColor"/>
                         </svg>
                         <span class = "hidden">Profile</span>
+                    </a>
+                </li>
+                <li class = "test-white font-medium text-lg">
+                    <a class = "flex flex-row items-center gap-3" href = "{{ route('logout')}}">
+                        <svg class = "min-w-[20px] rotate-180" xmlns="http://www.w3.org/2000/svg" id="Layer_1" data-name="Layer 1" viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M18.589,0H5.411A5.371,5.371,0,0,0,0,5.318V7.182a1.5,1.5,0,0,0,3,0V5.318A2.369,2.369,0,0,1,5.411,3H18.589A2.369,2.369,0,0,1,21,5.318V18.682A2.369,2.369,0,0,1,18.589,21H5.411A2.369,2.369,0,0,1,3,18.682V16.818a1.5,1.5,0,1,0-3,0v1.864A5.371,5.371,0,0,0,5.411,24H18.589A5.371,5.371,0,0,0,24,18.682V5.318A5.371,5.371,0,0,0,18.589,0Z" fill = "currentColor"/>
+                            <path d="M3.5,12A1.5,1.5,0,0,0,5,13.5H5l9.975-.027-3.466,3.466a1.5,1.5,0,0,0,2.121,2.122l4.586-4.586a3.5,3.5,0,0,0,0-4.95L13.634,4.939a1.5,1.5,0,1,0-2.121,2.122l3.413,3.412L5,10.5A1.5,1.5,0,0,0,3.5,12Z" fill = "currentColor"/>
+                        </svg>
+                        <span class = "hidden">Logout</span>
                     </a>
                 </li>
             @else

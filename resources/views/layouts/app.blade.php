@@ -23,7 +23,13 @@
     <body class="flex flex-col min-h-screen">
         <main class = "flex flex-col grow lg:flex-row bg-slate-100">
             @include('partials.navigation_menu')
-            <section id="content" class= "grow flex flex-col pt-5 ">
+            <section id="content" class= "grow flex flex-col pt-2">
+                <header class="w-3/4 mb-6 self-center md:w-full md:max-w-xl">
+                    <form action="{{ route('search') }}" method="GET" id="search-form" class="w-full max-w-3xl mx-auto">
+                        <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2 w-full shadow-md focus:outline-0">
+                        <input type="hidden" name="category" value="{{ old('category', $category ?? 'posts') }}">
+                    </form>
+                </header>
                 @yield('content')
                 @yield('scripts')
             </section>
