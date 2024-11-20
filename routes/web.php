@@ -42,8 +42,11 @@ Route::controller(CardController::class)->group(function () {
     Route::delete('/api/cards/{card_id}', 'delete');
 });
 
+//Posts
 Route::get('/home', [PostController::class, 'showAll'])->name('home');
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
+Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
+Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

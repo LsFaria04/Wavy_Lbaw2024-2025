@@ -3,7 +3,7 @@
     @section('content')
         <div class="flex flex-col items-center w-full">
             <!-- Profile Top Section -->
-            <header class="w-full max-w-3xl p-4 bg-white rounded-b-lg shadow-md flex items-center sticky top-0 z-10">
+            <header class="w-full max-w-3xl p-4 bg-white rounded-lg shadow-md flex items-center sticky top-0 z-10">
                 <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -52,14 +52,14 @@
                 </div>
 
                 <nav class="flex justify-around">
-                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900 text-sky-900 border-sky-900">Posts</button>
+                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900  border-sky-900">Posts</button>
                     <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Comments</button>
                     <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Likes</button>
                 </nav>
             </div>
 
             <!-- Edit Profile Menu -->
-            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
                     <form action="{{ route('profile.update', $user->userid) }}" method="POST">
@@ -87,7 +87,6 @@
                     </form>
                 </div>
             </div>
-
             <!-- Content Tabs -->
             <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6">
                 <!-- Posts Section -->
