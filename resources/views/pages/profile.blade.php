@@ -133,7 +133,7 @@
                                         </p>
                                     @endif 
                                 </div>
-                                <span class="text-sm text-gray-500">{{ $comment->createddate }}</span>
+                                <span class="text-sm text-gray-500">{{ $comment->createddate->diffForHumans() }}</span>
                                 <p class="mt-2 text-gray-700">{{ $comment->message }}</p>
                             </div>
                         @endforeach
