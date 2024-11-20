@@ -1,15 +1,14 @@
-    @extends('layouts.app')
-    @section('content')
-        <div class="flex flex-col items-center w-full"> 
-            
-            <header class="w-full max-w-xl mb-6"> 
-            <form action="{{ route('search') }}" method="GET" id="search-form" >
+@extends('layouts.app')
+@section('content')
+    <div class="flex flex-col items-center w-full">
+        <header class="w-full max-w-xl mb-6">
+            <form action="{{ route('search') }}" method="GET" id="search-form">
                 <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2 w-full">
             </form>
-            </header>
+        </header>
 
-            <section id="timeline" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg">
-                @auth
+        <section id="timeline" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg mx-auto">
+            @auth
                 <div class="addPost mb-6 p-4 bg-white rounded-md shadow-sm">
                     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
                         @csrf
@@ -28,30 +27,13 @@
                         </div>
                     </form>
                 </div>
-                @endauth
-                <!-- Check if there are posts -->
-                @if($posts->isEmpty())
-                    <p>No posts found.</p>
-                @else
-                    @foreach($posts as $post)
-                        <div class="post mb-4 p-4 bg-white rounded-md shadow-sm">
-                            <div class="post-header mb-2">
-                                <h3 class="font-bold">
-                                    <a href="{{ route('profile', $post->user->username) }}" class="text-black hover:text-sky-900">
-                                        {{ $post->user->username }}
-                                    </a>
-                                </h3> 
-                                <span class="text-gray-500 text-sm">{{ $post->createddate }}</span> 
-                            </div>
-                            <div class="post-body mb-2">
-                                <p>{{ $post->message }}</p>
-                            </div>
-                            <div class="post-footer text-sm text-gray-600">
-                                <span>Visibility: {{ $post->visibilitypublic ? 'Public' : 'Private' }}</span>
-                            </div>
-                        </div>
-                    @endforeach
-                @endif
-            </section>
-        </div>
-    @endsection
+            @endauth
+            @if($posts->isEmpty())
+                <p>No posts found.</p>
+            @else
+                @each('partials.post', $posts, 'post')
+            @endif
+        </section>
+    </div>
+
+@endsection

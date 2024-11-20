@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,10 @@ class Post extends Model
     use HasFactory;
 
     protected $table = 'post';
+
+    protected $casts = [
+        'createdDate' => 'datetime',
+    ];
 
     protected $primaryKey = 'postid';
 
@@ -48,5 +53,10 @@ class Post extends Model
     {
         // Establishes the belongsTo relationship with User
         return $this->belongsTo(User::class, 'userid');
+    }
+
+    public function getCreatedDateAttribute($value)
+    {
+        return Carbon::parse($value); // Ensure it's a Carbon instance
     }
 }

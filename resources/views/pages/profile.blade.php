@@ -87,7 +87,6 @@
                     </form>
                 </div>
             </div>
-
             <!-- Content Tabs -->
             <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6">
                 <!-- Posts Section -->

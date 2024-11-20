@@ -27,16 +27,16 @@ class PostController extends Controller
     public function showAll()
     {
         if (Auth::check()){
-            // Retrieve all posts, optionally with related user info (e.g., user name)
-            $posts = Post::with('user')->get();  // Eager load the related user
+            $posts = Post::with('user')->orderBy('createddate', 'desc')->get();  
         }
         else {
-            $posts = Post::with('user')->where('visibilitypublic',true)->get();
+            $posts = Post::with('user')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->get();
         }
+    
         // Return the view and pass the posts data
         return view('pages.home', compact('posts'));
     }
-
+    
     /**
      * Stores a new post.
      */
@@ -67,23 +67,39 @@ class PostController extends Controller
 
     }
 
-    public function delete(Request $request, $id)
-    {
-        // Find the post by its ID.
-        $post = Post::find($id);
 
-        // Check if the post exists.
-        if (!$post) {
-            return response()->json(['error' => 'Post not found'], 404);
+    // Update the post
+    public function update(Request $request, Post $post)
+    {
+        // Check if the authenticated user is the owner of the post
+        if ($post->userid != Auth::id()) {
+            return redirect()->route('home')->with('error', 'You are not authorized to update this post.');
         }
 
-        // Check if the current user is authorized to delete this post.
-        $this->authorize('delete', $post);
+        // Validate the input
+        $request->validate([
+            'message' => 'required|string|max:255',
+        ]);
 
-        // Delete the post.
+        // Update the post
+        $post->update([
+            'message' => $request->message,
+        ]);
+
+        return redirect()->route('home')->with('success', 'Post updated successfully!');
+    }
+
+    // Delete the post
+    public function destroy(Post $post)
+    {
+        // Check if the authenticated user is the owner of the post
+        if ($post->user_id != Auth::id()) {
+            return redirect()->route('home')->with('error', 'You are not authorized to delete this post.');
+        }
+
+        // Delete the post
         $post->delete();
 
-        // Return a response indicating the post was deleted.
-        return response()->json(['message' => 'Post deleted successfully', 'deletedPost' => $post], 200);
+        return redirect()->route('home')->with('success', 'Post deleted successfully!');
     }
 }
