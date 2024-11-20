@@ -212,21 +212,21 @@ function addEventListeners() {
     menuArrow.classList.toggle("rotate-180");
   }
 
-  const contextMenu = document.getElementById('context-menu');
+  const contextMenu = document.querySelector('#context-menu');
+  const contextMenuButton = document.querySelector("#context-menu button");
   const contextMenuArrow = document.querySelector("#context-menu button > svg");
 
+  //allows the operation of the context menu
   function contextMenuOperation(){
     if(contextMenu.classList.contains("w-60")){
       contextMenu.classList.remove("w-60");
-      contextMenu.classList.add("w-14");
-      contextMenu.classList.remove("max-h-screen");
-      contextMenu.classList.add("h-14");
+      contextMenu.classList.add("w-0");
+      contextMenuButton.classList.add("translate-x-56");
     }
     else{
       contextMenu.classList.add("w-60");
-      contextMenu.classList.remove("w-14");
-      contextMenu.classList.add("max-h-screen");
-      contextMenu.classList.remove("h-14");
+      contextMenu.classList.remove("w-0");
+      contextMenuButton.classList.remove("translate-x-56");
     }
     contextMenuArrow.classList.toggle("rotate-180");
   }
