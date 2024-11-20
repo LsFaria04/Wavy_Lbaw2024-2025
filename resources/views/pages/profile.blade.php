@@ -52,14 +52,14 @@
                 </div>
 
                 <nav class="flex justify-around">
-                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900 text-sky-900 border-sky-900">Posts</button>
+                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900  border-sky-900">Posts</button>
                     <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Comments</button>
                     <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Likes</button>
                 </nav>
             </div>
 
             <!-- Edit Profile Menu -->
-            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center">
+            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
                 <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
                     <form action="{{ route('profile.update', $user->userid) }}" method="POST">
