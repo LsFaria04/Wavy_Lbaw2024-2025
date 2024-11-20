@@ -7,7 +7,7 @@
             </form>
         </header>
 
-        <section id="timeline" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg mx-auto">
+        <section id="timeline" class="p-6 max-w-screen-lg w-full bg-slate-500 rounded-xl shadow-lg mx-auto">
             @auth
                 <div class="addPost mb-6 p-4 bg-white rounded-md shadow-sm">
                     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
