@@ -91,15 +91,15 @@
             <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6">
                 <!-- Posts Section -->
                 <section id="user-posts" class="tab-content">
-                    @if($user->posts->isEmpty())
+                    @if($posts->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">No posts found for this user.</p>
                         </div>
                     @else
-                        @foreach($user->posts as $post)
+                        @foreach($posts as $post)
                             <div class="mb-4 p-4 bg-white rounded-md shadow">
                                 <h3 class="font-bold text-gray-800">{{ $post->user->username }}</h3>
-                                <span class="text-sm text-gray-500">{{ $post->createddate }}</span>
+                                <span class="text-sm text-gray-500">{{ $post->createddate->diffForHumans() }}</span>
                                 <p class="mt-2 text-gray-700">{{ $post->message }}</p>
                             </div>
                         @endforeach
@@ -108,12 +108,12 @@
 
                 <!-- Comments Section -->
                 <section id="user-comments" class="tab-content hidden">
-                    @if($user->comments->isEmpty())
+                    @if($comments->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">No comments found for this user.</p>
                         </div>
                     @else
-                        @foreach($user->comments as $comment)
+                        @foreach($comments as $comment)
                             <div class="mb-4 p-4 bg-white rounded-md shadow">
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-bold text-gray-800">{{ $comment->user->username }}</h3>
