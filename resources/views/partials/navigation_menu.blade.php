@@ -12,7 +12,7 @@
                 </svg>
             </button>
     </header>
-    <nav class = "grow  lg:pt-20">
+    <nav class = "grow lg:pt-20">
         <ul class = "flex justify-center flex-row lg:flex-col gap-14 sm:gap-16 overflow-scroll">
             <li class = "test-white font-medium text-lg">
                 <a class = "flex flex-row items-center gap-3" href = "{{ route('home')}}">

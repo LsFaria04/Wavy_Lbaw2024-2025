@@ -8,7 +8,7 @@
             </button>
 
             <form id="search-bar" action="{{ route('search') }}" method="GET" class="hidden w-full mx-auto">
-                <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl p-2.5 w-full bg-white text-black shadow-md focus:outline-none">
+                <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl p-2.5 pl-5 w-full bg-white text-black shadow-md focus:outline-none">
             </form>
     </header>
 

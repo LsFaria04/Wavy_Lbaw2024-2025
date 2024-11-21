@@ -2,16 +2,16 @@
 
     @section('content')
         <div class="flex flex-col items-center w-full">
-            <header id="search-header" class="w-full max-w-screen-lg pt-4 bg-white rounded-lg shadow-md items-center sticky top-0 z-10 bg-opacity-40">
+            <header id="search-header" class="w-full max-w-full pt-4 bg-white shadow-md items-center sticky top-0 z-10 bg-opacity-90">
                 <div class="flex items-center">
-                    <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4 pl-2">
+                    <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4 pl-4">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
                     </a>
 
                     <form action="{{ route('search') }}" method="GET" id="search-form" class="w-full max-w-3xl mx-auto">
-                        <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl p-2.5 w-full shadow-md focus:outline-none">
+                        <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl p-2.5 pl-5 w-full shadow-md focus:outline-none">
                         <input type="hidden" name="category" value="{{ old('category', $category ?? 'posts') }}">
                     </form>
                 </div>
@@ -25,9 +25,11 @@
             </header>
             
             <!-- Search Results -->
-            <section id="search-results" class="p-6 max-w-xl w-full bg-slate-500 rounded-xl shadow-lg mt-2">
+            <section id="search-results" class="w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4">
                 @if(empty($query))
-                    <p class="text-white">Please insert a search term.</p>
+                    <div class="flex justify-center items-center h-32">
+                        <p class="text-gray-600 text-center">Please insert a search term.</p>
+                    </div>
                 @elseif($category == 'posts'  && !$posts->isEmpty())
                     @include('partials.searchPosts', ['posts' => $posts])
                 @elseif($category == 'users' && !$users->isEmpty())
@@ -35,7 +37,9 @@
                 @elseif($category == 'groups' && !$groups->isEmpty())
                     @include('partials.searchGroups', ['groups' => $groups])
                 @elseif (!empty($query))
-                    <p class="text-white">No results matched your search.</p>
+                    <div class="flex justify-center items-center h-32">
+                        <p class="text-gray-600 text-center">No results matched your search.</p>
+                    </div>
                 @endif
             </section>
         </div>
