@@ -8,11 +8,11 @@
             </button>
 
             <form id="search-bar" action="{{ route('search') }}" method="GET" class="hidden w-full mx-auto">
-                <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl p-2.5 pl-5 w-full bg-white text-black shadow-md focus:outline-none">
+                <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl py-1 pl-5 w-full bg-white text-black shadow-md focus:outline-none">
             </form>
     </header>
 
-    <nav class = "grow lg:pt-16">
+    <nav class = "grow lg:pt-14">
         <ul class="flex justify-center flex-row lg:flex-col gap-14 sm:gap-16 overflow-scroll">
             <li id="search-icon" class="items-center justify-center ">
                 <a class = "flex flex-row items-center gap-3" href = "{{ route('search')}}">

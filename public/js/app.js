@@ -518,19 +518,45 @@ function navigationMenuOperation(){
       document.getElementById('search-form').submit();
   }
 
-function showSectionAdmin(sectionId) {
-  document.querySelectorAll('.tab-section').forEach((el) => {
-      el.classList.add('hidden');
-  });
+  function updateFileName() {
+    const fileInput = document.getElementById('image');
+    const fileNameDisplay = document.getElementById('fileName');
+    const fileDisplay = document.getElementById('fileDisplay');
+    const file = fileInput.files[0];
 
-  document.getElementById(sectionId).classList.remove('hidden');
-}
-// Toggle the edit form visibility
-  function toggleEditPost(postid) {
-  const editForm = document.getElementById(`edit-post-${postid}`);
-  editForm.classList.toggle('hidden'); 
-}
-// Confirm delete dialog
-function confirmDelete() {
-    return confirm('Are you sure you want to delete this post? This action cannot be undone.');
-}
+    if (file) {
+        // Show the file name and remove button
+        fileNameDisplay.textContent = file.name;
+        fileDisplay.classList.remove('hidden');
+    } else {
+        // Hide the file display section
+        fileDisplay.classList.add('hidden');
+    }
+  }
+
+  function removeFile() {
+    const fileInput = document.getElementById('image');
+    const fileDisplay = document.getElementById('fileDisplay');
+
+    // Reset the file input and hide the file display section
+    fileInput.value = '';
+    fileDisplay.classList.add('hidden');
+  }
+
+
+  function showSectionAdmin(sectionId) {
+    document.querySelectorAll('.tab-section').forEach((el) => {
+        el.classList.add('hidden');
+    });
+
+    document.getElementById(sectionId).classList.remove('hidden');
+  }
+  // Toggle the edit form visibility
+    function toggleEditPost(postid) {
+    const editForm = document.getElementById(`edit-post-${postid}`);
+    editForm.classList.toggle('hidden'); 
+  }
+  // Confirm delete dialog
+  function confirmDelete() {
+      return confirm('Are you sure you want to delete this post? This action cannot be undone.');
+  }
