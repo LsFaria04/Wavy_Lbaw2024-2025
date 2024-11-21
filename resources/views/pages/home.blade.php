@@ -10,24 +10,43 @@
                 {{ session('success')}}          
             </div>
         @endif 
-        <section id="timeline" class="flex flex-col p-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
+        <section id="timeline" class="flex flex-col px-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
             @if(Auth::check() && !Auth()->user()->isadmin)
                 <div class="addPost mb-6 p-4 bg-white rounded-xl shadow-md">
-                    <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
+                    <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
+                    <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                         @csrf
-                        <div class="mb-4">
-                            <label for="message" class="block text-sm font-medium text-gray-700">What's on your mind?</label>
-                            <textarea id="message" name="message" rows="3" class="mt-1 block w-full p-4 border rounded-xl shadow-sm outline-none" placeholder="Write something..."></textarea>
+                        <div class="flex items-start">
+                            <div>
+                                <!-- If we want a layout like twitter we can put the profile image here -->
+                            </div>
+                            
+                            <div class="flex-1">
+                                <textarea id="message" name="message" rows="2" class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none block" placeholder="What's on your mind?"></textarea>
+                            </div>
                         </div>
 
-                        <div class="mb-4">
-                            <label for="image" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
-                            <input type="file" name="media" id="image"  class="mt-1 block w-full p-3 border rounded-xl shadow-sm">
-                        </div>
+                        <!-- Action Buttons -->
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center gap-2 relative">
+                                <!-- Paperclip Icon -->
+                                <label for="image" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                                        <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <span>Attach file (Optional)</span>
+                                </label>
 
-                        <div>
-                            <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-3xl hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">Post</button>
-                        </div>
+                                <input type="file" name="media" id="image" class="hidden" onchange="updateFileName()">
+                                
+                                <div id="fileDisplay" class="items-center gap-2 hidden">
+                                    <span id="fileName" class="text-sm text-gray-500"></span>
+                                    <button type="button" onclick="removeFile()" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+                                </div>
+                            </div>
+                            
+                            <button type="submit" class="px-4 py-2 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Post</button>
+                        </div>       
                     </form>
                 </div>
             @endif
@@ -37,7 +56,6 @@
                 @each('partials.post', $posts, 'post')
             @endif
         </section>
-            
     </div>
 
 @endsection
