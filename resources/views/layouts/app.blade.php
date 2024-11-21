@@ -20,8 +20,8 @@
         <script type="text/javascript" src={{ url('js/app.js') }} defer>
         </script>
     </head>
-    <body class="flex flex-col min-h-screen">
-        <main class = "flex flex-col grow lg:flex-row bg-slate-100">
+    <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">
+        <main class = "flex flex-col grow lg:flex-row bg-slate-100 ">
             @include('partials.navigation_menu')
             <section id="content" class= "grow flex flex-col pt-2">
                 <header class="w-3/4 mb-6 self-center md:w-full md:max-w-xl">
