@@ -48,6 +48,12 @@ Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store
 Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
 Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
+use App\Http\Controllers\MediaController;
+
+//Media
+Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');
+Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
+
 // Authentication
 Route::controller(LoginController::class)->group(function () {
     Route::get('/login', 'showLoginForm')->name('login');

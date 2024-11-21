@@ -247,3 +247,13 @@ function addEventListeners() {
       document.querySelector('input[name="category"]').value = category;
       document.getElementById('search-form').submit();
   }
+
+  // Toggle the edit form visibility
+   function toggleEditPost(postid) {
+    const editForm = document.getElementById(`edit-post-${postid}`);
+    editForm.classList.toggle('hidden'); 
+  }
+  // Confirm delete dialog
+  function confirmDelete() {
+      return confirm('Are you sure you want to delete this post? This action cannot be undone.');
+  }
