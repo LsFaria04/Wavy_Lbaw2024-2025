@@ -96,13 +96,7 @@
                             <p class="text-gray-600 text-center">No posts found for this user.</p>
                         </div>
                     @else
-                        @foreach($posts as $post)
-                            <div class="mb-4 p-4 bg-white rounded-md shadow">
-                                <h3 class="font-bold text-gray-800">{{ $post->user->username }}</h3>
-                                <span class="text-sm text-gray-500">{{ $post->createddate->diffForHumans() }}</span>
-                                <p class="mt-2 text-gray-700">{{ $post->message }}</p>
-                            </div>
-                        @endforeach
+                        @each('partials.post', $posts, 'post')
                     @endif
                 </section>
 
@@ -148,51 +142,4 @@
                 </section>
             </div>
         </div>
-
-        @section('scripts')
-            <script>
-                function toggleEditMenu() {
-                    const menu = document.getElementById('edit-profile-menu');
-                    const html = document.documentElement;
-                    menu.classList.toggle('hidden');
-                    html.classList.toggle('overflow-hidden');
-                }
-
-                document.addEventListener('DOMContentLoaded', () => {
-                    const alertBoxes = document.querySelectorAll('.alert');
-                    alertBoxes.forEach(alertBox => {
-                        setTimeout(() => {
-                            alertBox.remove()
-                        }, 3000); // Time before fade-out
-                    });
-                });
-
-                document.addEventListener('DOMContentLoaded', () => {
-                    const buttons = document.querySelectorAll('.tab-btn');
-                    const sections = document.querySelectorAll('.tab-content');
-
-                    buttons.forEach(button => {
-                        button.addEventListener('click', () => {
-                            const targetTab = button.dataset.tab;
-
-                            // Toggle active button
-                            buttons.forEach(btn => {
-                                btn.classList.remove('text-sky-900', 'border-sky-900');
-                            });
-                            button.classList.add('text-sky-900', 'border-sky-900');
-
-                            // Toggle visible content
-                            sections.forEach(section => {
-                                if (section.id === targetTab) {
-                                    section.classList.remove('hidden');
-                                } else {
-                                    section.classList.add('hidden');
-                                }
-                            });
-                        });
-                    });
-                });
-            </script>
-        @endsection
-
     @endSection

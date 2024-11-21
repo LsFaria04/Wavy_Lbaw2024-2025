@@ -1,4 +1,4 @@
-<div class="post mb-4 p-4 bg-white rounded-md shadow-sm">
+<div class="post mb-4 p-4 bg-white rounded-md shadow">
     <div class="post-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">

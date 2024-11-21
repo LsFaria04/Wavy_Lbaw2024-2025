@@ -24,6 +24,8 @@ function addEventListeners() {
       cardCreator.addEventListener('submit', sendCreateCardRequest);
 
     document.addEventListener('DOMContentLoaded', fadeAlert);
+
+    document.addEventListener('DOMContentLoaded', switchProfileTab);
   }
   
   function encodeForAjax(data) {
@@ -187,6 +189,13 @@ function addEventListeners() {
           }, 3000); 
         });// Time before fade-out
   }
+
+  function toggleEditMenu() {
+    const menu = document.getElementById('edit-profile-menu');
+    const html = document.documentElement;
+    menu.classList.toggle('hidden');
+    html.classList.toggle('overflow-hidden');
+}
   
   addEventListeners();
 
@@ -195,6 +204,32 @@ function addEventListeners() {
   const menuOptions = document.querySelectorAll("#navigation-menu li");
   const menuHeader = document.querySelector("#navigation-menu header");
   const menuArrow = document.querySelector("#navigation-menu header button > svg");
+
+  const buttons = document.querySelectorAll('.tab-btn');
+  const sections = document.querySelectorAll('.tab-content');
+
+  function switchProfileTab() {
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const targetTab = button.dataset.tab;
+
+        // Toggle active button
+        buttons.forEach(btn => {
+          btn.classList.remove('text-sky-900', 'border-sky-900');
+        });
+        button.classList.add('text-sky-900', 'border-sky-900');
+
+        // Toggle visible content
+        sections.forEach(section => {
+          if (section.id === targetTab) {
+            section.classList.remove('hidden');
+          } else {
+            section.classList.add('hidden');
+          }
+        });
+      });
+    });
+  }
 
   //Allows the expantion of the menu
   function navigationMenuOperation(){
