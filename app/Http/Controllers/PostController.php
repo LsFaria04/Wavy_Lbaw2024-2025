@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
 
 use App\Models\Post;
 use App\Models\Media;
@@ -25,18 +27,34 @@ class PostController extends Controller
         ]);
     }
 
-    public function showAll()
-    {
+    /**
+     * Gets the posts for pagination (infinite scrolling)
+     */
+    public function getPostPagination(Request $request){
+
         if (Auth::check()){
-            $posts = Post::with('user')->orderBy('createddate', 'desc')->get();  
+            $posts = Post::with('user','media')->orderBy('createddate', 'desc')->paginate(10);  
         }
         else {
-            $posts = Post::with('user')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->get();
+            $posts = Post::with('user', 'media')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
+        }
+
+        return response()->json($posts);
+    }
+
+    public function showFirstSet()
+    {
+        if (Auth::check()){
+            $posts = Post::with('user')->orderBy('createddate', 'desc')->paginate(10);  
+        }
+        else {
+            $posts = Post::with('user')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
         }
     
         // Return the view and pass the posts data
         return view('pages.home', compact('posts'));
     }
+
     
     /**
      * Stores a new post.
@@ -46,7 +64,7 @@ class PostController extends Controller
         // Validate input
         $request->validate([
             'message' => 'required|string|max:255',
-            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
+            'media' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:10000', 
         ]);
     
         // Check if the user is authorized to create a post
@@ -55,12 +73,17 @@ class PostController extends Controller
         }
     
         // Initialize image path variable
-        $imagePath = null;
+        $mediaPath = null;
     
         // Check if the image is uploaded
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('media')) {
             // Store the image in the 'images' directory under 'public'
-            $imagePath = $request->file('image')->store('images', 'public');
+            if($request->file('media')->isValid()){
+                $mediaPath = $request->file('media')->store('images', 'public');
+            }
+            else{
+                return redirect()->route('home')->with('error', 'Could not upload the file!');
+            }
         }
     
         // Create the post
@@ -73,11 +96,11 @@ class PostController extends Controller
         ]);
     
         // If an image was uploaded, create a media entry
-        if ($imagePath) {
+        if ($mediaPath) {
             Media::create([
                 'postid' => $post->postid, // Associate media with this post
                 'userid' => NULL, 
-                'path' => $imagePath, // Store the image path
+                'path' => $mediaPath, // Store the image path
             ]);
         }
     
@@ -102,9 +125,18 @@ class PostController extends Controller
         $post->update([
             'message' => $request->message,
         ]);
+
+        
     
         if ($request->hasFile('image')) {
-
+            
+            $mediaArray = Media::where('postid', $post->postid)->get();
+            foreach($mediaArray as $media){
+                if (Storage::exists('public/'. $media->path)){
+                    Storage::delete('public/'. $media->path);
+                }
+            }
+            
             $post->media()->delete();
     
             $imagePath = $request->file('image')->store('images', 'public');
@@ -128,8 +160,20 @@ class PostController extends Controller
             return redirect()->route('home')->with('error', 'You are not authorized to delete this post.');
         }
 
+        $mediaArray = Media::where('postid', $post->postid)->get();
+        foreach($mediaArray as $media){
+            if (Storage::exists('public/'. $media->path)){
+                Storage::delete('public/'. $media->path);
+            }
+        }
+
+
+        $post->media()->delete();
+        
         // Delete the post
         $post->delete();
+
+        
 
         return redirect()->route('home')->with('success', 'Post deleted successfully!');
     }

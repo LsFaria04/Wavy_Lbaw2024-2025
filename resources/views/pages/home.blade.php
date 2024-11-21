@@ -10,7 +10,7 @@
                 {{ session('success')}}          
             </div>
         @endif 
-        <section id="timeline" class="p-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
+        <section id="timeline" class="flex flex-col p-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
             @if(Auth::check() && !Auth()->user()->isadmin)
                 <div class="addPost mb-6 p-4 bg-white rounded-xl shadow-md">
                     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data">
@@ -22,7 +22,7 @@
 
                         <div class="mb-4">
                             <label for="image" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
-                            <input type="file" name="image" id="image" accept="image/*" class="mt-1 block w-full p-3 border rounded-xl shadow-sm">
+                            <input type="file" name="media" id="image"  class="mt-1 block w-full p-3 border rounded-xl shadow-sm">
                         </div>
 
                         <div>
@@ -37,6 +37,7 @@
                 @each('partials.post', $posts, 'post')
             @endif
         </section>
+            
     </div>
 
 @endsection
