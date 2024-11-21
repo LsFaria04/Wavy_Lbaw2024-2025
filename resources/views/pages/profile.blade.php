@@ -3,7 +3,7 @@
     @section('content')
         <div class="flex flex-col items-center w-full">
             <!-- Profile Top Section -->
-            <header class="w-full max-w-3xl p-4 bg-white rounded-lg shadow-md flex items-center sticky top-0 z-10">
+            <header id="profile-header" class="w-full max-w-3xl p-4 bg-white rounded-lg shadow-md flex items-center sticky top-0 z-10 bg-opacity-50">
                 <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -59,7 +59,7 @@
             </div>
 
             <!-- Edit Profile Menu -->
-            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
                 <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
                     <form action="{{ route('profile.update', $user->userid) }}" method="POST">
@@ -91,15 +91,15 @@
             <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6">
                 <!-- Posts Section -->
                 <section id="user-posts" class="tab-content">
-                    @if($user->posts->isEmpty())
+                    @if($posts->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">No posts found for this user.</p>
                         </div>
                     @else
-                        @foreach($user->posts as $post)
+                        @foreach($posts as $post)
                             <div class="mb-4 p-4 bg-white rounded-md shadow">
                                 <h3 class="font-bold text-gray-800">{{ $post->user->username }}</h3>
-                                <span class="text-sm text-gray-500">{{ $post->createddate }}</span>
+                                <span class="text-sm text-gray-500">{{ $post->createddate->diffForHumans() }}</span>
                                 <p class="mt-2 text-gray-700">{{ $post->message }}</p>
                             </div>
                         @endforeach
@@ -108,12 +108,12 @@
 
                 <!-- Comments Section -->
                 <section id="user-comments" class="tab-content hidden">
-                    @if($user->comments->isEmpty())
+                    @if($comments->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">No comments found for this user.</p>
                         </div>
                     @else
-                        @foreach($user->comments as $comment)
+                        @foreach($comments as $comment)
                             <div class="mb-4 p-4 bg-white rounded-md shadow">
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-bold text-gray-800">{{ $comment->user->username }}</h3>
@@ -133,7 +133,7 @@
                                         </p>
                                     @endif 
                                 </div>
-                                <span class="text-sm text-gray-500">{{ $comment->createddate }}</span>
+                                <span class="text-sm text-gray-500">{{ $comment->createddate->diffForHumans() }}</span>
                                 <p class="mt-2 text-gray-700">{{ $comment->message }}</p>
                             </div>
                         @endforeach
@@ -153,7 +153,9 @@
             <script>
                 function toggleEditMenu() {
                     const menu = document.getElementById('edit-profile-menu');
+                    const html = document.documentElement;
                     menu.classList.toggle('hidden');
+                    html.classList.toggle('overflow-hidden');
                 }
 
                 document.addEventListener('DOMContentLoaded', () => {

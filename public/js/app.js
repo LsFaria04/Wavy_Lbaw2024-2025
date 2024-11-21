@@ -23,17 +23,7 @@ function addEventListeners() {
     if (cardCreator != null)
       cardCreator.addEventListener('submit', sendCreateCardRequest);
 
-    let categoryButtons = document.querySelectorAll('.category-btn');
-    [].forEach.call(categoryButtons, function(button) {
-        button.addEventListener('click', function() {
-            const category = this.getAttribute('data-category');
-            changeCategory(category);
-        });
-    });
-
-    document.addEventListener('DOMContentLoaded', () => {
-      showSectionAdmin('posts');
-    });
+    document.addEventListener('DOMContentLoaded', fadeAlert);
   }
   
   function encodeForAjax(data) {
@@ -188,6 +178,15 @@ function addEventListeners() {
   
     return new_item;
   }
+
+  function fadeAlert(){
+    const alertBoxes = document.querySelectorAll('.alert');
+      alertBoxes.forEach(alertBox => {
+          setTimeout(() => {
+              alertBox.remove()
+          }, 3000); 
+        });// Time before fade-out
+  }
   
   addEventListeners();
 
@@ -248,3 +247,12 @@ function addEventListeners() {
 
     document.getElementById(sectionId).classList.remove('hidden');
 }
+  // Toggle the edit form visibility
+   function toggleEditPost(postid) {
+    const editForm = document.getElementById(`edit-post-${postid}`);
+    editForm.classList.toggle('hidden'); 
+  }
+  // Confirm delete dialog
+  function confirmDelete() {
+      return confirm('Are you sure you want to delete this post? This action cannot be undone.');
+  }
