@@ -55,7 +55,7 @@
 
         @auth
             @if(auth()->id() === $post->userid) 
-                <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded-md hover:bg-gray-600 mt-4" onclick="toggleEditPost({{ $post->postid }})">
+                <button type="button" class="px-4 py-2 bg-gray-500 text-white rounded-3xl hover:bg-gray-600" onclick="toggleEditPost({{ $post->postid }})">
                     Edit Post
                 </button>
                 <div id="edit-post-{{ $post->postid }}" class="edit-post-form hidden mt-4">
