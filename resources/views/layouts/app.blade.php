@@ -24,17 +24,11 @@
     <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">
         <main class = "flex flex-col grow lg:flex-row bg-white ">
             @include('partials.navigation_menu')
-            <section id="content" class= "grow flex flex-col pt-2">
-                <header class="w-3/4 mb-6 self-center md:w-full md:max-w-xl">
-                    <form action="{{ route('search') }}" method="GET" id="search-form" class="w-full max-w-3xl mx-auto">
-                        <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2 w-full shadow-md focus:outline-0">
-                        <input type="hidden" name="category" value="{{ old('category', $category ?? 'posts') }}">
-                    </form>
-                </header>
+            <section id="content" class= "grow flex flex-col">
                 @yield('content')
                 @yield('scripts')
             </section>
-            @include('partials.context_menu')
+            @include('partials.search_menu')
             
         </main>
         

@@ -396,14 +396,8 @@ function toggleEditMenu() {
   menu.classList.toggle('hidden');
   html.classList.toggle('overflow-hidden');
 }
-
-addEventListeners();
-
-const navigationMenu = document.getElementById('navigation-menu');
-const menuText = document.querySelectorAll("#navigation-menu span");
-const menuOptions = document.querySelectorAll("#navigation-menu li");
-const menuHeader = document.querySelector("#navigation-menu header");
-const menuArrow = document.querySelector("#navigation-menu header button > svg");
+  
+  addEventListeners();
 
 const buttons = document.querySelectorAll('.tab-btn');
 const sections = document.querySelectorAll('.tab-content');
@@ -419,17 +413,23 @@ function switchProfileTab() {
       });
       button.classList.add('text-sky-900', 'border-sky-900');
 
-      // Toggle visible content
-      sections.forEach(section => {
-        if (section.id === targetTab) {
-          section.classList.remove('hidden');
-        } else {
-          section.classList.add('hidden');
-        }
+        // Toggle visible content
+        sections.forEach(section => {
+          if (section.id === targetTab) {
+            section.classList.remove('hidden');
+          } else {
+            section.classList.add('hidden');
+          }
+        });
       });
     });
-  });
-}
+  }
+
+  const navigationMenu = document.getElementById('navigation-menu');
+  const menuText = document.querySelectorAll("#navigation-menu span");
+  const menuOptions = document.querySelectorAll("#navigation-menu li");
+  const menuHeader = document.querySelector("#navigation-menu header");
+  const menuArrow = document.querySelector("#navigation-menu header button > svg");
 
 //Allows the expantion of the menu
 function navigationMenuOperation(){
@@ -450,30 +450,42 @@ function navigationMenuOperation(){
   menuArrow.classList.toggle("rotate-180");
 }
 
-const contextMenu = document.querySelector('#context-menu');
-const contextMenuButton = document.querySelector("#context-menu button");
-const contextMenuArrow = document.querySelector("#context-menu button > svg");
+  const searchMenu = document.getElementById('search-menu');
+  const searchBar = document.getElementById('search-bar');
+  const searchIcon = document.getElementById('search-icon');
+  const searchMenuArrow = document.querySelector("#search-menu header button > svg");
 
-//allows the operation of the context menu
-function contextMenuOperation(){
-  if(contextMenu.classList.contains("w-60")){
-    contextMenu.classList.remove("w-60");
-    contextMenu.classList.add("w-0");
-    contextMenuButton.classList.add("translate-x-56");
+  //allows the operation of the search menu
+  function searchMenuOperation(){
+    if(searchMenu.classList.contains("lg:w-60")){
+      searchMenu.classList.remove("lg:w-60");
+      searchMenu.classList.add("lg:w-14");
+      searchBar.classList.add("hidden");
+      searchIcon.classList.remove("hidden");
+    }
+    else{
+      searchMenu.classList.add("lg:w-60");
+      searchMenu.classList.remove("lg:w-14");
+      searchBar.classList.remove("hidden");
+      searchIcon.classList.add("hidden");
+    }
+    searchMenuArrow.classList.toggle("rotate-180");
   }
-  else{
-    contextMenu.classList.add("w-60");
-    contextMenu.classList.remove("w-0");
-    contextMenuButton.classList.remove("translate-x-56");
+
+  function changeCategory(category) {
+      document.querySelector('input[name="category"]').value = category;
+
+      const buttons = document.querySelectorAll('.category-btn');
+      buttons.forEach(button => {
+          if (button.dataset.category === category) {
+              button.classList.add('text-sky-900', 'border-sky-900');
+          } else {
+              button.classList.remove('text-sky-900', 'border-sky-900');
+          }
+      });
+
+      document.getElementById('search-form').submit();
   }
-  contextMenuArrow.classList.toggle("rotate-180");
-}
-
-
-function changeCategory(category) {
-    document.querySelector('input[name="category"]').value = category;
-    document.getElementById('search-form').submit();
-}
 
 function showSectionAdmin(sectionId) {
   document.querySelectorAll('.tab-section').forEach((el) => {
