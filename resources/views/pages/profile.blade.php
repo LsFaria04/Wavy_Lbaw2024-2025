@@ -1,9 +1,9 @@
     @extends('layouts.app')
 
     @section('content')
-        <div class="flex flex-col items-center w-full">
+        <div class="flex flex-col items-center w-full bg-white">
             <!-- Profile Top Section -->
-            <header id="profile-header" class="w-full max-w-3xl p-4 bg-white rounded-lg shadow-md flex items-center sticky top-0 z-10 bg-opacity-50">
+            <header id="profile-header" class="w-full max-w-screen-lg p-4 bg-white rounded-lg shadow-md flex items-center sticky top-0 z-10 bg-opacity-50">
                 <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -26,19 +26,19 @@
             @endif
 
             <!-- Background Section -->
-            <div class="w-full max-w-3xl relative bg-gray-300 h-48 rounded-lg overflow-hidden pt-24">
+            <div class="w-full max-w-screen-lg relative bg-gray-300 h-48 rounded-lg overflow-hidden pt-24">
                 <div class="absolute inset-0 bg-cover bg-center">
                     <!-- Background Image To Add -->
                 </div>
             </div>
 
             <!-- Profile Info Section -->
-            <div class="w-full max-w-3xl relative bg-white rounded-lg shadow-md">
+            <div class="w-full max-w-screen-lg relative bg-white rounded-lg shadow-md">
                 <div class="absolute -top-16 left-4 w-32 h-32 bg-gray-200 rounded-full border-4 border-white overflow-hidden">
                     <!-- Profile Image To Add -->
                 </div>
 
-                <!-- Edit Profile only visble if Account owner -->
+                <!-- Edit Profile only visible if Account owner -->
                 <div class="pt-20 px-6 pb-4">
                     <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
                     <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>
@@ -88,7 +88,7 @@
                 </div>
             </div>
             <!-- Content Tabs -->
-            <div class="w-full max-w-3xl bg-white rounded-lg shadow-md p-6">
+            <div class="w-full max-w-screen-lg bg-white rounded-lg shadow-md p-6">
                 <!-- Posts Section -->
                 <section id="user-posts" class="tab-content">
                     @if($posts->isEmpty())
