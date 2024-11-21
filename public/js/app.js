@@ -274,6 +274,16 @@ function addEventListeners() {
 
   function changeCategory(category) {
       document.querySelector('input[name="category"]').value = category;
+
+      const buttons = document.querySelectorAll('.category-btn');
+      buttons.forEach(button => {
+          if (button.dataset.category === category) {
+              button.classList.add('text-sky-900', 'border-sky-900');
+          } else {
+              button.classList.remove('text-sky-900', 'border-sky-900');
+          }
+      });
+
       document.getElementById('search-form').submit();
   }
 

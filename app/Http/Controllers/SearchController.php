@@ -15,6 +15,10 @@ class SearchController extends Controller
         $posts = $users = $groups = collect();
 
         if (empty($query)) {
+            if ($request->ajax()) {
+                return response()->json(['results' => []]);
+            }
+
             return view('pages.search', [
                 'category' => $category,
                 'posts' => $posts,

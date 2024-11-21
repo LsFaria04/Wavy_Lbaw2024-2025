@@ -8,16 +8,15 @@
             </button>
 
             <form id="search-bar" action="{{ route('search') }}" method="GET" class="hidden w-full mx-auto">
-                <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2 w-full bg-white text-black shadow-md focus:outline-none">
-                <input type="hidden" name="category" value="{{ old('category', $category ?? 'posts') }}">
+                <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl p-2.5 w-full bg-white text-black shadow-md focus:outline-none">
             </form>
     </header>
 
-    <nav class = "grow lg:pt-20">
+    <nav class = "grow lg:pt-16">
         <ul class="flex justify-center flex-row lg:flex-col gap-14 sm:gap-16 overflow-scroll">
             <li id="search-icon" class="items-center justify-center ">
                 <a class = "flex flex-row items-center gap-3" href = "{{ route('search')}}">
-                    <svg class="min-w-[20px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="white" stroke="white" stroke-width="0.5">
+                    <svg class="min-w-[20px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="white" stroke="white" stroke-width="0.7">
                         <path d="M18,10a8,8,0,1,0-3.1,6.31l6.4,6.4,1.41-1.41-6.4-6.4A8,8,0,0,0,18,10Zm-8,6a6,6,0,1,1,6-6A6,6,0,0,1,10,16Z"/>
                     </svg>
                 </a>
