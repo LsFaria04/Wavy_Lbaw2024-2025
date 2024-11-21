@@ -4,15 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class ProfileController extends Controller
 {
     public function show($username) {
-        $user = User::where('username', $username)
-            ->with(['posts', 'comments'])
-            ->firstOrFail();
-        return view('pages.profile', compact('user'));
-    }
+        $user = User::where('username', $username)->firstOrFail();
+    
+        $posts = $user->posts()->orderBy('createddate', 'desc')->get();
+        $comments = $user->comments()->orderBy('createddate', 'desc')->get();
+    
+        return view('pages.profile', compact('user', 'posts', 'comments'));
+    }    
 
     public function update(Request $request, $userid) {
         $user = User::findOrFail($userid);
@@ -20,7 +23,13 @@ class ProfileController extends Controller
         
         try {
             $validatedData = $request->validate([
-                'username' => 'unique:users|required|string|max:250|alpha_dash',
+                'username' => [
+                    'required',
+                    'string',
+                    'max:250',
+                    'alpha_dash',
+                    Rule::unique('users', 'username')->ignore($userid, 'userid'),
+                ],
                 'bio' => 'nullable|string|max:500',
                 'visibilitypublic' => 'required|boolean',
             ]);

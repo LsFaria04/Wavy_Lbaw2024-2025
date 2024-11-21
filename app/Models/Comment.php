@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -11,6 +12,10 @@ class Comment extends Model
     use HasFactory;
 
     protected $table = 'comment';
+
+    protected $casts = [
+        'createdDate' => 'datetime',
+    ];
 
     protected $primaryKey = 'commentid';
 
@@ -56,5 +61,10 @@ class Comment extends Model
     public function parentComment(): BelongsTo
     {
         return $this->belongsTo(Comment::class, 'parentcommentid', 'commentid');
+    }
+
+    public function getCreatedDateAttribute($value)
+    {
+        return Carbon::parse($value); // Ensure it's a Carbon instance
     }
 }
