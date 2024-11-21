@@ -1,8 +1,8 @@
     @extends('layouts.app')
 
     @section('content')
-        <div class="flex flex-col items-center w-full">
-            <header id="search-header" class="w-full max-w-full pt-4 bg-white shadow-md items-center sticky top-0 z-10 bg-opacity-90">
+        <div class="flex flex-col items-center w-full bg-white">
+            <header id="search-header" class="w-full max-w-full pt-4 shadow-md items-center sticky top-0 z-10 backdrop-blur">
                 <div class="flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4 pl-4">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">

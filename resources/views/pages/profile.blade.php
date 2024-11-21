@@ -3,7 +3,7 @@
     @section('content')
         <div class="flex flex-col items-center w-full max-w-full bg-white">
             <!-- Profile Top Section -->
-            <header id="profile-header" class="w-full max-w-full p-4 bg-white shadow-md flex items-center sticky top-0 z-10 bg-opacity-40">
+            <header id="profile-header" class="w-full max-w-full p-4 shadow-md flex items-center sticky top-0 z-10 backdrop-blur">
                 <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
