@@ -2,7 +2,12 @@
 
     @section('content')
         <div class="flex flex-col items-center w-full">
-
+            <header class="w-3/4 mb-6 self-center md:w-full md:max-w-xl p-2">
+                <form action="{{ route('search') }}" method="GET" id="search-form" class="w-full max-w-3xl mx-auto">
+                    <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded p-2 w-full shadow-md focus:outline-none">
+                    <input type="hidden" name="category" value="{{ old('category', $category ?? 'posts') }}">
+                </form>
+            </header>
             <!-- Buttons -->
             <div class="category-buttons my-4">
             <button type="button" class="ca tegory-btn px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600" data-category="posts" onclick="changeCategory('posts')">Posts</button>

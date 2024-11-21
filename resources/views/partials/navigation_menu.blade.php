@@ -11,8 +11,6 @@
                     <path d="M17.482,19.5a1.5,1.5,0,0,1-1.06-.439l-6-6a1.5,1.5,0,0,1,0-2.122l6-6a1.5,1.5,0,1,1,2.121,2.122L13.6,12l4.939,4.939A1.5,1.5,0,0,1,17.482,19.5Z" fill = "currentColor"/>
                 </svg>
             </button>
-            
-
     </header>
     <nav class = "grow  lg:pt-20">
         <ul class = "flex justify-center flex-row lg:flex-col gap-14 sm:gap-16 overflow-scroll">

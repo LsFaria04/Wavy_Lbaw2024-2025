@@ -14,13 +14,13 @@
 
             <!-- Edit Profile Messages -->
             @if (session('success'))
-                <div class="alert w-full max-w-3xl p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg">
+                <div class="alert w-full max-w-screen-lg p-4 bg-green-100 text-green-800 border border-green-300 rounded-lg">
                     {{ session('success') }}
                 </div>
             @endif
 
             @if (session('error'))
-                <div class="alert w-full max-w-3xl p-4 bg-red-100 text-red-800 border border-red-300 rounded-lg">
+                <div class="alert w-full max-w-screen-lg p-4 bg-red-100 text-red-800 border border-red-300 rounded-lg">
                     {{ session('error') }}
                 </div>
             @endif
@@ -52,9 +52,9 @@
                 </div>
 
                 <nav class="flex justify-around">
-                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900  border-sky-900">Posts</button>
-                    <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Comments</button>
-                    <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold text-gray-500 border-b-2 hover:text-sky-900">Likes</button>
+                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900  border-sky-900 text-sky-900">Posts</button>
+                    <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold  border-b-2 hover:text-sky-900">Comments</button>
+                    <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Likes</button>
                 </nav>
             </div>
 
