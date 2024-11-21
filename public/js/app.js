@@ -199,26 +199,14 @@ function authId(){
   userId = response.id;
 }
 
-
+//gets the csrf token to insert in new forms
 function getCsrfToken(){
   return document.querySelector('meta[name="csrf-token"]').content;
 }
 
-let currentPage = 1;
-//check if the we have reached the end of the page and takes the apropriate actions
-function infiniteScroll(){ 
-  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
-      
-      //action to take place in the home page
-      const timeline = document.querySelector("#timeline");
-      if(timeline !== null){
-        currentPage += 1;
-        sendAjaxRequest('get', '/api/posts?page=' + currentPage, null, insertMorePosts);
-      }
-  }
-}
 
 
+//creates the a post container with the message, username and date
 function createPost(postInfo){
   let post = document.createElement('div');
   post.classList.add("post", "mb-4", "p-4", "bg-white", "rounded-md", "shadow");
@@ -244,6 +232,7 @@ function createPost(postInfo){
 
 }
 
+//creates a delete button and inserts it into a post. Returns the updated post
 function createDeletePostButton(post, id){
   const postheader = post.querySelector('.post-header');
   let buttom = document.createElement('div');
@@ -263,6 +252,7 @@ function createDeletePostButton(post, id){
   return post;
 }
 
+//inserts the media (images, audio and video) of a post into a post container. Returns the updated post container
 function insertPostMedia(post, mediaArray){
   const postbody = post.querySelector('.post-body');
   let mediaContainer = document.createElement('div');
@@ -316,15 +306,17 @@ function insertPostMedia(post, mediaArray){
   return post;
 }
 
+//Inserts the update post button into a post container. Return the updated post container
 function insertUpdateButton(post, id){
   const postbody = post.querySelector('.post-body');
   let button = document.createElement('button');
-  button.classList.add("px-4", "py-2", "bg-gray-500", "text-white", "rounded-md", "hover:bg-gray-600", "mt-4");
+  button.classList.add("px-4", "py-2", "bg-gray-500", "text-white", "rounded-3xl", "hover:bg-gray-600", "mt-4");
   button.setAttribute('onclick', `toggleEditPost(${id})`);
   button.innerHTML = 'Edit Post';
   postbody.appendChild(button);
 }
 
+//inserts the update post form into a post container. Return the updated post container.
 function insertUpdateForm(post, id, message){
   const postbody = post.querySelector('.post-body');
   let formContainer = document.createElement('div');
@@ -353,14 +345,16 @@ function insertUpdateForm(post, id, message){
   return post
 }
 
+//inserts more posts into the timeline
 function insertMorePosts(){
+  removeLoadingCircle(); //remove the circle because we already have the data
   const timeline = document.querySelector("#timeline");
   let posts = JSON.parse(this.responseText);
 
-  console.log(posts);
+  maxPage = posts.last_page; //used to stop send requests when maximum page is reached
+
   for(let i = 0; i < posts.data.length; i++){
       let post = createPost(posts.data[i]);
-      console.log(userId);
 
       if(userId == posts.data[i].user.userid){
         post = createDeletePostButton(post, posts.data[i].postid); 
@@ -376,9 +370,46 @@ function insertMorePosts(){
   }
 
 }
+
+function insertLoadingCircle(){
+  if(document.querySelector(".loading_circle") !== null){
+    //already exists a loading circle
+    return;
+  }
+  const timeline = document.querySelector("#timeline");
+  let loadingCircle = document.createElement("div");
+
+  loadingCircle.classList.add("loading_circle","ml-auto", "mr-auto", "inline-block", "h-8", "w-8", "animate-spin", "rounded-full", "border-4", "border-solid", "border-current", "border-e-transparent", "align-[-0.125em]", "text-primary", "motion-reduce:animate-[spin_1.5s_linear_infinite]");
+  loadingCircle.setAttribute('role', "status");
+  loadingCircle.innerHTML = `
+              <spanclass="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
+              </span>
+  `
+
+  timeline.appendChild(loadingCircle);
+}
+
+function removeLoadingCircle(){
+  let loadingCircles = document.querySelectorAll(".loading_circle");
+  loadingCircles.forEach((loadingCircle) => loadingCircle.remove());
+}
+
+let currentPage = 1;
+let maxPage = -1;
+//check if the we have reached the end of the page and takes the apropriate actions
+function infiniteScroll(){ 
+  if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
+      
+      //action to take place in the home page
+      const timeline = document.querySelector("#timeline");
+      if((timeline !== null) && (maxPage > currentPage || (maxPage == -1))  ){
+        currentPage += 1;
+        insertLoadingCircle();
+        sendAjaxRequest('get', '/api/posts?page=' + currentPage, null, insertMorePosts);
+      }
+  }
+}
   
-
-
 //fades the alert messages after a certain period of time
 function fadeAlert(){
   const alertBoxes = document.querySelectorAll('.alert');
@@ -497,7 +528,6 @@ function showSectionAdmin(sectionId) {
 // Toggle the edit form visibility
   function toggleEditPost(postid) {
   const editForm = document.getElementById(`edit-post-${postid}`);
-  console.log(editForm);
   editForm.classList.toggle('hidden'); 
 }
 // Confirm delete dialog
