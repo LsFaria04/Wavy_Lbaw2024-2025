@@ -22,8 +22,8 @@
                         </div>
 
                         <div class="mb-4">
-                            <label for="image" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
-                            <input type="file" name="image" id="image" accept="image/*" class="mt-1 block w-full p-2 border rounded-md">
+                            <label for="media" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
+                            <input type="file" name="media" id="media" class="mt-1 block w-full p-2 border rounded-md">
                         </div>
 
                         <div>

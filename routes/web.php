@@ -43,12 +43,21 @@ Route::controller(CardController::class)->group(function () {
     Route::put('/api/cards', 'create');
     Route::delete('/api/cards/{card_id}', 'delete');
 });
+Route::controller(PostController::class)->group(function (){
+    Route::get('api/posts','getPostPagination' );
+});
+Route::post('/auth-check', function () {
+    return response()->json(['authenticated' => Auth::check()]);
+});
+Route::post('/auth-id', function () {
+    return response()->json(['id' => auth()->id()]);
+});
 
 //Posts
-Route::get('/home', [PostController::class, 'showAll'])->name('home');
+Route::get('/home', [PostController::class, 'showFirstSet'])->name('home');
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
-Route::put('/posts/{post}', [PostController::class, 'update'])->name('posts.update');
-Route::delete('/posts/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('posts.update');
+Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 
 use App\Http\Controllers\MediaController;
 

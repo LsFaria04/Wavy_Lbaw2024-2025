@@ -13,7 +13,6 @@
                 <div class="flex items-center">
                     <form action="{{ route('posts.destroy', $post->postid) }}" method="POST" onsubmit="return confirmDelete()">
                         @csrf
-                        @method('DELETE')
                         <button type="submit" class="text-red-500 hover:text-red-700 ml-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -61,7 +60,6 @@
                 <div id="edit-post-{{ $post->postid }}" class="edit-post-form hidden mt-4">
                     <form action="{{ route('posts.update', $post->postid) }}" method="POST" enctype="multipart/form-data">
                         @csrf
-                        @method('PUT')
                         <div class="mb-4">
                             <label for="message" class="block text-sm font-medium text-gray-700">Message</label>
                             <textarea id="message" name="message" rows="3" class="mt-1 block w-full p-2 border rounded-md" placeholder="Edit your message">{{ $post->message }}</textarea>
@@ -69,7 +67,7 @@
 
                         <div class="mb-4">
                             <label for="image" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
-                            <input type="file" name="image" id="image" accept="image/*" class="mt-1 block w-full p-2 border rounded-md">
+                            <input type="file" name="image" id="image" class="mt-1 block w-full p-2 border rounded-md">
                         </div>
 
                         <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600">Update Post</button>

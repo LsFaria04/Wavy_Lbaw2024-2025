@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Media;
 use App\Models\Post;
+use Illuminate\Support\Facades\Storage;
 
 class MediaController extends Controller
 {
@@ -52,8 +53,8 @@ class MediaController extends Controller
         }
 
         // Delete the actual media file from storage
-        if (file_exists(storage_path('app/public/' . $media->path))) {
-            unlink(storage_path('app/public/' . $media->path));  // Delete the file from storage
+        if (Storage::exists('public/'. $media->path)){
+            Storage::delete('public/'. $media->path);
         }
 
         // Delete the record from the database
