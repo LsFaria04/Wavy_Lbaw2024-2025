@@ -476,8 +476,6 @@ function insertMoreSearchResults(){
 
   let results = JSON.parse(this.responseText);
 
-  console.log(results);
-  console.log(searchCategory);
   switch(searchCategory){
 
     case 'posts':
@@ -497,6 +495,14 @@ function insertMoreSearchResults(){
 
     default:
       return;
+  }
+
+  if(searchResults.firstChild == null){
+      searchResults.innerHTML = `
+                    <div class="flex justify-center items-center h-32">
+                        <p class="text-gray-600 text-center">No results matched your search.</p>
+                    </div>
+      `;       
   }
 
 }
@@ -555,6 +561,18 @@ function infiniteScroll(){
         loading = false;
       }
   }
+}
+
+//loads the first content of a search when selecting another category
+function loadSearchContent(category, query){
+  const searchResults = document.querySelector("#search-results");
+
+  while (searchResults.firstChild) {
+    searchResults.removeChild(searchResults.firstChild);
+  }
+
+  insertLoadingCircle(searchPage);
+  sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, null, insertMoreSearchResults);
 }
   
 //fades the alert messages after a certain period of time
@@ -631,7 +649,11 @@ function navigationMenuOperation(){
   const searchBar = document.getElementById('search-bar');
   const searchIcon = document.getElementById('search-icon');
   const searchMenuArrow = document.querySelector("#search-menu header button > svg");
-  let searchCategory = document.querySelector('input[name="category"]').value;
+
+  let searchCategory = null;
+  if(document.querySelector('input[name="category"]') !== null){
+    searchCategory = document.querySelector('input[name="category"]').value;
+  }
 
   //allows the operation of the search menu
   function searchMenuOperation(){
@@ -651,7 +673,8 @@ function navigationMenuOperation(){
   }
 
   function changeCategory(category) {
-    console.log("here");
+      currentPage = 1;
+
       searchCategory = category;
       document.querySelector('input[name="category"]').value = category;
 
@@ -664,7 +687,9 @@ function navigationMenuOperation(){
           }
       });
 
-      document.getElementById('search-form').submit();
+      query = document.querySelector('input[name="q"]').value;
+      loadSearchContent(category, query);
+      //document.getElementById('search-form').submit();
   }
 
   //Create Post Helper
