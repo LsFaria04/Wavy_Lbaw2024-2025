@@ -81,8 +81,8 @@
                             </select>
                         </div>
                         <div class="flex justify-end space-x-2">
-                            <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500" onclick="toggleEditMenu()">Cancel</button>
-                            <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-md hover:bg-sky-900">Save</button>
+                            <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-2xl hover:bg-gray-600" onclick="toggleEditMenu()">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-2xl hover:bg-sky-900">Save</button>
                         </div>
                     </form>
                 </div>

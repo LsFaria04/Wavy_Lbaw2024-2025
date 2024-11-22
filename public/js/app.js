@@ -420,10 +420,11 @@ function fadeAlert(){
       });// Time before fade-out
 }
 
+const html = document.documentElement;
+
 //toggles the edit menu when user clicks the edit button
 function toggleEditMenu() {
   const menu = document.getElementById('edit-profile-menu');
-  const html = document.documentElement;
   menu.classList.toggle('hidden');
   html.classList.toggle('overflow-hidden');
 }
@@ -518,6 +519,7 @@ function navigationMenuOperation(){
       document.getElementById('search-form').submit();
   }
 
+  //Create Post Helper
   function updateFileName() {
     const fileInput = document.getElementById('image');
     const fileNameDisplay = document.getElementById('fileName');
@@ -534,6 +536,7 @@ function navigationMenuOperation(){
     }
   }
 
+  //Create Post Helper
   function removeFile() {
     const fileInput = document.getElementById('image');
     const fileDisplay = document.getElementById('fileDisplay');
@@ -554,9 +557,52 @@ function navigationMenuOperation(){
   // Toggle the edit form visibility
     function toggleEditPost(postid) {
     const editForm = document.getElementById(`edit-post-${postid}`);
-    editForm.classList.toggle('hidden'); 
+    const postContent = document.getElementById(`post-content-${postid}`);
+    
+    editForm.classList.toggle('hidden');
+    postContent.classList.toggle('hidden');
   }
-  // Confirm delete dialog
-  function confirmDelete() {
-      return confirm('Are you sure you want to delete this post? This action cannot be undone.');
+
+  function openDeleteMenu(postid) {
+    const deleteMenu = document.getElementById('deleteMenu');
+    deleteMenu.classList.remove('hidden');
+    html.classList.toggle('overflow-hidden');
+    window.selectedPostId = postid;
+  }
+
+  document.getElementById('cancelButton').addEventListener('click', () => {
+    const deleteMenu = document.getElementById('deleteMenu');
+    deleteMenu.classList.add('hidden');
+  });
+
+  document.getElementById('confirmButton').addEventListener('click', () => {
+    const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
+    deleteForm.submit();
+  });
+
+  // Helper: Update the file name display when a file is selected
+  function updateEditFileName(postid) {
+    const fileInput = document.getElementById(`media`);
+    const fileNameDisplay = document.getElementById(`fileName-${postid}`);
+    const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
+    const file = fileInput.files[0];
+
+    if (file) {
+        // Show the file name and remove button
+        fileNameDisplay.textContent = file.name;
+        fileDisplay.classList.remove('hidden');
+    } else {
+        // Hide the file display section
+        fileDisplay.classList.add('hidden');
+    }
+  }
+
+  // Helper: Remove the file and hide the display section
+  function removeEditFile(postid) {
+    const fileInput = document.getElementById(`media`);
+    const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
+
+    // Reset the file input and hide the file display section
+    fileInput.value = '';
+    fileDisplay.classList.add('hidden');
   }
