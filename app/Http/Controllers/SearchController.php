@@ -40,7 +40,7 @@ class SearchController extends Controller
                         ->paginate(10);
                     break;
                 case 'users':
-                    $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                    $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?) or username = ?", [$queryWithPrefix, $queryWithPrefix])
                         ->where('visibilitypublic', true)
                         ->paginate(10);
                     break;

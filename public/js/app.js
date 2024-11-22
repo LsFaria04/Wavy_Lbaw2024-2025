@@ -377,16 +377,67 @@ function insertUpdateForm(post, id, message){
 
         <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
     </form>
-  `
+  `;
 
   post.appendChild(formContainer);
 
   return post
 }
 
+function createUser(userInfo){
+  let user = document.createElement('div');
+  user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+
+  user.innerHTML= `
+    <div class="user-header mb-2">
+            <h3 class="font-bold">
+                <a href="../profile/${userInfo.username}" class="text-black hover:text-sky-900">
+                    ${userInfo.username}
+                </a>
+            </h3>
+        </div>
+        <div class="user-body mb-2">
+            <p>${userInfo.bio }</p>
+        </div>
+  `;
+
+  return user;
+}
+
+function createGroup(groupInfo){
+  let group = document.createElement('div');
+  group.classList.add("group", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+
+  group.innerHTML= `
+    <div class="group mb-4 p-4 bg-white rounded-md shadow-md">
+        <div class="group-header mb-2">
+            <h3 class="font-bold">${groupInfo.groupname }}</h3>
+        </div>
+        <div class="group-body mb-2">
+            <p>${groupInfo.description }</p>
+        </div>
+    </div>
+  `;
+}
+
+function insertMoreUsers(element, users){
+  for(let i = 0; i < users.data.length; i++){
+    let user = createUser(users.data[i]);
+    element.appendChild(user);
+
+  }
+}
+
+function insertMoreGroups(element, groups){
+  for(let i = 0; i < groups.data.length; i++){
+    let group = createUser(groups.data[i]);
+    element.appendChild(group);
+
+  }
+}
+
 //inserts more posts into an element
 function insertMorePosts(element, posts){
-  console.log(posts);
   for(let i = 0; i < posts.data.length; i++){
     let post = createPost(posts.data[i]);
 
@@ -426,17 +477,22 @@ function insertMoreSearchResults(){
   let results = JSON.parse(this.responseText);
 
   console.log(results);
+  console.log(searchCategory);
   switch(searchCategory){
 
     case 'posts':
-      maxPage = results[1].last_page; 
+      maxPage = results[0].last_page; 
       insertMorePosts(searchResults,results[0]);
       break;
 
     case 'users':
+      maxPage = results[1].last_page;
+      insertMoreUsers(searchResults,results[1]);
       break;
 
     case 'groups':
+      maxPage = results[2].last_page;
+      insertMoreGroups(searchResults,results[2]);
       break;
 
     default:
@@ -575,7 +631,7 @@ function navigationMenuOperation(){
   const searchBar = document.getElementById('search-bar');
   const searchIcon = document.getElementById('search-icon');
   const searchMenuArrow = document.querySelector("#search-menu header button > svg");
-  let searchCategory = "posts";
+  let searchCategory = document.querySelector('input[name="category"]').value;
 
   //allows the operation of the search menu
   function searchMenuOperation(){
@@ -595,6 +651,7 @@ function navigationMenuOperation(){
   }
 
   function changeCategory(category) {
+    console.log("here");
       searchCategory = category;
       document.querySelector('input[name="category"]').value = category;
 
