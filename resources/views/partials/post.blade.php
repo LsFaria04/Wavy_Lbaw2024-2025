@@ -114,7 +114,7 @@
                             <input type="file" name="media" id="image" class="mt-1 block w-full p-2 border rounded-md">
                         </div>
   
-                        <button type="submit" class="px-4 py-2 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
+                        <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
                     </form>
                 </div>
             @endif

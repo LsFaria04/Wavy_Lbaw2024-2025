@@ -357,7 +357,7 @@ function insertUpdateForm(post, id, message){
             <input type="file" name="media" id="image" class="mt-1 block w-full p-2 border rounded-md">
         </div>
 
-        <button type="submit" class="px-4 py-2 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update Post</button>
+        <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update Post</button>
     </form>
   `
 
@@ -424,7 +424,7 @@ function infiniteScroll(){
       //action to take place in the home page
       const timeline = document.querySelector("#timeline");
       if((timeline !== null) && (maxPage > currentPage || (maxPage == -1))  ){
-        //currentPage += 1;
+        currentPage += 1;
         insertLoadingCircle();
         sendAjaxRequest('get', '/api/posts?page=' + currentPage, null, insertMorePosts);
       }
