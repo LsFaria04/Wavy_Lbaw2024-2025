@@ -35,9 +35,9 @@
             @endphp
 
             @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                <img src="{{ $filePath }}" alt="Image" class="w-full h-auto rounded-md mb-2">
+                <img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96 h-auto rounded-md mb-2">
             @elseif (in_array($fileExtension, ['mp4', 'avi', 'mov']))
-                <video controls class="w-full h-auto rounded-md mb-2">
+                <video controls class="max-w-full max-h-96 h-auto rounded-md mb-2">
                     <source src="{{ $filePath }}" type="video/{{ $fileExtension }}">
                     Your browser does not support the video tag.
                 </video>

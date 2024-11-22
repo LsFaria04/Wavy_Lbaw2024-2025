@@ -21,10 +21,10 @@ class SearchController extends Controller
         }
 
         $query = $request->input('q');
-        $category = $request->input('category', 'posts'); 
-        $posts = $users = $groups = collect();
+        $category = $request->input('category', 'posts');
 
         if (empty($query)) {
+
             if ($request->ajax()) {
                 return response()->json(['results' => []]);
             }
