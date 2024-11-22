@@ -350,6 +350,7 @@ function insertMorePosts(){
   removeLoadingCircle(); //remove the circle because we already have the data
   const timeline = document.querySelector("#timeline");
   let posts = JSON.parse(this.responseText);
+  
 
   maxPage = posts.last_page; //used to stop send requests when maximum page is reached
 

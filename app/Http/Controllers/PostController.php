@@ -28,7 +28,7 @@ class PostController extends Controller
     }
 
     /**
-     * Gets the posts for pagination (infinite scrolling)
+     * Gets the posts for pagination (infinite scrolling) and return a json response
      */
     public function getPostPagination(Request $request){
 
@@ -37,6 +37,10 @@ class PostController extends Controller
         }
         else {
             $posts = Post::with('user', 'media')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
+        }
+
+        for($i = 0;$i < sizeof($posts); $i++){
+            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
         }
 
         return response()->json($posts);
