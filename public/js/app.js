@@ -215,7 +215,7 @@ function createPost(postInfo){
     <div class="post-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">
-                <a href="{{ route('profile', $post->user->username) }}" class="text-black hover:text-sky-900">
+                <a href="../profile/${postInfo.user.username}" class="text-black hover:text-sky-900">
                     ${ postInfo.user.username }
                 </a>
             </h3>
