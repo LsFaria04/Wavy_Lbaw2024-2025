@@ -25,7 +25,25 @@ function addEventListeners() {
 
     document.addEventListener('DOMContentLoaded', fadeAlert);
     document.addEventListener('DOMContentLoaded', switchProfileTab);
-    document.addEventListener("scroll", infiniteScroll);
+    window.addEventListener("scroll", infiniteScroll);
+
+    let cancelButton = document.getElementById('cancelButton');
+
+    if(cancelButton !== null){
+      cancelButton.addEventListener('click', () => {
+      const deleteMenu = document.getElementById('deleteMenu');
+      html.classList.toggle('overflow-hidden');
+      deleteMenu.classList.add('hidden');
+    });
+  }
+    let confirmButton = document.getElementById('confirmButton');
+    if(confirmButton !== null){
+      confirmButton.addEventListener('click', () => {
+        const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
+        deleteForm.submit();
+      });
+    }
+    
 }
   
 function encodeForAjax(data) {
@@ -41,6 +59,7 @@ function sendAjaxRequest(method, url, data, handler) {
   request.open(method, url, true);
   request.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
   request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+  request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
   request.addEventListener('load', handler);
   request.send(encodeForAjax(data));
 }
@@ -186,12 +205,12 @@ function createItem(item) {
 //stores the authentication state
 let isAuthenticated = false; 
 let userId = -1;
-sendAjaxRequest('post', '/auth-check', null, isAuth);
+sendAjaxRequest('post', 'api/auth-check', null, isAuth);
 function isAuth(){
   const response = JSON.parse(this.responseText);
   isAuthenticated = response.authenticated;
   if(isAuthenticated){
-    sendAjaxRequest('post', '/auth-id', null, authId);
+    sendAjaxRequest('post', 'api/auth-id', null, authId);
   }
 }
 function authId(){
@@ -203,8 +222,6 @@ function authId(){
 function getCsrfToken(){
   return document.querySelector('meta[name="csrf-token"]').content;
 }
-
-
 
 //creates the a post container with the message, username and date
 function createPost(postInfo){
@@ -232,7 +249,7 @@ function createPost(postInfo){
 
 }
 
-//creates a delete button and inserts it into a post. Returns the updated post
+//creates buttons for post options and inserts them into a post. Returns the updated post
 function createPostOptions(post, id){
   const postheader = post.querySelector('.post-header');
   let options = document.createElement('div');
@@ -258,6 +275,7 @@ function createPostOptions(post, id){
   return post;
 }
 
+//inserts the delete menu into a post container. Returns an updated post
 function insertDeleteMenu(post){
   const postheader = post.querySelector('.post-header');
   let menu = document.createAttribute('div');
@@ -357,7 +375,7 @@ function insertUpdateForm(post, id, message){
             <input type="file" name="media" id="image" class="mt-1 block w-full p-2 border rounded-md">
         </div>
 
-        <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update Post</button>
+        <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
     </form>
   `
 
@@ -366,8 +384,29 @@ function insertUpdateForm(post, id, message){
   return post
 }
 
+//inserts more posts into an element
+function insertMorePosts(element, posts){
+  console.log(posts);
+  for(let i = 0; i < posts.data.length; i++){
+    let post = createPost(posts.data[i]);
+
+    if(userId == posts.data[i].user.userid){
+      post = createPostOptions(post, posts.data[i].postid); 
+    }
+
+    post = insertPostMedia(post, posts.data[i].media);
+
+    if(userId == posts.data[i].user.userid){
+      insertUpdateForm(post, posts.data[i].postid, posts.data[i].message);
+    }
+    element.appendChild(post);
+  }
+
+
+}
+
 //inserts more posts into the timeline
-function insertMorePosts(){
+function insertMoreTimeline(){
   removeLoadingCircle(); //remove the circle because we already have the data
   const timeline = document.querySelector("#timeline");
   let posts = JSON.parse(this.responseText);
@@ -375,58 +414,89 @@ function insertMorePosts(){
 
   maxPage = posts.last_page; //used to stop send requests when maximum page is reached
 
-  for(let i = 0; i < posts.data.length; i++){
-      let post = createPost(posts.data[i]);
+  insertMorePosts(timeline,posts);
 
-      if(userId == posts.data[i].user.userid){
-        post = createPostOptions(post, posts.data[i].postid); 
-      }
+}
 
-      post = insertPostMedia(post, posts.data[i].media);
+//inserts more results in the search body
+function insertMoreSearchResults(){
+  removeLoadingCircle();//remove the circle because we already have the data
+  const searchResults = document.querySelector("#search-results");
 
-      if(userId == posts.data[i].user.userid){
-        insertUpdateForm(post, posts.data[i].postid, posts.data[i].message);
-      }
-      timeline.appendChild(post);
+  let results = JSON.parse(this.responseText);
+
+  console.log(results);
+  switch(searchCategory){
+
+    case 'posts':
+      maxPage = results[1].last_page; 
+      insertMorePosts(searchResults,results[0]);
+      break;
+
+    case 'users':
+      break;
+
+    case 'groups':
+      break;
+
+    default:
+      return;
   }
 
 }
 
-function insertLoadingCircle(){
-  if(document.querySelector(".loading_circle") !== null){
+//inserts a loading circle when an ajax request starts (infinite scroll) 
+function insertLoadingCircle(element){
+  if(document.querySelector("#loading_circle") !== null){
     //already exists a loading circle
     return;
   }
-  const timeline = document.querySelector("#timeline");
+
   let loadingCircle = document.createElement("div");
 
-  loadingCircle.classList.add("loading_circle","ml-auto", "mr-auto", "inline-block", "h-8", "w-8", "animate-spin", "rounded-full", "border-4", "border-solid", "border-current", "border-e-transparent", "align-[-0.125em]", "text-primary", "motion-reduce:animate-[spin_1.5s_linear_infinite]");
+  loadingCircle.classList.add("ml-auto", "mr-auto", "inline-block", "h-8", "w-8", "animate-spin", "rounded-full", "border-4", "border-solid", "border-current", "border-e-transparent", "align-[-0.125em]", "text-primary", "motion-reduce:animate-[spin_1.5s_linear_infinite]");
   loadingCircle.setAttribute('role', "status");
+  loadingCircle.setAttribute('id', "loading_circle");
   loadingCircle.innerHTML = `
               <spanclass="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
               </span>
   `
 
-  timeline.appendChild(loadingCircle);
+  element.appendChild(loadingCircle);
 }
 
+//removes the loading circle from the page
 function removeLoadingCircle(){
-  let loadingCircles = document.querySelectorAll(".loading_circle");
+  let loadingCircles = document.querySelectorAll("#loading_circle");
   loadingCircles.forEach((loadingCircle) => loadingCircle.remove());
 }
 
 let currentPage = 1;
 let maxPage = -1;
+let loading = false;
 //check if the we have reached the end of the page and takes the apropriate actions
 function infiniteScroll(){ 
   if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
       
       //action to take place in the home page
       const timeline = document.querySelector("#timeline");
-      if((timeline !== null) && (maxPage > currentPage || (maxPage == -1))  ){
+      if((timeline !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
         currentPage += 1;
-        insertLoadingCircle();
-        sendAjaxRequest('get', '/api/posts?page=' + currentPage, null, insertMorePosts);
+        insertLoadingCircle(timeline);
+        loading = true;
+        sendAjaxRequest('get', '/api/posts?page=' + currentPage, null, insertMoreTimeline);
+        loading = false;
+      }
+
+      //actions to take place in the search page
+      const searchPage = document.querySelector("#search-results");
+      if((searchPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ){
+        currentPage +=1;
+        loading = true;
+        insertLoadingCircle(searchPage);
+        const query = document.querySelector('input[name="q"]').value;
+        sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchCategory, null, insertMoreSearchResults);
+        loading = false;
       }
   }
 }
@@ -505,6 +575,7 @@ function navigationMenuOperation(){
   const searchBar = document.getElementById('search-bar');
   const searchIcon = document.getElementById('search-icon');
   const searchMenuArrow = document.querySelector("#search-menu header button > svg");
+  let searchCategory = "posts";
 
   //allows the operation of the search menu
   function searchMenuOperation(){
@@ -524,6 +595,7 @@ function navigationMenuOperation(){
   }
 
   function changeCategory(category) {
+      searchCategory = category;
       document.querySelector('input[name="category"]').value = category;
 
       const buttons = document.querySelectorAll('.category-btn');
@@ -589,16 +661,7 @@ function navigationMenuOperation(){
     window.selectedPostId = postid;
   }
 
-  document.getElementById('cancelButton').addEventListener('click', () => {
-    const deleteMenu = document.getElementById('deleteMenu');
-    html.classList.toggle('overflow-hidden');
-    deleteMenu.classList.add('hidden');
-  });
 
-  document.getElementById('confirmButton').addEventListener('click', () => {
-    const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-    deleteForm.submit();
-  });
 
   // Helper: Update the file name display when a file is selected
   function updateEditFileName(postid) {

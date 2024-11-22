@@ -1,7 +1,7 @@
     @extends('layouts.app')
 
     @section('content')
-        <div class="flex flex-col items-center w-full bg-white">
+        <div class="flex flex-col items-center w-full bg-white" id="searchPage">
             <header id="search-header" class="w-full max-w-full pt-4 shadow-md items-center sticky top-0 z-10 backdrop-blur">
                 <div class="flex items-center">
                     <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4 pl-4">
@@ -25,13 +25,15 @@
             </header>
             
             <!-- Search Results -->
-            <section id="search-results" class="w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4">
+            <section id="search-results" class="flex flex-col justify-items-center w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4">
                 @if(empty($query))
                     <div class="flex justify-center items-center h-32">
                         <p class="text-gray-600 text-center">Please insert a search term.</p>
                     </div>
                 @elseif($category == 'posts'  && !$posts->isEmpty())
-                    @include('partials.searchPosts', ['posts' => $posts])
+                    
+                        @each('partials.post', $posts, 'post')
+                    
                 @elseif($category == 'users' && !$users->isEmpty())
                     @include('partials.searchUsers', ['users' => $users])
                 @elseif($category == 'groups' && !$groups->isEmpty())

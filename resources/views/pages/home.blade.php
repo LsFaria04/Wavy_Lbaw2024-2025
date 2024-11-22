@@ -1,6 +1,6 @@
 @extends('layouts.app')
 @section('content')
-    <div class="flex flex-col items-center w-full max-w-full bg-white">
+    <div class="flex flex-col items-center w-full max-w-full bg-white" id="homePage">
         @if (session('error'))
             <div class = "absolute self-center alert w-full max-w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">             
                 {{ session('error')}}          

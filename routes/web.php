@@ -46,10 +46,11 @@ Route::controller(CardController::class)->group(function () {
 Route::controller(PostController::class)->group(function (){
     Route::get('api/posts','getPostPagination' );
 });
-Route::post('/auth-check', function () {
+Route::get('api/search', [SearchController::class, 'search']);
+Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
-Route::post('/auth-id', function () {
+Route::post('api/auth-id', function () {
     return response()->json(['id' => auth()->id()]);
 });
 
