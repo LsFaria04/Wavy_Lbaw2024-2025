@@ -58,14 +58,14 @@
                 @endphp
 
                 @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                    <img src="{{ $filePath }}" alt="Image" class="w-full h-auto rounded-md mb-2">
+                    <img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto">
                 @elseif (in_array($fileExtension, ['mp4', 'avi', 'mov']))
-                    <video controls class="w-full h-auto rounded-md mb-2">
+                    <video controls class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto">
                         <source src="{{ $filePath }}" type="video/{{ $fileExtension }}">
                         Your browser does not support the video tag.
                     </video>
                 @elseif (in_array($fileExtension, ['mp3', 'wav', 'ogg']))
-                    <audio controls class="w-full mb-2">
+                    <audio controls class="max-w-full mb-2">
                         <source src="{{ $filePath }}" type="audio/{{ $fileExtension }}">
                         Your browser does not support the audio element.
                     </audio>
