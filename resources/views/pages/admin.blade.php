@@ -17,7 +17,6 @@
     <section id="posts" class="admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Posts</h2>
         
-        <!--Search Tools-->
         <div class="admin-tools mb-4 flex flex-wrap gap-4 items-center">
             <input type="text" placeholder="Search posts..." 
                 class="input-field flex-grow p-2 border border-gray-300 rounded-lg" id="search-posts" />
@@ -33,14 +32,19 @@
 
         @include('../partials.admin.posts-table', ['posts' => $posts])
 
-        {{ $posts->links() }}
+        {{ $posts->links('partials.admin.pagination') }}
     </section>
 
     <!--Users-->
     <section id="users" class="admin-section tab-section hidden max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Users</h2>
         
-        <!--Search Tools-->
+        <div class="mb-4 flex justify-between items-center">
+            <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">
+                Add New User
+            </a>
+        </div>
+
         <div class="admin-tools mb-4 flex flex-wrap gap-4 items-center">
             <input type="text" placeholder="Search users..." 
                 class="input-field flex-grow p-2 border border-gray-300 rounded-lg" id="search-users" />

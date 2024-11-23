@@ -12,7 +12,7 @@
         @foreach ($posts as $post)
             <tr class="border-t">
                 <td class="px-4 py-2 text-gray-800">{{ $post->message }}</td>
-                <td class="px-4 py-2 text-gray-800">{{ $post->user->name }}</td>
+                <td class="px-4 py-2 text-gray-800">{{ $post->user->username }}</td>
                 <td class="px-4 py-2 text-gray-800">
                     @if ($post->visibilitypublic == 1)
                         <span class="px-2 py-1 text-green-700 bg-green-100 rounded-full">Public</span>

@@ -15,11 +15,12 @@ class AdminController extends Controller
         if ($request->has('search')) {
             $query->where('message', 'like', '%' . $request->input('search') . '%');
         }
+
         if ($request->has('filter')) {
             $query->where('visibilitypublic', $request->input('filter'));
         }
 
-        $posts = $query->paginate(10); // Paginate 10 posts per page
+        $posts = $query->with('user')->paginate(10); // Paginate 10 posts per page
 
         // Similarly for users
         $usersQuery = User::query();
@@ -30,6 +31,26 @@ class AdminController extends Controller
         $users = $usersQuery->paginate(10);
 
         return view('pages.admin', compact('posts', 'users'));
+    }
+
+    public function createUser() {
+        return view('admin.users.create');
+    }
+
+    public function storeUser(Request $request) {
+        $validated = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        User::create([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'password' => bcrypt($validated['password']),
+        ]);
+
+        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
     public function editUser($id)
