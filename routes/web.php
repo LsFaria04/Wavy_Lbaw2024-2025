@@ -86,6 +86,15 @@ Route::controller(RegisterController::class)->group(function () {
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
 // Admin
-Route::get('/admin', [AdminController::class, 'index'])->middleware(['auth', 'isAdmin']);
+Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 
+    Route::get('/', [AdminController::class, 'index'])->name('admin.index');
 
+    Route::get('/posts/edit/{post}', [AdminController::class, 'editPost'])->name('admin.posts.edit');
+    Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('admin.posts.update');
+    Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+
+    Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
+    Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::delete('/users/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+});

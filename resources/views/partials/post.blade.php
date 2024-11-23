@@ -66,7 +66,7 @@
                     </video>
                 @elseif (in_array($fileExtension, ['mp3', 'wav', 'ogg']))
                     <audio controls class="max-w-full mb-2">
-                        <source src="{{ $filePath }}" type="audio/{{ $fileExtension }}">
+                        <source asrc="{{ $filePath }}" type="audio/{{ $fileExtension }}">
                         Your browser does not support the audio element.
                     </audio>
                 @else
