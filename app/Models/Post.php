@@ -65,11 +65,4 @@ class Post extends Model
         return $this->hasMany(Media::class, 'postid');
     }
 
-     /**
-     * Get the likes made by the user.
-     */
-    public function likes(): HasMany
-    {
-        return $this->hasMany(Like::class, 'userid', 'userid');
-    }
 }
