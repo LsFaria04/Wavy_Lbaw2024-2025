@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Like extends Model
 {
@@ -36,19 +37,19 @@ class Like extends Model
         'createddate',
     ];
 
-    public function posts(): Belongsto
+    public function post(): Belongsto
     {
-        return $this->belongsTo(Post::class);
+        return $this->belongsTo(Post::class, 'postid', 'postid');
     }
 
-    public function comments(): Belongsto
+    public function comment(): Belongsto
     {
-        return $this->belongsTo(Comment::class);
+        return $this->belongsTo(Comment::class, 'commentid', 'commentid');
     }
 
     public function user(): Belongsto
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'userid', 'userid');
     }
 
     public function getCreatedDateAttribute($value)

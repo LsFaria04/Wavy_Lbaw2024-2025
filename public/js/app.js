@@ -317,7 +317,7 @@ function insertPostMedia(post, mediaArray){
     
     if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)){
       newMedia.setAttribute('alt', 'Image');
-      newMedia.setAttribute('src', "storage/" + media.path);
+      newMedia.setAttribute('src', "/storage/" + media.path);
       newMedia.classList.add("max-w-full", "max-h-96", "object-cover", "rounded-md", "mb-2", "mx-auto");
     }
 
@@ -326,7 +326,7 @@ function insertPostMedia(post, mediaArray){
       newMedia.setAttribute("controls", "");
       let source = document.createElement('source');
   
-      source.setAttribute('src', "storage/" + media.path);
+      source.setAttribute('src', "/storage/" + media.path);
       source.setAttribute('type', "video/" + fileExtension);
 
       newMedia.appendChild(source);
@@ -337,7 +337,7 @@ function insertPostMedia(post, mediaArray){
       newMedia = document.createElement('audio');
       let source = document.createElement('source');
     
-      source.setAttribute('src', "storage/" + media.path);
+      source.setAttribute('src', "/storage/" + media.path);
       source.setAttribute('type', "audio/" + fileExtension);
 
       newMedia.appendChild(source);
@@ -384,6 +384,7 @@ function insertUpdateForm(post, id, message){
   return post
 }
 
+//creates a user container with all the necessary info
 function createUser(userInfo){
   let user = document.createElement('div');
   user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
@@ -404,6 +405,7 @@ function createUser(userInfo){
   return user;
 }
 
+//creates a new group container with all the needed info
 function createGroup(groupInfo){
   let group = document.createElement('div');
   group.classList.add("group", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
@@ -420,6 +422,44 @@ function createGroup(groupInfo){
   `;
 }
 
+//creates a new comment container with all the needed info
+function createComment(commentInfo){
+  const comment = document.createElement('div');
+  comment.classList.add("mb-4", "p-4", "bg-white", "rounded-md", "shadow");
+
+  comment.innerHTML = `
+    <div class="flex justify-between items-center">
+      <h3 class="font-bold text-gray-800">${ commentInfo.user.username}</h3>
+    </div>
+    <span class="text-sm text-gray-500">${ commentInfo.createddate}</span>
+    <p class="mt-2 text-gray-700">${ commentInfo.message }</p>
+  `;
+
+  const reply = document.createElement('p');
+  reply.classList.add("text-sm", "hover:text-sky-900");
+
+  console.log(commentInfo);
+  if(commentInfo.parent_comment !== null){
+
+    reply.innerHTML = `
+      <strong>Replying to:</strong>
+      ${ commentInfo.parent_comment.user.username }
+    `;
+  }
+  else{
+
+    reply.innerHTML = `
+      <strong>Replying to:</strong>
+      ${ commentInfo.post.user.username }`;
+  }
+
+  const commentInfoContainer = comment.querySelector("div");
+  commentInfoContainer.appendChild(reply);
+
+  return comment;
+}
+
+//inserts more users into an element
 function insertMoreUsers(element, users){
   for(let i = 0; i < users.data.length; i++){
     let user = createUser(users.data[i]);
@@ -428,6 +468,7 @@ function insertMoreUsers(element, users){
   }
 }
 
+//inserts more groups into and element
 function insertMoreGroups(element, groups){
   for(let i = 0; i < groups.data.length; i++){
     let group = createUser(groups.data[i]);
@@ -456,12 +497,29 @@ function insertMorePosts(element, posts){
 
 }
 
+//inserts more comments into an element
 function insertMoreComments(element, comments){
+  for(let i = 0; i < comments.data.length; i++){
+    let comment = createComment(comments.data[i]);
+    element.appendChild(comment);
+
+  }
 
 }
 
+//inserts more liked contents into an element
 function insertMoreLikedContent(element, likes){
   
+  for(let i = 0; i < likes.data.length; i++){
+    if(likes.data[i].post !== null){
+      let post = createPost(likes.data[i].post);
+      element.append(post);
+    }
+    else{
+      let comment = createComment(likes.data[i].comment);
+      element.append(comment);
+    }
+  }
 }
 
 //inserts more posts into the timeline
@@ -520,6 +578,7 @@ function insertMoreSearchResults(){
 
 }
 
+//inserts more content into the profile page
 function insertMoreProfileContent(){
   removeLoadingCircle();//remove the circle because we already have the data
   const profileContent = document.querySelector("#profile-tab-content");
@@ -560,6 +619,7 @@ function insertMoreProfileContent(){
 function insertLoadingCircle(element){
   if(document.querySelector("#loading_circle") !== null){
     //already exists a loading circle
+    
     return;
   }
 
@@ -615,7 +675,22 @@ function infiniteScroll(){
       if((profilePage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading)) {
         currentPage +=1;
         loading = true;
-        insertLoadingCircle(searchPage);
+        insertLoadingCircle(profilePage);
+        const username = document.getElementById('profile-username').innerHTML;
+        switch(profileTab){
+          case 'user-posts':
+              sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+              break;
+          
+          case 'user-comments':
+            sendAjaxRequest('get', '/api/comments/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+            break;
+          
+          case 'user-likes':
+            sendAjaxRequest('get', '/api/likes/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+            break;
+        }
+
         loading = false;
 
       }
@@ -647,7 +722,6 @@ function loadProfileContent(category){
 
   switch(category){
     case 'user-posts':
-      console.log("here");
         sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
         break;
     
@@ -659,7 +733,6 @@ function loadProfileContent(category){
       sendAjaxRequest('get', '/api/likes/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
       break;
   }
-  //sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, null, insertMoreSearchResults);
 }
   
 //fades the alert messages after a certain period of time
@@ -688,6 +761,7 @@ let profileTab = "user-posts";
 function switchProfileTab() {
   buttons.forEach(button => {
     button.addEventListener('click', () => {
+      currentPage = 1;
       profileTab = button.dataset.tab;
 
       // Toggle active button
@@ -695,8 +769,6 @@ function switchProfileTab() {
         btn.classList.remove('text-sky-900', 'border-sky-900');
       });
       button.classList.add('text-sky-900', 'border-sky-900');
-      console.log("here");
-      console.log(profileTab);
       loadProfileContent(profileTab);
       
       });

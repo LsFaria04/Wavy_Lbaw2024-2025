@@ -88,7 +88,7 @@
                 </div>
             </div>
             <!-- Content Tabs -->
-            <div class="w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4" id = "profile-tab-content">
+            <div class="flex flex-col w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4" id = "profile-tab-content">
                 <!-- Content Section (starts with the posts) -->
                     @if($posts->isEmpty())
                         <div class="flex justify-center items-center h-32">

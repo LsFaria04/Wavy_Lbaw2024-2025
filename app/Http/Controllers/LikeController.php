@@ -15,13 +15,22 @@ class LikeController extends Controller
     function getUserLikesByUsername(Request $request, $username){
         
         $user = User::where('username', $username)->firstOrFail();
-        $comments = Like::with('post', 'comment', 'user')->where('userid', $user->id)->orderBy('createddate', 'desc')->paginate(10);
+        $likes = Like::with('post', 'post.user', 'comment', 'comment.user', 'comment.post','comment.post.user', 'comment.parentComment', 'comment.parentComment.user', 'user')->where('userid', $user->userid)->orderBy('createddate', 'desc')->paginate(10);
         
-        if($request->ajax()){
-            return response()->json($comments);
+        for($i = 0;$i < sizeof($likes); $i++){
+            if($likes[$i]->comment !== null){
+                $likes[$i]->comment->createddate = $likes[$i]->comment->createddate->diffForHumans();
+            }
+            else{
+                $likes[$i]->post->createddate = $likes[$i]->post->createddate->diffForHumans();
+            }
         }
 
-        return $comments;
+        if($request->ajax()){
+            return response()->json($likes);
+        }
+
+        return $likes;
     }
     
 }
