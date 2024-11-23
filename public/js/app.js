@@ -745,31 +745,26 @@ function navigationMenuOperation(){
 
 
 
-  // Helper: Update the file name display when a file is selected
-  function updateEditFileName(postid) {
-    const fileInput = document.getElementById(`media`);
+  function updateFileNameEdit(postid) {
+    const fileInput = document.getElementById(`image-${postid}`);
     const fileNameDisplay = document.getElementById(`fileName-${postid}`);
     const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
     const file = fileInput.files[0];
 
     if (file) {
-        // Show the file name and remove button
         fileNameDisplay.textContent = file.name;
         fileDisplay.classList.remove('hidden');
-    } else {
-        // Hide the file display section
-        fileDisplay.classList.add('hidden');
     }
   }
 
-  // Helper: Remove the file and hide the display section
-  function removeEditFile(postid) {
-    const fileInput = document.getElementById(`media`);
+  function removeFileEdit(postid) {
+    const fileInput = document.getElementById(`image-${postid}`);
     const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
+    const removeMediaInput = document.getElementById(`removeMedia-${postid}`);
 
-    // Reset the file input and hide the file display section
     fileInput.value = '';
-    fileDisplay.classList.add('hidden');
+    fileDisplay.classList.toggle('hidden');
+    removeMediaInput.value = '1';
   }
 
   addEventListeners();

@@ -123,16 +123,24 @@ class PostController extends Controller
         // Validate the input
         $request->validate([
             'message' => 'required|string|max:255',
-        ]);
+        ]); 
     
         // Update the post message
         $post->update([
             'message' => $request->message,
         ]);
 
-        
-        if ($request->hasFile('media')) {
-            
+        if ($request->input('remove_media') == '1') {
+            $mediaArray = Media::where('postid', $post->postid)->get();
+            foreach ($mediaArray as $media) {
+                if (Storage::exists('public/' . $media->path)) {
+                    Storage::delete('public/' . $media->path);
+                }
+            }
+            $post->media()->delete(); // Remove media record
+        }
+
+        if ($request->hasFile('media')) {         
             
             $mediaArray = Media::where('postid', $post->postid)->get();
             foreach($mediaArray as $media){
@@ -143,12 +151,12 @@ class PostController extends Controller
             Log::info("here");
             $post->media()->delete();
     
-            $imagePath = $request->file('media')->store('images', 'public');
+            $mediaPath = $request->file('media')->store('images', 'public');
     
             Media::create([
                 'postid' => $post->postid, 
                 'userid' => NULL,
-                'path' => $imagePath, 
+                'path' => $mediaPath, 
             ]);
         }
         else{
