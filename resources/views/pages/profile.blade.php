@@ -9,7 +9,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </a>
-                <h1 class="text-xl font-bold text-gray-800">{{ $user->username }}</h1>
+                <h1 id = "profile-username" class="text-xl font-bold text-gray-800">{{ $user->username }}</h1>
             </header>
 
             <!-- Edit Profile Messages -->
@@ -88,9 +88,8 @@
                 </div>
             </div>
             <!-- Content Tabs -->
-            <div class="w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4">
-                <!-- Posts Section -->
-                <section id="user-posts" class="tab-content">
+            <div class="w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4" id = "profile-tab-content">
+                <!-- Content Section (starts with the posts) -->
                     @if($posts->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">No posts found for this user.</p>
@@ -98,11 +97,11 @@
                     @else
                         @each('partials.post', $posts, 'post')
                     @endif
-                </section>
-
-                <!-- Comments Section -->
+            
+                <!--
+                Comments Section
                 <section id="user-comments" class="tab-content hidden">
-                    @if($comments->isEmpty())
+                    @if(empty($comments))
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">No comments found for this user.</p>
                         </div>
@@ -112,9 +111,6 @@
                                 <div class="flex justify-between items-center">
                                     <h3 class="font-bold text-gray-800">{{ $comment->user->username }}</h3>
 
-                                    <!-- Need to create Post Page, Comment Page -->
-                                    <!-- And Change the <p> "Replying to" to anchors that redirect --> 
-                                    <!-- To those pages -->
                                     @if($comment->parentcommentid)
                                         <p class="text-sm hover:text-sky-900">
                                             <strong>Replying to:</strong>
@@ -133,13 +129,11 @@
                         @endforeach
                     @endif
                 </section>
-
-                <!-- Likes Section -->
                 <section id="user-likes" class="tab-content hidden">
                     <div class="flex justify-center items-center h-32">
                         <p class="text-gray-600 text-center">Likes TO-DO.</p>
                     </div>
-                </section>
+                </section> -->
             </div>
         </div>
     @endSection

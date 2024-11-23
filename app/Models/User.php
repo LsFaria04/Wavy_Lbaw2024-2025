@@ -86,6 +86,14 @@ class User extends Authenticatable
         return $this->hasMany(Comment::class, 'userid', 'userid');
     }
 
+    /**
+     * Get the likes made by the user.
+     */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class, 'userid', 'userid');
+    }
+
     public function getIsAdmin(): bool {
         return (bool) $this->attributes['isadmin'];
     }

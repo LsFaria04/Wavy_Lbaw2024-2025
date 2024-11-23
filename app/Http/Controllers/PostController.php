@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 
 use App\Models\Post;
 use App\Models\Media;
+use App\Models\User;
 
 class PostController extends Controller
 {
@@ -28,9 +29,9 @@ class PostController extends Controller
     }
 
     /**
-     * Gets the posts for pagination (infinite scrolling) and return a json response
+     * Gets the posts for the timeline
      */
-    public function getPostPagination(Request $request){
+    public function getPostsTimeline(Request $request){
 
         if (Auth::check()){
             $posts = Post::with('user','media')->orderBy('createddate', 'desc')->paginate(10);  
@@ -43,22 +44,44 @@ class PostController extends Controller
             $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
         }
 
-        return response()->json($posts);
-    }
+        if($request->ajax()){
+            return response()->json($posts);
+        }
 
-    public function showFirstSet()
-    {
-        if (Auth::check()){
-            $posts = Post::with('user')->orderBy('createddate', 'desc')->paginate(10);  
-        }
-        else {
-            $posts = Post::with('user')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
-        }
-    
         // Return the view and pass the posts data
         return view('pages.home', compact('posts'));
+        
     }
 
+    /**
+     * Gets the posts from a specific user 
+     */
+     public function getUserPosts(Request $request, $username){
+
+        $user = User::where('username', $username)->firstOrFail();
+
+        if (Auth::check()){
+            $posts = Post::with('user','media')
+            ->where('userid',$user->userid)
+            ->orderBy('createddate', 'desc')->paginate(10);  
+        }
+        else {
+            $posts = Post::with('user', 'media')
+            ->where('visibilitypublic', true)
+            ->where('userid',$user->userid)
+            ->orderBy('createddate', 'desc')->paginate(10);
+        }
+
+        for($i = 0;$i < sizeof($posts); $i++){
+            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+        }
+
+        if($request->ajax()){
+            return response()->json($posts);
+        }
+
+        return $posts;
+     }
     
     /**
      * Stores a new post.

@@ -55,6 +55,14 @@ class Comment extends Model
         return $this->belongsTo(Post::class, 'postid', 'postid');
     }
 
+     /**
+     * Get the likes made by the user.
+     */
+    public function likes(): HasMany
+    {
+        return $this->hasMany(Like::class, 'userid', 'userid');
+    }
+
     /**
      * Relationship with parent comment (for nested comments).
      */

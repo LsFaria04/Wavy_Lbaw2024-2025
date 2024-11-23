@@ -10,7 +10,8 @@ use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AdminController;
-
+use App\Http\Controllers\CommentController;
+use App\Http\Controllers\LikeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -44,9 +45,12 @@ Route::controller(CardController::class)->group(function () {
     Route::delete('/api/cards/{card_id}', 'delete');
 });
 Route::controller(PostController::class)->group(function (){
-    Route::get('api/posts','getPostPagination' );
+    Route::get('api/posts','getPostsTimeline' );
+    Route::get('api/posts/{username}', 'getUserPosts');
 });
 Route::get('api/search', [SearchController::class, 'search']);
+Route::get('api/comments/{username}', [CommentController::class, 'getUserCommentsByUsername']);
+Route::get('api/likes/{username}', [LikeController::class,'getUserLikesByUsername']);
 Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
@@ -55,7 +59,7 @@ Route::post('api/auth-id', function () {
 });
 
 //Posts
-Route::get('/home', [PostController::class, 'showFirstSet'])->name('home');
+Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('posts.update');
 Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('posts.destroy');

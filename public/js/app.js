@@ -205,12 +205,12 @@ function createItem(item) {
 //stores the authentication state
 let isAuthenticated = false; 
 let userId = -1;
-sendAjaxRequest('post', 'api/auth-check', null, isAuth);
+sendAjaxRequest('post', '/api/auth-check', null, isAuth);
 function isAuth(){
   const response = JSON.parse(this.responseText);
   isAuthenticated = response.authenticated;
   if(isAuthenticated){
-    sendAjaxRequest('post', 'api/auth-id', null, authId);
+    sendAjaxRequest('post', '/api/auth-id', null, authId);
   }
 }
 function authId(){
@@ -397,7 +397,7 @@ function createUser(userInfo){
             </h3>
         </div>
         <div class="user-body mb-2">
-            <p>${userInfo.bio }</p>
+            <p>${userInfo.bio === null ? "" : userInfo.bio }</p>
         </div>
   `;
 
@@ -456,6 +456,14 @@ function insertMorePosts(element, posts){
 
 }
 
+function insertMoreComments(element, comments){
+
+}
+
+function insertMoreLikedContent(element, likes){
+  
+}
+
 //inserts more posts into the timeline
 function insertMoreTimeline(){
   removeLoadingCircle(); //remove the circle because we already have the data
@@ -469,6 +477,8 @@ function insertMoreTimeline(){
 
 }
 
+
+
 //inserts more results in the search body
 function insertMoreSearchResults(){
   removeLoadingCircle();//remove the circle because we already have the data
@@ -479,16 +489,19 @@ function insertMoreSearchResults(){
   switch(searchCategory){
 
     case 'posts':
+      if(results[0] === undefined) break;
       maxPage = results[0].last_page; 
       insertMorePosts(searchResults,results[0]);
       break;
 
     case 'users':
+      if(results[1] === undefined) break;
       maxPage = results[1].last_page;
       insertMoreUsers(searchResults,results[1]);
       break;
 
     case 'groups':
+      if(results[2] === undefined) break;
       maxPage = results[2].last_page;
       insertMoreGroups(searchResults,results[2]);
       break;
@@ -505,6 +518,42 @@ function insertMoreSearchResults(){
       `;       
   }
 
+}
+
+function insertMoreProfileContent(){
+  removeLoadingCircle();//remove the circle because we already have the data
+  const profileContent = document.querySelector("#profile-tab-content");
+
+  let results = JSON.parse(this.responseText);
+
+  switch(profileTab){
+
+    case 'user-posts':
+      maxPage = results.last_page; 
+      insertMorePosts(profileContent,results);
+      break;
+
+    case 'user-comments':
+      maxPage = results.last_page;
+      insertMoreComments(profileContent,results);
+      break;
+
+    case 'user-likes':
+      maxPage = results.last_page;
+      insertMoreLikedContent(profileContent,results);
+      break;
+
+    default:
+      return;
+  }
+
+  if(profileContent.firstChild == null){
+    profileContent.innerHTML = `
+                    <div class="flex justify-center items-center h-32">
+                            <p class="text-gray-600 text-center">No ${profileTab == 'user-posts' ? 'posts' : (profileTab == 'user-comments' ? 'comments' : 'liked content')} found for this user.</p>
+                    </div>
+      `;       
+  }
 }
 
 //inserts a loading circle when an ajax request starts (infinite scroll) 
@@ -560,6 +609,16 @@ function infiniteScroll(){
         sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchCategory, null, insertMoreSearchResults);
         loading = false;
       }
+
+      //actions to take place in the profile page
+      const profilePage = document.querySelector("#profile-tab-content");
+      if((profilePage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading)) {
+        currentPage +=1;
+        loading = true;
+        insertLoadingCircle(searchPage);
+        loading = false;
+
+      }
   }
 }
 
@@ -573,6 +632,34 @@ function loadSearchContent(category, query){
 
   insertLoadingCircle(searchPage);
   sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, null, insertMoreSearchResults);
+}
+
+//loads the first content of a search when selecting another category
+function loadProfileContent(category){
+  const profileContent = document.querySelector("#profile-tab-content");
+  const username = document.getElementById('profile-username').innerHTML;
+
+  while (profileContent.firstChild) {
+    profileContent.removeChild(profileContent.firstChild);
+  }
+
+  insertLoadingCircle(profileContent);
+
+  switch(category){
+    case 'user-posts':
+      console.log("here");
+        sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+        break;
+    
+    case 'user-comments':
+      sendAjaxRequest('get', '/api/comments/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+      break;
+    
+    case 'user-likes':
+      sendAjaxRequest('get', '/api/likes/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+      break;
+  }
+  //sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, null, insertMoreSearchResults);
 }
   
 //fades the alert messages after a certain period of time
@@ -596,26 +683,22 @@ function toggleEditMenu() {
   
 const buttons = document.querySelectorAll('.tab-btn');
 const sections = document.querySelectorAll('.tab-content');
+let profileTab = "user-posts";
 
 function switchProfileTab() {
   buttons.forEach(button => {
     button.addEventListener('click', () => {
-      const targetTab = button.dataset.tab;
+      profileTab = button.dataset.tab;
 
       // Toggle active button
       buttons.forEach(btn => {
         btn.classList.remove('text-sky-900', 'border-sky-900');
       });
       button.classList.add('text-sky-900', 'border-sky-900');
-
-        // Toggle visible content
-        sections.forEach(section => {
-          if (section.id === targetTab) {
-            section.classList.remove('hidden');
-          } else {
-            section.classList.add('hidden');
-          }
-        });
+      console.log("here");
+      console.log(profileTab);
+      loadProfileContent(profileTab);
+      
       });
     });
   }
@@ -689,7 +772,6 @@ function navigationMenuOperation(){
 
       query = document.querySelector('input[name="q"]').value;
       loadSearchContent(category, query);
-      //document.getElementById('search-form').submit();
   }
 
   //Create Post Helper

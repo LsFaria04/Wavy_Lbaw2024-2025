@@ -9,14 +9,16 @@ use Illuminate\Validation\Rule;
 class ProfileController extends Controller
 {
     public function show($username) {
+
+        //load first set of data
         $user = User::where('username', $username)->firstOrFail();
-    
-        $posts = $user->posts()->orderBy('createddate', 'desc')->get();
-        $comments = $user->comments()->orderBy('createddate', 'desc')->get();
+        $posts = $user->posts()->orderBy('createddate', 'desc')->paginate(10);
+        $comments = [];
     
         return view('pages.profile', compact('user', 'posts', 'comments'));
-    }    
-
+    }
+    
+    
     public function update(Request $request, $userid) {
         $user = User::findOrFail($userid);
         $this->authorize('update', $user);
