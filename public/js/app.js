@@ -476,7 +476,13 @@ const searchResults = document.querySelector("#search-results");
 
 let results = JSON.parse(this.responseText);
 
+<<<<<<< HEAD
 switch(searchCategory){
+=======
+  console.log(results);
+  console.log(searchCategory);
+  switch(searchCategory){
+>>>>>>> parent of e103831 (Added ajax to all the sesrch page structure)
 
   case 'posts':
     maxPage = results[0].last_page; 
@@ -497,6 +503,7 @@ switch(searchCategory){
     return;
 }
 
+<<<<<<< HEAD
 if(searchResults.firstChild == null){
     searchResults.innerHTML = `
                   <div class="flex justify-center items-center h-32">
@@ -505,6 +512,8 @@ if(searchResults.firstChild == null){
     `;       
 }
 
+=======
+>>>>>>> parent of e103831 (Added ajax to all the sesrch page structure)
 }
 
 //inserts a loading circle when an ajax request starts (infinite scroll) 
@@ -562,6 +571,7 @@ if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
     }
 }
 }
+<<<<<<< HEAD
 
 //loads the first content of a search when selecting another category
 function loadSearchContent(category, query){
@@ -575,6 +585,9 @@ insertLoadingCircle(searchPage);
 sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, null, insertMoreSearchResults);
 }
 
+=======
+  
+>>>>>>> parent of e103831 (Added ajax to all the sesrch page structure)
 //fades the alert messages after a certain period of time
 function fadeAlert(){
 const alertBoxes = document.querySelectorAll('.alert');
@@ -645,6 +658,7 @@ menuOptions.forEach(function(option){
 menuArrow.classList.toggle("rotate-180");
 }
 
+<<<<<<< HEAD
 const searchMenu = document.getElementById('search-menu');
 const searchBar = document.getElementById('search-bar');
 const searchIcon = document.getElementById('search-icon');
@@ -668,10 +682,34 @@ function searchMenuOperation(){
     searchMenu.classList.remove("lg:w-14");
     searchBar.classList.remove("hidden");
     searchIcon.classList.add("hidden");
+=======
+  const searchMenu = document.getElementById('search-menu');
+  const searchBar = document.getElementById('search-bar');
+  const searchIcon = document.getElementById('search-icon');
+  const searchMenuArrow = document.querySelector("#search-menu header button > svg");
+  let searchCategory = document.querySelector('input[name="category"]').value;
+
+  //allows the operation of the search menu
+  function searchMenuOperation(){
+    if(searchMenu.classList.contains("lg:w-60")){
+      searchMenu.classList.remove("lg:w-60");
+      searchMenu.classList.add("lg:w-14");
+      searchBar.classList.add("hidden");
+      searchIcon.classList.remove("hidden");
+    }
+    else{
+      searchMenu.classList.add("lg:w-60");
+      searchMenu.classList.remove("lg:w-14");
+      searchBar.classList.remove("hidden");
+      searchIcon.classList.add("hidden");
+    }
+    searchMenuArrow.classList.toggle("rotate-180");
+>>>>>>> parent of e103831 (Added ajax to all the sesrch page structure)
   }
   searchMenuArrow.classList.toggle("rotate-180");
 }
 
+<<<<<<< HEAD
 function changeCategory(category) {
     currentPage = 1;
 
@@ -685,6 +723,56 @@ function changeCategory(category) {
         } else {
             button.classList.remove('text-sky-900', 'border-sky-900');
         }
+=======
+  function changeCategory(category) {
+    console.log("here");
+      searchCategory = category;
+      document.querySelector('input[name="category"]').value = category;
+
+      const buttons = document.querySelectorAll('.category-btn');
+      buttons.forEach(button => {
+          if (button.dataset.category === category) {
+              button.classList.add('text-sky-900', 'border-sky-900');
+          } else {
+              button.classList.remove('text-sky-900', 'border-sky-900');
+          }
+      });
+
+      document.getElementById('search-form').submit();
+  }
+
+  //Create Post Helper
+  function updateFileName() {
+    const fileInput = document.getElementById('image');
+    const fileNameDisplay = document.getElementById('fileName');
+    const fileDisplay = document.getElementById('fileDisplay');
+    const file = fileInput.files[0];
+
+    if (file) {
+        // Show the file name and remove button
+        fileNameDisplay.textContent = file.name;
+        fileDisplay.classList.remove('hidden');
+    } else {
+        // Hide the file display section
+        fileDisplay.classList.add('hidden');
+    }
+  }
+
+  //Create Post Helper
+  function removeFile() {
+    const fileInput = document.getElementById('image');
+    const fileDisplay = document.getElementById('fileDisplay');
+
+    // Reset the file input and hide the file display section
+    fileInput.value = '';
+    fileDisplay.classList.add('hidden');
+  }
+
+
+  function showSectionAdmin(sectionId) {
+    document.querySelectorAll('.tab-section').forEach((el) => {
+        el.classList.add('hidden');
+>>>>>>> parent of e103831 (Added ajax to all the sesrch page structure)
     });
 
     query = document.querySelector('input[name="q"]').value;
