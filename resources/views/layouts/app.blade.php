@@ -11,15 +11,12 @@
         <title>{{ config('app.name', 'Laravel') }}</title>
 
         <!-- Styles -->
-       <link href="{{ url('css/app.css') }}" rel="stylesheet"> 
         @vite('resources/css/app.css')
         <script type="text/javascript">
             // Fix for Firefox autofocus CSS bug
             // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
         </script>
-        <script type="text/javascript" src={{ url('js/app.js') }} defer>
-        </script>
-        
+        <script type="text/javascript" src="{{ url('js/app.js') }}" defer></script>
     </head>
     <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">
         <main class = "flex flex-col grow lg:flex-row bg-white ">
