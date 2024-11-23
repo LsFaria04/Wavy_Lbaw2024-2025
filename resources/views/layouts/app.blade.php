@@ -21,7 +21,7 @@
     <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">
         <main class = "flex flex-col grow lg:flex-row bg-white ">
             @include('partials.navigation_menu')
-            <section id="content" class= "grow flex flex-col">
+            <section id="content" class= "grow flex flex-col mb-16 lg:mb-0">
                 @yield('content')
                 @yield('scripts')
             </section>
