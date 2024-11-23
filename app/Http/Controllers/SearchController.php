@@ -6,26 +6,16 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Group;
-use Illuminate\Support\Facades\Validator;
 
 class SearchController extends Controller
 {   
 
     public function search(Request $request) {
-        $validator = Validator::make($request->all(), [
-            'q' => 'nullable|string|max:255', 
-            'category' => 'nullable|in:posts,users,groups', 
-        ]);
-
-        if ($validator->fails()) {
-            return response()->json(['error' => 'Entrada inválida.'], 400);
-        }
-
         $query = $request->input('q');
         $category = $request->input('category', 'posts');
+        $posts = $users = $groups = collect();
 
         if (empty($query)) {
-
             if ($request->ajax()) {
                 return response()->json([]);
             }
@@ -34,20 +24,14 @@ class SearchController extends Controller
                 'category' => $category,
                 'posts' => $posts,
                 'users' => $users,
-                'groups' => $groups,
-                'query' => $query
+                'groups' => $groups
             ]);
         }
 
-        $queryWithPrefix = $query . ':*';
+        else {
 
-        $validCategories = ['posts', 'users', 'groups'];
+            $queryWithPrefix = $query . ':*';
 
-        if (!in_array($category, $validCategories)) {
-            return response()->json(['error' => 'Categoria inválida.'], 400);
-        }
-
-        try {
             switch ($category) {
                 case 'posts':
                     $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
@@ -74,8 +58,6 @@ class SearchController extends Controller
                         ->paginate(10);
                     break;
             }
-        } catch (\Exception $e) {
-            return response()->json(['error' => 'Erro ao realizar a busca.'], 500);
         }
 
         $message = null;

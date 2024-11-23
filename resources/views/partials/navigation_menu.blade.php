@@ -22,7 +22,6 @@
                     <span class = "hidden">Home</span>
                 </a>
             </li>
-            {{--
             <li class = "test-white font-medium text-lg">
                 <a class = "flex flex-row items-center gap-3">
                 <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" id="Bold" viewBox="0 0 24 24" width="20" height="20">
@@ -32,7 +31,6 @@
                     <span class = "hidden">Messages</span>
                 </a>
             </li>
-            
             <li class = "test-white font-medium text-lg">
                 <a class = "flex flex-row items-center gap-3">
                 <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" id="Isolation_Mode" data-name="Isolation Mode" viewBox="0 0 24 24" width="20" height="20">
@@ -42,7 +40,6 @@
                     <span class = "hidden">Notifications</span>
                 </a>
             </li>
-            --}}
             @if(Auth::check())
                 <li class = "test-white font-medium text-lg">
                     <a class = "flex flex-row items-center gap-3" href = "{{ route('profile', ['username' => Auth::user()->username])}}">
