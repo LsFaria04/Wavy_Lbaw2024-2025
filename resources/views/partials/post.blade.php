@@ -76,47 +76,44 @@
         </div>
     </div>
 
-        @auth
-            @if(auth()->id() === $post->userid) 
-                <div id="edit-post-{{ $post->postid }}" class="edit-post-form hidden mt-4 bg-white rounded-xl shadow-md p-4">
-                    <form action="{{ route('posts.update', $post->postid) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
-                        @csrf
-                        <div class="mb-4">
-                            <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
-                            <textarea id="message" name="message" rows="2" class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" placeholder="Edit your message">{{ $post->message }}</textarea>
-                        </div>
+    @auth
+        @if(auth()->id() === $post->userid) 
+            <div id="edit-post-{{ $post->postid }}" class="edit-post-form hidden mt-4 bg-white rounded-xl shadow-md p-4">
+                <form action="{{ route('posts.update', $post->postid) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+                    @csrf
+                    <div class="mb-4">
+                        <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
+                        <textarea id="message" name="message" rows="2" class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" placeholder="Edit your message">{{ $post->message }}</textarea>
+                    </div>
 
-                        <!--<div class="flex items-center justify-between">
-                            <div class="flex items-center gap-2 relative">
-                                <label for="image" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black">
-                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
-                                        <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                                    </svg>
-                                    <span>Attach file(Optional)</span>
-                                </label>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Edit Media</label>
 
-                                <input type="file" name="media" id="image" class="hidden" onchange="updateEditFileName('{{ $post->postid }}')">
-                                
-                                
-                                <div id="fileDisplay-{{ $post->postid }}" class="items-center gap-2 {{ $post->media ? '' : 'hidden' }}">
-                                    <span id="fileName-{{ $post->postid }}" class="text-sm text-gray-500">
-                                        {{ $post->media->first() ? basename($post->media->first()->path) : '' }}
-                                    </span>
-                                    <button type="button" onclick="removeEditFile('{{ $post->postid }}')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
-                                </div>
-                            </div>   
-                           
+                        <label for="image-{{ $post->postid }}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                                <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <span>Attach new file</span>
+                        </label>
+                        @if ($post->media->isNotEmpty())
+                            <div id="fileDisplay-{{ $post->postid }}" class="flex items-center gap-2">
+                                <span id="fileName-{{ $post->postid }}" class="text-sm text-gray-500">{{ basename($post->media->first()->path) }}</span>
+                                <button type="button" onclick="removeFileEdit('{{ $post->postid }}')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+                            </div>
+                        @else
+                            <div id="fileDisplay-{{ $post->postid }}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2 hidden">
+                                <span id="fileName-{{ $post->postid }}" class="text-sm text-gray-500"></span>
+                                <button type="button" onclick="removeFileEdit('{{ $post->postid }}')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+                            </div>
+                        @endif
+
+                        <input type="file" name="media" id="image-{{ $post->postid }}" class="hidden" onchange="updateFileNameEdit('{{ $post->postid }}')">
+                        <input type="hidden" name="remove_media" id="removeMedia-{{ $post->postid }}" value="0">
+                    </div>
   
-                            <button type="submit" class="px-4 py-2 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
-                        </div> --> 
-                        <div class="mb-4">
-                            <label for="media" class="block text-sm font-medium text-gray-700">Upload Media (optional)</label>
-                            <input type="file" name="media" id="image" class="mt-1 block w-full p-2 border rounded-md">
-                        </div>
-  
-                        <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
-                    </form>
-                </div>
-            @endif
-        @endauth
+                    <button type="submit" class="p-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
+                </form>
+            </div>
+        @endif
+    @endauth
 </div>

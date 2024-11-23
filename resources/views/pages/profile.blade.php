@@ -1,4 +1,4 @@
-    @extends('layouts.app')
+@extends('layouts.app')
 
     @section('content')
         <div class="flex flex-col items-center w-full max-w-full bg-white">
@@ -12,51 +12,51 @@
                 <h1 id = "profile-username" class="text-xl font-bold text-gray-800">{{ $user->username }}</h1>
             </header>
 
-            <!-- Edit Profile Messages -->
-            @if (session('success'))
-                <div class="absolute self-center alert w-full max-w-full p-4 mb-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 rounded-lg z-10">
-                    {{ session('success') }}
-                </div>
-            @endif
+        <!-- Edit Profile Messages -->
+        @if (session('success'))
+            <div class="absolute self-center alert w-full max-w-full p-4 mb-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 rounded-lg z-10">
+                {{ session('success') }}
+            </div>
+        @endif
 
-            @if (session('error'))
-                <div class="absolute self-center alert w-full max-w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">
-                    {{ session('error') }}
-                </div>
-            @endif
+        @if (session('error'))
+            <div class="absolute self-center alert w-full max-w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">
+                {{ session('error') }}
+            </div>
+        @endif
 
-            <!-- Background Section -->
-            <div class="w-full max-w-full relative bg-gray-300 h-48 overflow-hidden">
-                <div class="absolute inset-0 bg-cover bg-center">
-                    <!-- Background Image To Add -->
-                </div>
+        <!-- Background Section -->
+        <div class="w-full max-w-full relative bg-gray-300 h-48 overflow-hidden">
+            <div class="absolute inset-0 bg-cover bg-center">
+                <!-- Background Image To Add -->
+            </div>
+        </div>
+
+        <!-- Profile Info Section -->
+        <div class="w-full max-w-full relative bg-white shadow-md">
+            <div class="absolute -top-16 left-4 w-32 h-32 bg-gray-200 rounded-full border-4 border-white overflow-hidden">
+                <!-- Profile Image To Add -->
             </div>
 
-            <!-- Profile Info Section -->
-            <div class="w-full max-w-full relative bg-white shadow-md">
-                <div class="absolute -top-16 left-4 w-32 h-32 bg-gray-200 rounded-full border-4 border-white overflow-hidden">
-                    <!-- Profile Image To Add -->
-                </div>
-
-                <!-- Edit Profile only visible if Account owner -->
-                <div class="pt-20 px-6 pb-4">
-                    <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
-                    <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>
-                    @if(auth()->id() === $user->userid)
-                        <button 
-                            class="absolute top-0 right-0 mt-4 mr-4 px-4 py-2 font-bold bg-gray-800 text-white rounded-2xl"
-                            onclick="toggleEditMenu()">
-                            Edit Profile
-                        </button>
-                    @endif
-                </div>
-
-                <nav class="flex justify-around">
-                    <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900  border-sky-900 text-sky-900">Posts</button>
-                    <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold  border-b-2 hover:text-sky-900">Comments</button>
-                    <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Likes</button>
-                </nav>
+            <!-- Edit Profile only visible if Account owner -->
+            <div class="pt-20 px-6 pb-4">
+                <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
+                <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>
+                @if(auth()->id() === $user->userid)
+                    <button 
+                        class="absolute top-0 right-0 mt-4 mr-4 px-4 py-2 font-bold bg-gray-800 text-white rounded-2xl"
+                        onclick="toggleEditMenu()">
+                        Edit Profile
+                    </button>
+                @endif
             </div>
+
+            <nav class="flex justify-around">
+                <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900  border-sky-900 text-sky-900">Posts</button>
+                <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold  border-b-2 hover:text-sky-900">Comments</button>
+                <button id="tab-likes" data-tab="user-likes" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Likes</button>
+            </nav>
+        </div>
 
             <!-- Edit Profile Menu -->
             <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
