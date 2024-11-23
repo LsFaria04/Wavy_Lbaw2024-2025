@@ -9,7 +9,8 @@ use App\Models\Group;
 use Illuminate\Support\Facades\Validator;
 
 class SearchController extends Controller
-{
+{   
+
     public function search(Request $request) {
         $validator = Validator::make($request->all(), [
             'q' => 'nullable|string|max:255', 
@@ -26,7 +27,7 @@ class SearchController extends Controller
         if (empty($query)) {
 
             if ($request->ajax()) {
-                return response()->json(['results' => []]);
+                return response()->json([]);
             }
 
             return view('pages.search', [
@@ -49,23 +50,28 @@ class SearchController extends Controller
         try {
             switch ($category) {
                 case 'posts':
-                    $posts = Post::whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                    $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
                         ->where('visibilitypublic', true)
-                        ->get();
+                        ->orderBy('createddate', 'desc')
+                        ->paginate(10);
+                    
+                        for($i = 0;$i < sizeof($posts); $i++){
+                            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+                        }
                     break;
                 case 'users':
-                    $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                    $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?) or username = ?", [$queryWithPrefix, $queryWithPrefix])
                         ->where('visibilitypublic', true)
-                        ->get();
+                        ->paginate(10);
                     break;
                 case 'groups':
                     $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ to_tsquery('english', ?)", [$queryWithPrefix])
-                        ->get();
+                        ->paginate(10);
                     break;
                 default:
                     $posts = Post::whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
                         ->where('visibilitypublic', true)
-                        ->get();
+                        ->paginate(10);
                     break;
             }
         } catch (\Exception $e) {
@@ -73,6 +79,10 @@ class SearchController extends Controller
         }
 
         $message = null;
+
+        if($request->ajax()){
+            return response()->json([$posts, $users, $groups]);
+        }
 
         return view('pages.search', compact('message', 'posts', 'users', 'groups', 'query', 'category'));
     }

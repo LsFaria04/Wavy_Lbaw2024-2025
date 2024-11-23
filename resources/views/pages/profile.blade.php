@@ -4,7 +4,7 @@
         <div class="flex flex-col items-center w-full max-w-full bg-white">
             <!-- Profile Top Section -->
             <header id="profile-header" class="w-full max-w-full p-4 shadow-md flex items-center sticky top-0 z-10 backdrop-blur">
-                <a href="{{ route('home') }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
+                <a href="{{ url()->previous() }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
@@ -81,8 +81,8 @@
                             </select>
                         </div>
                         <div class="flex justify-end space-x-2">
-                            <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500" onclick="toggleEditMenu()">Cancel</button>
-                            <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-md hover:bg-sky-900">Save</button>
+                            <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-2xl hover:bg-gray-600" onclick="toggleEditMenu()">Cancel</button>
+                            <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-2xl hover:bg-sky-900">Save</button>
                         </div>
                     </form>
                 </div>

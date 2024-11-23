@@ -28,7 +28,7 @@ class PostController extends Controller
     }
 
     /**
-     * Gets the posts for pagination (infinite scrolling)
+     * Gets the posts for pagination (infinite scrolling) and return a json response
      */
     public function getPostPagination(Request $request){
 
@@ -37,6 +37,10 @@ class PostController extends Controller
         }
         else {
             $posts = Post::with('user', 'media')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
+        }
+
+        for($i = 0;$i < sizeof($posts); $i++){
+            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
         }
 
         return response()->json($posts);
@@ -127,8 +131,8 @@ class PostController extends Controller
         ]);
 
         
-    
-        if ($request->hasFile('image')) {
+        if ($request->hasFile('media')) {
+            
             
             $mediaArray = Media::where('postid', $post->postid)->get();
             foreach($mediaArray as $media){
@@ -136,16 +140,19 @@ class PostController extends Controller
                     Storage::delete('public/'. $media->path);
                 }
             }
-            
+            Log::info("here");
             $post->media()->delete();
     
-            $imagePath = $request->file('image')->store('images', 'public');
+            $imagePath = $request->file('media')->store('images', 'public');
     
             Media::create([
                 'postid' => $post->postid, 
                 'userid' => NULL,
                 'path' => $imagePath, 
             ]);
+        }
+        else{
+            Log::info("no image");
         }
     
         return redirect()->route('home')->with('success', 'Post updated successfully!');
