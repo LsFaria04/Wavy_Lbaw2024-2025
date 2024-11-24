@@ -139,7 +139,7 @@ class PostController extends Controller
     public function update(Request $request, Post $post)
     {
         // Check if the authenticated user is the owner of the post
-        if ($post->userid != Auth::id()) {
+        if ($post->userid != Auth::id() && !Auth::user()->isadmin) {
             return redirect()->route('home')->with('error', 'You are not authorized to update this post.');
         }
     

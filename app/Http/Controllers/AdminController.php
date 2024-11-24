@@ -33,6 +33,11 @@ class AdminController extends Controller
         return view('pages.admin', compact('posts', 'users'));
     }
 
+    public function editPost($postId) {
+        $post = Post::findOrFail($postId);
+        return view('partials.admin.edit-post', compact('post'));
+    }
+
     public function createUser() {
         return view('admin.users.create');
     }
@@ -53,14 +58,12 @@ class AdminController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
     }
 
-    public function editUser($id)
-    {
+    public function editUser($id) {
         $user = User::findOrFail($id);
         return view('admin.users.editUser', compact('user'));
     }
 
-    public function updateUser(Request $request, $id)
-    {
+    public function updateUser(Request $request, $id) {
         $user = User::findOrFail($id);
         $validated = $request->validate([
             'username' => 'required|string|max:255|unique:users,username,' . $id,
@@ -72,8 +75,7 @@ class AdminController extends Controller
         return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
     }
 
-    public function destroyUser($id)
-    {
+    public function destroyUser($id) {
         $user = User::findOrFail($id);
         $user->delete();
 
