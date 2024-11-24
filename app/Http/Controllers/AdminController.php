@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Post;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash; 
+
 
 class AdminController extends Controller
 {
@@ -39,25 +41,31 @@ class AdminController extends Controller
     }
 
     public function createUser() {
-        return view('admin.users.create');
+        return view('partials.admin.create-user');
     }
 
-    public function storeUser(Request $request) {
+    public function storeUser(Request $request)
+    {
         $validated = $request->validate([
             'username' => 'required|string|max:255|unique:users,username',
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ]);
-
+    
+        // Create the user and hash the password
         User::create([
             'username' => $validated['username'],
             'email' => $validated['email'],
-            'password' => bcrypt($validated['password']),
+            'passwordhash' => Hash::make($validated['password']), // Ensure password_hash is set
+            'state' => 'active',
+            'visibilitypublic' => true,
+            'isadmin' => false,
         ]);
-
-        return redirect()->route('admin.users.index')->with('success', 'User created successfully.');
+    
+        return redirect()->route('admin.index')->with('success', 'User created successfully.');
     }
-
+    
+    
     public function editUser($id) {
         $user = User::findOrFail($id);
         return view('partials.admin.edit-user', compact('user'));
