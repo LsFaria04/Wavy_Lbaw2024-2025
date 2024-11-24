@@ -15,9 +15,9 @@
                 <td class="px-4 py-2 text-gray-800">{{ $post->user->username }}</td>
                 <td class="px-4 py-2 text-gray-800">
                     @if ($post->visibilitypublic == 1)
-                        <span class="px-2 py-1 text-green-700 bg-green-100 rounded-full">Public</span>
+                        <span class="px-2 py-1 text-green-700 bg-green-100 rounded-full w-[70px] text-center block">Public</span>
                     @else
-                        <span class="px-2 py-1 text-red-700 bg-red-100 rounded-full">Private</span>
+                        <span class="px-2 py-1 text-red-700 bg-red-100 rounded-full w-[70px] text-center block">Private</span>
                     @endif
                 </td>
                 <td class="px-4 py-2 text-gray-800">{{ $post->createddate->format('d/m/Y') }}</td>

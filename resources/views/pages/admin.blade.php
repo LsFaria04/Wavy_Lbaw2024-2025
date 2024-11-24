@@ -30,9 +30,11 @@
             </div>
         </div>
 
-        @include('../partials.admin.posts-table', ['posts' => $posts])
+        <div id="posts-container">
+            @include('../partials.admin.posts-table', ['posts' => $posts])
 
-        {{ $posts->appends(['section' => 'posts'])->links('partials.admin.pagination') }}
+            {{ $posts->appends(['section' => 'posts'])->links('partials.admin.pagination') }}
+        </div>
     </section>
 
     <!--Users-->
@@ -50,10 +52,11 @@
                 class="input-field flex-grow p-2 border border-gray-300 rounded-lg" id="search-users" />
             <button class="btn-primary px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">Search</button>
         </div>
+        <div id = "users-container">
+            @include('../partials.admin.users-table', ['users' => $users])
 
-        @include('../partials.admin.users-table', ['users' => $users])
-
-        {{ $users->appends(['section' => 'users'])->links('partials.admin.pagination') }}
+            {{ $users->appends(['section' => 'users'])->links('partials.admin.pagination') }}
+        </div>
     </section>
 </div>
 @endsection

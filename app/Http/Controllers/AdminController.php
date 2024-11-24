@@ -26,11 +26,20 @@ class AdminController extends Controller
 
         // Similarly for users
         $usersQuery = User::query();
+
         if ($request->has('search_users')) {
             $usersQuery->where('username', 'like', '%' . $request->input('search_users') . '%');
         }
 
         $users = $usersQuery->paginate(10);
+
+        if ($request->ajax()) {
+            if ($request->has('section') && $request->input('section') === 'posts') {
+                return view('partials.admin.posts-table', compact('posts'))->render();
+            } elseif ($request->has('section') && $request->input('section') === 'users') {
+                return view('partials.admin.users-table', compact('users'))->render();
+            }
+        }
 
         return view('pages.admin', compact('posts', 'users'));
     }

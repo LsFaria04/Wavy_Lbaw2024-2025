@@ -43,6 +43,11 @@ function addEventListeners() {
       deleteForm.submit();
     });
   }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    handlePagination('posts-container');
+    handlePagination('users-container');
+  });
   
 }
 
@@ -948,5 +953,60 @@ function removeEditFile(postid) {
     fileDisplay.classList.toggle('hidden');
     removeMediaInput.value = '1';
   }
+// Admin Page Pagination
+function handlePagination(containerId) {
+  const container = document.getElementById(containerId);
 
-  addEventListeners();
+  container.addEventListener('click', function (e) {
+    if (e.target.classList.contains('pagination-link')) {
+      e.preventDefault();
+
+      const url = e.target.href;
+
+      fetch(url, {
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+        }
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Erro ao carregar a página.');
+        }
+        return response.text();
+      })
+      .then(html => {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = html;
+
+        const newTableBody = tempDiv.querySelector('tbody');
+        const newPagination = tempDiv.querySelector('.pagination');
+
+        container.querySelector('tbody').innerHTML = newTableBody.innerHTML;
+        container.querySelector('.pagination').innerHTML = newPagination.innerHTML;
+
+        updateActivePage(containerId);
+      })
+      .catch(error => {
+        console.error('Erro:', error);
+      });
+    }
+  });
+}
+
+function updateActivePage(containerId) {
+  const container = document.getElementById(containerId);
+  const paginationLinks = container.querySelectorAll('.pagination-link');
+
+  paginationLinks.forEach(link => {
+    link.classList.remove('bg-blue-600', 'text-white');
+    link.classList.add('bg-gray-300', 'text-gray-700');
+  });
+
+  const currentPage = container.querySelector('.pagination-link.active');
+
+  if (currentPage) {
+    currentPage.classList.add('bg-blue-600', 'text-white');
+  }
+}
+
+addEventListeners();

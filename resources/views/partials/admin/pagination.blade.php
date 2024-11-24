@@ -1,10 +1,10 @@
 @if ($paginator->hasPages())
-    <nav class="flex items-center justify-center space-x-2 mt-6"> 
-        
+    <nav class="flex items-center justify-center space-x-2 mt-6 pagination">
         @if ($paginator->onFirstPage())
             <span class="px-4 py-2 bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed">←</span>
         @else
-            <a href="{{ $paginator->previousPageUrl() }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">←</a>
+            <a href="{{ $paginator->previousPageUrl() }}" 
+               class="pagination-link px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">←</a>
         @endif
 
         @foreach ($elements as $element)
@@ -13,16 +13,22 @@
             @elseif (is_array($element))
                 @foreach ($element as $page => $url)
                     @if ($page == $paginator->currentPage())
-                        <span class="px-4 py-2 bg-blue-600 text-white rounded-lg">{{ $page }}</span>
+                        <a href="{{ $url }}" class="pagination-link active bg-blue-600 text-white px-4 py-2 rounded-lg">
+                            {{ $page }}
+                        </a>
                     @else
-                        <a href="{{ $url }}" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-blue-500 transition">{{ $page }}</a>
+                        <a href="{{ $url }}" class="pagination-link bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-blue-500 transition" 
+                           data-page="{{ $page }}">
+                            {{ $page }}
+                        </a>
                     @endif
                 @endforeach
             @endif
         @endforeach
 
         @if ($paginator->hasMorePages())
-            <a href="{{ $paginator->nextPageUrl() }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">→</a>
+            <a href="{{ $paginator->nextPageUrl() }}" 
+               class="pagination-link px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">→</a>
         @else
             <span class="px-4 py-2 bg-gray-200 text-gray-500 rounded-lg cursor-not-allowed">→</span>
         @endif
