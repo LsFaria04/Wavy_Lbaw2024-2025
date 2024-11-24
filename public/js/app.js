@@ -752,6 +752,9 @@ sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" 
 //loads the first content of a search when selecting another category
 function loadProfileContent(category){
   const profileContent = document.querySelector("#profile-tab-content");
+  if(profileContent == null){
+    return;
+  }
   const username = document.getElementById('profile-username').innerHTML;
 
   while (profileContent.firstChild) {
@@ -974,16 +977,17 @@ function changeCategory(category) {
       // Update the file input's files property
       fileInput.files = dataTransfer.files;
     });
+  }
 
 
-    function showSectionAdmin(sectionId) {
+  function showSectionAdmin(sectionId) {
       document.querySelectorAll('.tab-section').forEach((el) => {
           el.classList.add('hidden');
       });
 
       document.getElementById(sectionId).classList.remove('hidden');
     }
-  }
+
   
 // Toggle the edit form visibility
 function toggleEditPost(postid) {
