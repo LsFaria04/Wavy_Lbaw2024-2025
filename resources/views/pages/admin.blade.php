@@ -32,8 +32,6 @@
 
         <div id="posts-container">
             @include('../partials.admin.posts-table', ['posts' => $posts])
-
-            {{ $posts->appends(['section' => 'posts'])->links('partials.admin.pagination') }}
         </div>
     </section>
 
@@ -55,7 +53,6 @@
         <div id = "users-container">
             @include('../partials.admin.users-table', ['users' => $users])
 
-            {{ $users->appends(['section' => 'users'])->links('partials.admin.pagination') }}
         </div>
     </section>
 </div>

@@ -984,6 +984,7 @@ function changeCategory(category) {
     fileDisplay.classList.toggle('hidden');
     removeMediaInput.value = '1';
   }
+
 // Admin Page Pagination
 function handlePagination(containerId) {
   const container = document.getElementById(containerId);
@@ -1001,7 +1002,7 @@ function handlePagination(containerId) {
       })
       .then(response => {
         if (!response.ok) {
-          throw new Error('Erro ao carregar a página.');
+          throw new Error('Error loading page.');
         }
         return response.text();
       })
@@ -1015,29 +1016,15 @@ function handlePagination(containerId) {
         container.querySelector('tbody').innerHTML = newTableBody.innerHTML;
         container.querySelector('.pagination').innerHTML = newPagination.innerHTML;
 
-        updateActivePage(containerId);
+        const activeButton = newPagination.querySelector('.pagination-link.active');
+
+
       })
       .catch(error => {
         console.error('Erro:', error);
       });
     }
   });
-}
-
-function updateActivePage(containerId) {
-  const container = document.getElementById(containerId);
-  const paginationLinks = container.querySelectorAll('.pagination-link');
-
-  paginationLinks.forEach(link => {
-    link.classList.remove('bg-blue-600', 'text-white');
-    link.classList.add('bg-gray-300', 'text-gray-700');
-  });
-
-  const currentPage = container.querySelector('.pagination-link.active');
-
-  if (currentPage) {
-    currentPage.classList.add('bg-blue-600', 'text-white');
-  }
 }
 
 addEventListeners();
