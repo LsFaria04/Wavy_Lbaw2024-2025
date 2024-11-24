@@ -97,13 +97,16 @@
                             <span>Attach new file</span>
                         </label>
                     
-                        <div id="fileDisplay-{{ $post->postid }}" class="flex items-center gap-2 text-gray-500 hover:text-black mt-2 {{ $post->media->isEmpty() ? 'hidden' : '' }}">
+                        <div id="fileDisplay-{{ $post->postid }}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 {{ $post->media->isEmpty() ? 'hidden' : '' }}">
                             @foreach ($post->media as $mediaItem)
                                 <div class="flex items-center gap-2" id="file-{{ $mediaItem->mediaid }}">
                                     <span class="text-sm text-gray-500">{{ basename($mediaItem->path) }}</span>
                                     <button type="button" onclick="removeFileEdit('{{ $post->postid }}', '{{ $mediaItem->mediaid }}')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
                                 </div>
                             @endforeach
+                            <div id="newFiles-{{ $post->postid }}" class="flex-col gap-2">
+                                <!-- New files to add appended via JS -->
+                            </div>
                         </div>
                         <input type="file" name="media[]" id="image-{{ $post->postid }}" class="hidden" onchange="updateFileNameEdit('{{ $post->postid }}')" multiple>
                         <input type="hidden" name="remove_media" id="removeMedia-{{ $post->postid }}" value="[]">

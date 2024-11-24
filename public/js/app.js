@@ -970,6 +970,7 @@ let selectedFilesEdit = [];  // New files selected by user (not yet submitted)
 function updateFileNameEdit(postId) {
   const fileInput = document.getElementById(`image-${postId}`);
   const fileDisplay = document.getElementById(`fileDisplay-${postId}`);
+  const newFileDisplay = document.getElementById(`newFiles-${postId}`)
 
   // Append new files to the list (preserve existing files)
   Array.from(fileInput.files).forEach(file => {
@@ -985,7 +986,7 @@ function updateFileNameEdit(postId) {
   }
 
   // Clear previous file list
-  fileDisplay.innerHTML = '';
+  newFileDisplay.innerHTML = '';
 
   // Show updated list of file names
   selectedFilesEdit.forEach((file, index) => {
@@ -996,12 +997,12 @@ function updateFileNameEdit(postId) {
           <span class="text-sm text-gray-500">${file.name}</span>
           <button type="button" onclick="removeSpecificFileEdit(${postId}, ${index})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
       `;
-      fileDisplay.appendChild(li);
+      newFileDisplay.appendChild(li);
   });
 
   fileDisplay.classList.remove('hidden');
   
-  // No need to reset the file input here, as it could interfere with future file selections
+  fileInput.value = '';
 }
 
 function removeFileEdit(postId, mediaId) {
@@ -1018,7 +1019,7 @@ function removeFileEdit(postId, mediaId) {
 }
 
 function removeSpecificFileEdit(postId, index) {
-  const fileDisplay = document.getElementById(`fileDisplay-${postId}`);
+  const fileDisplay = document.getElementById(`newFiles-${postId}`);
 
   // Remove file from the list
   selectedFilesEdit.splice(index, 1);

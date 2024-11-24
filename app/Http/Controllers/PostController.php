@@ -177,7 +177,7 @@ public function update(Request $request, Post $post)
     $mediaCount = $request->hasFile('media') ? count($request->file('media')) : 0;
 
     if ($currentMediaCount + $mediaCount > 4) {
-        return redirect()->route('posts.edit', $post->postid)->with('error', 'You can only upload a maximum of 4 files.');
+        return redirect()->route('home', $post->postid)->with('error', 'You can only upload a maximum of 4 files.');
     }
 
     // Handle new file uploads
