@@ -48,7 +48,8 @@ function addEventListeners() {
     handlePagination('posts-container');
     handlePagination('users-container');
   });
-  
+
+  document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
 }
 
 function encodeForAjax(data) {
@@ -989,6 +990,8 @@ function changeCategory(category) {
 function handlePagination(containerId) {
   const container = document.getElementById(containerId);
 
+  if (!container) return;
+
   container.addEventListener('click', function (e) {
     if (e.target.classList.contains('pagination-link')) {
       e.preventDefault();
@@ -1010,15 +1013,13 @@ function handlePagination(containerId) {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = html;
 
-        const newTableBody = tempDiv.querySelector('tbody');
+        const newContainer = tempDiv.querySelector(`#${containerId}`);
         const newPagination = tempDiv.querySelector('.pagination');
 
-        container.querySelector('tbody').innerHTML = newTableBody.innerHTML;
+        container.innerHTML = newContainer ? newContainer.innerHTML : '';
         container.querySelector('.pagination').innerHTML = newPagination.innerHTML;
 
         const activeButton = newPagination.querySelector('.pagination-link.active');
-
-
       })
       .catch(error => {
         console.error('Erro:', error);
@@ -1054,10 +1055,12 @@ function closeDeleteMenu() {
   modal.classList.add('hidden');
 }
 
-const deleteForm = document.getElementById('deleteForm');
-if (deleteForm !== null) {
+function handleDeleteFormSubmission() {
+  const deleteForm = document.getElementById('deleteForm');
+  if (!deleteForm) return;
+
   deleteForm.addEventListener('submit', function(event) {
-      event.preventDefault(); 
+      event.preventDefault();
 
       const formData = new FormData(deleteForm);
       const postId = formData.get('post_id');
@@ -1066,13 +1069,14 @@ if (deleteForm !== null) {
           method: 'POST',
           body: formData,
           headers: {
-              'X-Requested-With': 'XMLHttpRequest' 
+              'X-Requested-With': 'XMLHttpRequest'
           }
       })
       .then(response => response.json())
       .then(data => {
           if (data.success) {
-              document.getElementById(`post-${postId}`).remove();
+              const postElement = document.getElementById(`post-${postId}`);
+              postElement?.remove();
               closeDeleteMenu();
           } else {
               alert('Error deleting post!');
