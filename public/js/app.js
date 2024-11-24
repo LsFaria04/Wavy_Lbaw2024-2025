@@ -43,6 +43,10 @@ function addEventListeners() {
       deleteForm.submit();
     });
   }
+
+  //listeners related to the posts
+  addEventListenerToPostForms();
+  syncFilesWithInputEventListener()
   
 }
 
@@ -357,13 +361,13 @@ return post;
 }
 
 //inserts the update post form into a post container. Return the updated post container.
-function insertUpdateForm(post, id, message){
+function insertUpdateForm(post, id, message, media){
 let formContainer = document.createElement('div');
 formContainer.classList.add("edit-post-form", "hidden", "mt-4", "bg-white", "rounded-xl", "shadow-md", "p-4");
 formContainer.setAttribute('id',"edit-post-" + id);
 
 formContainer.innerHTML = `
-  <form action="../posts/update/${id}" method="POST" enctype="multipart/form-data"  class="flex flex-col gap-4">
+  <form action="/posts/update/${id}" method="POST" enctype="multipart/form-data"  class="flex flex-col gap-4" data-post-id = "${id}">
       <input type="hidden" name="_token" value= ${getCsrfToken()} />
       <div class="mb-4">
           <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
@@ -371,13 +375,45 @@ formContainer.innerHTML = `
       </div>
 
       <div class="mb-4">
-          <label for="media" class="block text-sm font-medium text-gray-700">Upload Image (optional)</label>
-          <input type="file" name="media" id="image" class="mt-1 block w-full p-2 border rounded-md">
+           <label class="block text-sm font-medium text-gray-700">Edit Media</label>
+
+            <label for="image-${id }" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                    <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span>Attach new file</span>
+            </label>
+        
+            <div id="fileDisplay-${id}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 ${ media.length == 0 ? 'hidden' : '' }">
+            </div>
+            <input type="file" name="media[]" id="image-${ id }" class="hidden" onchange="updateFileNameEdit('${id }')" multiple>
+            <input type="hidden" name="remove_media" id="removeMedia-${id }" value="[]">
       </div>
 
       <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
   </form>
 `;
+
+
+const fileDisplay = formContainer.querySelector('#fileDisplay-' + id);
+for(let i = 0; i < media.length; i++){
+  let mediaRemove = document.createElement('div');
+  mediaRemove.classList.add("flex", "items-center", "gap-2");
+  mediaRemove.setAttribute('id', 'file-' + media[i].mediaid);
+
+  mediaRemove.innerHTML = `
+    <span class="text-sm text-gray-500">${media[i].path.split('/')[1]}</span>
+    <button type="button" onclick="removeFileEdit('${id}', '${ media[i].mediaid }')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+  `;
+
+ 
+  fileDisplay.appendChild(mediaRemove);
+}
+
+const newFilesSection = document.createElement('div');
+newFilesSection.classList.add("flex-col", "gap-2");
+newFilesSection.setAttribute('id', 'newFiles-' + id);
+fileDisplay.appendChild(newFilesSection);
 
 post.appendChild(formContainer);
 
@@ -438,7 +474,6 @@ function createComment(commentInfo){
   const reply = document.createElement('p');
   reply.classList.add("text-sm", "hover:text-sky-900");
 
-  console.log(commentInfo);
   if(commentInfo.parent_comment !== null){
 
     reply.innerHTML = `
@@ -489,7 +524,12 @@ for(let i = 0; i < posts.data.length; i++){
   post = insertPostMedia(post, posts.data[i].media);
 
   if(userId == posts.data[i].user.userid){
-    insertUpdateForm(post, posts.data[i].postid, posts.data[i].message);
+    insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
+  }
+
+  let editForm = post.querySelector('.edit-post-form form');
+  if(editForm !== null){
+    addEventListenerToForm(editForm);
   }
   element.appendChild(post);
 }
@@ -570,9 +610,9 @@ switch(searchCategory){
 
 if(searchResults.firstChild == null){
     searchResults.innerHTML = `
-                  <div class="flex justify-center items-center h-32">
-                      <p class="text-gray-600 text-center">No results matched your search.</p>
-                  </div>
+      <div class="flex justify-center items-center h-32">
+          <p class="text-gray-600 text-center">No results matched your search.</p>
+      </div>
     `;       
 }
 
@@ -608,9 +648,9 @@ function insertMoreProfileContent(){
 
   if(profileContent.firstChild == null){
     profileContent.innerHTML = `
-                    <div class="flex justify-center items-center h-32">
-                            <p class="text-gray-600 text-center">No ${profileTab == 'user-posts' ? 'posts' : (profileTab == 'user-comments' ? 'comments' : 'liked content')} found for this user.</p>
-                    </div>
+      <div class="flex justify-center items-center h-32">
+              <p class="text-gray-600 text-center">No ${profileTab == 'user-posts' ? 'posts' : (profileTab == 'user-comments' ? 'comments' : 'liked content')} found for this user.</p>
+      </div>
       `;       
   }
 }
@@ -913,35 +953,38 @@ function changeCategory(category) {
     }
   }
 
-  // Synchronize selectedFiles with the file input before form submission
-  document.querySelector('form').addEventListener('submit', function (e) {
-    
-    if (selectedFiles.length > 4) {
-      e.preventDefault(); // Prevent the form from submitting
-      alert('You can only submit up to 4 files.');
-      return; 
+  function syncFilesWithInputEventListener(){
+    // Synchronize selectedFiles with the file input before form submission
+    document.querySelector('form').addEventListener('submit', function (e) {
+      
+      if (selectedFiles.length > 4) {
+        e.preventDefault(); // Prevent the form from submitting
+        alert('You can only submit up to 4 files.');
+        return; 
+      }
+
+      const fileInput = document.getElementById('image');
+      const dataTransfer = new DataTransfer();
+
+      // Append all files from selectedFiles to the new DataTransfer object
+      selectedFiles.forEach(file => {
+          dataTransfer.items.add(file);
+      });
+
+      // Update the file input's files property
+      fileInput.files = dataTransfer.files;
+    });
+
+
+    function showSectionAdmin(sectionId) {
+      document.querySelectorAll('.tab-section').forEach((el) => {
+          el.classList.add('hidden');
+      });
+
+      document.getElementById(sectionId).classList.remove('hidden');
     }
-
-    const fileInput = document.getElementById('image');
-    const dataTransfer = new DataTransfer();
-
-    // Append all files from selectedFiles to the new DataTransfer object
-    selectedFiles.forEach(file => {
-        dataTransfer.items.add(file);
-    });
-
-    // Update the file input's files property
-    fileInput.files = dataTransfer.files;
-  });
-
-
-  function showSectionAdmin(sectionId) {
-    document.querySelectorAll('.tab-section').forEach((el) => {
-        el.classList.add('hidden');
-    });
-
-    document.getElementById(sectionId).classList.remove('hidden');
   }
+  
 // Toggle the edit form visibility
 function toggleEditPost(postid) {
     const editForm = document.getElementById(`edit-post-${postid}`);
@@ -952,7 +995,7 @@ function toggleEditPost(postid) {
     
     // Reset file input and media display if switching from edit form to post content
     if (editForm.classList.contains('hidden')) {
-        resetFileInput(postid); // Reset media selection when returning to the post content view
+        selectedFilesEdit = []; // Reset media selection when returning to the post content view
     }
 }
 
@@ -1001,7 +1044,6 @@ function updateFileNameEdit(postId) {
   });
 
   fileDisplay.classList.remove('hidden');
-  
   fileInput.value = '';
 }
 
@@ -1044,31 +1086,43 @@ function removeSpecificFileEdit(postId, index) {
 }
 
 // Synchronize selectedFilesEdit with the file input before form submission
-document.querySelectorAll('.edit-post-form form').forEach(function (form) {
-  form.addEventListener('submit', function (e) {
-      const postId = form.dataset.postId;
-      const fileInput = document.getElementById(`image-${postId}`);
-      
-      // Check if there are more than 4 files, prevent submission
-      if (selectedFilesEdit.length > 4) {
-          e.preventDefault();
-          alert('You can only submit up to 4 files.');
-          return;
-      }
+function addEventListenerToPostForms(){
 
-      const dataTransfer = new DataTransfer();
+  if(document.querySelectorAll('.edit-post-form form').length === 0){
+    //did not found post edit forms
+    return;
+  }
 
-      // Append all files from selectedFilesEdit to the new DataTransfer object
-      selectedFilesEdit.forEach(file => {
-          dataTransfer.items.add(file);
-      });
-
-      // Update the file input's files property
-      fileInput.files = dataTransfer.files;
-
-      // Make sure the form submits only the valid files
-      // Here you can do additional checks if necessary (e.g., clearing out old files)
+  document.querySelectorAll('.edit-post-form form').forEach(function (form) {
+    addEventListenerToForm(form);
   });
-});
+}
+
+function addEventListenerToForm(form){
+  form.addEventListener('submit', function (e) {
+    const postId = form.dataset.postId;
+    const fileInput = document.getElementById(`image-${postId}`);
+    
+    // Check if there are more than 4 files, prevent submission
+    if (selectedFilesEdit.length > 4) {
+        e.preventDefault();
+        alert('You can only submit up to 4 files.');
+        return;
+    }
+
+    const dataTransfer = new DataTransfer();
+
+    // Append all files from selectedFilesEdit to the new DataTransfer object
+    selectedFilesEdit.forEach(file => {
+        dataTransfer.items.add(file);
+    });
+
+    // Update the file input's files property
+    fileInput.files = dataTransfer.files;
+
+    // Make sure the form submits only the valid files
+    // Here you can do additional checks if necessary (e.g., clearing out old files)
+  });
+}
 
   addEventListeners();

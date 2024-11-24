@@ -157,6 +157,7 @@ public function update(Request $request, Post $post)
         'message' => $request->message,
     ]);
 
+
     // Handle file removals
     if ($request->input('remove_media')) {
         $removeMediaIds = json_decode($request->input('remove_media'), true);
@@ -182,6 +183,7 @@ public function update(Request $request, Post $post)
 
     // Handle new file uploads
     if ($request->hasFile('media')) {
+        Log::info("files have arrived");
         foreach ($request->file('media') as $file) {
             $mediaPath = $file->store('images', 'public');
 
