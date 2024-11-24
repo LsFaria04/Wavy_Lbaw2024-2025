@@ -138,59 +138,66 @@ class PostController extends Controller
     }
     
 
-    // Update the post
-    public function update(Request $request, Post $post)
-    {
-        // Check if the authenticated user is the owner of the post
-        if ($post->userid != Auth::id() && !Auth::user()->isadmin) {
-            return redirect()->route('home')->with('error', 'You are not authorized to update this post.');
-        }
-    
-        // Validate the input
-        $request->validate([
-            'message' => 'required|string|max:255',
-        ]); 
-    
-        // Update the post message
-        $post->update([
-            'message' => $request->message,
-        ]);
+public function update(Request $request, Post $post)
+{
+    // Check if the authenticated user is the owner of the post
+    if ($post->userid != Auth::id() && !Auth::user()->isadmin) {
+        return redirect()->route('home')->with('error', 'You are not authorized to update this post.');
+    }
 
-        if ($request->input('remove_media') == '1') {
-            $mediaArray = Media::where('postid', $post->postid)->get();
-            foreach ($mediaArray as $media) {
-                if (Storage::exists('public/' . $media->path)) {
-                    Storage::delete('public/' . $media->path);
-                }
-            }
-            $post->media()->delete(); // Remove media record
-        }
+    // Validate the input
+    $request->validate([
+        'message' => 'required|string|max:255',
+        'media' => 'nullable|array', // Allow multiple media files
+        'media.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:10240', // Limit file types and size
+    ]);
 
-        if ($request->hasFile('media')) {         
-            
-            $mediaArray = Media::where('postid', $post->postid)->get();
-            foreach($mediaArray as $media){
-                if (Storage::exists('public/'. $media->path)){
-                    Storage::delete('public/'. $media->path);
-                }
+    // Update the post message
+    $post->update([
+        'message' => $request->message,
+    ]);
+
+    // Handle file removals
+    if ($request->input('remove_media')) {
+        $removeMediaIds = json_decode($request->input('remove_media'), true);
+
+        foreach ($removeMediaIds as $mediaId) {
+            $media = Media::find($mediaId);
+            if ($media && Storage::exists('public/' . $media->path)) {
+                Storage::delete('public/' . $media->path);
+                $media->delete(); // Delete the media record
             }
-            Log::info("here");
-            $post->media()->delete();
-    
-            $mediaPath = $request->file('media')->store('images', 'public');
-    
+        }
+    }
+
+    // Get current media count attached to the post
+    $currentMediaCount = $post->media()->count();
+
+    // Check if there are already 4 or more files attached to the post
+    $mediaCount = $request->hasFile('media') ? count($request->file('media')) : 0;
+
+    if ($currentMediaCount + $mediaCount > 4) {
+        return redirect()->route('posts.edit', $post->postid)->with('error', 'You can only upload a maximum of 4 files.');
+    }
+
+    // Handle new file uploads
+    if ($request->hasFile('media')) {
+        foreach ($request->file('media') as $file) {
+            $mediaPath = $file->store('images', 'public');
+
+            // Create new media record for the post
             Media::create([
-                'postid' => $post->postid, 
-                'userid' => NULL,
-                'path' => $mediaPath, 
+                'postid' => $post->postid,
+                'userid' => NULL, // Assuming the media belongs to the authenticated user
+                'path' => $mediaPath,
             ]);
         }
-        else{
-            Log::info("no image");
-        }
-    
-        return redirect()->route('home')->with('success', 'Post updated successfully!');
     }
+    return redirect()->route('home')->with('success', 'Post updated successfully!');
+}
+
+
+
     
 
     // Delete the post

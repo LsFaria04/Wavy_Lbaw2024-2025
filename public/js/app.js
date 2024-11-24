@@ -43,11 +43,6 @@ function addEventListeners() {
       deleteForm.submit();
     });
   }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    handlePagination('posts-container');
-    handlePagination('users-container');
-  });
   
 }
 
@@ -947,97 +942,132 @@ function changeCategory(category) {
 
     document.getElementById(sectionId).classList.remove('hidden');
   }
-  // Toggle the edit form visibility
-    function toggleEditPost(postid) {
+// Toggle the edit form visibility
+function toggleEditPost(postid) {
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
     
     editForm.classList.toggle('hidden');
     postContent.classList.toggle('hidden');
-  }
+    
+    // Reset file input and media display if switching from edit form to post content
+    if (editForm.classList.contains('hidden')) {
+        resetFileInput(postid); // Reset media selection when returning to the post content view
+    }
+}
 
-  function openDeleteMenu(postid) {
+// Open delete confirmation menu
+function openDeleteMenu(postid) {
     const deleteMenu = document.getElementById('deleteMenu');
     deleteMenu.classList.remove('hidden');
-    html.classList.toggle('overflow-hidden');
+    document.documentElement.classList.add('overflow-hidden'); // Ensure the whole page is locked
     window.selectedPostId = postid;
+}
+
+let selectedFilesEdit = [];  // New files selected by user (not yet submitted)
+
+// Edit Post Helpers
+function updateFileNameEdit(postId) {
+  const fileInput = document.getElementById(`image-${postId}`);
+  const fileDisplay = document.getElementById(`fileDisplay-${postId}`);
+
+  // Append new files to the list (preserve existing files)
+  Array.from(fileInput.files).forEach(file => {
+      selectedFilesEdit.push(file);
+  });
+
+  // Check if there are more than 4 files
+  if (selectedFilesEdit.length > 4) {
+      alert('You can only select up to 4 files.');
+      // Remove the newly added files from the selectedFiles array
+      selectedFilesEdit.splice(-fileInput.files.length);
+      return; 
   }
 
-  function updateFileNameEdit(postid) {
-    const fileInput = document.getElementById(`image-${postid}`);
-    const fileNameDisplay = document.getElementById(`fileName-${postid}`);
-    const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
-    const file = fileInput.files[0];
+  // Clear previous file list
+  fileDisplay.innerHTML = '';
 
-    if (file) {
-        fileNameDisplay.textContent = file.name;
-        fileDisplay.classList.remove('hidden');
-    }
+  // Show updated list of file names
+  selectedFilesEdit.forEach((file, index) => {
+      const li = document.createElement('li');
+      li.classList.add('flex', 'items-center', 'gap-2');
+
+      li.innerHTML = `
+          <span class="text-sm text-gray-500">${file.name}</span>
+          <button type="button" onclick="removeSpecificFileEdit(${postId}, ${index})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+      `;
+      fileDisplay.appendChild(li);
+  });
+
+  fileDisplay.classList.remove('hidden');
+  
+  // No need to reset the file input here, as it could interfere with future file selections
+}
+
+function removeFileEdit(postId, mediaId) {
+  const fileElement = document.getElementById(`file-${mediaId}`);
+  const removeMediaInput = document.getElementById(`removeMedia-${postId}`);
+  let removedFiles = JSON.parse(removeMediaInput.value);
+
+  // Add the removed mediaId to the array for server processing
+  removedFiles.push(mediaId);
+  removeMediaInput.value = JSON.stringify(removedFiles);
+
+  // Remove the media element from the display
+  fileElement.remove();
+}
+
+function removeSpecificFileEdit(postId, index) {
+  const fileDisplay = document.getElementById(`fileDisplay-${postId}`);
+
+  // Remove file from the list
+  selectedFilesEdit.splice(index, 1);
+
+  // Clear previous display and update with new list
+  fileDisplay.innerHTML = '';
+  selectedFilesEdit.forEach((file, i) => {
+      const li = document.createElement('li');
+      li.classList.add('flex', 'items-center', 'gap-2');
+
+      li.innerHTML = `
+          <span class="text-sm text-gray-500">${file.name}</span>
+          <button type="button" onclick="removeSpecificFileEdit(${postId}, ${i})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+      `;
+      fileDisplay.appendChild(li);
+  });
+
+  // Hide the display if no files remain
+  if (selectedFilesEdit.length === 0) {
+      fileDisplay.classList.add('hidden');
   }
+}
 
-  function removeFileEdit(postid) {
-    const fileInput = document.getElementById(`image-${postid}`);
-    const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
-    const removeMediaInput = document.getElementById(`removeMedia-${postid}`);
+// Synchronize selectedFilesEdit with the file input before form submission
+document.querySelectorAll('.edit-post-form form').forEach(function (form) {
+  form.addEventListener('submit', function (e) {
+      const postId = form.dataset.postId;
+      const fileInput = document.getElementById(`image-${postId}`);
+      
+      // Check if there are more than 4 files, prevent submission
+      if (selectedFilesEdit.length > 4) {
+          e.preventDefault();
+          alert('You can only submit up to 4 files.');
+          return;
+      }
 
-    fileInput.value = '';
-    fileDisplay.classList.toggle('hidden');
-    removeMediaInput.value = '1';
-  }
-// Admin Page Pagination
-function handlePagination(containerId) {
-  const container = document.getElementById(containerId);
+      const dataTransfer = new DataTransfer();
 
-  container.addEventListener('click', function (e) {
-    if (e.target.classList.contains('pagination-link')) {
-      e.preventDefault();
-
-      const url = e.target.href;
-
-      fetch(url, {
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-        }
-      })
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Erro ao carregar a página.');
-        }
-        return response.text();
-      })
-      .then(html => {
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = html;
-
-        const newTableBody = tempDiv.querySelector('tbody');
-        const newPagination = tempDiv.querySelector('.pagination');
-
-        container.querySelector('tbody').innerHTML = newTableBody.innerHTML;
-        container.querySelector('.pagination').innerHTML = newPagination.innerHTML;
-
-        updateActivePage(containerId);
-      })
-      .catch(error => {
-        console.error('Erro:', error);
+      // Append all files from selectedFilesEdit to the new DataTransfer object
+      selectedFilesEdit.forEach(file => {
+          dataTransfer.items.add(file);
       });
-    }
+
+      // Update the file input's files property
+      fileInput.files = dataTransfer.files;
+
+      // Make sure the form submits only the valid files
+      // Here you can do additional checks if necessary (e.g., clearing out old files)
   });
-}
+});
 
-function updateActivePage(containerId) {
-  const container = document.getElementById(containerId);
-  const paginationLinks = container.querySelectorAll('.pagination-link');
-
-  paginationLinks.forEach(link => {
-    link.classList.remove('bg-blue-600', 'text-white');
-    link.classList.add('bg-gray-300', 'text-gray-700');
-  });
-
-  const currentPage = container.querySelector('.pagination-link.active');
-
-  if (currentPage) {
-    currentPage.classList.add('bg-blue-600', 'text-white');
-  }
-}
-
-addEventListeners();
+  addEventListeners();
