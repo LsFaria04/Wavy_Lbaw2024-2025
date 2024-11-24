@@ -92,7 +92,7 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 
     Route::get('/posts/edit/{post}', [AdminController::class, 'editPost'])->name('admin.posts.edit');
     Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('admin.posts.update');
-    Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+    Route::delete('/posts/delete/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
 
     Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
