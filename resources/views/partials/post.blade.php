@@ -78,8 +78,9 @@
 
     @auth
         @if(auth()->id() === $post->userid) 
+            <!-- Edit Section in post.blade.php -->
             <div id="edit-post-{{ $post->postid }}" class="edit-post-form hidden mt-4 bg-white rounded-xl shadow-md p-4">
-                <form action="{{ route('posts.update', $post->postid) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+                <form action="{{ route('posts.update', $post->postid) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4" data-post-id="{{ $post->postid }}">
                     @csrf
                     <div class="mb-4">
                         <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
@@ -95,22 +96,22 @@
                             </svg>
                             <span>Attach new file</span>
                         </label>
-                        @if ($post->media->isNotEmpty())
-                            <div id="fileDisplay-{{ $post->postid }}" class="flex items-center gap-2">
-                                <span id="fileName-{{ $post->postid }}" class="text-sm text-gray-500">{{ basename($post->media->first()->path) }}</span>
-                                <button type="button" onclick="removeFileEdit('{{ $post->postid }}')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+                    
+                        <div id="fileDisplay-{{ $post->postid }}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 {{ $post->media->isEmpty() ? 'hidden' : '' }}">
+                            @foreach ($post->media as $mediaItem)
+                                <div class="flex items-center gap-2" id="file-{{ $mediaItem->mediaid }}">
+                                    <span class="text-sm text-gray-500">{{ basename($mediaItem->path) }}</span>
+                                    <button type="button" onclick="removeFileEdit('{{ $post->postid }}', '{{ $mediaItem->mediaid }}')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+                                </div>
+                            @endforeach
+                            <div id="newFiles-{{ $post->postid }}" class="flex-col gap-2">
+                                <!-- New files to add appended via JS -->
                             </div>
-                        @else
-                            <div id="fileDisplay-{{ $post->postid }}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2 hidden">
-                                <span id="fileName-{{ $post->postid }}" class="text-sm text-gray-500"></span>
-                                <button type="button" onclick="removeFileEdit('{{ $post->postid }}')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
-                            </div>
-                        @endif
-
-                        <input type="file" name="media" id="image-{{ $post->postid }}" class="hidden" onchange="updateFileNameEdit('{{ $post->postid }}')">
-                        <input type="hidden" name="remove_media" id="removeMedia-{{ $post->postid }}" value="0">
+                        </div>
+                        <input type="file" name="media[]" id="image-{{ $post->postid }}" class="hidden" onchange="updateFileNameEdit('{{ $post->postid }}')" multiple>
+                        <input type="hidden" name="remove_media" id="removeMedia-{{ $post->postid }}" value="[]">
                     </div>
-  
+
                     <button type="submit" class="p-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
                 </form>
             </div>
