@@ -32,7 +32,7 @@
 
         @include('../partials.admin.posts-table', ['posts' => $posts])
 
-        {{ $posts->links('partials.admin.pagination') }}
+        {{ $posts->appends(['section' => 'posts'])->links('partials.admin.pagination') }}
     </section>
 
     <!--Users-->
@@ -53,7 +53,7 @@
 
         @include('../partials.admin.users-table', ['users' => $users])
 
-        {{ $users->links() }}
+        {{ $users->appends(['section' => 'users'])->links('partials.admin.pagination') }}
     </section>
 </div>
 @endsection
