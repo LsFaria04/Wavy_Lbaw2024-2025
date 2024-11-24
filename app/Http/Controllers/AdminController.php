@@ -60,19 +60,19 @@ class AdminController extends Controller
 
     public function editUser($id) {
         $user = User::findOrFail($id);
-        return view('admin.users.editUser', compact('user'));
+        return view('partials.admin.edit-user', compact('user'));
     }
 
     public function updateUser(Request $request, $id) {
         $user = User::findOrFail($id);
         $validated = $request->validate([
-            'username' => 'required|string|max:255|unique:users,username,' . $id,
-            'email' => 'required|email|max:255|unique:users,email,' . $id,
+            'username' => 'required|string|max:255|unique:users,username,' . $id . ',userid',
+            'email' => 'required|email|max:255|unique:users,email,' . $id . ',userid',
         ]);
 
         $user->update($validated);
 
-        return redirect()->route('admin.users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('admin.index')->with('success', 'User updated successfully.');
     }
 
     public function destroyUser($id) {
