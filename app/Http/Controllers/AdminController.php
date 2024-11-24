@@ -44,11 +44,6 @@ class AdminController extends Controller
         return view('pages.admin', compact('posts', 'users'));
     }
 
-    public function editPost($postId) {
-        $post = Post::findOrFail($postId);
-        return view('partials.admin.edit-post', compact('post'));
-    }
-
     public function createUser() {
         return view('partials.admin.create-user');
     }
@@ -61,11 +56,10 @@ class AdminController extends Controller
             'password' => 'required|string|min:8|confirmed',
         ]);
     
-        // Create the user and hash the password
         User::create([
             'username' => $validated['username'],
             'email' => $validated['email'],
-            'passwordhash' => Hash::make($validated['password']), // Ensure password_hash is set
+            'passwordhash' => Hash::make($validated['password']),
             'state' => 'active',
             'visibilitypublic' => true,
             'isadmin' => false,

@@ -22,7 +22,6 @@
                 </td>
                 <td class="px-4 py-2 text-gray-800">{{ $post->createddate->format('d/m/Y') }}</td>
                 <td class="px-4 py-2 text-gray-800">
-                    <a href="{{ route('admin.posts.edit', $post->postid) }}" class="text-blue-600 hover:underline">Edit</a> |
                     <form action="{{ route('admin.posts.destroy', $post->postid) }}" method="POST" class="inline-block">
                         @csrf
                         @method('DELETE')
@@ -75,4 +74,3 @@
         @endif
     </nav>
 @endif
-

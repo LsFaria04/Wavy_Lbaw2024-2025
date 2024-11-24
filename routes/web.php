@@ -90,8 +90,6 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
 
-    Route::get('/posts/edit/{post}', [AdminController::class, 'editPost'])->name('admin.posts.edit');
-    Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('admin.posts.update');
     Route::delete('/posts/delete/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
 
     Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
