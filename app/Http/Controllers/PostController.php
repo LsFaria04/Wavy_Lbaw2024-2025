@@ -91,7 +91,7 @@ class PostController extends Controller
         // Validate input
         $request->validate([
             'message' => 'required|string|max:255',
-            'media' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:10000', 
+            'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:10000', 
         ]);
     
         // Check if the user is authorized to create a post
@@ -102,33 +102,36 @@ class PostController extends Controller
         // Initialize image path variable
         $mediaPath = null;
     
-        // Check if the image is uploaded
-        if ($request->hasFile('media')) {
-            // Store the image in the 'images' directory under 'public'
-            if($request->file('media')->isValid()){
-                $mediaPath = $request->file('media')->store('images', 'public');
-            }
-            else{
-                return redirect()->route('home')->with('error', 'Could not upload the file!');
-            }
-        }
-    
         // Create the post
         $post = Post::create([
             'userid' => Auth::id(),
             'message' => $request->message,
-            'visibilitypublic' => true, // Set visibility to true (public)
+            'visibilitypublic' => true, 
             'createddate' => now(),
             'groupid' => null, 
         ]);
-    
-        // If an image was uploaded, create a media entry
-        if ($mediaPath) {
-            Media::create([
-                'postid' => $post->postid, // Associate media with this post
-                'userid' => NULL, 
-                'path' => $mediaPath, // Store the image path
-            ]);
+        
+        if ($request->hasFile('media')) {
+            // Check if there are more than 4 files
+            if (count($request->file('media')) > 4) {
+                return redirect()->route('home')->with('error', 'You can only upload a maximum of 4 media files.');
+            }
+            
+            // Store the images in the 'images' directory under 'public'
+            foreach ($request->file('media') as $file) {
+                if($file->isValid()){
+                    $mediaPath = $file->store('images', 'public');
+
+                    Media::create([
+                        'postid' => $post->postid, // Associate media with this post
+                        'userid' => NULL, 
+                        'path' => $mediaPath, // Store the image path
+                    ]);
+                }
+                else{
+                    return redirect()->route('home')->with('error', 'Could not upload the file!');
+                }
+            }
         }
     
         return redirect()->route('home')->with('success', 'Post created successfully!');

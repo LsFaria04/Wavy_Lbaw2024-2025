@@ -850,87 +850,118 @@ function changeCategory(category) {
       query = document.querySelector('input[name="q"]').value;
       loadSearchContent(category, query);
   }
+  
+  //Create Post Helper
+  let selectedFiles = [];
 
-//Create Post Helper
-function updateFileName() {
-  const fileInput = document.getElementById('image');
-  const fileNameDisplay = document.getElementById('fileName');
-  const fileDisplay = document.getElementById('fileDisplay');
-  const file = fileInput.files[0];
+  function updateFileList() {
+    const fileInput = document.getElementById('image');
+    const fileDisplay = document.getElementById('fileDisplay');
 
-  if (file) {
-      // Show the file name and remove button
-      fileNameDisplay.textContent = file.name;
-      fileDisplay.classList.remove('hidden');
-  } else {
-      // Hide the file display section
-      fileDisplay.classList.add('hidden');
+    // Append new files to the list (preserve existing files)
+    Array.from(fileInput.files).forEach(file => {
+      selectedFiles.push(file);
+    });
+
+    // Check if there are more than 4 files
+    if (selectedFiles.length > 4) {
+      alert('You can only select up to 4 files.');
+      // Remove the newly added files from the selectedFiles array
+      selectedFiles.splice(-fileInput.files.length);
+      return; 
+    }
+
+    // Clear previous file list
+    fileDisplay.innerHTML = '';
+
+    // Show updated list of file names
+    selectedFiles.forEach((file, index) => {
+      const li = document.createElement('li');
+      li.classList.add('flex', 'items-center', 'gap-2');
+
+      li.innerHTML = `
+          <span class="text-sm text-gray-500">${file.name}</span>
+          <button type="button" onclick="removeSpecificFile(${index})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+      `;
+      fileDisplay.appendChild(li);
+    });
+
+    fileDisplay.classList.remove('hidden');
+
+    // Reset the file input to allow adding more files
+    fileInput.value = '';
   }
-}
 
-//Create Post Helper
-function removeFile() {
-  const fileInput = document.getElementById('image');
-  const fileDisplay = document.getElementById('fileDisplay');
+  //Create Post Helper
+  function removeSpecificFile(index) {
+    const fileDisplay = document.getElementById('fileDisplay');
 
-  // Reset the file input and hide the file display section
-  fileInput.value = '';
-  fileDisplay.classList.add('hidden');
-}
+    // Remove file from the list
+    selectedFiles.splice(index, 1);
 
+    // Clear previous display and update with new list
+    fileDisplay.innerHTML = '';
+    selectedFiles.forEach((file, i) => {
+        const li = document.createElement('li');
+        li.classList.add('flex', 'items-center', 'gap-2');
 
-function showSectionAdmin(sectionId) {
-  document.querySelectorAll('.tab-section').forEach((el) => {
-      el.classList.add('hidden');
+        li.innerHTML = `
+            <span class="text-sm text-gray-500">${file.name}</span>
+            <button type="button" onclick="removeSpecificFile(${i})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+        `;
+        fileDisplay.appendChild(li);
+    });
+
+    // Hide the display if no files remain
+    if (selectedFiles.length === 0) {
+        fileDisplay.classList.add('hidden');
+    }
+  }
+
+  // Synchronize selectedFiles with the file input before form submission
+  document.querySelector('form').addEventListener('submit', function (e) {
+    
+    if (selectedFiles.length > 4) {
+      e.preventDefault(); // Prevent the form from submitting
+      alert('You can only submit up to 4 files.');
+      return; 
+    }
+
+    const fileInput = document.getElementById('image');
+    const dataTransfer = new DataTransfer();
+
+    // Append all files from selectedFiles to the new DataTransfer object
+    selectedFiles.forEach(file => {
+        dataTransfer.items.add(file);
+    });
+
+    // Update the file input's files property
+    fileInput.files = dataTransfer.files;
   });
 
-  document.getElementById(sectionId).classList.remove('hidden');
-}
-// Toggle the edit form visibility
-  function toggleEditPost(postid) {
-  const editForm = document.getElementById(`edit-post-${postid}`);
-  const postContent = document.getElementById(`post-content-${postid}`);
-  
-  editForm.classList.toggle('hidden');
-  postContent.classList.toggle('hidden');
-}
 
-function openDeleteMenu(postid) {
-  const deleteMenu = document.getElementById('deleteMenu');
-  deleteMenu.classList.remove('hidden');
-  html.classList.toggle('overflow-hidden');
-  window.selectedPostId = postid;
-}
+  function showSectionAdmin(sectionId) {
+    document.querySelectorAll('.tab-section').forEach((el) => {
+        el.classList.add('hidden');
+    });
 
-
-
-// Helper: Update the file name display when a file is selected
-function updateEditFileName(postid) {
-  const fileInput = document.getElementById(`media`);
-  const fileNameDisplay = document.getElementById(`fileName-${postid}`);
-  const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
-  const file = fileInput.files[0];
-
-  if (file) {
-      // Show the file name and remove button
-      fileNameDisplay.textContent = file.name;
-      fileDisplay.classList.remove('hidden');
-  } else {
-      // Hide the file display section
-      fileDisplay.classList.add('hidden');
+    document.getElementById(sectionId).classList.remove('hidden');
   }
-}
+  // Toggle the edit form visibility
+    function toggleEditPost(postid) {
+    const editForm = document.getElementById(`edit-post-${postid}`);
+    const postContent = document.getElementById(`post-content-${postid}`);
+    
+    editForm.classList.toggle('hidden');
+    postContent.classList.toggle('hidden');
+  }
 
-// Helper: Remove the file and hide the display section
-function removeEditFile(postid) {
-  const fileInput = document.getElementById(`media`);
-  const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
-
-  // Reset the file input and hide the file display section
-  fileInput.value = '';
-  fileDisplay.classList.add('hidden');
-}
-
+  function openDeleteMenu(postid) {
+    const deleteMenu = document.getElementById('deleteMenu');
+    deleteMenu.classList.remove('hidden');
+    html.classList.toggle('overflow-hidden');
+    window.selectedPostId = postid;
+  }
 
   function updateFileNameEdit(postid) {
     const fileInput = document.getElementById(`image-${postid}`);
