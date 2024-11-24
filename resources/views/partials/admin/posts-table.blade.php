@@ -10,7 +10,7 @@
     </thead>
     <tbody>
         @foreach ($posts as $post)
-            <tr class="border-t">
+            <tr id="post-{{ $post->postid }}" class="border-t">
                 <td class="px-4 py-2 text-gray-800 max-w-xs overflow-hidden text-ellipsis">{{ $post->message }}</td>
                 <td class="px-4 py-2 text-gray-800">{{ $post->user->username }}</td>
                 <td class="px-4 py-2 text-gray-800">
@@ -22,16 +22,35 @@
                 </td>
                 <td class="px-4 py-2 text-gray-800">{{ $post->createddate->format('d/m/Y') }}</td>
                 <td class="px-4 py-2 text-gray-800">
-                    <form action="{{ route('admin.posts.destroy', $post->postid) }}" method="POST" class="inline-block">
-                        @csrf
-                        @method('DELETE')
-                        <button type="submit" class="text-red-600 hover:underline">Delete</button>
-                    </form>
+                    <button type="button" 
+                            class="text-red-600 hover:underline delete-post-button" 
+                            data-post-id="{{ $post->postid }}" 
+                            data-post-message="{{ $post->message }}">
+                        Delete
+                    </button>
                 </td>
+
             </tr>
         @endforeach
     </tbody>
 </table>
+
+<!--Delete Post Menu-->
+<div id="deleteMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20">
+    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+        <h2 class="text-xl font-semibold text-gray-900">Delete Post</h2>
+        <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this post? This action cannot be undone.</p>
+        <form id="deleteForm" method="POST" action="{{ route('admin.posts.destroy', 'POST_ID') }}">
+            @csrf
+            @method('DELETE')
+            <input type="hidden" name="post_id" id="postId">
+            <div class="mt-6 flex justify-end gap-3">
+                <button type="button" id="cancelButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none" onclick="closeDeleteMenu()">Cancel</button>
+                <button type="submit" id="confirmButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">Delete</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @if ($posts->hasPages())
     <nav class="flex items-center justify-center space-x-2 mt-6 pagination" aria-label="Pagination">

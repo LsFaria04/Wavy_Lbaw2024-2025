@@ -1027,4 +1027,64 @@ function handlePagination(containerId) {
   });
 }
 
+
+//Admin Delete Post
+document.querySelectorAll('.delete-post-button').forEach(button => {
+  button.addEventListener('click', function(event) {
+      const postId = event.target.getAttribute('data-post-id');
+      const postMessage = event.target.getAttribute('data-post-message');
+
+      openDeleteMenu(postId, postMessage);
+  });
+});
+
+function openDeleteMenu(postId, postMessage) {
+  const modal = document.getElementById('deleteMenu');
+  const deleteForm = document.getElementById('deleteForm');
+  const postIdInput = document.getElementById('postId');
+
+  deleteForm.action = deleteForm.action.replace('POST_ID', postId);
+  postIdInput.value = postId;
+
+  modal.classList.remove('hidden');
+}
+
+function closeDeleteMenu() {
+  const modal = document.getElementById('deleteMenu');
+  modal.classList.add('hidden');
+}
+
+const deleteForm = document.getElementById('deleteForm');
+if (deleteForm !== null) {
+  deleteForm.addEventListener('submit', function(event) {
+      event.preventDefault(); 
+
+      const formData = new FormData(deleteForm);
+      const postId = formData.get('post_id');
+
+      fetch(deleteForm.action, {
+          method: 'POST',
+          body: formData,
+          headers: {
+              'X-Requested-With': 'XMLHttpRequest' 
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              document.getElementById(`post-${postId}`).remove();
+              closeDeleteMenu();
+          } else {
+              alert('Error deleting post!');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('Error deleting post!');
+      });
+  });
+}
+
+
+
 addEventListeners();

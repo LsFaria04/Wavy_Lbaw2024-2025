@@ -20,14 +20,6 @@
         <div class="admin-tools mb-4 flex flex-wrap gap-4 items-center">
             <input type="text" placeholder="Search posts..." 
                 class="input-field flex-grow p-2 border border-gray-300 rounded-lg" id="search-posts" />
-            <div class="flex items-center space-x-2">
-                <select id="filter-posts" class="input-field p-2 border border-gray-300 rounded-lg">
-                    <option value="">Filter by Visibility</option>
-                    <option value="1">Public</option>
-                    <option value="0">Private</option>
-                </select>
-                <button class="btn-primary px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">Search</button>
-            </div>
         </div>
 
         <div id="posts-container">
@@ -48,7 +40,6 @@
         <div class="admin-tools mb-4 flex flex-wrap gap-4 items-center">
             <input type="text" placeholder="Search users..." 
                 class="input-field flex-grow p-2 border border-gray-300 rounded-lg" id="search-users" />
-            <button class="btn-primary px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">Search</button>
         </div>
         <div id = "users-container">
             @include('../partials.admin.users-table', ['users' => $users])
