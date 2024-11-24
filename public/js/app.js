@@ -50,6 +50,8 @@ function addEventListeners() {
   });
 
   document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
+
+  setupCreateUserMenu();
 }
 
 function encodeForAjax(data) {
@@ -1089,6 +1091,35 @@ function handleDeleteFormSubmission() {
   });
 }
 
+//Admin Create User
+function setupCreateUserMenu() {
+  const createUserBtn = document.getElementById("createUserBtn");
+  const createUserMenu = document.getElementById("createUserMenu");
+  const cancelCreateUserBtn = document.getElementById("cancelCreateUserBtn");
+
+  console.log(createUserBtn, createUserMenu, cancelCreateUserBtn);
+
+  if (createUserBtn && createUserMenu && cancelCreateUserBtn) {
+    createUserBtn.addEventListener("click", () => {
+      console.log("Create User Button Clicked");  
+      createUserMenu.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", (event) => {
+      console.log("Click event detected:", event.target); 
+      if (!createUserMenu.contains(event.target) && event.target !== createUserBtn) {
+        createUserMenu.classList.add("hidden");
+      }
+    });
+
+    cancelCreateUserBtn.addEventListener("click", () => {
+      console.log("Cancel Button Clicked");  
+      createUserMenu.classList.add("hidden");
+    });
+  } else {
+    console.error("One or more elements are missing. Check your HTML."); 
+  }
+}
 
 
 addEventListeners();

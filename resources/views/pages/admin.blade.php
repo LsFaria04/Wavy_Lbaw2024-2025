@@ -32,9 +32,9 @@
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Users</h2>
         
         <div class="mb-4 flex justify-between items-center">
-            <a href="{{ route('admin.users.create') }}" class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-500 transition">
-                Add New User
-            </a>
+            <button id="createUserBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Create User
+            </button>
         </div>
 
         <div class="admin-tools mb-4 flex flex-wrap gap-4 items-center">
@@ -46,5 +46,44 @@
 
         </div>
     </section>
+</div>
+
+
+<div id="createUserMenu" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <form id="createUserForm" class="space-y-4">
+            @csrf
+            <div>
+                <label for="username" class="block text-gray-700 font-medium">Nome de Utilizador:</label>
+                <input type="text" id="username" name="username"
+                    class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required>
+            </div>
+            <div>
+                <label for="email" class="block text-gray-700 font-medium">Email:</label>
+                <input type="email" id="email" name="email"
+                    class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required>
+            </div>
+            <div>
+                <label for="password" class="block text-gray-700 font-medium">Password:</label>
+                <input type="password" id="password" name="password"
+                    class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required>
+            </div>
+            <div>
+                <label for="password_confirmation" class="block text-gray-700 font-medium">Confirm Password:</label>
+                <input type="password" id="password_confirmation" name="password_confirmation"
+                    class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required>
+            </div>
+            <button type="button" id="cancelCreateUserBtn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                Cancel
+            </button>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Create
+            </button>
+        </form>
+    </div>
 </div>
 @endsection

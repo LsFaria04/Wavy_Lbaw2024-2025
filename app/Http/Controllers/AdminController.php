@@ -55,7 +55,7 @@ class AdminController extends Controller
             'email' => 'required|email|max:255|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
         ]);
-    
+
         User::create([
             'username' => $validated['username'],
             'email' => $validated['email'],
@@ -64,10 +64,10 @@ class AdminController extends Controller
             'visibilitypublic' => true,
             'isadmin' => false,
         ]);
-    
-        return redirect()->route('admin.index')->with('success', 'User created successfully.');
+
+        // Retornar resposta JSON para AJAX
+        return response()->json(['success' => true]);
     }
-    
     
     public function editUser($id) {
         $user = User::findOrFail($id);
