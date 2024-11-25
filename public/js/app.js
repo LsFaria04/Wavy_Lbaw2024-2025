@@ -1201,6 +1201,7 @@ function setupCreateUserMenu() {
     createUserBtn.addEventListener("click", () => {
       console.log("Create User Button Clicked");  
       createUserMenu.classList.toggle("hidden");
+      
     });
 
     document.addEventListener("click", (event) => {
@@ -1302,25 +1303,27 @@ document.querySelectorAll('.edit-user-button').forEach(button => {
   button.addEventListener('click', function() {
       const userId = this.getAttribute('data-user-id');
 
-      fetch(`/admin/users/${userId}/edit`)
-          .then(response => response.json())
-          .then(data => {
-              if (data.success) {
-                  document.getElementById('editUserId').value = data.user.userid;
-                  document.getElementById('editUsername').value = data.user.username;
-                  document.getElementById('editEmail').value = data.user.email;
-                  document.getElementById('editState').value = data.user.state;
-                  document.getElementById('editVisibility').value = data.user.visibilitypublic;
-                  document.getElementById('editAdmin').value = data.user.isadmin;
-
-                  document.getElementById('editUserModal').classList.remove('hidden');
-              } else {
-                  alert('Error loading user data');
-              }
-          })
-          .catch(error => console.error('Error:', error));
-  });
+      sendAjaxRequest('get',`/admin/users/${userId}/edit`, null, adminEditUser);
+  })
 });
+
+//loads the edit user form when receive a positive response from the server
+function adminEditUser(){
+  let data = JSON.parse(this.responseText);
+  if(data.success){
+    document.getElementById('editUserId').value = data.user.userid;
+    document.getElementById('editUsername').value = data.user.username;
+    document.getElementById('editEmail').value = data.user.email;
+    document.getElementById('editState').value = data.user.state;
+    document.getElementById('editVisibility').value = data.user.visibilitypublic;
+    document.getElementById('editAdmin').value = data.user.isadmin;
+
+    document.getElementById('editUserModal').classList.remove('hidden');
+  }
+  else{
+    alert('Error loading user data');
+  }
+}
 
 function eventListernerFormsAdmin(){
   if(document.getElementById('editUserForm') === null){
@@ -1329,36 +1332,33 @@ function eventListernerFormsAdmin(){
   document.getElementById('editUserForm').addEventListener('submit', function(event) {
     event.preventDefault();
 
-    const formData = new FormData(this);
+  const formData = new FormData(this);
 
-    fetch(`/admin/users/${document.getElementById('editUserId').value}`, {
-        method: 'POST',
-        body: formData,
-        headers: {
-            'X-Requested-With': 'XMLHttpRequest',
-            'Accept': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            const row = document.querySelector(`tr[data-user-id="${data.user.userid}"]`);
-            row.querySelector('.username').textContent = data.user.username;
-            row.querySelector('.email').textContent = data.user.email;
-            row.querySelector('.state').textContent = data.user.state;
-            row.querySelector('.visibility').textContent = data.user.visibilitypublic === 1 ? 'Public' : 'Private';
-            row.querySelector('.admin').textContent = data.user.isadmin ? 'Admin' : 'User';
+  let dataToSend = {};
+  for (let [name, value] of formData) {
+      dataToSend[name] = value;
+  }
 
-            document.getElementById('editUserModal').classList.add('hidden');
-        } else {
-            alert('Error saving user data');
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('An error occurred while saving user data');
-    });
+    sendAjaxRequest('post',`/admin/users/${document.getElementById('editUserId').value}`, dataToSend, updateDataEditProfile );
   });
+}
+
+function updateDataEditProfile(){
+  let data = JSON.parse(this.responseText);
+    if (data.success) {
+      const row = document.querySelector(`tr[data-user-id="${data.user.userid}"]`);
+      console.log(row);
+      row.querySelector('.username').textContent = data.user.username;
+      row.querySelector('.email').textContent = data.user.email;
+      row.querySelector('.state').textContent = data.user.state;
+      row.querySelector('.visibility').textContent = data.user.visibilitypublic === 1 ? 'Public' : 'Private';
+      row.querySelector('.admin').textContent = data.user.isadmin ? 'Admin' : 'User';
+
+      document.getElementById('editUserModal').classList.add('hidden');
+    } else {
+      alert('Error saving user data');
+    }
+
 }
 
 function addEventListenerEditUserAdmin(){

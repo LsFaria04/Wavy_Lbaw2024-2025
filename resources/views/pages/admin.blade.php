@@ -13,6 +13,18 @@
         </nav>
     </header>
 
+    @if (session('success'))
+            <div class="absolute self-center alert w-full max-w-full p-4 mb-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 rounded-lg z-10">
+                {{ session('success') }}
+            </div>
+    @endif
+
+    @if (session('error'))
+            <div class="absolute self-center alert w-full max-w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">
+                {{ session('error') }}
+            </div>
+    @endif
+
     <!--Posts -->
     <section id="posts" class="admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Posts</h2>
@@ -51,7 +63,7 @@
 
 <div id="createUserMenu" class="hidden fixed inset-0 flex items-center justify-center z-50 bg-gray-900 bg-opacity-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
-        <form id="createUserForm" class="space-y-4">
+        <form action = "{{route('admin.users.create')}}"id="createUserForm" class="space-y-4">
             @csrf
             <div>
                 <label for="username" class="block text-gray-700 font-medium">Nome de Utilizador:</label>

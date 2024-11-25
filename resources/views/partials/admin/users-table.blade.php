@@ -11,19 +11,19 @@
     </thead>
     <tbody>
         @foreach($users as $user)
-            <tr class="border-t">
-                <td class="px-4 py-2 text-gray-800">{{ $user->username }}</td>
-                <td class="px-4 py-2 text-gray-800">{{ $user->email }}</td>
+            <tr class="border-t" data-user-id="{{ $user->userid }}">
+                <td class="username px-4 py-2 text-gray-800">{{ $user->username }}</td>
+                <td class="email px-4 py-2 text-gray-800">{{ $user->email }}</td>
                 <td class="px-4 py-2 text-gray-800">
-                    <span class="px-2 py-1 text-gray-700 bg-gray-100 rounded-full">{{ $user->state }}</span>
+                    <span class="state px-2 py-1 text-gray-700 bg-gray-100 rounded-full">{{ $user->state }}</span>
                 </td>
-                <td class="px-4 py-2 text-gray-800">
+                <td class="visibility px-4 py-2 text-gray-800">
                     <span class="px-2 py-1 rounded-full w-[70px] text-center block
                         {{ $user->visibilitypublic == 1 ? 'text-green-700 bg-green-100' : 'text-red-700 bg-red-100' }} rounded-full">
                         {{ $user->visibilitypublic == 1 ? 'Public' : 'Private' }}
                     </span>
                 </td>
-                <td class="px-4 py-2 text-gray-800">
+                <td class="admin px-4 py-2 text-gray-800">
                     <span class="px-2 py-1 rounded-full w-[70px] text-center block
                         {{ $user->isadmin ? 'text-blue-700 bg-blue-100' : 'text-gray-700 bg-gray-100' }}">
                         {{ $user->isadmin ? 'Admin' : 'User' }}
