@@ -201,11 +201,9 @@ public function update(Request $request, Post $post)
 
     // Delete the post
     public function destroy(Post $post) {
-        Log::info("here");
         if (!$post) {
             return response()->json(['success' => false, 'message' => 'Post not found.'], 404);
         }
-        Log::info("here2");
 
         // Check if the authenticated user is the owner of the post
         

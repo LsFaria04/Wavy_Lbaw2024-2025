@@ -48,7 +48,7 @@ class MediaController extends Controller
     public function destroy(Media $media)
     {
         // Ensure the user is authorized to delete the media
-        if ($media->userid != Auth::id()) {
+        if ($this->authorize('delete', $media)) {
             return redirect()->route('home')->with('error', 'You are not authorized to delete this media.');
         }
 
