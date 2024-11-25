@@ -141,7 +141,8 @@ class PostController extends Controller
 public function update(Request $request, Post $post)
 {
     // Check if the authenticated user is the owner of the post
-    if ($post->userid != Auth::id() && !Auth::user()->isadmin) {
+    try { $this->authorize('edit', $post); // Proceed with the update logic 
+    }catch (AuthorizationException $e) {
         return redirect()->route('home')->with('error', 'You are not authorized to update this post.');
     }
 
@@ -200,17 +201,19 @@ public function update(Request $request, Post $post)
 
     // Delete the post
     public function destroy(Post $post) {
+        Log::info("here");
         if (!$post) {
             return response()->json(['success' => false, 'message' => 'Post not found.'], 404);
         }
+        Log::info("here2");
 
         // Check if the authenticated user is the owner of the post
-        if ($post->userid != Auth::id() && !Auth::user()->isadmin) {
-
+        
+        try { $this->authorize('delete', $post); // Proceed with the update logic 
+        }catch (AuthorizationException $e) {
             if (request()->ajax()) {
                 return response()->json(['success' => false, 'message' => 'You are not authorized to delete this post.']);
             }
-
             return redirect()->route('home')->with('error', 'You are not authorized to delete this post.');
         }
 
