@@ -1192,6 +1192,9 @@ function handleDeleteFormSubmission() {
 //Admin Create User
 function setupCreateUserMenu() {
   const createUserBtn = document.getElementById("createUserBtn");
+  if(createUserBtn === null){
+    return;
+  }
   const createUserMenu = document.getElementById("createUserMenu");
   const cancelCreateUserBtn = document.getElementById("cancelCreateUserBtn");
 
