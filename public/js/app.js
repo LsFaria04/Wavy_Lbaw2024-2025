@@ -220,8 +220,9 @@ return new_item;
 //stores the authentication state
 let isAuthenticated = false; 
 let userId = -1;
-sendAjaxRequest('post', '/api/auth-check', null, isAuth);
-function isAuth(){
+let isadmin = false;
+sendAjaxRequest('post', '/api/auth-check', null, authInfo);
+function authInfo(){
   const response = JSON.parse(this.responseText);
   isAuthenticated = response.authenticated;
   if(isAuthenticated){
@@ -231,6 +232,7 @@ function isAuth(){
 function authId(){
 const response = JSON.parse(this.responseText);
 userId = response.id;
+isadmin = response.isadmin;
 }
 
 //gets the csrf token to insert in new forms
@@ -528,13 +530,13 @@ function insertMorePosts(element, posts){
 for(let i = 0; i < posts.data.length; i++){
   let post = createPost(posts.data[i]);
 
-  if(userId == posts.data[i].user.userid){
+  if(userId == posts.data[i].user.userid || isadmin){
     post = createPostOptions(post, posts.data[i].postid); 
   }
 
   post = insertPostMedia(post, posts.data[i].media);
 
-  if(userId == posts.data[i].user.userid){
+  if(userId == posts.data[i].user.userid || isadmin){
     insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
   }
 
@@ -1005,6 +1007,7 @@ function toggleEditPost(postid) {
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
     
+    console.log(editForm);
     editForm.classList.toggle('hidden');
     postContent.classList.toggle('hidden');
     
@@ -1129,6 +1132,7 @@ document.querySelectorAll('.delete-post-button').forEach(button => {
   });
 });
 
+/*
 function openDeleteMenu(postId, postMessage) {
   const modal = document.getElementById('deleteMenu');
   const deleteForm = document.getElementById('deleteForm');
@@ -1143,7 +1147,7 @@ function openDeleteMenu(postId, postMessage) {
 
   modal.classList.remove('hidden');
 }
-
+*/
 function closeDeleteMenu() {
   const modal = document.getElementById('deleteMenu');
   modal.classList.add('hidden');

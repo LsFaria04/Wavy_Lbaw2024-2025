@@ -38,6 +38,9 @@ class SearchController extends Controller
                         ->where('visibilitypublic', true)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
+                        for($i = 0;$i < sizeof($posts); $i++){
+                            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+                        }
                     break;
                 case 'users':
                     $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?) or username = ?", [$queryWithPrefix, $queryWithPrefix])
@@ -52,6 +55,9 @@ class SearchController extends Controller
                     $posts = Post::whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
                         ->where('visibilitypublic', true)
                         ->paginate(10);
+                        for($i = 0;$i < sizeof($posts); $i++){
+                            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+                        }
                     break;
             }
         }

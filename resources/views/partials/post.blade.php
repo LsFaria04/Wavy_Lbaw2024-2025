@@ -9,7 +9,7 @@
             <span class="text-gray-500 text-sm">{{ $post->createddate->diffForHumans() }}</span>
         </div>
         @auth
-            @if(auth()->id() === $post->userid) 
+            @if(auth()->id() === $post->userid || Auth::user()->isadmin) 
                 <div id= "postOptions" class="flex items-center gap-2">
                     <button type="button" onclick="toggleEditPost('{{ $post->postid }}')" class="text-gray-500 hover:text-black">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="black" viewBox="0 0 24 24" stroke="currentColor">
@@ -77,7 +77,7 @@
     </div>
 
     @auth
-        @if(auth()->id() === $post->userid) 
+        @if(auth()->id() === $post->userid || Auth::user()->isadmin) 
             <!-- Edit Section in post.blade.php -->
             <div id="edit-post-{{ $post->postid }}" class="edit-post-form hidden mt-4 bg-white rounded-xl shadow-md p-4">
                 <form action="{{ route('posts.update', $post->postid) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4" data-post-id="{{ $post->postid }}">

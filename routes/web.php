@@ -55,7 +55,7 @@ Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
 Route::post('api/auth-id', function () {
-    return response()->json(['id' => auth()->id()]);
+    return response()->json(['id' => auth()->id(), 'isadmin' => Auth::user()->isadmin]);
 });
 
 //Posts
