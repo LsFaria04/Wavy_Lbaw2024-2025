@@ -1405,5 +1405,57 @@ function deleteUser(userId) {
   }
 }
 
+//Delete Account
+function toggleDropdown() {
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  dropdownMenu.classList.toggle('hidden');
+}
+
+function toggleConfirmationModal() {
+  const confirmationMenu = document.getElementById('confirmationModal');
+  confirmationMenu.classList.toggle('hidden');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  dropdownMenu.classList.toggle('hidden');
+  if (isadmin) {
+    togglePasswordForm();
+  }
+}
+
+function closeModal() {
+  const confirmationMenu = document.getElementById('confirmationModal');
+  confirmationMenu.classList.toggle('hidden');
+}
+
+function confirmDeleteProfile() {  
+  if (isadmin) {
+    document.getElementById('deleteProfileForm').submit();
+  }
+  else {
+    const password = document.getElementById('password').value;
+
+    if (!password) {
+      document.getElementById('passwordError').classList.remove('hidden');
+      document.getElementById('passwordError').innerText = 'Password is required.';
+      return;
+    }
+
+    sendAjaxRequest('POST', '/profile/verify-password', { password }, function () {
+      const response = JSON.parse(this.responseText);
+
+      if (response.success) {
+        document.getElementById('deleteProfileForm').submit();
+      }
+      else {
+        document.getElementById('passwordError').classList.remove('hidden');
+        document.getElementById('passwordError').innerText = response.message;
+      }
+    });
+  }
+}
+
+function togglePasswordForm() {
+  const passwordForm = document.getElementById('passwordForm');
+  passwordForm.classList.toggle('hidden');
+}
 
 addEventListeners();
