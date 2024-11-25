@@ -88,19 +88,9 @@ paths:
                   value: '/login'
 
   /register:
-    get:
-      operationId: R104
-      summary: 'R104: Register Page'
-      description: 'Provide new user registration form. Access: NAUTH'
-      tags:
-        - 'M01: Authentication'
-      responses:
-        '200':
-          description: 'Ok. Show Sign-Up UI'
-
     post:
-      operationId: R105
-      summary: 'R105: Register Action'
+      operationId: R104
+      summary: 'R104: Register Action'
       description: 'Processes the new user registration form submission. Access: NAUTH'
       tags:
         - 'M01: Authentication'
@@ -151,15 +141,15 @@ paths:
           required: true
       responses:
         '200':
-          description: 'Everything OK. Show User Profile'
+          description: 'Profile data retrieved successfully.'
         '404':
-          description: 'Profile Not Found'
+          description: 'User profile not found.'
   
   /profile/{userid}:
     put:
       operationId: R107
       summary: 'R107: Update Profile'
-      description: 'Updated the user profile. Access: AUTH, ADMIN'
+      description: 'Update the profile information of a user by their ID. Access: AUTH, ADMIN'
       tags:
         - 'M02: Users'
       parameters:
@@ -177,10 +167,13 @@ paths:
               properties:
                 username:
                   type: string
+                  description: 'Unique username'
                 bio:
                   type: string
+                  description: 'Short profile description'
                 visibilityPublic:
                   type: boolean
+                  description: 'Profile visibility (public or private)'
               required:
                   - username
                   - visibilityPublic
@@ -198,6 +191,10 @@ paths:
                 302Failure:
                   description: 'Failed. Redirect to the profile page without updating.'
                   value: '/profile/{username}'
+        '403':
+          description: 'Unauthorized to update the profile'
+        '404':
+          description: 'User not found'
   
   /home:
     get:
@@ -349,18 +346,34 @@ paths:
     get:
       operationId: R112
       summary: 'R112: Search for content, users and groups'
-      description: 'Provide quick access to content, users and groups. Access: NAUTH, AUTH, ADMIN'
+      description: 'Provide quick access to searched content, users and groups. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          required: false
+          description: 'Search query (e.g., keywords to search). If empty, returns no results.'
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [posts, users, groups]
+          required: false
+          description: 'The category to search in (default is posts).'
       responses: 
         '200':
-          description: 'OK. Show the Search results.'
+          description: 'Search results returned successfully.'
+        '400':
+          description: 'Invalid search parameters.'
 
   /media/store:
     post:
       operationId: R113
-      summary: 'R113: Store a Media'
-      description: 'Process and store media files. Access: AUTH'
+      summary: 'R113: Store Media'
+      description: 'Process and store a media file associated with a specific post. Access: AUTH'
       tags:
         - 'M06: Media'
       requestBody:
@@ -373,19 +386,24 @@ paths:
                 file:
                   type: string
                   format: binary
+                  description: 'Media file to upload (e.g., image, video)'
+                postid:
+                  type: integer
+                  description: 'ID of the post to associate the media with'
               required:
                 - file
+                - postid
       responses:
         '200':
-          description: 'OK. Media file uploaded successfully.'
+          description: 'Media file uploaded successfully.'
         '400':
-          description: 'Invalid file format.'
+          description: 'Invalid request or exceeded maximum media per post.'
           
   /media/{mediaId}:
     delete:
       operationId: R114
-      summary: 'R114: Delete Media'
-      description: 'Delete the specified media. Access: AUTH, ADMIN'
+      summary: 'R114: Delete a Media Item'
+      description: 'Remove a media item by its ID. Access: AUTH, ADMIN'
       tags:
         - 'M06: Media'
       parameters:
@@ -394,11 +412,14 @@ paths:
           schema:
             type: integer
           required: true
+          description: 'The ID of the media item to delete'
       responses:
         '204':
-          description: 'Media deleted successfully.'
+          description: 'Media item deleted successfully'
+        '403':
+          description: 'Unauthorized to delete media'
         '404':
-          description: 'Media not found.'
+          description: 'Media item not found'
 
   /api/posts:
     get:
@@ -437,10 +458,24 @@ paths:
   /api/search:
     get:
       operationId: R117
-      summary: 'R117: Perform a global search'
-      description: 'Searches content, users, or groups. Access: NAUTH, AUTH, ADMIN'
+      summary: 'R117: Perform a search'
+      description: 'Search across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: 'The search query string'
+          required: false
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [posts, users, groups]
+          description: 'The category to search within (default: posts)'
+          required: false
       responses:
         '200':
           description: Search results
@@ -466,3 +501,23 @@ paths:
       responses:
         '200':
           description: User ID and admin status in JSON
+
+  /api/profile/{username}:
+    get:
+      operationId: R120
+      summary: 'R120: Fetch User Data'
+      description: 'Retrieve JSON details of a user by username. Access: AUTH'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: 'Username of the user'
+      responses:
+        '200':
+          description: 'User data retrieved successfully.'
+        '404':
+          description: 'User not found.'
