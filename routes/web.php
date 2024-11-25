@@ -12,6 +12,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MediaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -63,8 +64,6 @@ Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('posts.update');
 Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-
-use App\Http\Controllers\MediaController;
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');

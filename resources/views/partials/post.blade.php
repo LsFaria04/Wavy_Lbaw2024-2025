@@ -50,7 +50,7 @@
         <p>{{ $post->message }}</p>
 
         <!-- Loop through media files associated with the post -->
-        <div class="post-media mt-4">
+        <div class="post-media mt-4 grid grid-cols-2 gap-4">
             @foreach ($post->media as $media)
                 @php
                     $filePath = asset('storage/' . $media->path);
@@ -58,7 +58,7 @@
                 @endphp
 
                 @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                    <img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto">
+                    <img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto ">
                 @elseif (in_array($fileExtension, ['mp4', 'avi', 'mov']))
                     <video controls class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto">
                         <source src="{{ $filePath }}" type="video/{{ $fileExtension }}">
