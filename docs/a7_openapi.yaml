@@ -31,7 +31,7 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: 'Everything Ok. Show the Login Page'
+          description: 'Show the Login Page'
     
     post:
       operationId: R102
@@ -64,7 +64,7 @@ paths:
                 302Success:
                   description: 'Login was successful.'
                   value: '/home'
-                303Error:
+                302Error:
                   description: 'The provided credentials do not match our records.'
                   value: '/login'
 
@@ -88,9 +88,19 @@ paths:
                   value: '/login'
 
   /register:
-    post:
+    get:
       operationId: R104
-      summary: 'R104: Register Action'
+      summary: 'R104: Register Page'
+      description: 'Provide new user registration form. Access: NAUTH'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: 'Show Register Page'
+
+    post:
+      operationId: R105
+      summary: 'R105: Register Action'
       description: 'Processes the new user registration form submission. Access: NAUTH'
       tags:
         - 'M01: Authentication'
@@ -141,7 +151,7 @@ paths:
           required: true
       responses:
         '200':
-          description: 'Profile data retrieved successfully.'
+          description: 'Profile data retrieved and displayed successfully.'
         '404':
           description: 'User profile not found.'
   
@@ -229,12 +239,6 @@ paths:
                 visibilityPublic:
                   type: boolean
                   description: 'Post visibility (public or private).'
-                media:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: 'Optional media files (max 4).'
               required:
                 - message
       responses:
@@ -281,12 +285,6 @@ paths:
                 removeMedia:
                   type: string
                   description: 'JSON array of media IDs to be removed'
-                media:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: 'New media files to upload'
               required:
                 - message
       responses:
@@ -346,28 +344,12 @@ paths:
     get:
       operationId: R112
       summary: 'R112: Search for content, users and groups'
-      description: 'Provide quick access to searched content, users and groups. Access: NAUTH, AUTH, ADMIN'
+      description: 'Provide quick access to content, users and groups. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
-      parameters:
-        - in: query
-          name: q
-          schema:
-            type: string
-          required: false
-          description: 'Search query (e.g., keywords to search). If empty, returns no results.'
-        - in: query
-          name: category
-          schema:
-            type: string
-            enum: [posts, users, groups]
-          required: false
-          description: 'The category to search in (default is posts).'
       responses: 
         '200':
-          description: 'Search results returned successfully.'
-        '400':
-          description: 'Invalid search parameters.'
+          description: 'OK. Show the Search results.'
 
   /media/store:
     post:
