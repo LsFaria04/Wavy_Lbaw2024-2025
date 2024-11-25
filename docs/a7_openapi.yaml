@@ -69,7 +69,7 @@ paths:
                   value: '/login'
 
   /logout:
-    post:
+    get:
       operationId: R103
       summary: 'R103: Logout Action'
       description: 'Logout the current authenticated user. Access: AUTH, ADMIN'
@@ -202,13 +202,15 @@ paths:
   /home:
     get:
       operationId: R108
-      summary: 'R108: Access the home page'
+      summary: 'R108: Access the Home Page'
       description: 'Provide access to the home page and timeline. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M02: Users'
       responses: 
         '200':
-          description: 'OK. Show the home page and timeline.'
+          description: 'Successfully retrieved home page'
+        '401':
+          description: 'Unauthorized access'
   
   /posts/store:
     post:
@@ -224,13 +226,20 @@ paths:
             schema:
               type: object
               properties:
-                content:
+                message:
                   type: string
+                  description: 'Content of the post.'
                 visibilityPublic:
                   type: boolean
+                  description: 'Post visibility (public or private).'
+                media:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 'Optional media files (max 4).'
               required:
-                - content
-                - visibilityPublic
+                - message
       responses:
         '302':
           description: 'Redirect after processing the post creation'
@@ -242,11 +251,104 @@ paths:
                 302Success:
                   description: 'Post creation was successful.'
                   value: '/home'
+                302Failure:
+                  description: 'Post creation failed.'
+                  value: '/home'
+        '400':
+          description: 'Invalid input or file upload failure'
+
+  /posts/update/{post}:
+    post:
+      operationId: R110
+      summary: 'R110: Update a post'
+      description: 'Update a specified post by its ID. Access: AUTH, ADMIN'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: post
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                visibilityPublic:
+                  type: boolean
+                removeMedia:
+                  type: string
+                  description: 'JSON array of media IDs to be removed'
+                media:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 'New media files to upload'
+              required:
+                - message
+      responses:
+        '302':
+          description: 'Redirect after successful post update'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Post updated successfully.'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed to update post.'
+                  value: '/home'
+        '400':
+          description: 'Invalid input or update failure'
+        '404':
+          description: 'Post not found'
+        '403':
+          description: 'Unauthorized to update the post'
+
+  /posts/delete/{post}:
+    post:
+      operationId: R111
+      summary: 'R111: Delete a post'
+      description: 'Deletes the specified post by ID. Access: AUTH, ADMIN'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: post
+          schema:
+            type: integer
+          required: true
+      responses:
+        '302':
+          description: 'Redirect after post deletion'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Post deleted successfully.'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed to delete post.'
+                  value: '/home'
+        '404':
+          description: 'Post not found'
+        '403':
+          description: 'Unauthorized to delete the post'
 
   /search:
     get:
-      operationId: R110
-      summary: 'R110: Search for content, users and groups'
+      operationId: R112
+      summary: 'R112: Search for content, users and groups'
       description: 'Provide quick access to content, users and groups. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
@@ -256,8 +358,8 @@ paths:
 
   /media/store:
     post:
-      operationId: R111
-      summary: 'R111: Store a Media'
+      operationId: R113
+      summary: 'R113: Store a Media'
       description: 'Process and store media files. Access: AUTH'
       tags:
         - 'M06: Media'
@@ -281,8 +383,8 @@ paths:
           
   /media/{mediaId}:
     delete:
-      operationId: R112
-      summary: 'R112: Delete Media'
+      operationId: R114
+      summary: 'R114: Delete Media'
       description: 'Delete the specified media. Access: AUTH, ADMIN'
       tags:
         - 'M06: Media'
@@ -297,3 +399,70 @@ paths:
           description: 'Media deleted successfully.'
         '404':
           description: 'Media not found.'
+
+  /api/posts:
+    get:
+      operationId: R115
+      summary: 'R115: Fetch posts for the timeline'
+      description: 'Retrieve posts for the authenticated user timeline. Access: AUTH'
+      tags:
+        - 'M03: Posts'
+      responses:
+        '200':
+          description: 'Successfully retrieved posts'
+        '401':
+          description: 'Unauthorized access'
+
+  /api/posts/{username}:
+    get:
+      operationId: R116
+      summary: 'R116: Fetch user posts'
+      description: 'Retrieve posts created by a specific user. Access: AUTH'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 'Successfully retrieved posts for the user'
+        '404':
+          description: 'User or posts not found'
+        '401':
+          description: 'Unauthorized access'
+
+  /api/search:
+    get:
+      operationId: R117
+      summary: 'R117: Perform a global search'
+      description: 'Searches content, users, or groups. Access: NAUTH, AUTH, ADMIN'
+      tags:
+        - 'M04: Search'
+      responses:
+        '200':
+          description: Search results
+
+  /api/auth-check:
+    post:
+      operationId: R118
+      summary: 'R118: Check authentication status'
+      description: 'Returns whether the current user is authenticated. Access: AUTH'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: Auth status in JSON
+
+  /api/auth-id:
+    post:
+      operationId: R119
+      summary: 'R119: Retrieve the current user's ID'
+      description: 'Returns the authenticated user ID and admin status. Access: AUTH'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: User ID and admin status in JSON
