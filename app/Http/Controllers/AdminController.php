@@ -65,31 +65,33 @@ class AdminController extends Controller
             'isadmin' => false,
         ]);
 
-        // Retornar resposta JSON para AJAX
         return response()->json(['success' => true]);
     }
     
-    public function editUser($id) {
-        $user = User::findOrFail($id);
-        return view('partials.admin.edit-user', compact('user'));
+    public function edit($id) {
+        $user = User::find($id);
+        if ($user) {
+            return response()->json(['success' => true, 'user' => $user]);
+        }
+        return response()->json(['success' => false]);
     }
 
-    public function updateUser(Request $request, $id) {
-        $user = User::findOrFail($id);
-        $validated = $request->validate([
-            'username' => 'required|string|max:255|unique:users,username,' . $id . ',userid',
-            'email' => 'required|email|max:255|unique:users,email,' . $id . ',userid',
-        ]);
-
-        $user->update($validated);
-
-        return redirect()->route('admin.index')->with('success', 'User updated successfully.');
+    public function update(Request $request, $id) {
+        $user = User::find($id);
+        if ($user) {
+            $user->update($request->only('username', 'email', 'state', 'visibilitypublic', 'isadmin'));
+            return response()->json(['success' => true, 'user' => $user]);
+        }
+        return response()->json(['success' => false]);
     }
+
 
     public function destroyUser($id) {
         $user = User::findOrFail($id);
         $user->delete();
-
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+        return response()->json([
+            'success' => true,
+            'message' => 'User deleted successfully.'
+        ]);
     }
 }

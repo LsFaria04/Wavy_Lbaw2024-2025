@@ -198,15 +198,19 @@ public function update(Request $request, Post $post)
     return redirect()->route('home')->with('success', 'Post updated successfully!');
 }
 
-
-
-    
-
     // Delete the post
-    public function destroy(Post $post)
-    {
+    public function destroy(Post $post) {
+        if (!$post) {
+            return response()->json(['success' => false, 'message' => 'Post not found.'], 404);
+        }
+
         // Check if the authenticated user is the owner of the post
         if ($post->userid != Auth::id() && !Auth::user()->isadmin) {
+
+            if (request()->ajax()) {
+                return response()->json(['success' => false, 'message' => 'You are not authorized to delete this post.']);
+            }
+
             return redirect()->route('home')->with('error', 'You are not authorized to delete this post.');
         }
 
@@ -217,13 +221,14 @@ public function update(Request $request, Post $post)
             }
         }
 
-
         $post->media()->delete();
         
         // Delete the post
         $post->delete();
 
-        
+        if (request()->ajax()) {
+        return response()->json(['success' => true, 'message' => 'Post deleted successfully!']);
+        }
 
         return redirect()->route('home')->with('success', 'Post deleted successfully!');
     }

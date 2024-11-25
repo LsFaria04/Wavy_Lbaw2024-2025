@@ -1131,6 +1131,10 @@ function openDeleteMenu(postId, postMessage) {
   const deleteForm = document.getElementById('deleteForm');
   const postIdInput = document.getElementById('postId');
 
+  if (!deleteForm.dataset.originalAction) {
+    deleteForm.dataset.originalAction = deleteForm.action;
+  }
+
   deleteForm.action = deleteForm.action.replace('POST_ID', postId);
   postIdInput.value = postId;
 
@@ -1149,24 +1153,30 @@ function handleDeleteFormSubmission() {
   deleteForm.addEventListener('submit', function(event) {
       event.preventDefault();
 
+      const postIdInput = document.getElementById('postId');
+      const postId = postIdInput.value;
+
       const formData = new FormData(deleteForm);
-      const postId = formData.get('post_id');
+      formData.set('post_id', postId);
 
       fetch(deleteForm.action, {
           method: 'POST',
           body: formData,
           headers: {
-              'X-Requested-With': 'XMLHttpRequest'
+            'X-Requested-With': 'XMLHttpRequest', 
+            'Accept': 'application/json',         
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content') 
           }
       })
       .then(response => response.json())
       .then(data => {
+          console.log(data);
           if (data.success) {
               const postElement = document.getElementById(`post-${postId}`);
               postElement?.remove();
               closeDeleteMenu();
           } else {
-              alert('Error deleting post!');
+              alert('Error deleting post!'  + data.message);
           }
       })
       .catch(error => {
@@ -1284,4 +1294,96 @@ function addEventListenerToForm(form){
   });
 }
 
-  addEventListeners();
+//Admin Edit User
+document.querySelectorAll('.edit-user-button').forEach(button => {
+  button.addEventListener('click', function() {
+      const userId = this.getAttribute('data-user-id');
+
+      fetch(`/admin/users/${userId}/edit`)
+          .then(response => response.json())
+          .then(data => {
+              if (data.success) {
+                  document.getElementById('editUserId').value = data.user.userid;
+                  document.getElementById('editUsername').value = data.user.username;
+                  document.getElementById('editEmail').value = data.user.email;
+                  document.getElementById('editState').value = data.user.state;
+                  document.getElementById('editVisibility').value = data.user.visibilitypublic;
+                  document.getElementById('editAdmin').value = data.user.isadmin;
+
+                  document.getElementById('editUserModal').classList.remove('hidden');
+              } else {
+                  alert('Error loading user data');
+              }
+          })
+          .catch(error => console.error('Error:', error));
+  });
+});
+
+document.getElementById('editUserForm').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  const formData = new FormData(this);
+
+  fetch(`/admin/users/${document.getElementById('editUserId').value}`, {
+      method: 'POST',
+      body: formData,
+      headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Accept': 'application/json',
+      }
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          const row = document.querySelector(`tr[data-user-id="${data.user.userid}"]`);
+          row.querySelector('.username').textContent = data.user.username;
+          row.querySelector('.email').textContent = data.user.email;
+          row.querySelector('.state').textContent = data.user.state;
+          row.querySelector('.visibility').textContent = data.user.visibilitypublic === 1 ? 'Public' : 'Private';
+          row.querySelector('.admin').textContent = data.user.isadmin ? 'Admin' : 'User';
+
+          document.getElementById('editUserModal').classList.add('hidden');
+      } else {
+          alert('Error saving user data');
+      }
+  })
+  .catch(error => {
+      console.error('Error:', error);
+      alert('An error occurred while saving user data');
+  });
+});
+
+document.getElementById('closeModalBtn').addEventListener('click', function() {
+  document.getElementById('editUserModal').classList.add('hidden');
+});
+
+// Admin Delete User
+function deleteUser(userId) {
+  if (confirm("Are you sure you want to delete this user?")) {
+      fetch(`/admin/users/${userId}`, {
+          method: 'DELETE',
+          headers: {
+              'Content-Type': 'application/json',
+              'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+          }
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              alert(data.message); 
+              document.getElementById(`user-${userId}`).remove();
+              
+              window.location.href = data.redirect_url; 
+          } else {
+              alert('Error deleting user');
+          }
+      })
+      .catch(error => {
+          console.error('Error:', error);
+          alert('An error occurred while deleting the user');
+      });
+  }
+}
+
+
+addEventListeners();

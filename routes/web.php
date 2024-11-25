@@ -90,11 +90,13 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
 
+    Route::get('/admin/posts/search', [SearchController::class, 'searchPosts'])->name('posts.search');
     Route::delete('/posts/delete/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
 
+    Route::get('/admin/users/search', [SearchController::class, 'searchUsers'])->name('users.search');
     Route::get('/admin/users/create', [AdminController::class, 'createUser'])->name('admin.users.create');
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
-    Route::get('/users/{id}/edit', [AdminController::class, 'editUser'])->name('admin.users.edit');
-    Route::put('/users/{id}', [AdminController::class, 'updateUser'])->name('admin.users.update');
+    Route::get('/admin/users/{id}/edit', [AdminController::class, 'edit'])->name('admin.users.edit');
+    Route::post('/admin/users/{id}', [AdminController::class, 'update'])->name('admin.users.update');
     Route::delete('/users/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
 });

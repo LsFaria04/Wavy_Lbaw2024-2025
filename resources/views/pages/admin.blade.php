@@ -55,25 +55,25 @@
             @csrf
             <div>
                 <label for="username" class="block text-gray-700 font-medium">Nome de Utilizador:</label>
-                <input type="text" id="username" name="username"
+                <input type="text" id="create-username" name="username"
                     class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required>
             </div>
             <div>
                 <label for="email" class="block text-gray-700 font-medium">Email:</label>
-                <input type="email" id="email" name="email"
+                <input type="email" id="create-email" name="email"
                     class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required>
             </div>
             <div>
                 <label for="password" class="block text-gray-700 font-medium">Password:</label>
-                <input type="password" id="password" name="password"
+                <input type="password" id="create-password" name="password"
                     class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required>
             </div>
             <div>
                 <label for="password_confirmation" class="block text-gray-700 font-medium">Confirm Password:</label>
-                <input type="password" id="password_confirmation" name="password_confirmation"
+                <input type="password" id="create-password_confirmation" name="password_confirmation"
                     class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required>
             </div>

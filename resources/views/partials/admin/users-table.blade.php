@@ -29,7 +29,7 @@
                         {{ $user->isadmin ? 'Admin' : 'User' }}
                     </span>                </td>
                 <td class="px-4 py-2 text-gray-800">
-                    <a href="{{ route('admin.users.edit', ['id' => $user->userid]) }}" class="text-blue-600 hover:underline">Edit</a> |
+                    <button class="text-blue-600 hover:underline edit-user-button" data-user-id="{{ $user->userid }}">Edit</button>
                     <form action="{{ route('admin.users.destroy', ['id' => $user->userid]) }}" method="POST" class="inline-block">
                         @csrf
                         @method('DELETE')
@@ -40,6 +40,54 @@
         @endforeach
     </tbody>
 </table>
+
+<!--Edit User Menu-->
+<div id="editUserModal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center">
+    <div class="bg-white p-6 rounded-lg w-[400px]">
+        <h2 class="text-xl font-semibold text-gray-700 mb-4">Edit User</h2>
+        <form id="editUserForm">
+            @csrf
+            <input type="hidden" id="editUserId" name="id">
+            
+            <div class="mb-4">
+                <label for="editUsername" class="block text-gray-600">Username</label>
+                <input type="text" id="editUsername" name="username" class="w-full p-2 border rounded mt-2">
+            </div>
+            
+            <div class="mb-4">
+                <label for="editEmail" class="block text-gray-600">Email</label>
+                <input type="email" id="editEmail" name="email" class="w-full p-2 border rounded mt-2">
+            </div>
+            
+            <div class="mb-4">
+                <label for="editState" class="block text-gray-600">State</label>
+                <input type="text" id="editState" name="state" class="w-full p-2 border rounded mt-2">
+            </div>
+
+            <div class="mb-4">
+                <label for="editVisibility" class="block text-gray-600">Visibility</label>
+                <select id="editVisibility" name="visibilitypublic" class="w-full p-2 border rounded mt-2">
+                    <option value="1">Public</option>
+                    <option value="0">Private</option>
+                </select>
+            </div>
+
+            <div class="mb-4">
+                <label for="editAdmin" class="block text-gray-600">Admin</label>
+                <select id="editAdmin" name="isadmin" class="w-full p-2 border rounded mt-2">
+                    <option value="1">Yes</option>
+                    <option value="0">No</option>
+                </select>
+            </div>
+            
+            <div class="flex justify-end">
+                <button type="button" id="closeModalBtn" class="bg-gray-300 text-gray-700 px-4 py-2 rounded mr-2">Cancel</button>
+                <button type="submit" id="saveEditBtn" class="bg-blue-600 text-white px-4 py-2 rounded">Save</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 
 @if ($users->hasPages())
     <nav class="flex items-center justify-center space-x-2 mt-6 pagination" aria-label="Pagination">
