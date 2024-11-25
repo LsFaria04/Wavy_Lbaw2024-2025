@@ -42,6 +42,7 @@
             <div class="pt-20 px-6 pb-4">
                 <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
                 <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>
+                @auth
                 @if(auth()->id() === $user->userid || Auth::user()->isadmin)
                     <button 
                         class="absolute top-0 right-0 mt-4 mr-4 px-4 py-2 font-bold bg-gray-800 text-white rounded-2xl"
@@ -49,6 +50,7 @@
                         Edit Profile
                     </button>
                 @endif
+                @endauth
             </div>
 
             <nav class="flex justify-around">
@@ -90,50 +92,18 @@
             <!-- Content Tabs -->
             <div class="flex flex-col w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4" id = "profile-tab-content">
                 <!-- Content Section (starts with the posts) -->
-                    @if($posts->isEmpty())
+                    @if(($user->visibilitypublic === false && !Auth::check())  || ($user->visibilitypublic === false && !Auth::user()->isadmin))
+                        <div class="flex justify-center items-center h-32">
+                            <p class="text-gray-600 text-center">Account is private.</p>
+                        </div>
+                    @elseif($posts->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">No posts found for this user.</p>
                         </div>
+                    
                     @else
                         @each('partials.post', $posts, 'post')
                     @endif
-            
-                <!--
-                Comments Section
-                <section id="user-comments" class="tab-content hidden">
-                    @if(empty($comments))
-                        <div class="flex justify-center items-center h-32">
-                            <p class="text-gray-600 text-center">No comments found for this user.</p>
-                        </div>
-                    @else
-                        @foreach($comments as $comment)
-                            <div class="mb-4 p-4 bg-white rounded-md shadow">
-                                <div class="flex justify-between items-center">
-                                    <h3 class="font-bold text-gray-800">{{ $comment->user->username }}</h3>
-
-                                    @if($comment->parentcommentid)
-                                        <p class="text-sm hover:text-sky-900">
-                                            <strong>Replying to:</strong>
-                                            {{ $comment->parentcomment->user->username }}
-                                        </p>
-                                    @else
-                                        <p class="text-sm hover:text-sky-900">
-                                            <strong>Replying to:</strong>
-                                            {{ $comment->post->user->username }}
-                                        </p>
-                                    @endif 
-                                </div>
-                                <span class="text-sm text-gray-500">{{ $comment->createddate->diffForHumans() }}</span>
-                                <p class="mt-2 text-gray-700">{{ $comment->message }}</p>
-                            </div>
-                        @endforeach
-                    @endif
-                </section>
-                <section id="user-likes" class="tab-content hidden">
-                    <div class="flex justify-center items-center h-32">
-                        <p class="text-gray-600 text-center">Likes TO-DO.</p>
-                    </div>
-                </section> -->
             </div>
         </div>
     @endSection
