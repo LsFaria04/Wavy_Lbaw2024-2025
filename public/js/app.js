@@ -249,9 +249,10 @@ post.innerHTML = `
   <div class="post-header mb-2 flex justify-between items-center">
       <div>
           <h3 class="font-bold">
-              <a href="../profile/${postInfo.user.username}" class="text-black hover:text-sky-900">
-                  ${ postInfo.user.username }
-              </a>
+            <a href="${ postInfo.user.state === 'deleted' ? '#' : '../profile/' + postInfo.user.username }" 
+                class="text-black hover:text-sky-900">
+                ${ postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username }
+            </a>
           </h3>
           <span class="text-gray-500 text-sm">${ postInfo.createddate }</span>
       </div>
@@ -260,7 +261,6 @@ post.innerHTML = `
       <p>${ postInfo.message }</p>
     </div>
 `;
-
 
 return post
 
