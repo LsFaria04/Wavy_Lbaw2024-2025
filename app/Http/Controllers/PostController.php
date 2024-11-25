@@ -34,6 +34,8 @@ class PostController extends Controller
     public function getPostsTimeline(Request $request){
 
         if (Auth::check()){
+            //$friendsId = Follow::where('follower',Auth::id())->pluck('followee')->toArray();
+            //whereIn(userid, $friendsId) --> Posts of friends, do the same to groups and topics when implemented.
             $posts = Post::with('user','media')->orderBy('createddate', 'desc')->paginate(10);  
         }
         else {
