@@ -55,6 +55,9 @@ function addEventListeners() {
   //listeners related to the posts
   addEventListenerToPostForms();
   syncFilesWithInputEventListener()
+
+  addEventListenerEditUserAdmin();
+  eventListernerFormsAdmin();
   
 }
 
@@ -1319,43 +1322,53 @@ document.querySelectorAll('.edit-user-button').forEach(button => {
   });
 });
 
-document.getElementById('editUserForm').addEventListener('submit', function(event) {
-  event.preventDefault();
+function eventListernerFormsAdmin(){
+  if(document.getElementById('editUserForm') === null){
+    return;
+  }
+  document.getElementById('editUserForm').addEventListener('submit', function(event) {
+    event.preventDefault();
 
-  const formData = new FormData(this);
+    const formData = new FormData(this);
 
-  fetch(`/admin/users/${document.getElementById('editUserId').value}`, {
-      method: 'POST',
-      body: formData,
-      headers: {
-          'X-Requested-With': 'XMLHttpRequest',
-          'Accept': 'application/json',
-      }
-  })
-  .then(response => response.json())
-  .then(data => {
-      if (data.success) {
-          const row = document.querySelector(`tr[data-user-id="${data.user.userid}"]`);
-          row.querySelector('.username').textContent = data.user.username;
-          row.querySelector('.email').textContent = data.user.email;
-          row.querySelector('.state').textContent = data.user.state;
-          row.querySelector('.visibility').textContent = data.user.visibilitypublic === 1 ? 'Public' : 'Private';
-          row.querySelector('.admin').textContent = data.user.isadmin ? 'Admin' : 'User';
+    fetch(`/admin/users/${document.getElementById('editUserId').value}`, {
+        method: 'POST',
+        body: formData,
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+            'Accept': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            const row = document.querySelector(`tr[data-user-id="${data.user.userid}"]`);
+            row.querySelector('.username').textContent = data.user.username;
+            row.querySelector('.email').textContent = data.user.email;
+            row.querySelector('.state').textContent = data.user.state;
+            row.querySelector('.visibility').textContent = data.user.visibilitypublic === 1 ? 'Public' : 'Private';
+            row.querySelector('.admin').textContent = data.user.isadmin ? 'Admin' : 'User';
 
-          document.getElementById('editUserModal').classList.add('hidden');
-      } else {
-          alert('Error saving user data');
-      }
-  })
-  .catch(error => {
-      console.error('Error:', error);
-      alert('An error occurred while saving user data');
+            document.getElementById('editUserModal').classList.add('hidden');
+        } else {
+            alert('Error saving user data');
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        alert('An error occurred while saving user data');
+    });
   });
-});
+}
 
-document.getElementById('closeModalBtn').addEventListener('click', function() {
-  document.getElementById('editUserModal').classList.add('hidden');
-});
+function addEventListenerEditUserAdmin(){
+  if(document.getElementById('closeModalBtn') === null){
+    return;
+  }
+  document.getElementById('closeModalBtn').addEventListener('click', function() {
+    document.getElementById('editUserModal').classList.add('hidden');
+  });
+}
 
 // Admin Delete User
 function deleteUser(userId) {
