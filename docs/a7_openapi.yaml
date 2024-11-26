@@ -140,7 +140,7 @@ paths:
     get:
       operationId: R108
       summary: 'R108: View User Profile'
-      description: 'Show the user profile. Access: AUTH, ADMIN'
+      description: 'Show the user profile. Access: NAUTH, AUTH, OWN, ADMIN'
       tags:
         - 'M02: Users'
       parameters:
@@ -159,7 +159,7 @@ paths:
     put:
       operationId: R109
       summary: 'R109: Update Profile'
-      description: 'Update the profile information of a user by their ID. Access: AUTH, ADMIN'
+      description: 'Update the profile information of a user by their ID. Access: OWN, ADMIN'
       tags:
         - 'M02: Users'
       parameters:
@@ -232,27 +232,12 @@ paths:
           schema:
             type: integer
           description: 'ID of the user to delete'
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  description: 'User password for confirmation'
-              required:
-                - password
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  description: 'User password for confirmation'
-              required:
-                - password
+        - name: X-Request-Password
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'User password for confirmation'
       responses:
         '200':
           description: 'User deleted successfully'
@@ -379,7 +364,7 @@ paths:
     post:
       operationId: R113
       summary: 'R113: Update a post'
-      description: 'Update a specified post by its ID. Access: AUTH, ADMIN'
+      description: 'Update a specified post by its ID. Access: OWN, ADMIN'
       tags:
         - 'M03: Posts'
       parameters:
@@ -444,7 +429,7 @@ paths:
     post:
       operationId: R114
       summary: 'R114: Delete a post'
-      description: 'Deletes the specified post by ID. Access: AUTH, ADMIN'
+      description: 'Deletes the specified post by ID. Access: OWN, ADMIN'
       tags:
         - 'M03: Posts'
       parameters:
