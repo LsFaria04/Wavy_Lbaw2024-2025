@@ -528,6 +528,7 @@ for(let i = 0; i < groups.data.length; i++){
 function insertMorePosts(element, posts){
   for(let i = 0; i < posts.data.length; i++){
     
+    console.log(posts.data[i].user);
     if (posts.data[i].user.state === 'deleted') {
       posts.data[i].user.username = 'Deleted User';
     }

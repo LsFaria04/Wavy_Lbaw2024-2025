@@ -34,6 +34,7 @@ class User extends Authenticatable
         'visibilitypublic',
         'isadmin',
         'search',
+        'state',
     ];
 
     /**
@@ -44,7 +45,6 @@ class User extends Authenticatable
     protected $hidden = [
         'passwordhash',
         'remember_token',
-        'state',
     ];
 
     /**
