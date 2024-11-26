@@ -208,8 +208,8 @@ paths:
   
   /home:
     get:
-      operationId: R109
-      summary: 'R109: Access the Home Page'
+      operationId: R110
+      summary: 'R110: Access the Home Page'
       description: 'Provide access to the home page and timeline. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M02: Users'
@@ -220,8 +220,8 @@ paths:
           description: 'Unauthorized access'
   /profile/{id}/delete:
     delete:
-      operationId: R110
-      summary: 'R110: Delete user profile after verifying ownership'
+      operationId: R111
+      summary: 'R111: Delete user profile after verifying ownership'
       description: 'Processes the user password form submission to delete the account. Requires authentication. If the user is the owner of the account or has admin privileges, the profile is deleted. Access: AUTH, ADMIN.'
       tags:
         - 'M02: Users'
@@ -306,8 +306,8 @@ paths:
                     example: 'Failed to delete the user.'
   /posts/store:
     post:
-      operationId: R112
-      summary: 'R112: Store a Post'
+      operationId: R113
+      summary: 'R113: Store a Post'
       description: 'Process a post created by a user and store it into the database. Access: AUTH'
       tags:
         - 'M03: Posts'
@@ -362,8 +362,8 @@ paths:
 
   /posts/update/{post}:
     post:
-      operationId: R113
-      summary: 'R113: Update a post'
+      operationId: R114
+      summary: 'R114: Update a post'
       description: 'Update a specified post by its ID. Access: OWN, ADMIN'
       tags:
         - 'M03: Posts'
@@ -427,8 +427,8 @@ paths:
 
   /posts/delete/{post}:
     post:
-      operationId: R114
-      summary: 'R114: Delete a post'
+      operationId: R115
+      summary: 'R115: Delete a post'
       description: 'Deletes the specified post by ID. Access: OWN, ADMIN'
       tags:
         - 'M03: Posts'
@@ -494,8 +494,8 @@ paths:
 
   /search:
     get:
-      operationId: R117
-      summary: 'R117: Access the search page'
+      operationId: R118
+      summary: 'R118: Access the search page'
       description: 'Provide quick access to the search page with an optional query string and category that is defaulted to "posts". Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
@@ -519,8 +519,8 @@ paths:
 
   /media/store:
     post:
-      operationId: R119
-      summary: 'R119: Store Media'
+      operationId: R123
+      summary: 'R123: Store Media'
       description: 'Process and store a media file associated with a specific post. Access: AUTH'
       tags:
         - 'M06: Media'
@@ -558,8 +558,8 @@ paths:
           
   /media/{mediaId}:
     delete:
-      operationId: R120
-      summary: 'R120: Delete a Media Item'
+      operationId: R124
+      summary: 'R124: Delete a Media Item'
       description: 'Remove a media item by its ID. Access: AUTH, ADMIN'
       tags:
         - 'M06: Media'
@@ -601,8 +601,8 @@ paths:
 
   /api/posts:
     get:
-      operationId: R115
-      summary: 'R115: Fetch posts for the timeline'
+      operationId: R116
+      summary: 'R116: Fetch posts for the timeline'
       description: 'Retrieve posts for the authenticated user timeline. Access: AUTH, NAUTH, ADMIN'
       tags:
         - 'M03: Posts'
@@ -612,8 +612,8 @@ paths:
 
   /api/posts/{username}:
     get:
-      operationId: R116
-      summary: 'R116: Fetch user posts'
+      operationId: R117
+      summary: 'R117: Fetch user posts'
       description: 'Retrieve posts created by a specific user. Access: AUTH, ADMIN'
       tags:
         - 'M03: Posts'
@@ -629,8 +629,8 @@ paths:
 
   /api/search:
     get:
-      operationId: R118
-      summary: 'R118: Allows search results to filter by category via AJAX'
+      operationId: R119
+      summary: 'R119: Allows search results to filter by category via AJAX'
       description: 'Search results across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
@@ -676,8 +676,8 @@ paths:
 
   /api/{username}:
     get:
-      operationId: R111
-      summary: 'R111: Fetch User Data'
+      operationId: R112
+      summary: 'R112: Fetch User Data'
       description: 'Retrieve JSON details of a user by username. Access: AUTH'
       tags:
         - 'M02: Users'
@@ -696,8 +696,8 @@ paths:
 
   /admin:
     get:
-      operationId: R121
-      summary: 'R121: Access Admin Page'
+      operationId: R120
+      summary: 'R120: Access Admin Page'
       description: 'Provides access to the admin page. Access: ADMIN'
       tags:
         - 'M05: Administration'
@@ -720,8 +720,8 @@ paths:
 
   /admin/users/create:
     get:
-      operationId: R122
-      summary: 'R122: Display User Creation Form'
+      operationId: R121
+      summary: 'R121: Display User Creation Form'
       description: 'Displays the form for creating a new user. Access: ADMIN'
       tags:
         - 'M05: Administration'
@@ -741,12 +741,10 @@ paths:
                   message:
                     type: string
                     example: 'You do not have permission to access the user creation form.'
-
-
   /admin/users:
     post:
-      operationId: R123
-      summary: 'R123: Create a new user'
+      operationId: R122
+      summary: 'R122: Create a new user'
       tags:
         - 'M05: Administration'
       requestBody:
