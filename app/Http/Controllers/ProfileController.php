@@ -42,7 +42,6 @@ class ProfileController extends Controller
         
             $user->update($validatedData);
 
-            Log::info('User profile updated', ['user_id' => $user->id, 'username' => $user->username]);
         
             return redirect()->route('profile', $user->username)
                              ->with('success', 'Profile updated successfully!');
@@ -57,26 +56,43 @@ class ProfileController extends Controller
     public function delete(Request $request, $id) {
         $user = User::findOrFail($id);
         $this->authorize('delete', $user);
-
-        Log::info('Attempt to delete user', ['user_id' => $user->id, 'username' => $user->username]);
-
-
+    
+        $currentUser = Auth::user();
+        $isAdmin = $currentUser->isadmin === true;
+    
+        if (!$isAdmin) {
+            $request->validate([
+                'password' => 'required|string',
+            ]);
+    
+            $passwordMatches = Hash::check($request->password, $currentUser->passwordhash);
+    
+            if (!$passwordMatches) {
+    
+                if ($request->ajax()) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Incorrect password',
+                    ], 403); 
+                }
+    
+                return redirect()->route('profile', $user->username)->with('error', 'Incorrect password. Deletion aborted.');
+            }
+        }
+    
         if ($user->state === 'deleted') {
-
-            Log::warning('User already deleted', ['user_id' => $user->id, 'username' => $user->username]);
-
 
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'User has already been deleted.',
-                ], 400); 
+                ], 400);
             }
     
             return redirect()->route('home')->with('error', 'User has already been deleted.');
         }
     
-        DB::beginTransaction();  
+        DB::beginTransaction();
     
         try {
             DB::statement('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
@@ -87,12 +103,10 @@ class ProfileController extends Controller
             $user->email = NULL;
             $user->state = 'deleted';
             $user->save();
-
-            Log::info('User successfully deleted', ['user_id' => $user->id, 'username' => $user->username]);
     
             DB::commit();
-            
-            if (Auth::user()->userid === $user->userid) {
+    
+            if ($currentUser->userid === $user->userid) {
                 Auth::logout();
                 $request->session()->invalidate();
                 $request->session()->regenerateToken();
@@ -108,9 +122,6 @@ class ProfileController extends Controller
             return redirect()->route('home')->with('success', 'User deleted successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
-
-            Log::error('Failed to delete user', ['user_id' => $user->id, 'username' => $user->username, 'error' => $e->getMessage()]);
-
     
             if ($request->ajax()) {
                 return response()->json([
@@ -123,28 +134,5 @@ class ProfileController extends Controller
         }
     }
     
-    public function verifyPassword(Request $request) {
-        $request->validate([
-            'password' => 'required|string',
-        ]);
-
-        $user = Auth::user();
-
-        Log::info('Password verification attempt', ['user_id' => $user->id, 'username' => $user->username]);
-
-
-        if (!$user) {
-            return response()->json(['success' => false, 'message' => 'User not authenticated']);
-        }
-
-        if (Hash::check($request->password, $user->password)) {
-            Log::info('Password verification successful', ['user_id' => $user->id, 'username' => $user->username]);
-            return response()->json(['success' => true]);
-        }
-
-        Log::warning('Incorrect password attempt', ['user_id' => $user->id, 'username' => $user->username]);
-
-        return response()->json(['success' => false, 'message' => 'Incorrect password']);
-    }
     
 }
