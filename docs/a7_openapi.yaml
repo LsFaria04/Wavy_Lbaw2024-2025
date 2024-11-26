@@ -152,8 +152,8 @@ paths:
       responses:
         '200':
           description: 'Profile data retrieved and displayed successfully.'
-        '404':
-          description: 'User profile not found.'
+        '302':
+          description: 'Redirect to home page.'
   
   /profile/{userid}:
     put:

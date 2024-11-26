@@ -19,7 +19,12 @@ class ProfileController extends Controller
     public function show($username) {
 
         //gets the firts set of data
-        $user = User::where('username', $username)->firstOrFail();
+        $user = User::where('username', $username)->first();
+
+        if (!$user) {
+            return redirect('/home');
+        }
+
         $posts = $user->posts()->orderBy('createddate', 'desc')->paginate(10);
         $comments = [];
     
