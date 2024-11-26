@@ -439,13 +439,6 @@ paths:
       description: 'Process and store a media file associated with a specific post. Access: AUTH'
       tags:
         - 'M06: Media'
-      parameters:
-        - in: query
-          name: q
-          schema:
-            type: string
-          description: 'The search query string'
-          required: false
       requestBody:
         required: true
         content:
@@ -456,7 +449,7 @@ paths:
                 file:
                   type: string
                   format: binary
-                  description: 'Media file to upload (e.g., image, video)'
+                  description: 'Media file to upload. Allowed types: jpeg, png, jpg, gif, mp4, avi, mp3, wav, ogg.'
                 postid:
                   type: integer
                   description: 'ID of the post to associate the media with'
@@ -464,10 +457,19 @@ paths:
                 - file
                 - postid
       responses:
-        '200':
-          description: 'Media file uploaded successfully.'
-        '400':
-          description: 'Invalid request or exceeded maximum media per post.'
+        '302':
+          description: 'Redirect after successful media upload'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Media uploaded successfully!'
+                  value: '/home'
+                302Failure:
+                  description: 'This post already has the maximum of 4 media items.'
+                  value: '/home'
           
   /media/{mediaId}:
     delete:
@@ -484,12 +486,33 @@ paths:
           required: true
           description: 'The ID of the media item to delete'
       responses:
-        '204':
-          description: 'Media item deleted successfully'
+        '302':
+          description: 'Redirect after successful media deletion'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Media deleted successfully!'
+                  value: '/home'
+                302Failure:
+                  description: 'Media deletion failed.'
+                  value: '/home'          
         '403':
-          description: 'Unauthorized to delete media'
-        '404':
-          description: 'Media item not found'
+          description: 'Unauthorized to delete media.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'You are not authorized to delete this media.'
+
 
   /api/posts:
     get:
