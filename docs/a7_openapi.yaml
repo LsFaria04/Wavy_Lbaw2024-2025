@@ -222,7 +222,7 @@ paths:
     delete:
       operationId: R110
       summary: 'R110: Delete user profile after verifying ownership'
-      description: 'Processes the user password form submission to delete the account. Requires authentication. If the user is the owner of the account or has admin privileges, the profile is deleted.'
+      description: 'Processes the user password form submission to delete the account. Requires authentication. If the user is the owner of the account or has admin privileges, the profile is deleted. Access: AUTH, ADMIN.'
       tags:
         - 'M02: Users'
       parameters:
