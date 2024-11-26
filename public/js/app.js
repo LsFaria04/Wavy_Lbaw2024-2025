@@ -675,6 +675,7 @@ const html = document.documentElement;
 function toggleEditMenu() {
 const menu = document.getElementById('edit-profile-menu');
 menu.classList.toggle('hidden');
+menu.classList.toggle('flex');
 html.classList.toggle('overflow-hidden');
 }
 
@@ -1107,17 +1108,20 @@ function setupCreateUserMenu() {
   if (createUserBtn && createUserMenu && cancelCreateUserBtn) {
     createUserBtn.addEventListener("click", () => {
       createUserMenu.classList.toggle("hidden");
+      createUserMenu.classList.toggle("flex");
       
     });
 
     document.addEventListener("click", (event) => {
       if (!createUserMenu.contains(event.target) && event.target !== createUserBtn) {
         createUserMenu.classList.add("hidden");
+        createUserMenu.classList.toggle("flex");
       }
     });
 
     cancelCreateUserBtn.addEventListener("click", () => { 
       createUserMenu.classList.add("hidden");
+      createUserMenu.classList.toggle("flex");
     });
   } else {
     console.error("One or more elements are missing. Check your HTML."); 
@@ -1311,9 +1315,12 @@ function toggleDropdown() {
   dropdownMenu.classList.toggle('hidden');
 }
 
+//toggles the confirmation menu so that it can appear on screen
 function toggleConfirmationModal() {
   const confirmationMenu = document.getElementById('confirmationModal');
   confirmationMenu.classList.toggle('hidden');
+  confirmationMenu.classList.toggle('flex');
+  console.log("here");
   const dropdownMenu = document.getElementById('dropdownMenu');
   dropdownMenu.classList.toggle('hidden');
   if (isadmin) {
@@ -1325,11 +1332,11 @@ function toggleConfirmationModal() {
 function closeModal() {
   const confirmationMenu = document.getElementById('confirmationModal');
   confirmationMenu.classList.toggle('hidden');
+  confirmationMenu.classList.toggle('flex');
 }
 
 //handles the profile delete confirmation with requests via ajax
 function confirmDeleteProfile() {  
-  console.log("here");
   if (isadmin) {
     document.getElementById('deleteProfileForm').submit();
   }
@@ -1350,6 +1357,9 @@ function confirmDeleteProfile() {
 //toggles the password form when it is needed in the delete user menu
 function togglePasswordForm() {
   const passwordForm = document.getElementById('passwordForm');
+  if(passwordForm.classList.contains('hidden')){
+    return;
+  }
   passwordForm.classList.toggle('hidden');
 }
 

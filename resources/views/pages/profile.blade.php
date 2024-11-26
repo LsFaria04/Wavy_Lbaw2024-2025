@@ -80,7 +80,7 @@
         </div>
 
             <!-- Edit Profile Menu -->
-            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+            <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden">
                 <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
                     <form action="{{ route('profile.update', $user->userid) }}" method="POST">
@@ -127,7 +127,7 @@
         </div>
 
         <!-- Confirmation Modal -->
-        <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        <div id="confirmationModal" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden">
             <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
                 <h2 class="text-2xl font-bold mb-4">Are you sure you want to delete the account?</h2>
                 
