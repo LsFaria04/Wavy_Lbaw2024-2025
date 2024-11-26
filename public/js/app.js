@@ -955,8 +955,12 @@ function updateFileNameEdit(postId) {
       selectedFilesEdit.push(file);
   });
 
+  
+  const lenStoreMedia = fileDisplay.querySelectorAll('div').length - 1;
+  console.log(lenStoreMedia);
   // Check if there are more than 4 files
-  if (selectedFilesEdit.length > 4) {
+  console.log(lenStoreMedia + selectedFiles.length);
+  if (lenStoreMedia + selectedFilesEdit.length > 4) {
       alert('You can only select up to 4 files.');
       // Remove the newly added files from the selectedFiles array
       selectedFilesEdit.splice(-fileInput.files.length);
@@ -967,7 +971,11 @@ function updateFileNameEdit(postId) {
   newFileDisplay.innerHTML = '';
 
   // Show updated list of file names
+  console.log(selectedFilesEdit);
   selectedFilesEdit.forEach((file, index) => {
+    if(newFileDisplay.classList.contains('hidden')){
+      newFileDisplay.classList.toggle('hidden');
+    }
       const li = document.createElement('li');
       li.classList.add('flex', 'items-center', 'gap-2');
 
