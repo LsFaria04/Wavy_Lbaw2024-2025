@@ -31,15 +31,13 @@ class SearchController extends Controller
 
         else {
 
-            //sanitazes the query to separate the words
-            $sanitizedQuery = implode(' & ', array_map(function($term) {
-                return $term . ':*';
-            }, explode(' ', $query)));
+            //sanitizes the query to separate the words
+            $sanitizedQuery = str_replace("'", "''", $query);
 
             //Performs the DB query according to the search category
             switch ($category) {
                 case 'posts':
-                    $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$sanitizedQuery])
+                    $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
@@ -49,7 +47,7 @@ class SearchController extends Controller
                     break;
                 case 'users':
                     $users = User::where(function($query) use ($sanitizedQuery) {
-                        $query->whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?)", [$sanitizedQuery])
+                        $query->whereRaw("to_tsvector('english', username) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                               ->orWhere('username', $sanitizedQuery);
                     })
                     ->where('visibilitypublic', true)
@@ -57,11 +55,11 @@ class SearchController extends Controller
                     ->paginate(10);
                     break;
                 case 'groups':
-                    $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ to_tsquery('english', ?)", [$sanitizedQuery])
+                    $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->paginate(10);
                     break;
                 default:
-                    $posts = Post::whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$sanitizedQuery])
+                    $posts = Post::whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->paginate(10);
                         for($i = 0;$i < sizeof($posts); $i++){
