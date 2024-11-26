@@ -557,49 +557,6 @@ paths:
                   description: 'This post already has the maximum of 4 media items.'
                   value: '/home'
           
-  /media/{mediaId}:
-    delete:
-      operationId: R124
-      summary: 'R124: Delete a Media Item'
-      description: 'Remove a media item by its ID. Access: OWN, ADMIN'
-      tags:
-        - 'M06: Media'
-      parameters:
-        - in: path
-          name: mediaId
-          schema:
-            type: integer
-          required: true
-          description: 'The ID of the media item to delete'
-      responses:
-        '302':
-          description: 'Redirect after successful media deletion.'
-          headers:
-            Location:
-              schema:
-                type: string
-              examples:
-                302Success:
-                  description: 'Media deleted successfully!'
-                  value: '/home'
-                302Failure:
-                  description: 'Media deletion failed.'
-                  value: '/home'          
-        '403':
-          description: 'Unauthorized to delete media.'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: 'You are not authorized to delete this media.'
-
-
   /api/posts:
     get:
       operationId: R116

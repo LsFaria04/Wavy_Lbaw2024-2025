@@ -56,7 +56,6 @@ Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('p
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');
-Route::delete('/media/{media}', [MediaController::class, 'destroy'])->name('media.destroy');
 
 // Authentication
 Route::controller(LoginController::class)->group(function () {

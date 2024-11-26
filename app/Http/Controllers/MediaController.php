@@ -41,24 +41,4 @@ class MediaController extends Controller
         return redirect()->route('home')->with('success', 'Media uploaded successfully!');
     }
 
-    /**
-     * Delete a media item.
-     */
-    public function destroy(Media $media)
-    {
-        // Ensure the user is authorized to delete the media
-        if ($this->authorize('delete', $media)) {
-            return redirect()->route('home')->with('error', 'You are not authorized to delete this media.');
-        }
-
-        // Delete the actual media file from storage
-        if (Storage::exists('public/'. $media->path)){
-            Storage::delete('public/'. $media->path);
-        }
-
-        // Delete the record from the database
-        $media->delete();
-
-        return redirect()->route('home')->with('success', 'Media deleted successfully!');
-    }
 }
