@@ -38,12 +38,14 @@ class SearchController extends Controller
             //Performs the DB query according to the search category
             switch ($category) {
                 case 'posts':
-                    if(Auth::check() || Auth::user()->isadmin){
-                        $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                        ->orderBy('createddate', 'desc')
-                        ->paginate(10);
-                        for($i = 0;$i < sizeof($posts); $i++) {
-                            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+                    if(Auth::check()){
+                            if(Auth::user()->isadmin){
+                            $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            ->orderBy('createddate', 'desc')
+                            ->paginate(10);
+                            for($i = 0;$i < sizeof($posts); $i++) {
+                                $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+                            }
                         }
                     }
 
@@ -60,7 +62,7 @@ class SearchController extends Controller
 
                 case 'users':
 
-                    if(Auth::check() || Auth::user()->isadmin) {
+                    if(Auth::check()) {
                         $users = User::where(function($query) use ($sanitizedQuery) {
                             $query->whereRaw("to_tsvector('english', username) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                                   ->orWhere('username', $sanitizedQuery);
