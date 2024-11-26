@@ -509,11 +509,10 @@ function createComment(commentInfo){
 
 //inserts more users into an element
 function insertMoreUsers(element, users){
-for(let i = 0; i < users.data.length; i++){
-  let user = createUser(users.data[i]);
-  element.appendChild(user);
-
-}
+  for(let i = 0; i < users.data.length; i++){
+    let user = createUser(users.data[i]);
+    element.appendChild(user);
+    }
 }
 
 //inserts more groups into and element
@@ -527,27 +526,30 @@ for(let i = 0; i < groups.data.length; i++){
 
 //inserts more posts into an element
 function insertMorePosts(element, posts){
-for(let i = 0; i < posts.data.length; i++){
-  let post = createPost(posts.data[i]);
+  for(let i = 0; i < posts.data.length; i++){
+    
+    if (posts.data[i].user.state === 'deleted') {
+      posts.data[i].user.username = 'Deleted User';
+    }
 
-  if(userId == posts.data[i].user.userid || isadmin){
-    post = createPostOptions(post, posts.data[i].postid); 
+    let post = createPost(posts.data[i]);
+
+    if(userId == posts.data[i].user.userid || isadmin){
+      post = createPostOptions(post, posts.data[i].postid); 
+    }
+
+    post = insertPostMedia(post, posts.data[i].media);
+
+    if(userId == posts.data[i].user.userid || isadmin){
+      insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
+    }
+
+    let editForm = post.querySelector('.edit-post-form form');
+    if(editForm !== null){
+      addEventListenerToForm(editForm);
+    }
+    element.appendChild(post);
   }
-
-  post = insertPostMedia(post, posts.data[i].media);
-
-  if(userId == posts.data[i].user.userid || isadmin){
-    insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
-  }
-
-  let editForm = post.querySelector('.edit-post-form form');
-  if(editForm !== null){
-    addEventListenerToForm(editForm);
-  }
-  element.appendChild(post);
-}
-
-
 }
 
 //inserts more comments into an element

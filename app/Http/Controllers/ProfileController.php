@@ -15,7 +15,6 @@ class ProfileController extends Controller
 {
     public function show($username) {
 
-        //load first set of data
         $user = User::where('username', $username)->firstOrFail();
         $posts = $user->posts()->orderBy('createddate', 'desc')->paginate(10);
         $comments = [];
@@ -67,12 +66,11 @@ class ProfileController extends Controller
             Log::warning('User already deleted', ['user_id' => $user->id, 'username' => $user->username]);
 
 
-            // Return an error response if the user is already deleted
             if ($request->ajax()) {
                 return response()->json([
                     'success' => false,
                     'message' => 'User has already been deleted.',
-                ], 400); // Bad request
+                ], 400); 
             }
     
             return redirect()->route('home')->with('error', 'User has already been deleted.');
@@ -91,11 +89,14 @@ class ProfileController extends Controller
             $user->save();
 
             Log::info('User successfully deleted', ['user_id' => $user->id, 'username' => $user->username]);
-
     
-            //probably should add a logic here to make all posts author be UserDeleted
-    
-            DB::commit(); 
+            DB::commit();
+            
+            if (Auth::user()->userid === $user->userid) {
+                Auth::logout();
+                $request->session()->invalidate();
+                $request->session()->regenerateToken();
+            }
     
             if ($request->ajax()) {
                 return response()->json([
