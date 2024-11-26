@@ -30,11 +30,13 @@ class SearchController extends Controller
 
         else {
 
-            $queryWithPrefix = $query . ':*';
+            $sanitizedQuery = implode(' & ', array_map(function($term) {
+                return $term . ':*';
+            }, explode(' ', $query)));
 
             switch ($category) {
                 case 'posts':
-                    $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                    $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
@@ -43,16 +45,16 @@ class SearchController extends Controller
                         }
                     break;
                 case 'users':
-                    $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?) or username = ?", [$queryWithPrefix, $queryWithPrefix])
+                    $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?) or username = ?", [$sanitizedQuery, $sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->paginate(10);
                     break;
                 case 'groups':
-                    $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                    $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ to_tsquery('english', ?)", [$sanitizedQuery])
                         ->paginate(10);
                     break;
                 default:
-                    $posts = Post::whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$queryWithPrefix])
+                    $posts = Post::whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->paginate(10);
                         for($i = 0;$i < sizeof($posts); $i++){
