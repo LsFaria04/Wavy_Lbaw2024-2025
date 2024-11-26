@@ -174,7 +174,7 @@ return post;
 function insertPostMedia(post, mediaArray){
 const postbody = post.querySelector('.post-body');
 let mediaContainer = document.createElement('div');
-mediaContainer.classList.add("post-media", "mt-4");
+mediaContainer.classList.add("post-media", "mt-4", "grid", "grid-cols-2", "gap-4");
 
 for(let i = 0; i < mediaArray.length; i++){
   let media = mediaArray[i];
@@ -218,8 +218,10 @@ for(let i = 0; i < mediaArray.length; i++){
     newMedia.innerHTML = 'Unsupported media type';
   }
 
-  postbody.appendChild(newMedia);
+  mediaContainer.appendChild(newMedia);
 }
+
+postbody.appendChild(mediaContainer);
 
 return post;
 }

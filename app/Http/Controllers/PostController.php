@@ -151,8 +151,7 @@ public function update(Request $request, Post $post)
     // Validate the input
     $request->validate([
         'message' => 'required|string|max:255',
-        'media' => 'nullable|array', // Allow multiple media files
-        'media.*' => 'file|mimes:jpeg,png,jpg,gif,svg|max:10240', // Limit file types and size
+        'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:10000', // Limit file types and size
     ]);
 
     // Update the post message
