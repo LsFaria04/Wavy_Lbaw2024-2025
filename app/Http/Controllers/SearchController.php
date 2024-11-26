@@ -46,9 +46,13 @@ class SearchController extends Controller
                         }
                     break;
                 case 'users':
-                    $users = User::whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?) or username = ?", [$sanitizedQuery, $sanitizedQuery])
-                        ->where('visibilitypublic', true)
-                        ->paginate(10);
+                    $users = User::where(function($query) use ($sanitizedQuery) {
+                        $query->whereRaw("to_tsvector('english', username) @@ to_tsquery('english', ?)", [$sanitizedQuery])
+                              ->orWhere('username', $sanitizedQuery);
+                    })
+                    ->where('visibilitypublic', true)
+                    ->where('state', '<>', 'deleted')
+                    ->paginate(10);
                     break;
                 case 'groups':
                     $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ to_tsquery('english', ?)", [$sanitizedQuery])
