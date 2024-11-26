@@ -2,9 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 
-use App\Http\Controllers\CardController;
 use App\Http\Controllers\PostController;
-
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\ProfileController;
@@ -12,6 +10,7 @@ use App\Http\Controllers\SearchController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
+use App\Http\Controllers\MediaController;
 
 /*
 |--------------------------------------------------------------------------
@@ -34,18 +33,10 @@ Route::put('/profile/{userid}', [ProfileController::class, 'update'])->name('pro
 Route::delete('/profile/{id}/delete', [ProfileController::class, 'delete'])->name('profile.delete');
 Route::post('/profile/verify-password', [ProfileController::class, 'verifyPassword']);
 
-// Cards
-Route::controller(CardController::class)->group(function () {
-    Route::get('/cards', 'list')->name('cards');
-    Route::get('/cards/{id}', 'show');
-});
+
 
 
 // API
-Route::controller(CardController::class)->group(function () {
-    Route::put('/api/cards', 'create');
-    Route::delete('/api/cards/{card_id}', 'delete');
-});
 Route::controller(PostController::class)->group(function (){
     Route::get('api/posts','getPostsTimeline' );
     Route::get('api/posts/{username}', 'getUserPosts');
@@ -53,6 +44,7 @@ Route::controller(PostController::class)->group(function (){
 Route::get('api/search', [SearchController::class, 'search']);
 Route::get('api/comments/{username}', [CommentController::class, 'getUserCommentsByUsername']);
 Route::get('api/likes/{username}', [LikeController::class,'getUserLikesByUsername']);
+Route::get('api/{username}', [ProfileController::class, 'getProfileUserData']);
 Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
@@ -65,8 +57,6 @@ Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('posts.update');
 Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
-
-use App\Http\Controllers\MediaController;
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');

@@ -2,7 +2,7 @@ openapi: 3.0.0
 
 info:
   version: '1.0'
-  title: 'Wavy s Web API'
+  title: 'Wavy Web API'
   description: 'Web Resources Specification (A7) for Wavy'
 
 servers:
@@ -19,6 +19,7 @@ tags:
  - name: 'M03: Posts'
  - name: 'M04: Search'
  - name: 'M05: Administration'
+ - name: 'M06: Media'
 
 paths:
   /login:
@@ -30,14 +31,14 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: 'Everything Ok. Show the Login Page'
+          description: 'Show the Login Page'
+    
     post:
       operationId: R102
       summary: 'R102: Login Action'
-      description: 'Process the login information submited. Access: NAUTH'
+      description: 'Process the login information submitted. Access: NAUTH'
       tags:
         - 'M01: Authentication'
-      
       requestBody:
         required: true
         content:
@@ -61,15 +62,14 @@ paths:
                 type: string
               examples:
                 302Success:
-                  description: 'Login was successfull.'
+                  description: 'Login was successful.'
                   value: '/home'
-                303Error:
+                302Error:
                   description: 'The provided credentials do not match our records.'
                   value: '/login'
 
   /logout:
-
-    post:
+    get:
       operationId: R103
       summary: 'R103: Logout Action'
       description: 'Logout the current authenticated user. Access: AUTH, ADMIN'
@@ -96,7 +96,7 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: 'Ok. Show Sign-Up UI'
+          description: 'Show Register Page'
 
     post:
       operationId: R105
@@ -104,7 +104,6 @@ paths:
       description: 'Processes the new user registration form submission. Access: NAUTH'
       tags:
         - 'M01: Authentication'
-
       requestBody:
         required: true
         content:
@@ -122,7 +121,6 @@ paths:
                   - name
                   - email
                   - password
-
       responses:
         '302':
           description: 'Redirect after processing the new user information.'
@@ -149,30 +147,27 @@ paths:
         - in: path
           name: username
           schema: 
-            type: integer
+            type: string
           required: true
-    
       responses:
         '200':
-          description: 'Everything OK. Show user profile'
+          description: 'Profile data retrieved and displayed successfully.'
         '404':
-          description: 'Profile Not Found'
+          description: 'User profile not found.'
   
   /profile/{userid}:
     put:
       operationId: R107
       summary: 'R107: Update Profile'
-      description: 'Updated the user profile. Access: AUTH, ADMIN'
+      description: 'Update the profile information of a user by their ID. Access: AUTH, ADMIN'
       tags:
         - 'M02: Users'
-
       parameters:
-      - in: path
-        name: userid
-        schema:
-          type: integer
-        required: true
-
+        - in: path
+          name: userid
+          schema:
+            type: integer
+          required: true
       requestBody:
         required: true
         content:
@@ -182,49 +177,55 @@ paths:
               properties:
                 username:
                   type: string
+                  description: 'Unique username'
                 bio:
                   type: string
+                  description: 'Short profile description'
                 visibilityPublic:
                   type: boolean
+                  description: 'Profile visibility (public or private)'
               required:
                   - username
                   - visibilityPublic
-      
       responses:
         '302':
-          description: 'Redirect after a successfull update. User returns to the profile page'
+          description: 'Redirect after a successful update. User returns to the profile page'
           headers:
             Location:
               schema:
                 type: string
               example:
                 302Success:
-                  description: 'Successful update, Redirect to the profile page.'
+                  description: 'Successful update, Redirect to the profile page with updates.'
                   value: '/profile/{username}'
                 302Failure:
                   description: 'Failed. Redirect to the profile page without updating.'
+                  value: '/profile/{username}'
+        '403':
+          description: 'Unauthorized to update the profile'
+        '404':
+          description: 'User not found'
   
   /home:
     get:
       operationId: R108
-      summary: 'R108: Access the home page'
-      description: 'Provide access to the home page and Timeline. Access: NAUTH, AUTH, ADMIN'
-    
+      summary: 'R108: Access the Home Page'
+      description: 'Provide access to the home page and timeline. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M02: Users'
-      
       responses: 
         '200':
-          description: 'OK. Show the home page and Timeline.'
+          description: 'Successfully retrieved home page'
+        '401':
+          description: 'Unauthorized access'
   
   /posts/store:
     post:
       operationId: R109
       summary: 'R109: Store a Post'
-      description: 'Process a post created by an user and store it into the database. Access: AUTH'
+      description: 'Process a post created by a user and store it into the database. Access: AUTH'
       tags:
         - 'M03: Posts'
-      
       requestBody:
         required: true
         content:
@@ -232,39 +233,273 @@ paths:
             schema:
               type: object
               properties:
-                email:
+                message:
                   type: string
-                password:
-                  type: string
+                  description: 'Content of the post.'
+                visibilityPublic:
+                  type: boolean
+                  description: 'Post visibility (public or private).'
               required:
-                - email
-                - password
+                - message
       responses:
         '302':
-          description: 'Redirect after processing post created'
+          description: 'Redirect after processing the post creation'
           headers:
             Location:
               schema:
                 type: string
               examples:
                 302Success:
-                  description: 'Post creation was successfull.'
+                  description: 'Post creation was successful.'
                   value: '/home'
+                302Failure:
+                  description: 'Post creation failed.'
+                  value: '/home'
+        '400':
+          description: 'Invalid input or file upload failure'
 
+  /posts/update/{post}:
+    post:
+      operationId: R110
+      summary: 'R110: Update a post'
+      description: 'Update a specified post by its ID. Access: AUTH, ADMIN'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: post
+          schema:
+            type: integer
+          required: true
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                message:
+                  type: string
+                visibilityPublic:
+                  type: boolean
+                removeMedia:
+                  type: string
+                  description: 'JSON array of media IDs to be removed'
+              required:
+                - message
+      responses:
+        '302':
+          description: 'Redirect after successful post update'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Post updated successfully.'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed to update post.'
+                  value: '/home'
+        '400':
+          description: 'Invalid input or update failure'
+        '404':
+          description: 'Post not found'
+        '403':
+          description: 'Unauthorized to update the post'
+
+  /posts/delete/{post}:
+    post:
+      operationId: R111
+      summary: 'R111: Delete a post'
+      description: 'Deletes the specified post by ID. Access: AUTH, ADMIN'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: post
+          schema:
+            type: integer
+          required: true
+      responses:
+        '302':
+          description: 'Redirect after post deletion'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'Post deleted successfully.'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed to delete post.'
+                  value: '/home'
+        '404':
+          description: 'Post not found'
+        '403':
+          description: 'Unauthorized to delete the post'
 
   /search:
     get:
-      operationId: R110
-      summary: 'R109: Search for content, users and groups'
-      description: 'Provide quick access to content, users and gorups. Access: NAUTH, AUTH, ADMIN'
-    
+      operationId: R112
+      summary: 'R112: Search for content, users and groups'
+      description: 'Provide quick access to content, users and groups. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
-      
       responses: 
         '200':
           description: 'OK. Show the Search results.'
 
+  /media/store:
+    post:
+      operationId: R113
+      summary: 'R113: Store Media'
+      description: 'Process and store a media file associated with a specific post. Access: AUTH'
+      tags:
+        - 'M06: Media'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: 'Media file to upload (e.g., image, video)'
+                postid:
+                  type: integer
+                  description: 'ID of the post to associate the media with'
+              required:
+                - file
+                - postid
+      responses:
+        '200':
+          description: 'Media file uploaded successfully.'
+        '400':
+          description: 'Invalid request or exceeded maximum media per post.'
+          
+  /media/{mediaId}:
+    delete:
+      operationId: R114
+      summary: 'R114: Delete a Media Item'
+      description: 'Remove a media item by its ID. Access: AUTH, ADMIN'
+      tags:
+        - 'M06: Media'
+      parameters:
+        - in: path
+          name: mediaId
+          schema:
+            type: integer
+          required: true
+          description: 'The ID of the media item to delete'
+      responses:
+        '204':
+          description: 'Media item deleted successfully'
+        '403':
+          description: 'Unauthorized to delete media'
+        '404':
+          description: 'Media item not found'
 
+  /api/posts:
+    get:
+      operationId: R115
+      summary: 'R115: Fetch posts for the timeline'
+      description: 'Retrieve posts for the authenticated user timeline. Access: AUTH'
+      tags:
+        - 'M03: Posts'
+      responses:
+        '200':
+          description: 'Successfully retrieved posts'
+        '401':
+          description: 'Unauthorized access'
 
+  /api/posts/{username}:
+    get:
+      operationId: R116
+      summary: 'R116: Fetch user posts'
+      description: 'Retrieve posts created by a specific user. Access: AUTH'
+      tags:
+        - 'M03: Posts'
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: 'Successfully retrieved posts for the user'
+        '404':
+          description: 'User or posts not found'
+        '401':
+          description: 'Unauthorized access'
 
+  /api/search:
+    get:
+      operationId: R117
+      summary: 'R117: Perform a search'
+      description: 'Search across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
+      tags:
+        - 'M04: Search'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: 'The search query string'
+          required: false
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [posts, users, groups]
+          description: 'The category to search within (default: posts)'
+          required: false
+      responses:
+        '200':
+          description: Search results
+
+  /api/auth-check:
+    post:
+      operationId: R118
+      summary: 'R118: Check authentication status'
+      description: 'Returns whether the current user is authenticated. Access: AUTH'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: Auth status in JSON
+
+  /api/auth-id:
+    post:
+      operationId: R119
+      summary: 'R119: Retrieve the current user ID'
+      description: 'Returns the authenticated user ID and admin status. Access: AUTH'
+      tags:
+        - 'M01: Authentication'
+      responses:
+        '200':
+          description: User ID and admin status in JSON
+
+  /api/profile/{username}:
+    get:
+      operationId: R120
+      summary: 'R120: Fetch User Data'
+      description: 'Retrieve JSON details of a user by username. Access: AUTH'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: 'Username of the user'
+      responses:
+        '200':
+          description: 'User data retrieved successfully.'
+        '404':
+          description: 'User not found.'

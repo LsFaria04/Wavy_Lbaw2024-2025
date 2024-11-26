@@ -21,7 +21,11 @@ class ProfileController extends Controller
     
         return view('pages.profile', compact('user', 'posts', 'comments'));
     }
-    
+
+    public function getProfileUserData($username) {
+        $user = User::where('username', $username)->firstOrFail();
+        return response()->json($user);
+    }
     
     public function update(Request $request, $userid) {
         $user = User::findOrFail($userid);

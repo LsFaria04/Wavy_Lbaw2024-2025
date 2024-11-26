@@ -1,28 +1,4 @@
 function addEventListeners() {
-  let itemCheckers = document.querySelectorAll('article.card li.item input[type=checkbox]');
-  [].forEach.call(itemCheckers, function(checker) {
-    checker.addEventListener('change', sendItemUpdateRequest);
-  });
-
-  let itemCreators = document.querySelectorAll('article.card form.new_item');
-  [].forEach.call(itemCreators, function(creator) {
-    creator.addEventListener('submit', sendCreateItemRequest);
-  });
-
-  let itemDeleters = document.querySelectorAll('article.card li a.delete');
-  [].forEach.call(itemDeleters, function(deleter) {
-    deleter.addEventListener('click', sendDeleteItemRequest);
-  });
-
-  let cardDeleters = document.querySelectorAll('article.card header a.delete');
-  [].forEach.call(cardDeleters, function(deleter) {
-    deleter.addEventListener('click', sendDeleteCardRequest);
-  });
-
-  let cardCreator = document.querySelector('article.card form.new_card');
-  if (cardCreator != null)
-    cardCreator.addEventListener('submit', sendCreateCardRequest);
-
   document.addEventListener('DOMContentLoaded', fadeAlert);
   document.addEventListener('DOMContentLoaded', switchProfileTab);
   window.addEventListener("scroll", infiniteScroll);
@@ -79,143 +55,6 @@ request.addEventListener('load', handler);
 request.send(encodeForAjax(data));
 }
 
-function sendItemUpdateRequest() {
-let item = this.closest('li.item');
-let id = item.getAttribute('data-id');
-let checked = item.querySelector('input[type=checkbox]').checked;
-
-sendAjaxRequest('post', '/api/item/' + id, {done: checked}, itemUpdatedHandler);
-}
-
-function sendDeleteItemRequest() {
-let id = this.closest('li.item').getAttribute('data-id');
-
-sendAjaxRequest('delete', '/api/item/' + id, null, itemDeletedHandler);
-}
-
-function sendCreateItemRequest(event) {
-let id = this.closest('article').getAttribute('data-id');
-let description = this.querySelector('input[name=description]').value;
-
-if (description != '')
-  sendAjaxRequest('put', '/api/cards/' + id, {description: description}, itemAddedHandler);
-
-event.preventDefault();
-}
-
-function sendDeleteCardRequest(event) {
-let id = this.closest('article').getAttribute('data-id');
-
-sendAjaxRequest('delete', '/api/cards/' + id, null, cardDeletedHandler);
-}
-
-function sendCreateCardRequest(event) {
-let name = this.querySelector('input[name=name]').value;
-
-if (name != '')
-  sendAjaxRequest('put', '/api/cards/', {name: name}, cardAddedHandler);
-
-event.preventDefault();
-}
-
-function itemUpdatedHandler() {
-let item = JSON.parse(this.responseText);
-let element = document.querySelector('li.item[data-id="' + item.id + '"]');
-let input = element.querySelector('input[type=checkbox]');
-element.checked = item.done == "true";
-}
-
-function itemAddedHandler() {
-if (this.status != 200) window.location = '/';
-let item = JSON.parse(this.responseText);
-
-// Create the new item
-let new_item = createItem(item);
-
-// Insert the new item
-let card = document.querySelector('article.card[data-id="' + item.card_id + '"]');
-let form = card.querySelector('form.new_item');
-form.previousElementSibling.append(new_item);
-
-// Reset the new item form
-form.querySelector('[type=text]').value="";
-}
-
-function itemDeletedHandler() {
-if (this.status != 200) window.location = '/';
-let item = JSON.parse(this.responseText);
-let element = document.querySelector('li.item[data-id="' + item.id + '"]');
-element.remove();
-}
-
-function cardDeletedHandler() {
-if (this.status != 200) window.location = '/';
-let card = JSON.parse(this.responseText);
-let article = document.querySelector('article.card[data-id="'+ card.id + '"]');
-article.remove();
-}
-
-function cardAddedHandler() {
-if (this.status != 200) window.location = '/';
-let card = JSON.parse(this.responseText);
-
-// Create the new card
-let new_card = createCard(card);
-
-// Reset the new card input
-let form = document.querySelector('article.card form.new_card');
-form.querySelector('[type=text]').value="";
-
-// Insert the new card
-let article = form.parentElement;
-let section = article.parentElement;
-section.insertBefore(new_card, article);
-
-// Focus on adding an item to the new card
-new_card.querySelector('[type=text]').focus();
-}
-
-function createCard(card) {
-let new_card = document.createElement('article');
-new_card.classList.add('card');
-new_card.setAttribute('data-id', card.id);
-new_card.innerHTML = `
-
-<header>
-  <h2><a href="cards/${card.id}">${card.name}</a></h2>
-  <a href="#" class="delete">&#10761;</a>
-</header>
-<ul></ul>
-<form class="new_item">
-  <input name="description" type="text">
-</form>`;
-
-let creator = new_card.querySelector('form.new_item');
-creator.addEventListener('submit', sendCreateItemRequest);
-
-let deleter = new_card.querySelector('header a.delete');
-deleter.addEventListener('click', sendDeleteCardRequest);
-
-return new_card;
-}
-
-
-
-function createItem(item) {
-let new_item = document.createElement('li');
-new_item.classList.add('item');
-new_item.setAttribute('data-id', item.id);
-new_item.innerHTML = `
-<label>
-  <input type="checkbox"> <span>${item.description}</span><a href="#" class="delete">&#10761;</a>
-</label>
-`;
-
-new_item.querySelector('input').addEventListener('change', sendItemUpdateRequest);
-new_item.querySelector('a.delete').addEventListener('click', sendDeleteItemRequest);
-
-return new_item;
-}
 
 //stores the authentication state
 let isAuthenticated = false; 
@@ -238,6 +77,18 @@ isadmin = response.isadmin;
 //gets the csrf token to insert in new forms
 function getCsrfToken(){
 return document.querySelector('meta[name="csrf-token"]').content;
+}
+
+//store user profile info (only accessed if we enter a profile)
+let isPublic = false;
+let username = "";
+if(document.querySelector("#profile-tab-content") !== null){
+  username = document.getElementById('profile-username').innerHTML;
+  sendAjaxRequest('get', '/api/' + username, null, handleProfileInfo);
+}
+function handleProfileInfo(){
+  const response = JSON.parse(this.responseText);
+  isPublic = response.visibilitypublic;
 }
 
 //creates the a post container with the message, username and date
@@ -641,6 +492,15 @@ function insertMoreProfileContent(){
 
   let results = JSON.parse(this.responseText);
 
+  if(!isPublic && !isadmin){
+    profileContent.innerHTML = `
+    <div class="flex justify-center items-center h-32">
+            <p class="text-gray-600 text-center">Account is private.</p>
+    </div>
+    `;
+    return;   
+  }
+
   switch(profileTab){
 
     case 'user-posts':
@@ -729,10 +589,15 @@ if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
       //actions to take place in the profile page
       const profilePage = document.querySelector("#profile-tab-content");
       if((profilePage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading)) {
+
+        if(!isPublic && !isadmin){
+          //doesn´t need to load more info because the account is private
+          return;
+        }
+
         currentPage +=1;
         loading = true;
         insertLoadingCircle(profilePage);
-        const username = document.getElementById('profile-username').innerHTML;
         switch(profileTab){
           case 'user-posts':
               sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
@@ -771,7 +636,6 @@ function loadProfileContent(category){
   if(profileContent == null){
     return;
   }
-  const username = document.getElementById('profile-username').innerHTML;
 
   while (profileContent.firstChild) {
     profileContent.removeChild(profileContent.firstChild);
@@ -1135,22 +999,6 @@ document.querySelectorAll('.delete-post-button').forEach(button => {
   });
 });
 
-/*
-function openDeleteMenu(postId, postMessage) {
-  const modal = document.getElementById('deleteMenu');
-  const deleteForm = document.getElementById('deleteForm');
-  const postIdInput = document.getElementById('postId');
-
-  if (!deleteForm.dataset.originalAction) {
-    deleteForm.dataset.originalAction = deleteForm.action;
-  }
-
-  deleteForm.action = deleteForm.action.replace('POST_ID', postId);
-  postIdInput.value = postId;
-
-  modal.classList.remove('hidden');
-}
-*/
 function closeDeleteMenu() {
   const modal = document.getElementById('deleteMenu');
   modal.classList.add('hidden');
@@ -1281,6 +1129,7 @@ function addEventListenerToPostForms(){
   });
 }
 
+//adds a event listener to a post form
 function addEventListenerToForm(form){
   form.addEventListener('submit', function (e) {
     const postId = form.dataset.postId;
