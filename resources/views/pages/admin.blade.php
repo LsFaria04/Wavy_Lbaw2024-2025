@@ -65,7 +65,7 @@
         <form action = "{{route('admin.users.create')}}"id="createUserForm" class="space-y-4">
             @csrf
             <div>
-                <label for="username" class="block text-gray-700 font-medium">Nome de Utilizador:</label>
+                <label for="username" class="block text-gray-700 font-medium">Username:</label>
                 <input type="text" id="create-username" name="username"
                     class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     required>
