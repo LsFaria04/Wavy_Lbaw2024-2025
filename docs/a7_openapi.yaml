@@ -138,8 +138,8 @@ paths:
 
   /profile/{username}:
     get:
-      operationId: R106
-      summary: 'R106: View User Profile'
+      operationId: R108
+      summary: 'R108: View User Profile'
       description: 'Show the user profile. Access: AUTH, ADMIN'
       tags:
         - 'M02: Users'
@@ -157,8 +157,8 @@ paths:
   
   /profile/{userid}:
     put:
-      operationId: R107
-      summary: 'R107: Update Profile'
+      operationId: R109
+      summary: 'R109: Update Profile'
       description: 'Update the profile information of a user by their ID. Access: AUTH, ADMIN'
       tags:
         - 'M02: Users'
@@ -208,8 +208,8 @@ paths:
   
   /home:
     get:
-      operationId: R108
-      summary: 'R108: Access the Home Page'
+      operationId: R109
+      summary: 'R109: Access the Home Page'
       description: 'Provide access to the home page and timeline. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M02: Users'
@@ -218,11 +218,111 @@ paths:
           description: 'Successfully retrieved home page'
         '401':
           description: 'Unauthorized access'
-  
+  /profile/{id}/delete:
+    delete:
+      operationId: R110
+      summary: 'R110: Delete user profile after verifying ownership'
+      description: 'Processes the user password form submission to delete the account. Requires authentication. If the user is the owner of the account or has admin privileges, the profile is deleted.'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: 'ID of the user to delete'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: 'User password for confirmation'
+              required:
+                - password
+          application/json:
+            schema:
+              type: object
+              properties:
+                password:
+                  type: string
+                  description: 'User password for confirmation'
+              required:
+                - password
+      responses:
+        '200':
+          description: 'User deleted successfully'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'User deleted successfully!'
+        '302':
+          description: 'Redirect after processing the user password'
+          headers:
+            Location:
+              schema:
+                type: string
+              examples:
+                302Success:
+                  description: 'User deleted successfully!'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed to delete the user.'
+                  value: '/profile/{userid}'
+        '400':
+          description: 'User has already been deleted.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'User has already been deleted.'
+        '403':
+          description: 'Incorrect password or unauthorized access.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Incorrect password. Deletion aborted.'
+        '500':
+          description: 'Internal server error while attempting to delete the user.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Failed to delete the user.'
   /posts/store:
     post:
-      operationId: R109
-      summary: 'R109: Store a Post'
+      operationId: R112
+      summary: 'R112: Store a Post'
       description: 'Process a post created by a user and store it into the database. Access: AUTH'
       tags:
         - 'M03: Posts'
@@ -277,8 +377,8 @@ paths:
 
   /posts/update/{post}:
     post:
-      operationId: R110
-      summary: 'R110: Update a post'
+      operationId: R113
+      summary: 'R113: Update a post'
       description: 'Update a specified post by its ID. Access: AUTH, ADMIN'
       tags:
         - 'M03: Posts'
@@ -342,8 +442,8 @@ paths:
 
   /posts/delete/{post}:
     post:
-      operationId: R111
-      summary: 'R111: Delete a post'
+      operationId: R114
+      summary: 'R114: Delete a post'
       description: 'Deletes the specified post by ID. Access: AUTH, ADMIN'
       tags:
         - 'M03: Posts'
@@ -409,8 +509,8 @@ paths:
 
   /search:
     get:
-      operationId: R112
-      summary: 'R112: Access the search page'
+      operationId: R117
+      summary: 'R117: Access the search page'
       description: 'Provide quick access to the search page with an optional query string and category that is defaulted to "posts". Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
@@ -434,8 +534,8 @@ paths:
 
   /media/store:
     post:
-      operationId: R113
-      summary: 'R113: Store Media'
+      operationId: R119
+      summary: 'R119: Store Media'
       description: 'Process and store a media file associated with a specific post. Access: AUTH'
       tags:
         - 'M06: Media'
@@ -473,8 +573,8 @@ paths:
           
   /media/{mediaId}:
     delete:
-      operationId: R114
-      summary: 'R114: Delete a Media Item'
+      operationId: R120
+      summary: 'R120: Delete a Media Item'
       description: 'Remove a media item by its ID. Access: AUTH, ADMIN'
       tags:
         - 'M06: Media'
@@ -544,8 +644,8 @@ paths:
 
   /api/search:
     get:
-      operationId: R117
-      summary: 'R117: Allows search results to filter by category via AJAX'
+      operationId: R118
+      summary: 'R118: Allows search results to filter by category via AJAX'
       description: 'Search results across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
@@ -569,8 +669,8 @@ paths:
 
   /api/auth-check:
     post:
-      operationId: R118
-      summary: 'R118: Check authentication status'
+      operationId: R106
+      summary: 'R106: Check authentication status'
       description: 'Returns whether the current user is authenticated. Access: AUTH, ADMIN'
       tags:
         - 'M01: Authentication'
@@ -580,8 +680,8 @@ paths:
 
   /api/auth-id:
     post:
-      operationId: R119
-      summary: 'R119: Retrieve the current user ID'
+      operationId: R107
+      summary: 'R107: Retrieve the current user ID'
       description: 'Returns the authenticated user ID and admin status. Access: AUTH, ADMIN'
       tags:
         - 'M01: Authentication'
@@ -591,8 +691,8 @@ paths:
 
   /api/{username}:
     get:
-      operationId: R120
-      summary: 'R120: Fetch User Data'
+      operationId: R111
+      summary: 'R111: Fetch User Data'
       description: 'Retrieve JSON details of a user by username. Access: AUTH'
       tags:
         - 'M02: Users'
