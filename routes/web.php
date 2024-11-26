@@ -34,8 +34,6 @@ Route::delete('/profile/{id}/delete', [ProfileController::class, 'delete'])->nam
 Route::post('/profile/verify-password', [ProfileController::class, 'verifyPassword']);
 
 
-
-
 // API
 Route::controller(PostController::class)->group(function (){
     Route::get('api/posts','getPostsTimeline' );
