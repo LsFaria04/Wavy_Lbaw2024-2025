@@ -327,7 +327,7 @@ paths:
                   description: 'Post update failed.'
                   value: '/home'
         '403':
-        description: 'Unauthorized to update the post.'
+          description: 'Unauthorized to update the post.'
           content:
             application/json:
               schema:
@@ -371,16 +371,15 @@ paths:
           description: 'Redirect response after post deletion (non-AJAX).'
           headers:
             Location:
-              description: 'Redirect URL after successful or failed deletion.'
               schema:
                 type: string
-                examples:
-                  302Success:
-                    description: 'Post deleted successfully!'
-                    value: '/home'
-                  302Failure:
-                    description: 'Failed to delete post.'
-                    value: '/home'
+              examples:
+                302Success:
+                  description: 'Post deleted successfully!'
+                  value: '/home'
+                302Failure:
+                  description: 'Failed to delete post.'
+                  value: '/home'
         '401':
           description: 'Unauthorized action.'
           content:
@@ -412,7 +411,7 @@ paths:
     get:
       operationId: R112
       summary: 'R112: Access the search page'
-      description: 'Provide quick access to the search page with an optional query string and category defaulted to "posts". Access: NAUTH, AUTH, ADMIN'
+      description: 'Provide quick access to the search page with an optional query string and category that is defaulted to "posts". Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
       parameters:
