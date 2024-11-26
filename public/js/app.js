@@ -873,20 +873,65 @@ function updateFileList() {
       */
     }
 
-  
+// Object to store the original values and files for each post
+const originalFormData = {};
+
 // Toggle the edit form visibility
 function toggleEditPost(postid) {
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
-    
+    const editFormFields = editForm.querySelectorAll('input, textarea, select'); // Editable fields
+
+    // File-related elements
+    const fileInput = document.getElementById(`image-${postid}`);
+    const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
+    const newFilesContainer = document.getElementById(`newFiles-${postid}`);
+    const removeMediaInput = document.getElementById(`removeMedia-${postid}`);
+
+    // Toggle visibility
     editForm.classList.toggle('hidden');
     postContent.classList.toggle('hidden');
-    
-    // Reset file input and media display if switching from edit form to post content
-    if (editForm.classList.contains('hidden')) {
+
+    // If showing the edit form, save original values
+    if (!editForm.classList.contains('hidden')) {
+        if (!originalFormData[postid]) {
+            // Store the original values in the object
+            originalFormData[postid] = {
+                formValues: {},
+                mediaFiles: fileDisplay.innerHTML, // Store current files displayed
+                removeMedia: removeMediaInput.value, // Store any files marked for removal
+            };
+            editFormFields.forEach(field => {
+                originalFormData[postid].formValues[field.name] = field.value;
+            });
+        }
+    } else {
+        // If hiding the edit form without saving, restore original values
+        if (originalFormData[postid]) {
+            // Restore original form values
+            editFormFields.forEach(field => {
+                field.value = originalFormData[postid].formValues[field.name];
+            });
+
+            // Restore original files
+            fileDisplay.innerHTML = originalFormData[postid].mediaFiles;
+            removeMediaInput.value = originalFormData[postid].removeMedia;
+            
+            // Clear new files added during the edit session
+            if (newFilesContainer) {
+                newFilesContainer.innerHTML = "";
+            }
+
+            // Reset the file input
+            fileInput.value = "";
+        }
+
+        // Reset file input and media display if switching from edit form to post content
         selectedFilesEdit = []; // Reset media selection when returning to the post content view
     }
 }
+
+
 
 // Open delete confirmation menu
 function openDeleteMenu(postid) {

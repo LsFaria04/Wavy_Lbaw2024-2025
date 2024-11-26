@@ -31,7 +31,7 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: 'Show the Login Page'
+          description: 'Show the Login Page.'
     
     post:
       operationId: R102
@@ -72,7 +72,7 @@ paths:
     get:
       operationId: R103
       summary: 'R103: Logout Action'
-      description: 'Logout the current authenticated user. Access: AUTH, ADMIN'
+      description: 'Logout the current authenticated user. Access: AUTH, ADMIN, OWN'
       tags:
         - 'M01: Authentication'
       responses:
@@ -96,7 +96,7 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: 'Show Register Page'
+          description: 'Show Register Page.'
 
     post:
       operationId: R105
@@ -140,7 +140,7 @@ paths:
     get:
       operationId: R108
       summary: 'R108: View User Profile'
-      description: 'Show the user profile. Access: AUTH, ADMIN'
+      description: 'Show the user profile. Access: NAUTH, AUTH, OWN, ADMIN'
       tags:
         - 'M02: Users'
       parameters:
@@ -159,7 +159,7 @@ paths:
     put:
       operationId: R109
       summary: 'R109: Update Profile'
-      description: 'Update the profile information of a user by their ID. Access: AUTH, ADMIN'
+      description: 'Update the profile information of a user by their ID. Access: OWN, ADMIN, AUTH'
       tags:
         - 'M02: Users'
       parameters:
@@ -202,27 +202,28 @@ paths:
                   description: 'Failed. Redirect to the profile page without updating.'
                   value: '/profile/{username}'
         '403':
-          description: 'Unauthorized to update the profile'
+          description: 'Unauthorized to update the profile.'
         '404':
-          description: 'User not found'
+          description: 'User not found.'
   
   /home:
     get:
-      operationId: R109
-      summary: 'R109: Access the Home Page'
-      description: 'Provide access to the home page and timeline. Access: NAUTH, AUTH, ADMIN'
+      operationId: R110
+      summary: 'R110: Access the Home Page'
+      description: 'Provide access to the home page and timeline. Access: NAUTH, AUTH, ADMIN, OWN'
       tags:
         - 'M02: Users'
       responses: 
         '200':
-          description: 'Successfully retrieved home page'
+          description: 'Successfully retrieved home page.'
         '401':
-          description: 'Unauthorized access'
+          description: 'Unauthorized access.'
+
   /profile/{id}/delete:
     delete:
-      operationId: R110
-      summary: 'R110: Delete user profile after verifying ownership'
-      description: 'Processes the user password form submission to delete the account. Requires authentication. If the user is the owner of the account or has admin privileges, the profile is deleted. Access: AUTH, ADMIN.'
+      operationId: R111
+      summary: 'R111: Delete user profile after verifying ownership'
+      description: 'Processes the user password form submission to delete the account. Access: AUTH, ADMIN, OWN'
       tags:
         - 'M02: Users'
       parameters:
@@ -232,30 +233,15 @@ paths:
           schema:
             type: integer
           description: 'ID of the user to delete'
-      requestBody:
-        required: true
-        content:
-          application/x-www-form-urlencoded:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  description: 'User password for confirmation'
-              required:
-                - password
-          application/json:
-            schema:
-              type: object
-              properties:
-                password:
-                  type: string
-                  description: 'User password for confirmation'
-              required:
-                - password
+        - name: X-Request-Password
+          in: header
+          required: true
+          schema:
+            type: string
+          description: 'User password for confirmation'
       responses:
         '200':
-          description: 'User deleted successfully'
+          description: 'User deleted successfully.'
           content:
             application/json:
               schema:
@@ -321,9 +307,9 @@ paths:
                     example: 'Failed to delete the user.'
   /posts/store:
     post:
-      operationId: R112
-      summary: 'R112: Store a Post'
-      description: 'Process a post created by a user and store it into the database. Access: AUTH'
+      operationId: R113
+      summary: 'R113: Store a Post'
+      description: 'Process a post created by a user and store it into the database. Access: AUTH, OWN'
       tags:
         - 'M03: Posts'
       requestBody:
@@ -377,9 +363,9 @@ paths:
 
   /posts/update/{post}:
     post:
-      operationId: R113
-      summary: 'R113: Update a post'
-      description: 'Update a specified post by its ID. Access: AUTH, ADMIN'
+      operationId: R114
+      summary: 'R114: Update a post'
+      description: 'Update a specified post by its ID. Access: OWN, ADMIN'
       tags:
         - 'M03: Posts'
       parameters:
@@ -442,9 +428,9 @@ paths:
 
   /posts/delete/{post}:
     post:
-      operationId: R114
-      summary: 'R114: Delete a post'
-      description: 'Deletes the specified post by ID. Access: AUTH, ADMIN'
+      operationId: R115
+      summary: 'R115: Delete a post'
+      description: 'Deletes the specified post by ID. Access: OWN, ADMIN'
       tags:
         - 'M03: Posts'
       parameters:
@@ -509,9 +495,9 @@ paths:
 
   /search:
     get:
-      operationId: R117
-      summary: 'R117: Access the search page'
-      description: 'Provide quick access to the search page with an optional query string and category that is defaulted to "posts". Access: NAUTH, AUTH, ADMIN'
+      operationId: R118
+      summary: 'R118: Access the search page'
+      description: 'Provide quick access to the search page with an optional query string and category that is defaulted to "posts". Access: NAUTH, AUTH, ADMIN, OWN'
       tags:
         - 'M04: Search'
       parameters:
@@ -525,7 +511,7 @@ paths:
           name: category
           schema:
             type: string
-            enum: [posts, users, groups]
+            enum: [posts, users]
           description: 'The category to filter the search (default: posts).'
           required: false
       responses: 
@@ -534,9 +520,9 @@ paths:
 
   /media/store:
     post:
-      operationId: R119
-      summary: 'R119: Store Media'
-      description: 'Process and store a media file associated with a specific post. Access: AUTH'
+      operationId: R123
+      summary: 'R123: Store Media'
+      description: 'Process and store a media file associated with a specific post. Access: OWN, AUTH, ADMIN'
       tags:
         - 'M06: Media'
       requestBody:
@@ -558,7 +544,7 @@ paths:
                 - postid
       responses:
         '302':
-          description: 'Redirect after successful media upload'
+          description: 'Redirect after successful media upload.'
           headers:
             Location:
               schema:
@@ -571,65 +557,22 @@ paths:
                   description: 'This post already has the maximum of 4 media items.'
                   value: '/home'
           
-  /media/{mediaId}:
-    delete:
-      operationId: R120
-      summary: 'R120: Delete a Media Item'
-      description: 'Remove a media item by its ID. Access: AUTH, ADMIN'
-      tags:
-        - 'M06: Media'
-      parameters:
-        - in: path
-          name: mediaId
-          schema:
-            type: integer
-          required: true
-          description: 'The ID of the media item to delete'
-      responses:
-        '302':
-          description: 'Redirect after successful media deletion'
-          headers:
-            Location:
-              schema:
-                type: string
-              examples:
-                302Success:
-                  description: 'Media deleted successfully!'
-                  value: '/home'
-                302Failure:
-                  description: 'Media deletion failed.'
-                  value: '/home'          
-        '403':
-          description: 'Unauthorized to delete media.'
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                    example: false
-                  message:
-                    type: string
-                    example: 'You are not authorized to delete this media.'
-
-
   /api/posts:
     get:
-      operationId: R115
-      summary: 'R115: Fetch posts for the timeline'
-      description: 'Retrieve posts for the authenticated user timeline. Access: AUTH, NAUTH, ADMIN'
+      operationId: R116
+      summary: 'R116: Fetch posts for the timeline'
+      description: 'Retrieve posts for the user timeline. Access: AUTH, NAUTH, ADMIN, OWN'
       tags:
         - 'M03: Posts'
       responses:
         '200':
-          description: 'Successfully retrieved posts'
+          description: 'Successfully retrieved posts.'
 
   /api/posts/{username}:
     get:
-      operationId: R116
-      summary: 'R116: Fetch user posts'
-      description: 'Retrieve posts created by a specific user. Access: AUTH, ADMIN'
+      operationId: R117
+      summary: 'R117: Fetch user posts'
+      description: 'Retrieve posts created by the specific user. Access: ADMIN, OWN'
       tags:
         - 'M03: Posts'
       parameters:
@@ -644,9 +587,9 @@ paths:
 
   /api/search:
     get:
-      operationId: R118
-      summary: 'R118: Allows search results to filter by category via AJAX'
-      description: 'Search results across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
+      operationId: R119
+      summary: 'R119: Allows search results to filter by category via AJAX'
+      description: 'Search results across posts or users based on the query and category. Access: NAUTH, AUTH, ADMIN, OWN'
       tags:
         - 'M04: Search'
       parameters:
@@ -660,7 +603,7 @@ paths:
           name: category
           schema:
             type: string
-            enum: [posts, users, groups]
+            enum: [posts, users]
           description: 'The category to filter the search.'
           required: false
       responses:
@@ -671,7 +614,7 @@ paths:
     post:
       operationId: R106
       summary: 'R106: Check authentication status'
-      description: 'Returns whether the current user is authenticated. Access: AUTH, ADMIN'
+      description: 'Returns whether the current user is authenticated. Access: AUTH, ADMIN, OWN'
       tags:
         - 'M01: Authentication'
       responses:
@@ -682,7 +625,7 @@ paths:
     post:
       operationId: R107
       summary: 'R107: Retrieve the current user ID'
-      description: 'Returns the authenticated user ID and admin status. Access: AUTH, ADMIN'
+      description: 'Returns the authenticated user ID and admin status. Access: AUTH, ADMIN, OWN'
       tags:
         - 'M01: Authentication'
       responses:
@@ -691,9 +634,9 @@ paths:
 
   /api/{username}:
     get:
-      operationId: R111
-      summary: 'R111: Fetch User Data'
-      description: 'Retrieve JSON details of a user by username. Access: AUTH'
+      operationId: R112
+      summary: 'R112: Fetch User Data'
+      description: 'Retrieve JSON details of a user by username. Access: AUTH, OWN'
       tags:
         - 'M02: Users'
       parameters:
@@ -708,3 +651,123 @@ paths:
           description: 'User data retrieved successfully.'
         '404':
           description: 'User not found.'
+
+  /admin:
+    get:
+      operationId: R120
+      summary: 'R120: Access Admin Page'
+      description: 'Provides access to the admin page. Access: ADMIN'
+      tags:
+        - 'M05: Administration'
+      responses:
+        '200':
+          description: 'Successfully retrieved the admin page.'
+        '403':
+          description: 'Forbidden: Unauthorized access.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'You do not have permission to access the admin page.'
+
+  /admin/users/create:
+    get:
+      operationId: R121
+      summary: 'R121: Display User Creation Form'
+      description: 'Displays the form for creating a new user. Access: ADMIN'
+      tags:
+        - 'M05: Administration'
+      responses:
+        '200':
+          description: 'Successfully retrieved the user creation form.'
+        '403':
+          description: 'Forbidden: Unauthorized access.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'You do not have permission to access the user creation form.'
+
+  /admin/users:
+    post:
+      operationId: R122
+      summary: 'R122: Create a new user'
+      description: 'Allows the creation of new users. Access: ADMIN'
+      tags:
+        - 'M05: Administration'
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  description: 'Unique username for the new user.'
+                email:
+                  type: string
+                  description: 'Email address of the new user.'
+                password:
+                  type: string
+                  description: 'Password for the new user.'
+                confirmPassword:
+                  type: string
+                  description: 'Confirmation of the password to ensure they match.'
+              required:
+                - username
+                - email
+                - password
+                - confirmPassword
+      responses:
+        '201':
+          description: 'User created successfully.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'User created successfully!'
+        '400':
+          description: 'Bad request, missing required fields or invalid data.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Invalid input or missing fields.'
+        '403':
+          description: 'Unauthorized to perform this action.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'You do not have permission to create a user.'

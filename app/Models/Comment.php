@@ -58,7 +58,7 @@ class Comment extends Model
      /**
      * Get the likes made by the user.
      */
-    public function likes(): HasMany
+    public function likes()
     {
         return $this->hasMany(Like::class, 'userid', 'userid');
     }
