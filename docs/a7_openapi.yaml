@@ -411,10 +411,24 @@ paths:
   /search:
     get:
       operationId: R112
-      summary: 'R112: Access the search page with or without an initial query'
-      description: 'Provide quick access to search page. Access: NAUTH, AUTH, ADMIN'
+      summary: 'R112: Access the search page'
+      description: 'Provide quick access to the search page with an optional query string and category defaulted to "posts". Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: 'The search query string.'
+          required: false
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [posts, users, groups]
+          description: 'The category to filter the search (default: posts).'
+          required: false
       responses: 
         '200':
           description: 'OK. Show the Search results.'
@@ -509,8 +523,8 @@ paths:
   /api/search:
     get:
       operationId: R117
-      summary: 'R117: Perform a search via AJAX'
-      description: 'Search across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
+      summary: 'R117: Allows search results to filter by category via AJAX'
+      description: 'Search results across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
       parameters:
@@ -525,11 +539,11 @@ paths:
           schema:
             type: string
             enum: [posts, users, groups]
-          description: 'The category to search within (default: posts)'
+          description: 'The category to filter the search.'
           required: false
       responses:
         '200':
-          description: Search results
+          description: 'Search results successfully filtered and returned.'
 
   /api/auth-check:
     post:
@@ -540,7 +554,7 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: Auth status via AJAX
+          description: 'Auth status via AJAX.'
 
   /api/auth-id:
     post:
@@ -551,7 +565,7 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: User ID and admin status via AJAX
+          description: 'User ID and admin status via AJAX.'
 
   /api/{username}:
     get:
