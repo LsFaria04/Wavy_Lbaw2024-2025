@@ -68,6 +68,7 @@ class SearchController extends Controller
                                   ->orWhere('username', $sanitizedQuery);
                         })
                         ->where('state', '<>', 'deleted')
+                        ->where('isadmin', false)
                         ->paginate(10);
                     }
 
@@ -78,6 +79,7 @@ class SearchController extends Controller
                         })
                         ->where('visibilitypublic', true)
                         ->where('state', '<>', 'deleted')
+                        ->where('isadmin', false)
                         ->paginate(10);
                     }
                     break;
