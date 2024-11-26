@@ -476,7 +476,7 @@ paths:
   /api/auth-id:
     post:
       operationId: R119
-      summary: 'R119: Retrieve the current user's ID'
+      summary: 'R119: Retrieve the current user ID'
       description: 'Returns the authenticated user ID and admin status. Access: AUTH'
       tags:
         - 'M01: Authentication'
