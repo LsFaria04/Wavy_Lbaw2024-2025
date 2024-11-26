@@ -31,7 +31,7 @@ Route::view('/home', 'pages.home')->name('home');
 Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile');
 Route::put('/profile/{userid}', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile/{id}/delete', [ProfileController::class, 'delete'])->name('profile.delete');
-Route::post('/profile/verify-password', [ProfileController::class, 'verifyPassword']);
+Route::post('/profile/verify-password', [ProfileController::class, '']);
 
 
 // API
@@ -66,7 +66,6 @@ Route::controller(LoginController::class)->group(function () {
     Route::post('/login', 'authenticate');
     Route::get('/logout', 'logout')->name('logout');
 });
-
 Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
@@ -80,12 +79,12 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 
     Route::get('/', [AdminController::class, 'index'])->name('admin.index');
 });
-    Route::get('/admin/posts/search', [SearchController::class, 'searchPosts'])->name('posts.search');
-    Route::delete('/posts/delete/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
+    //Route::get('/admin/posts/search', [SearchController::class, 'searchPosts'])->name('posts.search');
+    //Route::delete('/posts/delete/{post}', [PostController::class, 'destroy'])->name('admin.posts.destroy');
 
-    Route::get('/admin/users/search', [SearchController::class, 'searchUsers'])->name('users.search');
+    //Route::get('/admin/users/search', [SearchController::class, 'searchUsers'])->name('users.search');
     Route::get('/admin/users/create', [AdminController::class, 'storeUser'])->name('admin.users.create');
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
-    Route::get('/admin/users/{id}/edit', [AdminController::class, 'edit'])->name('admin.users.edit');
-    Route::post('/admin/users/{id}', [AdminController::class, 'update'])->name('admin.users.update');
-    Route::delete('/users/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');
+    //Route::get('/admin/users/{id}/edit', [AdminController::class, 'edit'])->name('admin.users.edit');
+    //Route::post('/admin/users/{id}', [AdminController::class, 'update'])->name('admin.users.update');
+    //Route::delete('/users/{id}', [AdminController::class, 'destroyUser'])->name('admin.users.destroy');

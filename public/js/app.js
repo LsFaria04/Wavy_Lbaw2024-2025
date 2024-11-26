@@ -1284,6 +1284,7 @@ function closeModal() {
 
 //handles the profile delete confirmation with requests via ajax
 function confirmDeleteProfile() {  
+  console.log("here");
   if (isadmin) {
     document.getElementById('deleteProfileForm').submit();
   }
@@ -1296,18 +1297,9 @@ function confirmDeleteProfile() {
       return;
     }
 
-    sendAjaxRequest('POST', '/profile/verify-password', { password }, function () {
-      const response = JSON.parse(this.responseText);
-
-      if (response.success) {
-        document.getElementById('deleteProfileForm').submit();
-      }
-      else {
-        document.getElementById('passwordError').classList.remove('hidden');
-        document.getElementById('passwordError').innerText = response.message;
-      }
-    });
+    document.getElementById('deleteProfileForm').submit();
   }
+    
 }
 
 //toggles the password form when it is needed in the delete user menu

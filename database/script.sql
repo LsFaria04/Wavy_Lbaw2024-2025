@@ -808,7 +808,7 @@ VALUES
     ('BobJohnson', 'hash2', 'Avid hiker and nature enthusiast, always seeking the next adventure.', 'bob.johnson@example.com', 'active', TRUE, FALSE),
     ('CharlieBrown', 'hash3', 'Art lover who enjoys visiting galleries and creating new pieces.', 'charlie.brown@example.com', 'suspended', TRUE, FALSE),
     ('DanaWhite', 'hash4', 'Foodie and chef, always experimenting with new recipes.', 'dana.white@example.com', 'active', TRUE, FALSE),
-    ('EveBlack', 'hash5', 'Traveler at heart, exploring cultures and cuisines around the world.', 'eve.black@example.com', 'deleted', TRUE, FALSE),
+    ('EveBlack', 'hash5', 'Traveler at heart, exploring cultures and cuisines around the world.', 'eve.black@example.com', 'active', TRUE, FALSE),
     ('FrankMoore', 'hash6', 'Sports coach who enjoys mentoring young athletes and staying active.', 'frank.moore@example.com', 'active', TRUE, FALSE),
     ('GraceHall', 'hash7', 'Yoga instructor and wellness advocate, passionate about mindfulness.', 'grace.hall@example.com', 'active', TRUE, FALSE),
     ('HenryKing', 'hash8', 'Gardener with a love for growing fresh vegetables and herbs.', 'henry.king@example.com', 'suspended', TRUE, FALSE),
@@ -937,14 +937,7 @@ VALUES
     (7, NOW(), NULL, 3),   
     (8, NOW(), 1, NULL),  
     (9, NOW(), 3, NULL), 
-    (10, NOW(), NULL, 2);
-
-INSERT INTO MEDIA (path, postID, commentID, userID) VALUES
-    ('/media/images/photo1.jpg', 1, NULL, NULL),
-    ('/media/images/photo2.jpg', NULL, 2, NULL),
-    ('/media/videos/video1.mp4', 3, NULL, NULL),
-    ('/media/images/profile1.jpg', NULL, NULL, 1),  
-    ('/media/audio/audio1.mp3', NULL, NULL, 2);    
+    (10, NOW(), NULL, 2);  
 
 INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (7, 2, 'Accepted', NOW()),

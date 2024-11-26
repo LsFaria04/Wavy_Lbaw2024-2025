@@ -60,6 +60,7 @@ class ProfileController extends Controller
     public function delete(Request $request, $id) {
         $user = User::findOrFail($id);
         $this->authorize('delete', $user);
+
     
         $currentUser = Auth::user();
         $isAdmin = $currentUser->isadmin === true;

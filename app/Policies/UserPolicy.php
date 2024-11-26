@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+
 
 class UserPolicy
 {
@@ -20,6 +22,6 @@ class UserPolicy
     }
 
     public function delete(User $authUser, User $user) {
-        return $authUser === $user->id || $authUser->isadmin;
+        return $authUser->id === $user->id || $authUser->isadmin;
     }
 }
