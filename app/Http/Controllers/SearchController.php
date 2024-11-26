@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Group;
+use Illuminate\Support\Facades\Auth;
 
 class SearchController extends Controller
 {   
@@ -37,23 +38,48 @@ class SearchController extends Controller
             //Performs the DB query according to the search category
             switch ($category) {
                 case 'posts':
-                    $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                    if(Auth::check() || Auth::user()->isadmin){
+                        $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                        ->orderBy('createddate', 'desc')
+                        ->paginate(10);
+                        for($i = 0;$i < sizeof($posts); $i++) {
+                            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+                        }
+                    }
+
+                    else {
+                        $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
-                        for($i = 0;$i < sizeof($posts); $i++){
+                        for($i = 0;$i < sizeof($posts); $i++) {
                             $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
                         }
+                    }
                     break;
+
                 case 'users':
-                    $users = User::where(function($query) use ($sanitizedQuery) {
-                        $query->whereRaw("to_tsvector('english', username) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                              ->orWhere('username', $sanitizedQuery);
-                    })
-                    ->where('visibilitypublic', true)
-                    ->where('state', '<>', 'deleted')
-                    ->paginate(10);
+
+                    if(Auth::check() || Auth::user()->isadmin) {
+                        $users = User::where(function($query) use ($sanitizedQuery) {
+                            $query->whereRaw("to_tsvector('english', username) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                                  ->orWhere('username', $sanitizedQuery);
+                        })
+                        ->where('state', '<>', 'deleted')
+                        ->paginate(10);
+                    }
+
+                    else {
+                        $users = User::where(function($query) use ($sanitizedQuery) {
+                            $query->whereRaw("to_tsvector('english', username) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                                  ->orWhere('username', $sanitizedQuery);
+                        })
+                        ->where('visibilitypublic', true)
+                        ->where('state', '<>', 'deleted')
+                        ->paginate(10);
+                    }
                     break;
+
                 case 'groups':
                     $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->paginate(10);
