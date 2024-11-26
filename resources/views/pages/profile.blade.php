@@ -52,19 +52,22 @@
                             Edit Profile
                         </button>
 
+                        <!-- Dropdown Trigger -->
                         <button onclick="toggleDropdown()" class="focus:outline-none">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-gray-800 hover:text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 hover:text-gray-600" fill="black" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                                 <path stroke-linecap="round" stroke-linejoin="round" d="M12 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm0 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm0 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
                             </svg>
                         </button>
                     </div>
+
                     <!-- Dropdown Menu -->
-                    <div id="dropdownMenu" class="hidden absolute top-14 right-0 border border-gray-200 rounded-md shadow-lg w-48 backdrop-blur">
-                        <button onclick="toggleConfirmationModal()" class="text-left w-full text-sm text-red-600 hover:text-red-800">
+                    <div id="dropdownMenu" class="hidden absolute top-16 right-4 w-40 bg-white border border-gray-200 rounded-md shadow-lg transition duration-300 ease-in-out">
+                        <button 
+                            onclick="toggleConfirmationModal()" 
+                            class="w-full px-4 py-2 text-left text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
                             Delete Account
                         </button>
                     </div>
-
                 @endif
                 @endauth
             </div>
