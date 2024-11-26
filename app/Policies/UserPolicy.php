@@ -14,12 +14,12 @@ class UserPolicy
         //
     }
 
-    public function update(User $user)
+    public function update(User $authUser, User $user)
     {
         return $authUser->id === $user->id;
     }
 
     public function delete(User $authUser, User $user) {
-        return $authUser->id === $user->id || $authUser->isadmin;
+        return $authUser === $user->id || $authUser->isadmin;
     }
 }
