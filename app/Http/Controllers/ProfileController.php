@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 class ProfileController extends Controller
 {   
     /*
-    Show the profile of the user with the same username as the one provided
+    * Show the profile of the user with the same username as the one provided
     */
     public function show($username) {
 
@@ -65,7 +65,7 @@ class ProfileController extends Controller
     }
 
     /*
-    Used to delete a user from the site. Only removes the personal informations but retains it's if and published contents
+    * Used to delete a user from the site. Only removes the personal informations but retains it's if and published contents
     */
     public function delete(Request $request, $id) {
         $user = User::findOrFail($id);
@@ -150,6 +150,4 @@ class ProfileController extends Controller
             return redirect()->route('home')->with('error', 'Failed to delete the user.');
         }
     }
-    
-    
 }

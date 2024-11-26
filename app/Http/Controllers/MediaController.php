@@ -29,15 +29,13 @@ class MediaController extends Controller
         // Store the uploaded file in the public storage folder
         $path = $request->file('file')->store('media', 'public');  // This saves the file to 'storage/app/public/media'
 
-        // Now, let's create the Media record
         Media::create([
             'userid' => Auth::id(),
             'postid' => $request->postid,  // Associating media with a specific post
-            'commentid' => null,  // Optional: If you want to add comment-based media later
+            'commentid' => null,  // Optional: Add comment media later
             'path' => $path,  // Storing the path to the media file
         ]);
 
-        // Return a response or redirect after storing the media
         return redirect()->route('home')->with('success', 'Media uploaded successfully!');
     }
 
