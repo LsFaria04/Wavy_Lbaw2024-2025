@@ -2,8 +2,8 @@
     <div class="post-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">
-                <a href="{{ route('profile', $post->user->username) }}" class="text-black hover:text-sky-900">
-                    {{ $post->user->username }}
+                <a href="{{ $post->user->state === 'deleted' ? '#' : route('profile', $post->user->username) }}" class="text-black hover:text-sky-900">
+                    {{ $post->user->state === 'deleted' ? 'Deleted User' : $post->user->username }}
                 </a>
             </h3>
             <span class="text-gray-500 text-sm">{{ $post->createddate->diffForHumans() }}</span>

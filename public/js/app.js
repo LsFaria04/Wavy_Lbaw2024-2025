@@ -100,9 +100,10 @@ post.innerHTML = `
   <div class="post-header mb-2 flex justify-between items-center">
       <div>
           <h3 class="font-bold">
-              <a href="../profile/${postInfo.user.username}" class="text-black hover:text-sky-900">
-                  ${ postInfo.user.username }
-              </a>
+            <a href="${ postInfo.user.state === 'deleted' ? '#' : '../profile/' + postInfo.user.username }" 
+                class="text-black hover:text-sky-900">
+                ${ postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username }
+            </a>
           </h3>
           <span class="text-gray-500 text-sm">${ postInfo.createddate }</span>
       </div>
@@ -111,7 +112,6 @@ post.innerHTML = `
       <p>${ postInfo.message }</p>
     </div>
 `;
-
 
 return post
 
@@ -360,11 +360,10 @@ function createComment(commentInfo){
 
 //inserts more users into an element
 function insertMoreUsers(element, users){
-for(let i = 0; i < users.data.length; i++){
-  let user = createUser(users.data[i]);
-  element.appendChild(user);
-
-}
+  for(let i = 0; i < users.data.length; i++){
+    let user = createUser(users.data[i]);
+    element.appendChild(user);
+    }
 }
 
 //inserts more groups into and element
@@ -378,27 +377,31 @@ for(let i = 0; i < groups.data.length; i++){
 
 //inserts more posts into an element
 function insertMorePosts(element, posts){
-for(let i = 0; i < posts.data.length; i++){
-  let post = createPost(posts.data[i]);
+  for(let i = 0; i < posts.data.length; i++){
+    
+    console.log(posts.data[i].user);
+    if (posts.data[i].user.state === 'deleted') {
+      posts.data[i].user.username = 'Deleted User';
+    }
 
-  if(userId == posts.data[i].user.userid || isadmin){
-    post = createPostOptions(post, posts.data[i].postid); 
+    let post = createPost(posts.data[i]);
+
+    if(userId == posts.data[i].user.userid || isadmin){
+      post = createPostOptions(post, posts.data[i].postid); 
+    }
+
+    post = insertPostMedia(post, posts.data[i].media);
+
+    if(userId == posts.data[i].user.userid || isadmin){
+      insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
+    }
+
+    let editForm = post.querySelector('.edit-post-form form');
+    if(editForm !== null){
+      addEventListenerToForm(editForm);
+    }
+    element.appendChild(post);
   }
-
-  post = insertPostMedia(post, posts.data[i].media);
-
-  if(userId == posts.data[i].user.userid || isadmin){
-    insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
-  }
-
-  let editForm = post.querySelector('.edit-post-form form');
-  if(editForm !== null){
-    addEventListenerToForm(editForm);
-  }
-  element.appendChild(post);
-}
-
-
 }
 
 //inserts more comments into an element
@@ -1254,5 +1257,57 @@ function deleteUser(userId) {
   }
 }
 
+//Delete Account
+function toggleDropdown() {
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  dropdownMenu.classList.toggle('hidden');
+}
+
+function toggleConfirmationModal() {
+  const confirmationMenu = document.getElementById('confirmationModal');
+  confirmationMenu.classList.toggle('hidden');
+  const dropdownMenu = document.getElementById('dropdownMenu');
+  dropdownMenu.classList.toggle('hidden');
+  if (isadmin) {
+    togglePasswordForm();
+  }
+}
+
+function closeModal() {
+  const confirmationMenu = document.getElementById('confirmationModal');
+  confirmationMenu.classList.toggle('hidden');
+}
+
+function confirmDeleteProfile() {  
+  if (isadmin) {
+    document.getElementById('deleteProfileForm').submit();
+  }
+  else {
+    const password = document.getElementById('password').value;
+
+    if (!password) {
+      document.getElementById('passwordError').classList.remove('hidden');
+      document.getElementById('passwordError').innerText = 'Password is required.';
+      return;
+    }
+
+    sendAjaxRequest('POST', '/profile/verify-password', { password }, function () {
+      const response = JSON.parse(this.responseText);
+
+      if (response.success) {
+        document.getElementById('deleteProfileForm').submit();
+      }
+      else {
+        document.getElementById('passwordError').classList.remove('hidden');
+        document.getElementById('passwordError').innerText = response.message;
+      }
+    });
+  }
+}
+
+function togglePasswordForm() {
+  const passwordForm = document.getElementById('passwordForm');
+  passwordForm.classList.toggle('hidden');
+}
 
 addEventListeners();
