@@ -36,7 +36,7 @@ class ProfileController extends Controller
                 'username' => [
                     'required',
                     'string',
-                    'max:250',
+                    'max:30',
                     'alpha_dash',
                     Rule::unique('users', 'username')->ignore($userid, 'userid'),
                 ],
