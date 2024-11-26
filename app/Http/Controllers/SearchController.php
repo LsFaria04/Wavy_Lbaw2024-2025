@@ -10,12 +10,13 @@ use App\Models\Group;
 
 class SearchController extends Controller
 {   
-
+    //Perfoms the search according to the query inserted by the user
     public function search(Request $request) {
         $query = $request->input('q');
         $category = $request->input('category', 'posts');
         $posts = $users = $groups = collect();
 
+        //No query so no data is provided
         if (empty($query)) {
             if ($request->ajax()) {
                 return response()->json([]);
@@ -31,10 +32,12 @@ class SearchController extends Controller
 
         else {
 
+            //sanitazes the query to separate the words
             $sanitizedQuery = implode(' & ', array_map(function($term) {
                 return $term . ':*';
             }, explode(' ', $query)));
 
+            //Performs the DB query according to the search category
             switch ($category) {
                 case 'posts':
                     $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ to_tsquery('english', ?)", [$sanitizedQuery])

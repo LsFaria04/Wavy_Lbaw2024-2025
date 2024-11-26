@@ -44,11 +44,13 @@ class AdminController extends Controller
 
         return view('pages.admin', compact('posts', 'users'));
     }
-
+    
+    //returns the create user form to the admin page
     public function createUser() {
         return view('partials.admin.create-user');
     }
 
+    //stores a user when it is created in the admin page
     public function storeUser(Request $request)
     {   
         if(Auth::user()->isadmin){
@@ -78,59 +80,5 @@ class AdminController extends Controller
             return redirect()->route('admin.index')->with('error', "You are not an admin");
         }
 
-    }
-    
-    public function edit($id) {
-        if(Auth::user()->isadmin){
-            Log::info("is an admin");
-        $user = User::find($id);
-        if ($user) {
-            return response()->json(['success' => true, 'user' => $user]);
-        }
-            return response()->json(['success' => false]);
-        }
-        else{
-            return response()->json(['success' => false]);
-        }
-    }
-
-    public function update(Request $request, $id) {
-        if(Auth::user()->isadmin){
-            $user = User::find($id);
-            if ($user) {
-                try{
-                    if($request['visibilitypublic'] === 'true'){
-                        Log::info("data is being sent wrongly");
-                    }
-                    if($request['visibilitypublic'] === 'false'){
-                        Log::info("data is being sent correctly");
-                    }
-                $user->update($request->only('username', 'email', 'state', 'visibilitypublic', 'isadmin'));
-                
-                } catch (\Exception $e){
-                    Log::info("error on update");
-                }
-                return response()->json(['success' => true, 'user' => $user]);
-            }
-            return response()->json(['success' => false]);
-        }
-        else{
-            return response()->json(['success' => false]);
-        }
-    }
-
-
-    public function destroyUser($id) {
-        if(Auth::user()->isadmin){
-            $user = User::findOrFail($id);
-            $user->delete();
-            return response()->json([
-                'success' => true,
-                'message' => 'User deleted successfully.'
-            ]);
-        }
-        else{
-            return response()->json(['success' => false]);
-        }
     }
 }

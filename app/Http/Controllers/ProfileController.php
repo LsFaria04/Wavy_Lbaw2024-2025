@@ -12,9 +12,13 @@ use Illuminate\Support\Facades\Log;
 
 
 class ProfileController extends Controller
-{
+{   
+    /*
+    Show the profile of the user with the same username as the one provided
+    */
     public function show($username) {
 
+        //gets the firts set of data
         $user = User::where('username', $username)->firstOrFail();
         $posts = $user->posts()->orderBy('createddate', 'desc')->paginate(10);
         $comments = [];
@@ -22,15 +26,18 @@ class ProfileController extends Controller
         return view('pages.profile', compact('user', 'posts', 'comments'));
     }
 
+    //gets all the data of a user and sends it as json 
     public function getProfileUserData($username) {
         $user = User::where('username', $username)->firstOrFail();
         return response()->json($user);
     }
     
+    //used to update the information of a user when he edits its profile
     public function update(Request $request, $userid) {
         $user = User::findOrFail($userid);
         $this->authorize('update', $user);
         
+        //try the data input validation
         try {
             $validatedData = $request->validate([
                 'username' => [
@@ -57,6 +64,9 @@ class ProfileController extends Controller
         }    
     }
 
+    /*
+    Used to delete a user from the site. Only removes the personal informations but retains it's if and published contents
+    */
     public function delete(Request $request, $id) {
         $user = User::findOrFail($id);
         $this->authorize('delete', $user);
@@ -64,7 +74,8 @@ class ProfileController extends Controller
     
         $currentUser = Auth::user();
         $isAdmin = $currentUser->isadmin === true;
-    
+        
+        //if user isn't admin we need to check if the password inserted is valid
         if (!$isAdmin) {
             $request->validate([
                 'password' => 'required|string',
@@ -84,7 +95,8 @@ class ProfileController extends Controller
                 return redirect()->route('profile', $user->username)->with('error', 'Incorrect password. Deletion aborted.');
             }
         }
-    
+        
+        //user already deleted
         if ($user->state === 'deleted') {
 
             if ($request->ajax()) {
@@ -96,9 +108,9 @@ class ProfileController extends Controller
     
             return redirect()->route('home')->with('error', 'User has already been deleted.');
         }
-    
+        
+        //starts a transaction to delete the user
         DB::beginTransaction();
-    
         try {
             DB::statement('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ');
     
