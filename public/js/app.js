@@ -381,7 +381,6 @@ for(let i = 0; i < groups.data.length; i++){
 function insertMorePosts(element, posts){
   for(let i = 0; i < posts.data.length; i++){
     
-    console.log(posts.data[i].user);
     if (posts.data[i].user.state === 'deleted') {
       posts.data[i].user.username = 'Deleted User';
     }
@@ -752,6 +751,7 @@ function searchMenuOperation(){
   searchMenuArrow.classList.toggle("rotate-180");
 }
 
+//Used to change the search category when a user clicks in a search tab option
 function changeCategory(category) {
     currentPage = 1;
 
@@ -774,7 +774,7 @@ function changeCategory(category) {
   //Create Post Helper
   let selectedFiles = [];
 
-  function updateFileList() {
+function updateFileList() {
     const fileInput = document.getElementById('image');
     const fileDisplay = document.getElementById('fileDisplay');
 
@@ -862,12 +862,15 @@ function changeCategory(category) {
   }
 
 
+  //used to switch from section in the admin page(only for the final product)
   function showSectionAdmin(sectionId) {
+    /*
       document.querySelectorAll('.tab-section').forEach((el) => {
           el.classList.add('hidden');
       });
 
       document.getElementById(sectionId).classList.remove('hidden');
+      */
     }
 
   
@@ -876,7 +879,6 @@ function toggleEditPost(postid) {
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
     
-    console.log(editForm);
     editForm.classList.toggle('hidden');
     postContent.classList.toggle('hidden');
     
@@ -1001,11 +1003,13 @@ document.querySelectorAll('.delete-post-button').forEach(button => {
   });
 });
 
+//closes the users posts delete menu
 function closeDeleteMenu() {
   const modal = document.getElementById('deleteMenu');
   modal.classList.add('hidden');
 }
 
+//handles the delete forms in the admins (Maybe used for the final product)
 function handleDeleteFormSubmission() {
   const deleteForm = document.getElementById('deleteForm');
   if (!deleteForm) return;
@@ -1030,7 +1034,6 @@ function handleDeleteFormSubmission() {
       })
       .then(response => response.json())
       .then(data => {
-          console.log(data);
           if (data.success) {
               const postElement = document.getElementById(`post-${postId}`);
               postElement?.remove();
@@ -1055,24 +1058,20 @@ function setupCreateUserMenu() {
   const createUserMenu = document.getElementById("createUserMenu");
   const cancelCreateUserBtn = document.getElementById("cancelCreateUserBtn");
 
-  console.log(createUserBtn, createUserMenu, cancelCreateUserBtn);
 
   if (createUserBtn && createUserMenu && cancelCreateUserBtn) {
     createUserBtn.addEventListener("click", () => {
-      console.log("Create User Button Clicked");  
       createUserMenu.classList.toggle("hidden");
       
     });
 
     document.addEventListener("click", (event) => {
-      console.log("Click event detected:", event.target); 
       if (!createUserMenu.contains(event.target) && event.target !== createUserBtn) {
         createUserMenu.classList.add("hidden");
       }
     });
 
-    cancelCreateUserBtn.addEventListener("click", () => {
-      console.log("Cancel Button Clicked");  
+    cancelCreateUserBtn.addEventListener("click", () => { 
       createUserMenu.classList.add("hidden");
     });
   } else {
@@ -1080,6 +1079,7 @@ function setupCreateUserMenu() {
   }
 }
 
+//removes the file from the options in the edit post menu
 function removeFileEdit(postId, mediaId) {
   const fileElement = document.getElementById(`file-${mediaId}`);
   const removeMediaInput = document.getElementById(`removeMedia-${postId}`);
@@ -1186,6 +1186,7 @@ function adminEditUser(){
   }
 }
 
+//event listeners for the forms in the admin page
 function eventListernerFormsAdmin(){
   if(document.getElementById('editUserForm') === null){
     return;
@@ -1204,11 +1205,11 @@ function eventListernerFormsAdmin(){
   });
 }
 
+//updates the data in admin pages when a profile is edit (Only for the final product)
 function updateDataEditProfile(){
   let data = JSON.parse(this.responseText);
     if (data.success) {
       const row = document.querySelector(`tr[data-user-id="${data.user.userid}"]`);
-      console.log(row);
       row.querySelector('.username').textContent = data.user.username;
       row.querySelector('.email').textContent = data.user.email;
       row.querySelector('.state').textContent = data.user.state;
@@ -1221,7 +1222,7 @@ function updateDataEditProfile(){
     }
 
 }
-
+//event listener for the admmin edit user profile
 function addEventListenerEditUserAdmin(){
   if(document.getElementById('closeModalBtn') === null){
     return;
@@ -1275,11 +1276,13 @@ function toggleConfirmationModal() {
   }
 }
 
+//used to close modal menu
 function closeModal() {
   const confirmationMenu = document.getElementById('confirmationModal');
   confirmationMenu.classList.toggle('hidden');
 }
 
+//handles the profile delete confirmation with requests via ajax
 function confirmDeleteProfile() {  
   if (isadmin) {
     document.getElementById('deleteProfileForm').submit();
@@ -1307,6 +1310,7 @@ function confirmDeleteProfile() {
   }
 }
 
+//toggles the password form when it is needed in the delete user menu
 function togglePasswordForm() {
   const passwordForm = document.getElementById('passwordForm');
   passwordForm.classList.toggle('hidden');

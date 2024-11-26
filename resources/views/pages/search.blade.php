@@ -20,7 +20,7 @@
                 <nav class="category-buttons flex justify-around mt-2">
                     <button type="button" data-category="posts" class="category-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 {{ $category === 'posts' ? 'border-sky-900 text-sky-900' : 'hover:text-sky-900' }}" onclick="changeCategory('posts')">Posts</button>
                     <button type="button" data-category="users" class="category-btn flex-1 text-center py-3 text-sm font-semibold  border-b-2 {{ $category === 'users' ? 'border-sky-900 text-sky-900' : 'hover:text-sky-900' }}" onclick="changeCategory('users')">Users</button>
-                    <button type="button" data-category="groups" class="category-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 {{ $category === 'groups' ? 'border-sky-900 text-sky-900' : 'hover:text-sky-900' }}" onclick="changeCategory('groups')">Groups</button>
+                    <!--<button type="button" data-category="groups" class="category-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 {{ $category === 'groups' ? 'border-sky-900 text-sky-900' : 'hover:text-sky-900' }}" onclick="changeCategory('groups')">Groups</button>-->
                 </nav>
             </header>
             

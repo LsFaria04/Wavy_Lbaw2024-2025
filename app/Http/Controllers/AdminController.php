@@ -59,7 +59,7 @@ class AdminController extends Controller
                 'password' => 'required|string|min:8|confirmed',
             ]);
             }catch(\Exception $e){
-                return redirect()->route('admin.index')->with('error', "Please verify if the password length, username and email");
+                return redirect()->route('admin.index')->with('error', "Please verify the password length, username and email");
             }
 
 
