@@ -239,6 +239,12 @@ paths:
                 visibilityPublic:
                   type: boolean
                   description: 'Post visibility (public or private).'
+                media:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 'Media files associated with the post (up to 4 files).'
               required:
                 - message
       responses:
@@ -250,13 +256,24 @@ paths:
                 type: string
               examples:
                 302Success:
-                  description: 'Post creation was successful.'
+                  description: 'Post created sucessfully!'
                   value: '/home'
                 302Failure:
-                  description: 'Post creation failed.'
+                  description: 'Post creation failed!'
                   value: '/home'
-        '400':
-          description: 'Invalid input or file upload failure'
+        '403':
+          description: 'User is not authorized to create a post.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'You cannot create a post!'
 
   /posts/update/{post}:
     post:
@@ -280,11 +297,19 @@ paths:
               properties:
                 message:
                   type: string
+                  description: 'Updated content of the post.'
                 visibilityPublic:
                   type: boolean
+                  description: 'Updated visibility (public or private).'
                 removeMedia:
                   type: string
                   description: 'JSON array of media IDs to be removed'
+                media:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+                  description: 'New media files to upload (up to 4 files total, including existing ones).'
               required:
                 - message
       responses:
@@ -296,17 +321,24 @@ paths:
                 type: string
               examples:
                 302Success:
-                  description: 'Post updated successfully.'
+                  description: 'Post updated successfully!'
                   value: '/home'
                 302Failure:
-                  description: 'Failed to update post.'
+                  description: 'Post update failed.'
                   value: '/home'
-        '400':
-          description: 'Invalid input or update failure'
-        '404':
-          description: 'Post not found'
         '403':
-          description: 'Unauthorized to update the post'
+        description: 'Unauthorized to update the post.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'You are not authorized to update this post.'
 
   /posts/delete/{post}:
     post:
@@ -321,30 +353,66 @@ paths:
           schema:
             type: integer
           required: true
-      responses:
+      responses:  
+        '200':
+          description: 'Post deleted successfully (AJAX).'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+                  message:
+                    type: string
+                    example: 'Post deleted successfully!'
         '302':
-          description: 'Redirect after post deletion'
+          description: 'Redirect response after post deletion (non-AJAX).'
           headers:
             Location:
+              description: 'Redirect URL after successful or failed deletion.'
               schema:
                 type: string
-              examples:
-                302Success:
-                  description: 'Post deleted successfully.'
-                  value: '/home'
-                302Failure:
-                  description: 'Failed to delete post.'
-                  value: '/home'
+                examples:
+                  302Success:
+                    description: 'Post deleted successfully!'
+                    value: '/home'
+                  302Failure:
+                    description: 'Failed to delete post.'
+                    value: '/home'
+        '401':
+          description: 'Unauthorized action.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'You are not authorized to delete this post.'
         '404':
-          description: 'Post not found'
-        '403':
-          description: 'Unauthorized to delete the post'
+          description: 'Post not found.'
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: false
+                  message:
+                    type: string
+                    example: 'Post not found.'
 
   /search:
     get:
       operationId: R112
-      summary: 'R112: Search for content, users and groups'
-      description: 'Provide quick access to content, users and groups. Access: NAUTH, AUTH, ADMIN'
+      summary: 'R112: Access the search page with or without an initial query'
+      description: 'Provide quick access to search page. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
       responses: 
@@ -358,6 +426,13 @@ paths:
       description: 'Process and store a media file associated with a specific post. Access: AUTH'
       tags:
         - 'M06: Media'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: 'The search query string'
+          required: false
       requestBody:
         required: true
         content:
@@ -407,20 +482,18 @@ paths:
     get:
       operationId: R115
       summary: 'R115: Fetch posts for the timeline'
-      description: 'Retrieve posts for the authenticated user timeline. Access: AUTH'
+      description: 'Retrieve posts for the authenticated user timeline. Access: AUTH, NAUTH, ADMIN'
       tags:
         - 'M03: Posts'
       responses:
         '200':
           description: 'Successfully retrieved posts'
-        '401':
-          description: 'Unauthorized access'
 
   /api/posts/{username}:
     get:
       operationId: R116
       summary: 'R116: Fetch user posts'
-      description: 'Retrieve posts created by a specific user. Access: AUTH'
+      description: 'Retrieve posts created by a specific user. Access: AUTH, ADMIN'
       tags:
         - 'M03: Posts'
       parameters:
@@ -431,16 +504,12 @@ paths:
           required: true
       responses:
         '200':
-          description: 'Successfully retrieved posts for the user'
-        '404':
-          description: 'User or posts not found'
-        '401':
-          description: 'Unauthorized access'
+          description: 'Successfully retrieved posts from the specific user.'
 
   /api/search:
     get:
       operationId: R117
-      summary: 'R117: Perform a search'
+      summary: 'R117: Perform a search via AJAX'
       description: 'Search across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
@@ -484,7 +553,7 @@ paths:
         '200':
           description: User ID and admin status in JSON
 
-  /api/profile/{username}:
+  /api/{username}:
     get:
       operationId: R120
       summary: 'R120: Fetch User Data'
