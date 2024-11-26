@@ -27,10 +27,10 @@ DROP TABLE IF EXISTS POST_TOPICS CASCADE;
 
 CREATE TABLE USERS (
     userID SERIAL PRIMARY KEY,
-    userName VARCHAR(30) UNIQUE NOT NULL,
+    userName VARCHAR(30) UNIQUE,
     passwordHash TEXT NOT NULL,
     bio TEXT,
-    email TEXT UNIQUE NOT NULL,
+    email TEXT UNIQUE,
     state TEXT NOT NULL CHECK (state IN ('active', 'suspended', 'deleted')),
     visibilityPublic BOOLEAN NOT NULL,
     isAdmin BOOLEAN NOT NULL,

@@ -2,8 +2,9 @@
     <div class="user mb-4 p-4 bg-white rounded-md shadow-md">
         <div class="user-header mb-2">
             <h3 class="font-bold">
-                <a href="{{ route('profile', $user->username) }}" class="text-black hover:text-sky-900">
-                    {{ $user->username }}
+                <a href="{{ $user->state === 'deleted' ? '#' : route('profile', $user->username) }}" 
+                   class="text-black hover:text-sky-900 {{ $user->state === 'deleted' ? 'disabled' : '' }}">
+                    {{ $user->state === 'deleted' ? 'Deleted User' : $user->username }}
                 </a>
             </h3>
         </div>

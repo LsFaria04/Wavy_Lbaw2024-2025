@@ -31,7 +31,7 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: 'Everything Ok. Show the Login Page'
+          description: 'Show the Login Page'
     
     post:
       operationId: R102
@@ -64,7 +64,7 @@ paths:
                 302Success:
                   description: 'Login was successful.'
                   value: '/home'
-                303Error:
+                302Error:
                   description: 'The provided credentials do not match our records.'
                   value: '/login'
 
@@ -96,7 +96,7 @@ paths:
         - 'M01: Authentication'
       responses:
         '200':
-          description: 'Ok. Show Sign-Up UI'
+          description: 'Show Register Page'
 
     post:
       operationId: R105
@@ -151,15 +151,15 @@ paths:
           required: true
       responses:
         '200':
-          description: 'Everything OK. Show User Profile'
+          description: 'Profile data retrieved and displayed successfully.'
         '404':
-          description: 'Profile Not Found'
+          description: 'User profile not found.'
   
   /profile/{userid}:
     put:
       operationId: R107
       summary: 'R107: Update Profile'
-      description: 'Updated the user profile. Access: AUTH, ADMIN'
+      description: 'Update the profile information of a user by their ID. Access: AUTH, ADMIN'
       tags:
         - 'M02: Users'
       parameters:
@@ -177,10 +177,13 @@ paths:
               properties:
                 username:
                   type: string
+                  description: 'Unique username'
                 bio:
                   type: string
+                  description: 'Short profile description'
                 visibilityPublic:
                   type: boolean
+                  description: 'Profile visibility (public or private)'
               required:
                   - username
                   - visibilityPublic
@@ -198,6 +201,10 @@ paths:
                 302Failure:
                   description: 'Failed. Redirect to the profile page without updating.'
                   value: '/profile/{username}'
+        '403':
+          description: 'Unauthorized to update the profile'
+        '404':
+          description: 'User not found'
   
   /home:
     get:
@@ -232,12 +239,6 @@ paths:
                 visibilityPublic:
                   type: boolean
                   description: 'Post visibility (public or private).'
-                media:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: 'Optional media files (max 4).'
               required:
                 - message
       responses:
@@ -284,12 +285,6 @@ paths:
                 removeMedia:
                   type: string
                   description: 'JSON array of media IDs to be removed'
-                media:
-                  type: array
-                  items:
-                    type: string
-                    format: binary
-                  description: 'New media files to upload'
               required:
                 - message
       responses:
@@ -359,8 +354,8 @@ paths:
   /media/store:
     post:
       operationId: R113
-      summary: 'R113: Store a Media'
-      description: 'Process and store media files. Access: AUTH'
+      summary: 'R113: Store Media'
+      description: 'Process and store a media file associated with a specific post. Access: AUTH'
       tags:
         - 'M06: Media'
       requestBody:
@@ -373,19 +368,24 @@ paths:
                 file:
                   type: string
                   format: binary
+                  description: 'Media file to upload (e.g., image, video)'
+                postid:
+                  type: integer
+                  description: 'ID of the post to associate the media with'
               required:
                 - file
+                - postid
       responses:
         '200':
-          description: 'OK. Media file uploaded successfully.'
+          description: 'Media file uploaded successfully.'
         '400':
-          description: 'Invalid file format.'
+          description: 'Invalid request or exceeded maximum media per post.'
           
   /media/{mediaId}:
     delete:
       operationId: R114
-      summary: 'R114: Delete Media'
-      description: 'Delete the specified media. Access: AUTH, ADMIN'
+      summary: 'R114: Delete a Media Item'
+      description: 'Remove a media item by its ID. Access: AUTH, ADMIN'
       tags:
         - 'M06: Media'
       parameters:
@@ -394,11 +394,14 @@ paths:
           schema:
             type: integer
           required: true
+          description: 'The ID of the media item to delete'
       responses:
         '204':
-          description: 'Media deleted successfully.'
+          description: 'Media item deleted successfully'
+        '403':
+          description: 'Unauthorized to delete media'
         '404':
-          description: 'Media not found.'
+          description: 'Media item not found'
 
   /api/posts:
     get:
@@ -437,10 +440,24 @@ paths:
   /api/search:
     get:
       operationId: R117
-      summary: 'R117: Perform a global search'
-      description: 'Searches content, users, or groups. Access: NAUTH, AUTH, ADMIN'
+      summary: 'R117: Perform a search'
+      description: 'Search across posts, users, or groups based on the query and category. Access: NAUTH, AUTH, ADMIN'
       tags:
         - 'M04: Search'
+      parameters:
+        - in: query
+          name: q
+          schema:
+            type: string
+          description: 'The search query string'
+          required: false
+        - in: query
+          name: category
+          schema:
+            type: string
+            enum: [posts, users, groups]
+          description: 'The category to search within (default: posts)'
+          required: false
       responses:
         '200':
           description: Search results
@@ -459,10 +476,30 @@ paths:
   /api/auth-id:
     post:
       operationId: R119
-      summary: 'R119: Retrieve the current user's ID'
+      summary: 'R119: Retrieve the current user ID'
       description: 'Returns the authenticated user ID and admin status. Access: AUTH'
       tags:
         - 'M01: Authentication'
       responses:
         '200':
           description: User ID and admin status in JSON
+
+  /api/profile/{username}:
+    get:
+      operationId: R120
+      summary: 'R120: Fetch User Data'
+      description: 'Retrieve JSON details of a user by username. Access: AUTH'
+      tags:
+        - 'M02: Users'
+      parameters:
+        - in: path
+          name: username
+          schema:
+            type: string
+          required: true
+          description: 'Username of the user'
+      responses:
+        '200':
+          description: 'User data retrieved successfully.'
+        '404':
+          description: 'User not found.'
