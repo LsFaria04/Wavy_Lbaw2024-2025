@@ -16,7 +16,7 @@ class MediaController extends Controller
     {
         // Validate the input: Ensure the file is present and it's of an acceptable media type
         $request->validate([
-            'file' => 'required|file|mimes:jpeg,png,jpg,gif,mp4,avi,mp3,wav,ogg|max:20480', // Allow up to 20MB
+            'file' => 'required|file|mimes:jpeg,png,jpg,gif,mp4,avi,mp3,wav,ogg|max:2048', // Allow up to 20MB
             'postid' => 'required|exists:posts,postid', // Ensure the post exists
         ]);
 

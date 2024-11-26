@@ -781,7 +781,12 @@ function updateFileList() {
 
     // Append new files to the list (preserve existing files)
     Array.from(fileInput.files).forEach(file => {
-      selectedFiles.push(file);
+      if (file.size > 2097152){
+        alert('File too big');
+      }
+      else{
+        selectedFiles.push(file);
+      }
     });
 
     // Check if there are more than 4 files
@@ -951,8 +956,15 @@ function updateFileNameEdit(postId) {
   const newFileDisplay = document.getElementById(`newFiles-${postId}`)
 
   // Append new files to the list (preserve existing files)
+
   Array.from(fileInput.files).forEach(file => {
+    console.log(file.size);
+    if (file.size > 2097152){
+      alert('File too big');
+    }
+    else{
       selectedFilesEdit.push(file);
+    }
   });
 
   

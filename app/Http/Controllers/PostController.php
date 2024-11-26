@@ -93,7 +93,7 @@ class PostController extends Controller
         // Validate input
         $request->validate([
             'message' => 'required|string|max:255',
-            'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:10000', 
+            'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:8192', 
         ]);
     
         // Check if the user is authorized to create a post

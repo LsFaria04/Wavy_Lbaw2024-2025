@@ -47,7 +47,7 @@ class ProfileController extends Controller
                     'alpha_dash',
                     Rule::unique('users', 'username')->ignore($userid, 'userid'),
                 ],
-                'bio' => 'nullable|string|max:500',
+                'bio' => 'nullable|string|max:40',
                 'visibilitypublic' => 'required|boolean',
             ]);
         
