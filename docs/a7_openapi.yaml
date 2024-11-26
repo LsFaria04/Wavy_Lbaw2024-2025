@@ -77,14 +77,14 @@ paths:
         - 'M01: Authentication'
       responses:
         '302':
-          description: 'Redirect after processing logout.'
+          description: 'Redirect to login after successfully processing logout.'
           headers:
             Location:
               schema:
                 type: string
               examples:
                 302Success:
-                  description: 'Successful logout. Redirect to login form.'
+                  description: 'You have logged out successfully!'
                   value: '/login'
 
   /register:
@@ -130,7 +130,7 @@ paths:
                 type: string
               examples:
                 302Success:
-                  description: 'Successful Registration. Redirect to home page.'
+                  description: 'You have successfully registered & logged in!'
                   value: '/home'
                 302Failure:
                   description: 'Failed Registration. Redirect to register page.'
@@ -535,23 +535,23 @@ paths:
     post:
       operationId: R118
       summary: 'R118: Check authentication status'
-      description: 'Returns whether the current user is authenticated. Access: AUTH'
+      description: 'Returns whether the current user is authenticated. Access: AUTH, ADMIN'
       tags:
         - 'M01: Authentication'
       responses:
         '200':
-          description: Auth status in JSON
+          description: Auth status via AJAX
 
   /api/auth-id:
     post:
       operationId: R119
       summary: 'R119: Retrieve the current user ID'
-      description: 'Returns the authenticated user ID and admin status. Access: AUTH'
+      description: 'Returns the authenticated user ID and admin status. Access: AUTH, ADMIN'
       tags:
         - 'M01: Authentication'
       responses:
         '200':
-          description: User ID and admin status in JSON
+          description: User ID and admin status via AJAX
 
   /api/{username}:
     get:
