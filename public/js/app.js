@@ -696,60 +696,13 @@ function switchProfileTab() {
       button.classList.add('text-sky-900', 'border-sky-900');
       loadProfileContent(profileTab);
       
-      });
     });
-  }
-
-const navigationMenu = document.getElementById('navigation-menu');
-const menuText = document.querySelectorAll("#navigation-menu span");
-const menuOptions = document.querySelectorAll("#navigation-menu li");
-const menuHeader = document.querySelector("#navigation-menu header");
-const menuArrow = document.querySelector("#navigation-menu header button > svg");
-
-//Allows the expantion of the menu
-function navigationMenuOperation(){
-if(navigationMenu.classList.contains("lg:w-60")){
-  navigationMenu.classList.remove("lg:w-60");
-  navigationMenu.classList.add("lg:w-14");
+  });
 }
-else{
-  navigationMenu.classList.add("lg:w-60");
-  navigationMenu.classList.remove("lg:w-14");
-}
-menuText.forEach(function(element){
-  element.classList.toggle("hidden");
-})
-menuOptions.forEach(function(option){
-  option.classList.toggle("gap-3");
-})
-menuArrow.classList.toggle("rotate-180");
-}
-
-const searchMenu = document.getElementById('search-menu');
-const searchBar = document.getElementById('search-bar');
-const searchIcon = document.getElementById('search-icon');
-const searchMenuArrow = document.querySelector("#search-menu header button > svg");
 
 let searchCategory = null;
 if(document.querySelector('input[name="category"]') !== null){
   searchCategory = document.querySelector('input[name="category"]').value;
-}
-
-//allows the operation of the search menu
-function searchMenuOperation(){
-  if(searchMenu.classList.contains("lg:w-60")){
-    searchMenu.classList.remove("lg:w-60");
-    searchMenu.classList.add("lg:w-14");
-    searchBar.classList.add("hidden");
-    searchIcon.classList.remove("hidden");
-  }
-  else{
-    searchMenu.classList.add("lg:w-60");
-    searchMenu.classList.remove("lg:w-14");
-    searchBar.classList.remove("hidden");
-    searchIcon.classList.add("hidden");
-  }
-  searchMenuArrow.classList.toggle("rotate-180");
 }
 
 //Used to change the search category when a user clicks in a search tab option
