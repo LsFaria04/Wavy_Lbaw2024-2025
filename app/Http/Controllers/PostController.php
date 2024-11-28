@@ -232,7 +232,7 @@ class PostController extends Controller
         $post->delete();
 
         if (request()->ajax()) {
-        return response()->json(['success' => true, 'message' => 'Post deleted successfully!']);
+            return response()->json(['success' => true, 'message' => 'Post deleted successfully!']);
         }
 
         return redirect()->route('home')->with('success', 'Post deleted successfully!');
