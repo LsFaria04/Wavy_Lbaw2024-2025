@@ -432,14 +432,14 @@ function insertMoreLikedContent(element, likes){
 
 //inserts more posts into the timeline
 function insertMoreTimeline(){
-removeLoadingCircle(); //remove the circle because we already have the data
-const timeline = document.querySelector("#timeline");
-let posts = JSON.parse(this.responseText);
+  removeLoadingCircle(); //remove the circle because we already have the data
+  const timeline = document.querySelector("#timeline");
+  let posts = JSON.parse(this.responseText);
 
 
-maxPage = posts.last_page; //used to stop send requests when maximum page is reached
+  maxPage = posts.last_page; //used to stop send requests when maximum page is reached
 
-insertMorePosts(timeline,posts);
+  insertMorePosts(timeline,posts);
 
 }
 
@@ -447,33 +447,33 @@ insertMorePosts(timeline,posts);
 
 //inserts more results in the search body
 function insertMoreSearchResults(){
-removeLoadingCircle();//remove the circle because we already have the data
-const searchResults = document.querySelector("#search-results");
+  removeLoadingCircle();//remove the circle because we already have the data
+  const searchResults = document.querySelector("#search-results");
 
-let results = JSON.parse(this.responseText);
+  let results = JSON.parse(this.responseText);
 
-switch(searchCategory){
+  switch(searchCategory){
 
-    case 'posts':
-      if(results[0] === undefined) break;
-      maxPage = results[0].last_page; 
-      insertMorePosts(searchResults,results[0]);
-      break;
+      case 'posts':
+        if(results[0] === undefined) break;
+        maxPage = results[0].last_page; 
+        insertMorePosts(searchResults,results[0]);
+        break;
 
-    case 'users':
-      if(results[1] === undefined) break;
-      maxPage = results[1].last_page;
-      insertMoreUsers(searchResults,results[1]);
-      break;
+      case 'users':
+        if(results[1] === undefined) break;
+        maxPage = results[1].last_page;
+        insertMoreUsers(searchResults,results[1]);
+        break;
 
-    case 'groups':
-      if(results[2] === undefined) break;
-      maxPage = results[2].last_page;
-      insertMoreGroups(searchResults,results[2]);
-      break;
+      case 'groups':
+        if(results[2] === undefined) break;
+        maxPage = results[2].last_page;
+        insertMoreGroups(searchResults,results[2]);
+        break;
 
-  default:
-    return;
+    default:
+      return;
 }
 
 if(searchResults.firstChild == null){

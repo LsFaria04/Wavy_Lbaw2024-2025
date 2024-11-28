@@ -39,8 +39,18 @@ class SearchController extends Controller
             switch ($category) {
                 case 'posts':
                     if(Auth::check()){
-                            if(Auth::user()->isadmin){
+                        if(Auth::user()->isadmin){
                             $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            ->orderBy('createddate', 'desc')
+                            ->paginate(10);
+                            for($i = 0;$i < sizeof($posts); $i++) {
+                                $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+                            }
+                            
+                        }
+                        else {
+                            $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            ->where('visibilitypublic', true)
                             ->orderBy('createddate', 'desc')
                             ->paginate(10);
                             for($i = 0;$i < sizeof($posts); $i++) {
