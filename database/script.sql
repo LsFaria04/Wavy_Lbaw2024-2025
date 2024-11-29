@@ -29,40 +29,35 @@ CREATE TABLE USERS (
     userID SERIAL PRIMARY KEY,
     userName VARCHAR(30) UNIQUE,
     passwordHash TEXT NOT NULL,
-    bio TEXT,
+    bio TEXT DEFAULT '',
     email TEXT UNIQUE,
-    state TEXT NOT NULL CHECK (state IN ('active', 'suspended', 'deleted')),
-    visibilityPublic BOOLEAN NOT NULL,
-    isAdmin BOOLEAN NOT NULL,
-    remember_token VARCHAR(100)
+    state TEXT NOT NULL CHECK (state IN ('active', 'suspended', 'deleted')) DEFAULT 'active',
+    visibilityPublic BOOLEAN NOT NULL DEFAULT TRUE,
+    isAdmin BOOLEAN NOT NULL DEFAULT FALSE,
+    remember_token VARCHAR(100) DEFAULT NULL,
+    search TSVECTOR
 );
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Users ADD COLUMN search TSVECTOR;
 
 CREATE TABLE MESSAGE (
     messageID SERIAL PRIMARY KEY,
     receiverID INTEGER NOT NULL,
     senderID INTEGER NOT NULL,
     message TEXT NOT NULL,
-    date TIMESTAMP NOT NULL,
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (receiverID) REFERENCES USERS(userID) ON DELETE CASCADE,
     FOREIGN KEY (senderID) REFERENCES USERS(userID) ON DELETE CASCADE,
     CHECK (receiverID <> senderID)
 );
 
-
 CREATE TABLE GROUPS (
     groupID SERIAL PRIMARY KEY,
     groupName VARCHAR(30) NOT NULL,
-    description TEXT,
-    visibilityPublic BOOLEAN NOT NULL,
+    description TEXT DEFAULT '',
+    visibilityPublic BOOLEAN NOT NULL DEFAULT TRUE,
     ownerID INTEGER UNIQUE NOT NULL,
-    FOREIGN KEY (ownerID) REFERENCES USERS(userID) ON DELETE CASCADE
+    FOREIGN KEY (ownerID) REFERENCES USERS(userID) ON DELETE CASCADE,
+    search TSVECTOR
 );
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Groups ADD COLUMN search TSVECTOR;
 
 CREATE TABLE GROUP_MEMBERSHIP (
     groupID INTEGER NOT NULL,
@@ -72,61 +67,52 @@ CREATE TABLE GROUP_MEMBERSHIP (
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE
 );
 
-
 CREATE TABLE JOIN_GROUP_REQUEST (
     groupID INTEGER NOT NULL,
     userID INTEGER NOT NULL,
-    date TIMESTAMP NOT NULL,
-    state TEXT NOT NULL CHECK (state IN ('Pending', 'Accepted', 'Rejected')),
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    state TEXT NOT NULL CHECK (state IN ('Pending', 'Accepted', 'Rejected')) DEFAULT 'Pending',
     PRIMARY KEY (groupID, userID),
     FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE CASCADE,
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE
 );
 
-
 CREATE TABLE POST (
     postID SERIAL PRIMARY KEY,
     userID INTEGER NOT NULL,
     message TEXT NOT NULL,
-    visibilityPublic BOOLEAN NOT NULL,
-    createdDate TIMESTAMP NOT NULL,
-    groupID INTEGER,
+    visibilityPublic BOOLEAN NOT NULL DEFAULT TRUE,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    groupID INTEGER DEFAULT NULL,
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE,
-    FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE SET NULL
+    FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE SET NULL,
+    search TSVECTOR
 );
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Post ADD COLUMN search TSVECTOR;
 
 CREATE TABLE TOPIC (
     topicID SERIAL PRIMARY KEY,
-    topicName VARCHAR(30) NOT NULL
+    topicName VARCHAR(30) NOT NULL,
+    search TSVECTOR
 );
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Topic ADD COLUMN search TSVECTOR;
 
 CREATE TABLE COMMENT (
     commentID SERIAL PRIMARY KEY,
     userID INTEGER NOT NULL,
     message TEXT NOT NULL,
-    createdDate TIMESTAMP NOT NULL,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     postID INTEGER,
     parentCommentID INTEGER,  -- Parent comment if exists
     CHECK ((postID IS NOT NULL AND parentCommentID IS NULL) OR (postID IS NULL AND parentCommentID IS NOT NULL)),
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE,
     FOREIGN KEY (postID) REFERENCES POST(postID) ON DELETE CASCADE,
-    FOREIGN KEY (parentCommentID) REFERENCES COMMENT(commentID) ON DELETE CASCADE
+    FOREIGN KEY (parentCommentID) REFERENCES COMMENT(commentID) ON DELETE CASCADE,
+    search TSVECTOR
 );
-
---Add column with the pre computed ts_vectors
-ALTER TABLE Comment ADD COLUMN search TSVECTOR;
-
 
 CREATE TABLE LIKES (
     likeID SERIAL PRIMARY KEY,
     userID INTEGER NOT NULL,
-    createdDate TIMESTAMP NOT NULL,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     postID INTEGER,
     commentID INTEGER,
     CHECK ((postID IS NOT NULL AND commentID IS NULL) OR (postID IS NULL AND commentID IS NOT NULL)),
@@ -142,7 +128,11 @@ CREATE TABLE MEDIA (
     postID INTEGER,
     commentID INTEGER,
     userID INTEGER,
-    CHECK ((postID IS NOT NULL AND commentID IS NULL and userID IS NULL) OR (postID IS NULL AND commentID IS NOT NULL and userID IS NULL) OR (postID IS NULL AND commentID IS NULL and userID IS NOT NULL)),
+    CHECK (
+        (postID IS NOT NULL AND commentID IS NULL and userID IS NULL) OR
+        (postID IS NULL AND commentID IS NOT NULL and userID IS NULL) OR 
+        (postID IS NULL AND commentID IS NULL and userID IS NOT NULL)
+    ),
     FOREIGN KEY (postID) REFERENCES POST(postID) ON DELETE CASCADE,
     FOREIGN KEY (commentID) REFERENCES COMMENT(commentID) ON DELETE CASCADE,
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE
@@ -152,7 +142,7 @@ CREATE TABLE FOLLOW (
     followerID INTEGER NOT NULL,
     followeeID INTEGER NOT NULL,
     state TEXT NOT NULL CHECK (state IN ('Pending', 'Accepted', 'Rejected')),
-    followDate TIMESTAMP NOT NULL,
+    followDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CHECK (followerID <> followeeID),
     PRIMARY KEY (followerID, followeeID),
     FOREIGN KEY (followerID) REFERENCES USERS(userID) ON DELETE CASCADE,
@@ -162,11 +152,11 @@ CREATE TABLE FOLLOW (
 CREATE TABLE NOTIFICATION (
     notificationID SERIAL PRIMARY KEY,
     receiverID INTEGER NOT NULL,
-    date TIMESTAMP NOT NULL,
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     seen BOOLEAN NOT NULL,
-    followID INTEGER,
-    commentID INTEGER,
-    likeID INTEGER,
+    followID INTEGER DEFAULT NULL,
+    commentID INTEGER DEFAULT NULL,
+    likeID INTEGER DEFAULT NULL,
     CHECK (
         (followID IS NOT NULL AND commentID IS NULL AND likeID IS NULL) OR
         (followID IS NULL AND commentID IS NOT NULL AND likeID IS NULL) OR
@@ -201,8 +191,8 @@ CREATE TABLE USER_TOPICS (
 CREATE TABLE USER_REPORTS (
     reportID SERIAL PRIMARY KEY,
     userID INTEGER NOT NULL,
-    postID INTEGER,
-    commentID INTEGER,
+    postID INTEGER DEFAULT NULL,
+    commentID INTEGER DEFAULT NULL,
     reason TEXT,
     CHECK ((postID IS NOT NULL AND commentID IS NULL) OR (postID IS NULL AND commentID IS NOT NULL)),
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE,
@@ -214,7 +204,7 @@ CREATE TABLE USER_REPORTS (
 CREATE TABLE GROUP_INVITATION (
     groupID INTEGER NOT NULL,
     userID INTEGER NOT NULL,
-    date TIMESTAMP NOT NULL,
+    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     state TEXT NOT NULL CHECK (state IN ('Pending', 'Accepted', 'Rejected')),
     PRIMARY KEY (groupID, userID),
     FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE CASCADE,
