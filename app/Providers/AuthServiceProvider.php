@@ -9,6 +9,8 @@ use App\Models\Post;
 use App\Policies\PostPolicy;
 use App\Models\User;
 use App\Policies\UserPolicy;
+use App\Models\Group;
+use App\Policies\GroupPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -21,6 +23,7 @@ class AuthServiceProvider extends ServiceProvider
         // Register the Post model with the PostPolicy
         Post::class => PostPolicy::class,
         User::class => UserPolicy::class,
+        Group::class => GroupPolicy::class,
     ];
 
     /**

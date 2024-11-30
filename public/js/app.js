@@ -1,6 +1,7 @@
 function addEventListeners() {
   document.addEventListener('DOMContentLoaded', fadeAlert);
   document.addEventListener('DOMContentLoaded', switchProfileTab);
+  document.addEventListener('DOMContentLoaded', switchGroupTab);
   window.addEventListener("scroll", infiniteScroll);
 
   let cancelButton = document.getElementById('cancelButton');
@@ -307,21 +308,25 @@ user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md")
 return user;
 }
 
-//creates a new group container with all the needed info
-function createGroup(groupInfo){
-let group = document.createElement('div');
-group.classList.add("group", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+// Creates a new group container with all the needed info
+function createGroup(groupInfo) {
+  let group = document.createElement('div');
+  group.classList.add("group", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
 
-group.innerHTML= `
-  <div class="group mb-4 p-4 bg-white rounded-md shadow-md">
-      <div class="group-header mb-2">
-          <h3 class="font-bold">${groupInfo.groupname }}</h3>
-      </div>
-      <div class="group-body mb-2">
-          <p>${groupInfo.description }</p>
-      </div>
-  </div>
-`;
+  group.innerHTML = `
+    <div class="group-header mb-2">
+      <h3 class="font-bold">
+        <a href="/group/${groupInfo.groupid}" class="text-black hover:text-sky-900">
+          ${groupInfo.groupname}
+        </a>
+      </h3>
+    </div>
+    <div class="group-body mb-2">
+      <p>${groupInfo.description}</p>
+    </div>
+  `;
+
+  return group;
 }
 
 //creates a new comment container with all the needed info
@@ -371,7 +376,7 @@ function insertMoreUsers(element, users){
 //inserts more groups into and element
 function insertMoreGroups(element, groups){
 for(let i = 0; i < groups.data.length; i++){
-  let group = createUser(groups.data[i]);
+  let group = createGroup(groups.data[i]);
   element.appendChild(group);
 
 }
@@ -442,8 +447,6 @@ function insertMoreTimeline(){
   insertMorePosts(timeline,posts);
 
 }
-
-
 
 //inserts more results in the search body
 function insertMoreSearchResults(){
@@ -696,6 +699,27 @@ function switchProfileTab() {
       button.classList.add('text-sky-900', 'border-sky-900');
       loadProfileContent(profileTab);
       
+    });
+  });
+}
+
+const buttonsG = document.querySelectorAll('.tab-btn');
+const sectionsG = document.querySelectorAll('.tab-content');
+let groupTab = "group-posts"; // Default tab
+
+function switchGroupTab() {
+  buttonsG.forEach(button => {
+    button.addEventListener('click', () => {
+      currentPage = 1;  // Reset page for new tab content
+      groupTab = button.dataset.tab;
+
+      // Toggle active button
+      buttonsG.forEach(btn => {
+        btn.classList.remove('text-sky-900', 'border-sky-900');
+      });
+      button.classList.add('text-sky-900', 'border-sky-900');
+      
+      // TO-DO loadGroupContent(groupTab);
     });
   });
 }

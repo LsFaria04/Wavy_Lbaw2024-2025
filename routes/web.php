@@ -11,6 +11,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MediaController;
+use App\Http\Controllers\GroupController;
 
 /*
 |--------------------------------------------------------------------------
@@ -78,3 +79,6 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 });
     Route::get('/admin/users/create', [AdminController::class, 'storeUser'])->name('admin.users.create');
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
+
+// Group
+Route::get('/group/{group}', [GroupController::class, 'show'])->name('group');

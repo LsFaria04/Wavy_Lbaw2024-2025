@@ -12,6 +12,23 @@ use Illuminate\Support\Facades\Auth;
 
 class GroupController extends Controller
 {
+    public function show($groupid)
+    {
+        // Retrieve the group using groupid
+        $group = Group::find($groupid);
+
+        // If no group is found, redirect to home or another page
+        if (!$group) {
+            return redirect('/home');
+        }
+
+        $posts = [];
+        $members = [];
+
+        // Pass the group data to the view
+        return view('pages.group', compact('group'));
+    }
+
     // Create a new group
     public function create(Request $request)
     {

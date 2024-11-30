@@ -20,7 +20,7 @@ class Group extends Model
         'groupname',
         'description',
         'visibility_public',
-        'owner',
+        'ownerid',
     ];
 
     public function owner(): BelongsTo

@@ -72,7 +72,6 @@ class User extends Authenticatable
      */
     public function posts(): HasMany
     {
-        // If the 'posts' table's foreign key is 'userid', specify it explicitly
         return $this->hasMany(Post::class, 'userid', 'userid');
     }
 

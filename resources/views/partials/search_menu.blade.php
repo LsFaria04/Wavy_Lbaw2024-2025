@@ -1,4 +1,4 @@
-<div id = "search-menu" class= "lg:flex lg:flex-col lg:w-60 lg:max-h-screen bg-sky-900 p-4 text-white text-nowrap fixed lg:top-0 lg:sticky transition-w ease-in duration-300">
+<div id = "search-menu" class= "lg:flex lg:flex-col lg:w-60 lg:max-h-screen bg-sky-900 p-4 text-white text-nowrap fixed lg:top-0 lg:sticky transition-w ease-in duration-300 hidden">
     <header class = "flex items-center justify-between overflow-hidden">
         <form id="search-bar" action="{{ route('search') }}" method="GET" class="w-full mx-auto">
             <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl py-1 pl-5 w-full bg-white text-black shadow-md focus:outline-none">
