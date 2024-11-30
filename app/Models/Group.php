@@ -12,7 +12,7 @@ class Group extends Model
 
     protected $table = 'groups';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'groupid';
 
     public $timestamps = false;
 
@@ -25,6 +25,21 @@ class Group extends Model
 
     public function owner(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'owner');
+        return $this->belongsTo(User::class, 'ownerid');
+    }
+
+    public function members(): HasManyThrough
+    {
+        return $this->hasManyThrough(User::class, GroupMembership::class, 'groupid', 'userid');
+    }
+
+    public function joinRequests(): HasMany
+    {
+        return $this->hasMany(JoinGroupRequest::class, 'groupid');
+    }
+
+    public function invitations(): HasMany
+    {
+        return $this->hasMany(GroupInvitation::class, 'groupid');
     }
 }
