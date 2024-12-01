@@ -9,6 +9,15 @@
         <ul class="flex justify-center flex-row lg:flex-col gap-14 sm:gap-16 overflow-scroll">
         </ul>
     </nav>
+
+    <!--About Us -->
+    <div class="lg:mt-8 lg:pt-4 text-center">
+        <p class="text-sm">
+            <a href="{{ route('about') }}" class="text-white hover:text-sky-300">
+                About Us
+            </a>
+        </p>
+    </div>
 </div>
 
 <div id="search-ball" 

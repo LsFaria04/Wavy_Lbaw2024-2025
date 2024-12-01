@@ -82,3 +82,6 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 
 // Group
 Route::get('/group/{group}', [GroupController::class, 'show'])->name('group');
+
+//About Us
+Route::view('/about', 'pages.about')->name('about');
