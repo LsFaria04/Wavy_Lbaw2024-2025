@@ -17,6 +17,13 @@
             // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
         </script>
         <script type="text/javascript" src="{{ url('js/app.js') }}" defer></script>
+        <script type="text/javascript" src="{{ url('js/admin.js') }}" defer></script>
+        <script type="text/javascript" src="{{ url('js/comment.js') }}" defer></script>
+        <script type="text/javascript" src="{{ url('js/group.js') }}" defer></script>
+        <script type="text/javascript" src="{{ url('js/home.js') }}" defer></script>
+        <script type="text/javascript" src="{{ url('js/posts.js') }}" defer></script>
+        <script type="text/javascript" src="{{ url('js/profile.js') }}" defer></script>
+        <script type="text/javascript" src="{{ url('js/search.js') }}" defer></script>
     </head>
     <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">
         <main class = "flex flex-col grow lg:flex-row bg-white ">
