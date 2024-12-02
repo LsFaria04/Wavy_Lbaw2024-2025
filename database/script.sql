@@ -226,7 +226,7 @@ CREATE INDEX postID_postTopics_idx ON POST_TOPICS USING hash (postID);
 
 CREATE INDEX postID_comment_idx ON comment USING hash (postID);
 
-CREATE INDEX receiver_idx ON notification USING hash (receiveriD);
+CREATE INDEX receiver_idx ON notification USING hash (receiverID);
 
 -------------------  FULL TEXT SEARCH -------------------------------------------
 
@@ -260,7 +260,7 @@ IF TG_OP = 'INSERT' THEN
     NEW.search = (setweight(to_tsvector('english', NEW.groupName),'A') || setweight  (to_tsvector('english', NEW.description),'B'));
 END IF; 
 IF TG_OP = 'UPDATE' THEN 
-IF NEW.groupName <> OLD.groupName OR NEW.description <> NEW.description THEN 
+IF NEW.groupName <> OLD.groupName OR NEW.description <> OLD.description THEN 
         NEW.search = (setweight(to_tsvector('english', NEW.groupname),'A') || setweight  (to_tsvector('english', NEW.description),'B'));
 END IF; 
 END IF; 
