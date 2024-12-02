@@ -82,18 +82,19 @@ function addEventListeners() {
   function insertMoreGroupContent() {
     removeLoadingCircle(); // Remove the loading indicator
     const groupContent = document.querySelector("#group-tab-content");
-    const results = JSON.parse(this.responseText);
+
+    let results = JSON.parse(this.responseText);
 
     // Populate content based on the current tab
     switch (groupTab) {
         case 'group-posts':
             maxPage = results.last_page;
-            insertMoreGroupPosts(groupContent, results);
+            insertMorePosts(groupContent, results);
             break;
 
         case 'group-members':
             maxPage = results.last_page;
-            insertMoreMembers(groupContent, results);
+            insertMoreUsers(groupContent, results);
             break;
 
         case 'group-invitations':
@@ -103,38 +104,14 @@ function addEventListeners() {
         default:
             return;
     }
-  }
 
-  // Insert posts
-  function insertMoreGroupPosts(element, posts) {
-    posts.data.forEach(post => {
-        let postElement = createPost(post);
-        element.appendChild(postElement);
-    });
-  }
-
-  // Insert members
-  function insertMoreMembers(element, members) {
-    members.data.forEach(member => {
-        let memberElement = document.createElement('div');
-        memberElement.classList.add('member');
-        memberElement.innerHTML = `
-            <p>${member.name}</p>
-        `;
-        element.appendChild(memberElement);
-    });
-  }
-
-  // Insert invitations
-  function insertMoreInvitations(element, invitations) {
-    invitations.data.forEach(invitation => {
-        let invitationElement = document.createElement('div');
-        invitationElement.classList.add('invitation');
-        invitationElement.innerHTML = `
-            <p>Invitation to ${invitation.userid}</p>
-        `;
-        element.appendChild(invitationElement);
-    });
+    if(groupContent.firstChild == null){
+      groupContent.innerHTML = `
+        <div class="flex justify-center items-center h-32">
+                <p class="text-gray-600 text-center">No ${groupTab == 'group-posts' ? 'posts' : (groupTab == 'group-members' ? 'members' : 'invitations')} found for this group.</p>
+        </div>
+        `;       
+    }
   }
 
   addEventListeners();

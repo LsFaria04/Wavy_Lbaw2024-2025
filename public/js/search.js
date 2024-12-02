@@ -37,8 +37,9 @@ function addEventListeners() {
   eventListernerFormsAdmin();
   
 }
-//Used to change the search category when a user clicks in a search tab option
-function changeCategory(category) {
+
+  //Used to change the search category when a user clicks in a search tab option
+  function changeCategory(category) {
     currentPage = 1;
 
     searchCategory = category;
@@ -57,40 +58,39 @@ function changeCategory(category) {
       loadSearchContent(category, query);
   }
 
-let searchCategory = null;
-if(document.querySelector('input[name="category"]') !== null){
-searchCategory = document.querySelector('input[name="category"]').value;
-}
-//loads the first content of a search when selecting another category
-function loadProfileContent(category){
-  const profileContent = document.querySelector("#profile-tab-content");
-  if(profileContent == null){
-    return;
+  let searchCategory = null;
+    if(document.querySelector('input[name="category"]') !== null){
+    searchCategory = document.querySelector('input[name="category"]').value;
   }
 
-  while (profileContent.firstChild) {
-    profileContent.removeChild(profileContent.firstChild);
-  }
+  //loads the first content of a search when selecting another category
+  function loadProfileContent(category){
+    const profileContent = document.querySelector("#profile-tab-content");
+    if(!profileContent) return;
 
-  insertLoadingCircle(profileContent);
+    while (profileContent.firstChild) {
+      profileContent.removeChild(profileContent.firstChild);
+    }
 
-  switch(category){
-    case 'user-posts':
-        sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+    insertLoadingCircle(profileContent);
+
+    switch(category){
+      case 'user-posts':
+          sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+          break;
+      
+      case 'user-comments':
+        sendAjaxRequest('get', '/api/comments/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
         break;
-    
-    case 'user-comments':
-      sendAjaxRequest('get', '/api/comments/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
-      break;
-    
-    case 'user-likes':
-      sendAjaxRequest('get', '/api/likes/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
-      break;
+      
+      case 'user-likes':
+        sendAjaxRequest('get', '/api/likes/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+        break;
+    }
   }
-}
 
-//loads the first content of a search when selecting another category
-function loadSearchContent(category, query){
+  //loads the first content of a search when selecting another category
+  function loadSearchContent(category, query){
     const searchResults = document.querySelector("#search-results");
     
     while (searchResults.firstChild) {
@@ -99,9 +99,9 @@ function loadSearchContent(category, query){
     
     insertLoadingCircle(searchPage);
     sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, null, insertMoreSearchResults);
-    }
+  }
     
-//inserts more results in the search body
+  //inserts more results in the search body
   function insertMoreSearchResults(){
       removeLoadingCircle();//remove the circle because we already have the data
       const searchResults = document.querySelector("#search-results");
@@ -168,6 +168,63 @@ function loadSearchContent(category, query){
       let group = createGroup(groups.data[i]);
       element.appendChild(group);
     
+    }
+  }
+
+  //inserts more posts into an element
+  function insertMorePosts(element, posts){
+    for(let i = 0; i < posts.data.length; i++){
+      
+      if (posts.data[i].user.state === 'deleted') {
+        posts.data[i].user.username = 'Deleted User';
+      }
+
+      let post = createPost(posts.data[i]);
+
+      if(userId == posts.data[i].user.userid || isadmin){
+        post = createPostOptions(post, posts.data[i].postid); 
+      }
+
+      post = insertPostMedia(post, posts.data[i].media);
+
+      if(userId == posts.data[i].user.userid || isadmin){
+        insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
+      }
+
+      let editForm = post.querySelector('.edit-post-form form');
+      if(editForm !== null){
+        addEventListenerToForm(editForm);
+      }
+      element.appendChild(post);
+    }
+  }
+
+  //creates a user container with all the necessary info
+  function createUser(userInfo){
+    let user = document.createElement('div');
+    user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+    
+      user.innerHTML= `
+        <div class="user-header mb-2">
+                <h3 class="font-bold">
+                    <a href="../profile/${userInfo.username}" class="text-black hover:text-sky-900">
+                        ${userInfo.username}
+                    </a>
+                </h3>
+            </div>
+            <div class="user-body mb-2">
+                <p>${userInfo.bio === null ? "" : userInfo.bio }</p>
+            </div>
+      `;
+    
+    return user;
+  }
+    
+  //inserts more users into an element
+  function insertMoreUsers(element, users){
+    for(let i = 0; i < users.data.length; i++){
+      let user = createUser(users.data[i]);
+      element.appendChild(user);
     }
   }
   

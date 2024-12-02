@@ -38,8 +38,16 @@
         <!-- Content Tabs -->
         <div class="flex flex-col w-full max-w-full bg-white shadow-md p-6 mt-4" id="group-tab-content">
             <!-- Content Section (starts with the posts) -->
-            <div id="group-posts" class="tab-content">
-                <p class="text-gray-600 text-center">Not implemented yet.</p>
-            </div>
+                @if(($group->visibilitypublic === false && !Auth::check())  || ($group->visibilitypublic === false && !Auth::user()->isadmin))
+                    <div class="flex justify-center items-center h-32">
+                        <p class="text-gray-600 text-center">Group is private.</p>
+                    </div>
+                @elseif($group->posts->isEmpty())
+                    <div class="flex justify-center items-center h-32">
+                        <p class="text-gray-600 text-center">No posts found for this group.</p>
+                    </div>
+                @else
+                    @each('partials.post', $group->posts, 'post')
+                @endif
         </div>
 @endsection
