@@ -76,6 +76,10 @@ function addEventListeners() {
         case 'group-invitations':
             sendAjaxRequest('get', `/api/groups/${groupId}/invitations?page=${currentPage}`, null, insertMoreGroupContent);
             break;
+
+        case 'group-requests':
+          sendAjaxRequest('get', `/api/groups/${groupId}/requests?page=${currentPage}`, null, insertMoreGroupContent);
+          break;
     }
   }
 
@@ -101,6 +105,12 @@ function addEventListeners() {
             maxPage = results.last_page;
             insertMoreInvitations(groupContent, results);
             break;
+
+          case 'group-requests':
+            maxPage = results.last_page;
+            insertMoreRequests(groupContent, results);
+            break;
+
         default:
             return;
     }
@@ -108,7 +118,7 @@ function addEventListeners() {
     if(groupContent.firstChild == null){
       groupContent.innerHTML = `
         <div class="flex justify-center items-center h-32">
-                <p class="text-gray-600 text-center">No ${groupTab == 'group-posts' ? 'posts' : (groupTab == 'group-members' ? 'members' : 'invitations')} found for this group.</p>
+                <p class="text-gray-600 text-center">No ${groupTab == 'group-posts' ? 'posts' : (groupTab == 'group-members' ? 'members' : (groupTab == 'group-invitations' ? 'invitations' : 'join requests'))} found for this group.</p>
         </div>
         `;       
     }
@@ -121,6 +131,7 @@ function addEventListeners() {
 
     if (!invitationInfo.user) {
         console.error("User data is missing in invitationInfo:", invitationInfo);
+        invitation.innerHTML = `<p>Error: User information is unavailable.</p>`;
         return invitation;
     }
 
@@ -133,7 +144,7 @@ function addEventListeners() {
             </h3>
         </div>
         <div class="invitation-body mb-2">
-            <p>Invitation sent: ${invitationInfo.date}</p>
+            <p>Invitation sent: ${invitationInfo.date || 'Date unavailable'}</p>
             <p>Status: ${invitationInfo.state}</p>
         </div>
     `;
@@ -145,6 +156,41 @@ function addEventListeners() {
     for (let i = 0; i < invitations.data.length; i++) {
         let invitationElement = createInvitation(invitations.data[i]);
         element.appendChild(invitationElement);
+    }
+  }
+
+  // Creates an join request container with all the necessary info
+  function createRequest(requestInfo) {
+    let request = document.createElement('div');
+    request.classList.add("request", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+
+    if (!requestInfo.user) {
+        console.error("User data is missing in requestInfo:", requestInfo);
+        request.innerHTML = `<p>Error: User information is unavailable.</p>`;
+        return requestInfo;
+    }
+
+    request.innerHTML = `
+        <div class="request-header mb-2">
+            <h3 class="font-bold">
+                <a href="../profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
+                    ${requestInfo.user.username}
+                </a>
+            </h3>
+        </div>
+        <div class="request-body mb-2">
+            <p>Join request received: ${requestInfo.date || 'Date unavailable'}</p>
+            <p>Status: ${requestInfo.state}</p>
+        </div>
+    `;
+    return request;
+  }
+
+  // Inserts more join requests into an element
+  function insertMoreRequests(element, requests) {
+    for (let i = 0; i < requests.data.length; i++) {
+        let requestElement = createRequest(requests.data[i]);
+        element.appendChild(requestElement);
     }
   }
 

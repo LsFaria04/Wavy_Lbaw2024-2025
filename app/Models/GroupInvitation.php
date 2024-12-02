@@ -2,14 +2,20 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class GroupInvitation extends Model
 {
     use HasFactory;
 
     protected $table = 'group_invitation';
+
+    protected $casts = [
+        'date' => 'datetime',
+    ];
 
     public $timestamps = false;
 
@@ -34,5 +40,10 @@ class GroupInvitation extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'userid');
+    }
+
+    public function getDateAttribute($value)
+    {
+        return Carbon::parse($value);
     }
 }

@@ -52,6 +52,7 @@ Route::get('/api/groups/{id}', [GroupController::class, 'getGroupData']);
 Route::get('/api/groups/{id}/posts', [GroupController::class, 'getGroupPosts']);
 Route::get('/api/groups/{id}/members', [GroupController::class, 'getGroupMembers']);
 Route::get('/api/groups/{id}/invitations', [GroupController::class, 'getGroupInvitations']);
+Route::get('/api/groups/{id}/requests', [GroupController::class, 'getJoinRequests']);
 
 //Posts
 Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');

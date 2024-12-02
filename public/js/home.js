@@ -115,6 +115,9 @@ function addEventListeners() {
             case 'group-invitations':
                 sendAjaxRequest('get', `/api/groups/${groupId}/invitations?page=${currentPage}`, null, insertMoreGroupContent);
                 break;
+            case 'group-requests':
+                sendAjaxRequest('get', `/api/groups/${groupId}/requests?page=${currentPage}`, null, insertMoreGroupContent);
+                break;
         }
         loading = false;
       }

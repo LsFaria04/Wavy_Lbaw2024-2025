@@ -96,12 +96,34 @@ class GroupController extends Controller
         }
 
         // Fetch pending invitations and eager load user data
-        $invitations = GroupInvitation::where('groupid', $id)
-            ->where('state', 'Pending') // Only Pending invitations
-            ->with('user') // Load only the username and ID of the invited user
+        $invitations = GroupInvitation::with('user') 
+            ->where('groupid', $id)
+            ->where('state', 'Pending') 
+            ->orderBy('date', 'desc')
             ->paginate(10);
 
         return response()->json($invitations);
+    }
+
+    /**
+     * Get paginated join requests for a specific group.
+     */
+    public function getJoinRequests($id)
+    {
+        $group = Group::findOrFail($id);
+
+        if ($group->ownerid !== Auth::id() && !Auth::user()->isadmin) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Fetch pending join requests and eager load user data
+        $joinRequests = JoinGroupRequest::with('user')
+            ->where('groupid', $id)
+            ->where('state', 'Pending') 
+            ->orderBy('date', 'desc')
+            ->paginate(10);
+
+        return response()->json($joinRequests);
     }
 
     /**

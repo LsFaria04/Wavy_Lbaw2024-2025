@@ -17,6 +17,7 @@
                 @auth
                     @if (auth()->id() === $group->ownerid || Auth::user()->isadmin)
                         <button id="tab-invitations" data-tab="group-invitations" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Invitations</button>
+                        <button id="tab-requests" data-tab="group-requests" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Join Requests</button>
                     @endif
                 @endauth
             </nav>
