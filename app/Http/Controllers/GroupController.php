@@ -37,11 +37,11 @@ class GroupController extends Controller
      */
     public function getGroupData($id)
     {
-        $group = Group::with('owner', 'members')->findOrFail($id);
+        $group = Group::findOrFail($id);
 
         if (!$group->visibilitypublic && 
             !$group->members->contains(Auth::id()) && 
-            $group->ownerid !== Auth::id()) {
+            $group->ownerid !== Auth::id() && !Auth::user()->isadmin) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -57,7 +57,7 @@ class GroupController extends Controller
 
         if (!$group->visibilitypublic &&
             !$group->members->contains(Auth::id()) &&
-            $group->ownerid !== Auth::id()) {
+            $group->ownerid !== Auth::id() && !Auth::user()->isadmin) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -75,7 +75,7 @@ class GroupController extends Controller
 
         if (!$group->visibilitypublic &&
             !$group->members->contains(Auth::id()) &&
-            $group->ownerid !== Auth::id()) {
+            $group->ownerid !== Auth::id() && !Auth::user()->isadmin) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
@@ -91,11 +91,15 @@ class GroupController extends Controller
     {
         $group = Group::findOrFail($id);
 
-        if ($group->ownerid !== Auth::id()) {
+        if ($group->ownerid !== Auth::id() && !Auth::user()->isadmin) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $invitations = GroupInvitation::where('groupid', $id)->paginate(10);
+        // Fetch pending invitations and eager load user data
+        $invitations = GroupInvitation::where('groupid', $id)
+            ->where('state', 'Pending') // Only Pending invitations
+            ->with('user') // Load only the username and ID of the invited user
+            ->paginate(10);
 
         return response()->json($invitations);
     }
@@ -185,37 +189,4 @@ class GroupController extends Controller
         return response()->json(['message' => 'User invited successfully.']);
     }
 
-    /**
-     * Respond to a group invitation.
-     */
-    public function respondInvitation(Request $request, $id)
-    {
-        $request->validate(['state' => 'required|string|in:Accepted,Rejected']);
-
-        $invitation = GroupInvitation::where(['groupid' => $id, 'userid' => Auth::id()])->firstOrFail();
-
-        $invitation->update(['state' => $request->state]);
-
-        if ($request->state === 'Accepted') {
-            GroupMembership::create(['groupid' => $id, 'userid' => Auth::id()]);
-        }
-
-        return response()->json(['message' => 'Invitation responded successfully.']);
-    }
-
-    /**
-     * Delete a group.
-     */
-    public function deleteGroup($id)
-    {
-        $group = Group::findOrFail($id);
-
-        if ($group->ownerid !== Auth::id()) {
-            return response()->json(['error' => 'Only the group owner can delete this group.'], 403);
-        }
-
-        $group->delete();
-
-        return response()->json(['message' => 'Group deleted successfully.']);
-    }
 }

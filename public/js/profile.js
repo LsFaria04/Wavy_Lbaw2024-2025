@@ -192,7 +192,6 @@ function addEventListeners() {
       element.appendChild(comment);
 
     }
-
   }
 
   //inserts more liked contents into an element

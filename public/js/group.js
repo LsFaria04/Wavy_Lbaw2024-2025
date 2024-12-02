@@ -114,4 +114,38 @@ function addEventListeners() {
     }
   }
 
+  // Creates an invitation container with all the necessary info
+  function createInvitation(invitationInfo) {
+    let invitation = document.createElement('div');
+    invitation.classList.add("invitation", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+
+    if (!invitationInfo.user) {
+        console.error("User data is missing in invitationInfo:", invitationInfo);
+        return invitation;
+    }
+
+    invitation.innerHTML = `
+        <div class="invitation-header mb-2">
+            <h3 class="font-bold">
+                <a href="../profile/${invitationInfo.user.username}" class="text-black hover:text-sky-900">
+                    ${invitationInfo.user.username}
+                </a>
+            </h3>
+        </div>
+        <div class="invitation-body mb-2">
+            <p>Invitation sent: ${invitationInfo.date}</p>
+            <p>Status: ${invitationInfo.state}</p>
+        </div>
+    `;
+    return invitation;
+  }
+
+  // Inserts more invitations into an element
+  function insertMoreInvitations(element, invitations) {
+    for (let i = 0; i < invitations.data.length; i++) {
+        let invitationElement = createInvitation(invitations.data[i]);
+        element.appendChild(invitationElement);
+    }
+  }
+
   addEventListeners();

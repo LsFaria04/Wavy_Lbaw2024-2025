@@ -58,7 +58,7 @@ class PostController extends Controller
     /**
      * Gets the posts from a specific user 
      */
-     public function getUserPosts(Request $request, $username){
+    public function getUserPosts(Request $request, $username){
 
         $user = User::where('username', $username)->firstOrFail();
 
@@ -83,7 +83,7 @@ class PostController extends Controller
         }
 
         return $posts;
-     }
+    }
     
     /**
      * Stores a new post.
