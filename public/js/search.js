@@ -102,45 +102,73 @@ function loadSearchContent(category, query){
     }
     
 //inserts more results in the search body
-function insertMoreSearchResults(){
-    removeLoadingCircle();//remove the circle because we already have the data
-    const searchResults = document.querySelector("#search-results");
-  
-    let results = JSON.parse(this.responseText);
-  
-    switch(searchCategory){
-  
-        case 'posts':
-          if(results[0] === undefined) break;
-          maxPage = results[0].last_page; 
-          insertMorePosts(searchResults,results[0]);
-          break;
-  
-        case 'users':
-          if(results[1] === undefined) break;
-          maxPage = results[1].last_page;
-          insertMoreUsers(searchResults,results[1]);
-          break;
-  
-        case 'groups':
-          if(results[2] === undefined) break;
-          maxPage = results[2].last_page;
-          insertMoreGroups(searchResults,results[2]);
-          break;
-  
-      default:
-        return;
-  }
-  
-  if(searchResults.firstChild == null){
-      searchResults.innerHTML = `
-        <div class="flex justify-center items-center h-32">
-            <p class="text-gray-600 text-center">No results matched your search.</p>
-        </div>
-      `;       
-  }
-  
+  function insertMoreSearchResults(){
+      removeLoadingCircle();//remove the circle because we already have the data
+      const searchResults = document.querySelector("#search-results");
+    
+      let results = JSON.parse(this.responseText);
+    
+      switch(searchCategory){
+    
+          case 'posts':
+            if(results[0] === undefined) break;
+            maxPage = results[0].last_page; 
+            insertMorePosts(searchResults,results[0]);
+            break;
+    
+          case 'users':
+            if(results[1] === undefined) break;
+            maxPage = results[1].last_page;
+            insertMoreUsers(searchResults,results[1]);
+            break;
+    
+          case 'groups':
+            if(results[2] === undefined) break;
+            maxPage = results[2].last_page;
+            insertMoreGroups(searchResults,results[2]);
+            break;
+    
+        default:
+          return;
+    }
+    
+    if(searchResults.firstChild == null){
+        searchResults.innerHTML = `
+          <div class="flex justify-center items-center h-32">
+              <p class="text-gray-600 text-center">No results matched your search.</p>
+          </div>
+        `;       
+    }
   }
 
+  // Creates a new group container with all the needed info
+  function createGroup(groupInfo) {
+    let group = document.createElement('div');
+    group.classList.add("group", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+  
+    group.innerHTML = `
+      <div class="group-header mb-2">
+        <h3 class="font-bold">
+          <a href="/group/${groupInfo.groupid}" class="text-black hover:text-sky-900">
+            ${groupInfo.groupname}
+          </a>
+        </h3>
+      </div>
+      <div class="group-body mb-2">
+        <p>${groupInfo.description}</p>
+      </div>
+    `;
+  
+    return group;
+  }
+
+  //inserts more groups into and element
+  function insertMoreGroups(element, groups){
+    for(let i = 0; i < groups.data.length; i++){
+      let group = createGroup(groups.data[i]);
+      element.appendChild(group);
+    
+    }
+  }
   
   addEventListeners();

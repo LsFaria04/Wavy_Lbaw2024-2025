@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Group extends Model
 {
@@ -19,27 +18,39 @@ class Group extends Model
     protected $fillable = [
         'groupname',
         'description',
-        'visibility_public',
+        'visibilitypublic',
         'ownerid',
     ];
 
-    public function owner(): BelongsTo
+    /**
+     * Group owner relationship.
+     */
+    public function owner()
     {
         return $this->belongsTo(User::class, 'ownerid');
     }
 
-    public function members(): HasManyThrough
+    /**
+     * Group members relationship.
+     */
+    public function members()
     {
-        return $this->hasManyThrough(User::class, GroupMembership::class, 'groupid', 'userid');
+        return $this->belongsToMany(User::class, 'group_membership', 'groupid', 'userid');
     }
 
-    public function joinRequests(): HasMany
+    /**
+     * Join requests for the group.
+     */
+    public function joinRequests()
     {
         return $this->hasMany(JoinGroupRequest::class, 'groupid');
     }
 
-    public function invitations(): HasMany
+    /**
+     * Posts related to the group.
+     */
+    public function posts()
     {
-        return $this->hasMany(GroupInvitation::class, 'groupid');
+        return $this->hasMany(Post::class, 'groupid');
     }
 }

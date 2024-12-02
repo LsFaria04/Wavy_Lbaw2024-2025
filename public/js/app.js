@@ -118,26 +118,4 @@ const alertBoxes = document.querySelectorAll('.alert');
     });// Time before fade-out
 }
 
-const buttonsG = document.querySelectorAll('.tab-btn');
-const sectionsG = document.querySelectorAll('.tab-content');
-let groupTab = "group-posts"; // Default tab
-
-function switchGroupTab() {
-  buttonsG.forEach(button => {
-    button.addEventListener('click', () => {
-      currentPage = 1;  // Reset page for new tab content
-      groupTab = button.dataset.tab;
-
-      // Toggle active button
-      buttonsG.forEach(btn => {
-        btn.classList.remove('text-sky-900', 'border-sky-900');
-      });
-      button.classList.add('text-sky-900', 'border-sky-900');
-      
-      // TO-DO loadGroupContent(groupTab);
-    });
-  });
-}
-
-
 addEventListeners();

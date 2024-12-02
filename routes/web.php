@@ -48,6 +48,10 @@ Route::post('api/auth-check', function () {
 Route::post('api/auth-id', function () {
     return response()->json(['id' => auth()->id(), 'isadmin' => Auth::user()->isadmin]);
 });
+Route::get('/api/groups/{id}', [GroupController::class, 'getGroupData']);
+Route::get('/api/groups/{id}/posts', [GroupController::class, 'getGroupPosts']);
+Route::get('/api/groups/{id}/members', [GroupController::class, 'getGroupMembers']);
+Route::get('/api/groups/{id}/invitations', [GroupController::class, 'getGroupInvitations']);
 
 //Posts
 Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');
@@ -81,7 +85,7 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
 
 // Group
-Route::get('/group/{group}', [GroupController::class, 'show'])->name('group');
+Route::get('/group/{id}', [GroupController::class, 'show'])->name('group');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');

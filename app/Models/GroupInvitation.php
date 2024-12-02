@@ -19,4 +19,20 @@ class GroupInvitation extends Model
         'date',
         'state',
     ];
+
+    /**
+     * The group this invitation is for.
+     */
+    public function group()
+    {
+        return $this->belongsTo(Group::class, 'groupid');
+    }
+
+    /**
+     * The user this invitation is sent to.
+     */
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'userid');
+    }
 }

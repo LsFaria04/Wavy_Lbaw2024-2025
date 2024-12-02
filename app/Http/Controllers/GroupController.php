@@ -12,61 +12,125 @@ use Illuminate\Support\Facades\Auth;
 
 class GroupController extends Controller
 {
-    public function show($groupid)
+    /**
+     * Display a specific group and its details.
+     */
+    public function show($id)
     {
-        // Retrieve the group using groupid
-        $group = Group::find($groupid);
+        $group = Group::with('members')->find($id);
 
-        // If no group is found, redirect to home or another page
         if (!$group) {
-            return redirect('/home');
+            return redirect('/home')->withErrors(['Group not found.']);
         }
 
-        $posts = [];
-        $members = [];
+        if (!$group->visibilitypublic 
+            && !$group->members->contains(Auth::id()) 
+            && $group->ownerid !== Auth::id()) {
+            return redirect('/home')->withErrors(['You do not have access to view this group.']);
+        }
 
-        // Pass the group data to the view
         return view('pages.group', compact('group'));
     }
 
-    // Create a new group
+    /**
+     * Get all the data of a group and send it as JSON.
+     */
+    public function getGroupData($id)
+    {
+        $group = Group::with('owner', 'members')->findOrFail($id);
+
+        if (!$group->visibilitypublic && 
+            !$group->members->contains(Auth::id()) && 
+            $group->ownerid !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        return response()->json($group);
+    }
+
+    /**
+     * Get paginated posts for a specific group.
+     */
+    public function getGroupPosts($id)
+    {
+        $group = Group::findOrFail($id);
+
+        if (!$group->visibilitypublic &&
+            !$group->members->contains(Auth::id()) &&
+            $group->ownerid !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $posts = $group->posts()->with('user', 'media')->orderBy('createddate', 'desc')->paginate(10);
+
+        return response()->json($posts);
+    }
+
+    /**
+     * Get paginated members for a specific group.
+     */
+    public function getGroupMembers($id)
+    {
+        $group = Group::findOrFail($id);
+
+        if (!$group->visibilitypublic &&
+            !$group->members->contains(Auth::id()) &&
+            $group->ownerid !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $members = $group->members()->paginate(10);
+
+        return response()->json($members);
+    }
+
+    /**
+     * Get paginated invitations for a specific group.
+     */
+    public function getGroupInvitations($id)
+    {
+        $group = Group::findOrFail($id);
+
+        if ($group->ownerid !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        $invitations = GroupInvitation::where('groupid', $id)->paginate(10);
+
+        return response()->json($invitations);
+    }
+
+    /**
+     * Create a new group.
+     */
     public function create(Request $request)
     {
         $request->validate([
             'groupname' => 'required|string|max:30|unique:groups,groupname',
-            'description' => 'string|max:255',
-            'visibilitypublic' => 'boolean',
+            'description' => 'nullable|string|max:255',
+            'visibilitypublic' => 'required|boolean',
         ]);
 
         $group = Group::create([
-            'groupname' => $request->groupName,
-            'description' => $request->description,
-            'visibilitypublic' => $request->visibilityPublic ?? true,
+            'groupname' => $request->groupname,
+            'description' => $request->description ?? '',
+            'visibilitypublic' => $request->visibilitypublic ?? true,
             'ownerid' => Auth::id(),
         ]);
 
         return response()->json(['message' => 'Group created successfully.', 'group' => $group], 201);
     }
 
-    // Get group details
-    public function getGroup($id)
-    {
-        $group = Group::with('members')->findOrFail($id);
-
-        if (!$group->visibilitypublic && !$group->members->contains(Auth::id()) && $group->ownerid !== Auth::id()) {
-            return response()->json(['error' => 'You do not have permission to view this group.'], 403);
-        }
-
-        return response()->json($group);
-    }
-
-    // Join a group (request membership)
+    /**
+     * Send a join request to a group.
+     */
     public function requestJoin($id)
     {
         $group = Group::findOrFail($id);
 
-        if ($group->ownerid === Auth::id() || GroupMembership::where(['groupid' => $id, 'userid' => Auth::id()])->exists()) {
-            return response()->json(['message' => 'You are already in this group or own it.'], 400);
+        if ($group->ownerid === Auth::id() 
+            || GroupMembership::where(['groupid' => $id, 'userid' => Auth::id()])->exists()) {
+            return response()->json(['message' => 'You are already a member or own this group.'], 400);
         }
 
         JoinGroupRequest::updateOrCreate(
@@ -77,12 +141,12 @@ class GroupController extends Controller
         return response()->json(['message' => 'Join request sent successfully.']);
     }
 
-    // Respond to a join request
+    /**
+     * Respond to a join request.
+     */
     public function respondJoinRequest(Request $request, $groupid, $userid)
     {
-        $request->validate([
-            'state' => 'required|string|in:Accepted,Rejected',
-        ]);
+        $request->validate(['state' => 'required|string|in:Accepted,Rejected']);
 
         $group = Group::findOrFail($groupid);
 
@@ -91,54 +155,63 @@ class GroupController extends Controller
         }
 
         $joinRequest = JoinGroupRequest::where(['groupid' => $groupid, 'userid' => $userid])->firstOrFail();
-
         $joinRequest->update(['state' => $request->state]);
+
+        if ($request->state === 'Accepted') {
+            GroupMembership::create(['groupid' => $groupid, 'userid' => $userid]);
+        }
 
         return response()->json(['message' => 'Join request responded successfully.']);
     }
 
-    // Invite a user to a group
+    /**
+     * Invite a user to the group.
+     */
     public function inviteUser(Request $request, $id)
     {
-        $request->validate([
-            'userid' => 'required|exists:users,userid',
-        ]);
-
         $group = Group::findOrFail($id);
 
         if ($group->ownerid !== Auth::id()) {
             return response()->json(['error' => 'Only the group owner can invite users.'], 403);
         }
 
+        $request->validate(['userid' => 'required|exists:users,userid']);
+
         GroupInvitation::updateOrCreate(
             ['groupid' => $id, 'userid' => $request->userid],
-            ['state' => 'Pending']
+            ['state' => 'Pending', 'date' => now()]
         );
 
         return response()->json(['message' => 'User invited successfully.']);
     }
 
-    // Respond to a group invitation
+    /**
+     * Respond to a group invitation.
+     */
     public function respondInvitation(Request $request, $id)
     {
-        $request->validate([
-            'state' => 'required|string|in:Accepted,Rejected',
-        ]);
+        $request->validate(['state' => 'required|string|in:Accepted,Rejected']);
 
         $invitation = GroupInvitation::where(['groupid' => $id, 'userid' => Auth::id()])->firstOrFail();
 
         $invitation->update(['state' => $request->state]);
 
+        if ($request->state === 'Accepted') {
+            GroupMembership::create(['groupid' => $id, 'userid' => Auth::id()]);
+        }
+
         return response()->json(['message' => 'Invitation responded successfully.']);
     }
 
-    // Delete a group
+    /**
+     * Delete a group.
+     */
     public function deleteGroup($id)
     {
         $group = Group::findOrFail($id);
 
         if ($group->ownerid !== Auth::id()) {
-            return response()->json(['error' => 'Only the group owner can delete the group.'], 403);
+            return response()->json(['error' => 'Only the group owner can delete this group.'], 403);
         }
 
         $group->delete();
@@ -146,4 +219,3 @@ class GroupController extends Controller
         return response()->json(['message' => 'Group deleted successfully.']);
     }
 }
-
