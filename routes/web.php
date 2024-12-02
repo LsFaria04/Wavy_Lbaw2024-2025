@@ -53,6 +53,8 @@ Route::get('/api/groups/{id}/posts', [GroupController::class, 'getGroupPosts']);
 Route::get('/api/groups/{id}/members', [GroupController::class, 'getGroupMembers']);
 Route::get('/api/groups/{id}/invitations', [GroupController::class, 'getGroupInvitations']);
 Route::get('/api/groups/{id}/requests', [GroupController::class, 'getJoinRequests']);
+Route::delete('api/invitations/{id}/cancel', [GroupController::class, 'cancelInvitation']);
+Route::post('api/join-requests/{id}/process', [GroupController::class, 'processJoinRequest']);
 
 //Posts
 Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');

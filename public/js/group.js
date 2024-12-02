@@ -25,7 +25,6 @@ function addEventListeners() {
     });
   
     document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
-  
     setupCreateUserMenu();
     addEventListenerEditUserAdmin();
     eventListernerFormsAdmin();
@@ -147,7 +146,11 @@ function addEventListeners() {
             <p>Invitation sent: ${invitationInfo.date || 'Date unavailable'}</p>
             <p>Status: ${invitationInfo.state}</p>
         </div>
+        <button class="cancel-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700" data-id="${invitationInfo.groupid}">
+            Cancel
+        </button>
     `;
+
     return invitation;
   }
 
@@ -182,7 +185,16 @@ function addEventListeners() {
             <p>Join request received: ${requestInfo.date || 'Date unavailable'}</p>
             <p>Status: ${requestInfo.state}</p>
         </div>
+        <div class="request-actions">
+            <button class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" data-id="${requestInfo.groupid}">
+                Accept
+            </button>
+            <button class="reject-btn bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700" data-id="${requestInfo.groupid}">
+                Reject
+            </button>
+        </div>
     `;
+
     return request;
   }
 
