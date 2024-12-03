@@ -13,12 +13,15 @@ class GroupMembership extends Model
 
     protected $table = 'group_membership';
 
+    protected $primaryKey = 'memberid';
+
     public $timestamps = false;
 
     protected $fillable = [
+        'memberid',
         'groupid',
         'userid',
-    ];
+    ];    
 
     /**
      * The group this invitation is for.

@@ -13,6 +13,8 @@ class JoinGroupRequest extends Model
 
     protected $table = 'join_group_request';
 
+    protected $primaryKey = 'requestid';
+
     protected $casts = [
         'date' => 'datetime',
     ];
@@ -20,6 +22,7 @@ class JoinGroupRequest extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'requestid',
         'groupid',
         'userid',
         'date',

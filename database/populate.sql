@@ -1,15 +1,15 @@
 INSERT INTO Users (userName, passwordHash, bio, email, state, visibilityPublic, isAdmin) 
 VALUES 
-    ('Admin', 'hash1', 'Community leader passionate about making a difference.', 'administrator@example.com', 'active', FALSE, TRUE),
-    ('BobJohnson', 'hash2', 'Avid hiker and nature enthusiast, always seeking the next adventure.', 'bob.johnson@example.com', 'active', TRUE, FALSE),
-    ('CharlieBrown', 'hash3', 'Art lover who enjoys visiting galleries and creating new pieces.', 'charlie.brown@example.com', 'suspended', TRUE, FALSE),
-    ('DanaWhite', 'hash4', 'Foodie and chef, always experimenting with new recipes.', 'dana.white@example.com', 'active', TRUE, FALSE),
-    ('EveBlack', 'hash5', 'Traveler at heart, exploring cultures and cuisines around the world.', 'eve.black@example.com', 'deleted', TRUE, FALSE),
-    ('FrankMoore', 'hash6', 'Sports coach who enjoys mentoring young athletes and staying active.', 'frank.moore@example.com', 'active', TRUE, FALSE),
-    ('GraceHall', 'hash7', 'Yoga instructor and wellness advocate, passionate about mindfulness.', 'grace.hall@example.com', 'active', TRUE, FALSE),
-    ('HenryKing', 'hash8', 'Gardener with a love for growing fresh vegetables and herbs.', 'henry.king@example.com', 'suspended', TRUE, FALSE),
-    ('IvyAdams', 'hash9', 'Bookworm and aspiring novelist, always lost in a good story.', 'ivy.adams@example.com', 'active', TRUE, FALSE),
-    ('JackLee', 'hash10', 'Music enthusiast and amateur guitarist, loves performing at local cafes.', 'jack.lee@example.com', 'active', FALSE, FALSE);
+    ('Admin', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Community leader passionate about making a difference.', 'administrator@example.com', 'active', FALSE, TRUE),
+    ('BobJohnson', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Avid hiker and nature enthusiast, always seeking the next adventure.', 'bob.johnson@example.com', 'active', TRUE, FALSE),
+    ('CharlieBrown', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Art lover who enjoys visiting galleries and creating new pieces.', 'charlie.brown@example.com', 'suspended', TRUE, FALSE),
+    ('DanaWhite', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Foodie and chef, always experimenting with new recipes.', 'dana.white@example.com', 'active', TRUE, FALSE),
+    ('EveBlack', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Traveler at heart, exploring cultures and cuisines around the world.', 'eve.black@example.com', 'active', TRUE, FALSE),
+    ('FrankMoore', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Sports coach who enjoys mentoring young athletes and staying active.', 'frank.moore@example.com', 'active', TRUE, FALSE),
+    ('GraceHall', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Yoga instructor and wellness advocate, passionate about mindfulness.', 'grace.hall@example.com', 'active', TRUE, FALSE),
+    ('HenryKing', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Gardener with a love for growing fresh vegetables and herbs.', 'henry.king@example.com', 'suspended', TRUE, FALSE),
+    ('IvyAdams', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Bookworm and aspiring novelist, always lost in a good story.', 'ivy.adams@example.com', 'active', TRUE, FALSE),
+    ('JackLee', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Music enthusiast and amateur guitarist, loves performing at local cafes.', 'jack.lee@example.com', 'active', FALSE, FALSE);
 
 INSERT INTO GROUPS (groupName, description, visibilityPublic, ownerID) 
 VALUES 
@@ -70,14 +70,14 @@ VALUES
     (5, 'Just visited a new country, and it was incredible!', FALSE, '2017-10-08 18:45:00', NULL),
     (6, 'Had a great day coaching my team today!', TRUE, '2024-10-10 12:20:00', NULL), 
     (7, 'Practicing my yoga poses today, feeling great!', TRUE, '2024-10-12 07:30:00', NULL),
-    (8, 'Can’t wait for my vegetables to be ready for harvest!', TRUE, '2024-10-15 16:40:00', 7), 
+    (8, 'Can’t wait for my vegetables to be ready for harvest!', FALSE, '2024-10-15 16:40:00', 7), 
     (9, 'Currently working on my novel, it’s coming together!', TRUE, '2024-10-18 20:05:00', NULL), 
-    (10, 'Played at a local café last night, had a blast!', TRUE, '2024-10-20 21:15:00', NULL),
+    (10, 'Played at a local café last night, had a blast!', FALSE, '2024-10-20 21:15:00', NULL),
     (5, 'Just completed a challenging workout—feeling accomplished!', TRUE, '2024-11-01 18:15:00', NULL),
     (2, 'Exploring new music genres to expand my playlist!', TRUE, '2024-01-11 20:45:00', NULL),
     (3, 'What’s everyone’s favorite movie from the 90s?', TRUE, '2024-01-12 22:00:00', NULL),
     (4, 'Volunteered at the local animal shelter today—such a rewarding experience!', TRUE, '2024-01-13 17:30:00', NULL),
-    (5, 'Who else is getting excited for the upcoming holiday season?', TRUE, '2024-01-14 12:00:00', NULL),
+    (5, 'Who else is getting excited for the upcoming holiday season?', FALSE, '2024-01-14 12:00:00', NULL),
     (6, 'Working on my coding skills—any recommendations for resources?', TRUE, '2024-01-15 09:45:00', NULL),
     (7, 'Just finished a beautiful sunset painting!', TRUE, '2024-02-16 19:00:00', NULL),
     (8, 'Mewing tournament today at 3pm, do not miss', TRUE, '2024-03-17 14:30:00', NULL),
@@ -133,14 +133,7 @@ VALUES
     (7, NOW(), NULL, 3),   
     (8, NOW(), 1, NULL),  
     (9, NOW(), 3, NULL), 
-    (10, NOW(), NULL, 2);
-
-INSERT INTO MEDIA (path, postID, commentID, userID) VALUES
-    ('/media/images/photo1.jpg', 1, NULL, NULL),
-    ('/media/images/photo2.jpg', NULL, 2, NULL),
-    ('/media/videos/video1.mp4', 3, NULL, NULL),
-    ('/media/images/profile1.jpg', NULL, NULL, 1),  
-    ('/media/audio/audio1.mp3', NULL, NULL, 2);    
+    (10, NOW(), NULL, 2);  
 
 INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (7, 2, 'Accepted', NOW()),

@@ -13,6 +13,8 @@ class GroupInvitation extends Model
 
     protected $table = 'group_invitation';
 
+    protected $primaryKey = 'invitationid';
+
     protected $casts = [
         'date' => 'datetime',
     ];
@@ -20,6 +22,7 @@ class GroupInvitation extends Model
     public $timestamps = false;
 
     protected $fillable = [
+        'invitationid',
         'groupid',
         'userid',
         'date',

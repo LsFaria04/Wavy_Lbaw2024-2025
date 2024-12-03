@@ -95,7 +95,6 @@ class GroupController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        // Fetch pending invitations and eager load user data
         $invitations = GroupInvitation::with('user') 
             ->where('groupid', $id)
             ->where('state', 'Pending') 
@@ -116,7 +115,6 @@ class GroupController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        // Fetch pending join requests and eager load user data
         $joinRequests = JoinGroupRequest::with('user')
             ->where('groupid', $id)
             ->where('state', 'Pending') 
