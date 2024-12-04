@@ -156,11 +156,17 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Invitation canceled successfully.'], 200);
     }
 
-    public function rejectJoinRequest($groupId, $requestId)
+    public function rejectJoinRequest($groupid, $requestid)
     {
-        $joinRequest = JoinGroupRequest::where('groupID', $groupId)
-            ->where('requestID', $requestId)
+        $joinRequest = JoinGroupRequest::where('groupid', $groupid)
+            ->where('requestid', $requestid)
             ->firstOrFail();
+
+        if ($joinRequest->state === 'Accepted') {
+            return response()->json(['status' => 'error', 'message' => 'Request already accepted.'], 400);
+        } else if ($joinRequest->state === 'Rejected') {
+            return response()->json(['status' => 'error', 'message' => 'Request already rejected.'], 400);
+        }
 
         $joinRequest->state = 'Rejected';
         $joinRequest->save();

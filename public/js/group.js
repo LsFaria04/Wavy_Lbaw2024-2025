@@ -35,6 +35,40 @@
         });
       }
     });
+
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.classList.contains('reject-btn')) {
+          const requestId = e.target.dataset.id;
+  
+          if (!groupId || !requestId) {
+              console.error('Group ID or Request ID is missing.');
+              return;
+          }
+  
+          // Send AJAX request to accept the join request
+          sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/reject`, {}, function () {
+              if (this.status === 200) {
+                  const response = JSON.parse(this.responseText);
+                  console.log(response.message);
+  
+                  // Remove the specific request element
+                  const requestElement = e.target.closest('.request');
+                  if (requestElement) requestElement.remove();
+
+                  // Check if the list is empty and reload content
+                  const groupContent = document.querySelector("#group-tab-content");
+                  if (!groupContent.firstChild) {
+                      loadGroupContent('group-requests'); // Reload the requests tab content
+                      alert(response.message);
+                  } else {
+                      alert(response.message); 
+                  }
+              } else {
+                console.error('Failed to reject request:', this.responseText);
+              }
+        });
+      }
+    });
   }
 
   const buttonsG = document.querySelectorAll('.tab-btn');
