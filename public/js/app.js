@@ -1,6 +1,5 @@
 function addEventListeners() {
   document.addEventListener('DOMContentLoaded', fadeAlert);
-  document.addEventListener('DOMContentLoaded', switchGroupTab);
 
   let cancelButton = document.getElementById('cancelButton');
 

@@ -3,6 +3,40 @@
     document.addEventListener('DOMContentLoaded', switchGroupTab);
 
     document.addEventListener('click', function (e) {
+      if (e.target && e.target.classList.contains('cancel-btn')) {
+          const invitationId = e.target.dataset.id;
+  
+          if (!groupId || !invitationId) {
+              console.error('Group ID or Invitation ID is missing.');
+              return;
+          }
+  
+          // Send AJAX request to cancel the invite
+          sendAjaxRequest('delete', `/api/groups/${groupId}/invitations/${invitationId}`, {}, function () {
+              if (this.status === 200) {
+                  const response = JSON.parse(this.responseText);
+                  console.log(response.message);
+  
+                  // Remove the specific request element
+                  const invitationElement = e.target.closest('.invitation');
+                  if (invitationElement) invitationElement.remove();
+
+                  // Check if the list is empty and reload content
+                  const groupContent = document.querySelector("#group-tab-content");
+                  if (!groupContent.firstChild) {
+                      loadGroupContent('group-invitations'); // Reload the invitations tab content
+                      alert(response.message);
+                  } else {
+                      alert(response.message); 
+                  }
+              } else {
+                console.error('Failed to cancel the invitation:', this.responseText);
+              }
+        });
+      }
+    });
+
+    document.addEventListener('click', function (e) {
       if (e.target && e.target.classList.contains('accept-btn')) {
           const requestId = e.target.dataset.id;
   
@@ -45,7 +79,7 @@
               return;
           }
   
-          // Send AJAX request to accept the join request
+          // Send AJAX request to reject the join request
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/reject`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);

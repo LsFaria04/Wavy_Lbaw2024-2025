@@ -145,11 +145,17 @@ class GroupController extends Controller
         return response()->json(['message' => 'Group created successfully.', 'group' => $group], 201);
     }
     
-    public function cancelInvitation($groupId, $invitationId)
+    public function cancelInvitation($groupid, $invitationid)
     {
-        $invitation = GroupInvitation::where('groupID', $groupId)
-            ->where('invitationID', $invitationId)
+        $invitation = GroupInvitation::where('groupid', $groupid)
+            ->where('invitationid', $invitationid)
             ->firstOrFail();
+
+        if ($invitation->state === 'Accepted') {
+            return response()->json(['status' => 'error', 'message' => 'Invitation already accepted.'], 400);
+        } else if ($invitation->state === 'Rejected') {
+            return response()->json(['status' => 'error', 'message' => 'Invitation already rejected.'], 400);
+        }
 
         $invitation->delete();
 
