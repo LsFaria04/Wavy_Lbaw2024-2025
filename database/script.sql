@@ -836,6 +836,8 @@ INSERT INTO JOIN_GROUP_REQUEST (groupID, userID, date, state)
 VALUES 
     (2, 5, NOW(), 'Pending'),  
     (3, 7, NOW(), 'Rejected'), 
+    (3, 5, NOW(), 'Pending'),
+    (3, 6, NOW(), 'Pending'),
     (4, 2, NOW(), 'Pending'),    
     (5, 1, NOW(), 'Accepted'),   
     (6, 8, NOW(), 'Pending'),    
@@ -967,6 +969,7 @@ INSERT INTO USER_REPORTS (userID, postID, commentID, reason) VALUES
 
 INSERT INTO GROUP_INVITATION (groupID, userID, date, state) VALUES
     (3, 2, NOW(), 'Pending'), 
+    (3, 3, NOW(), 'Pending'),
     (8, 3, NOW(), 'Accepted'),
     (2, 1, NOW(), 'Rejected');
 

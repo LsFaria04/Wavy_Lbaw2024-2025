@@ -21,14 +21,8 @@
                   const invitationElement = e.target.closest('.invitation');
                   if (invitationElement) invitationElement.remove();
 
-                  // Check if the list is empty and reload content
-                  const groupContent = document.querySelector("#group-tab-content");
-                  if (!groupContent.firstChild) {
-                      loadGroupContent('group-invitations'); // Reload the invitations tab content
-                      alert(response.message);
-                  } else {
-                      alert(response.message); 
-                  }
+                  loadGroupContent('group-invitations'); // Reload the invitations tab content
+                  alert(response.message);
               } else {
                 console.error('Failed to cancel the invitation:', this.responseText);
               }
@@ -55,14 +49,9 @@
                   const requestElement = e.target.closest('.request');
                   if (requestElement) requestElement.remove();
 
-                  // Check if the list is empty and reload content
-                  const groupContent = document.querySelector("#group-tab-content");
-                  if (!groupContent.firstChild) {
-                      loadGroupContent('group-requests'); // Reload the requests tab content
-                      alert(response.message);
-                  } else {
-                      alert(response.message); 
-                  }
+                  // Reload content
+                  loadGroupContent('group-requests');
+                  alert(response.message); 
               } else {
                 console.error('Failed to accept request:', this.responseText);
               }
@@ -89,14 +78,9 @@
                   const requestElement = e.target.closest('.request');
                   if (requestElement) requestElement.remove();
 
-                  // Check if the list is empty and reload content
-                  const groupContent = document.querySelector("#group-tab-content");
-                  if (!groupContent.firstChild) {
-                      loadGroupContent('group-requests'); // Reload the requests tab content
-                      alert(response.message);
-                  } else {
-                      alert(response.message); 
-                  }
+                  // Reload content
+                  loadGroupContent('group-requests');
+                  alert(response.message); 
               } else {
                 console.error('Failed to reject request:', this.responseText);
               }
@@ -158,7 +142,7 @@
   }
 
   function insertMoreGroupContent() {
-    removeLoadingCircle(); // Remove the loading indicator
+    removeLoadingCircle(); 
     const groupContent = document.querySelector("#group-tab-content");
 
     let results = JSON.parse(this.responseText);
@@ -228,7 +212,6 @@
     return invitation;
   }
 
-  // Inserts more invitations into an element
   function insertMoreInvitations(element, invitations) {
     for (let i = 0; i < invitations.data.length; i++) {
         let invitationElement = createInvitation(invitations.data[i]);
@@ -271,7 +254,6 @@
     return request;
   }
 
-  // Inserts more join requests into an element
   function insertMoreRequests(element, requests) {
     for (let i = 0; i < requests.data.length; i++) {
         let requestElement = createRequest(requests.data[i]);

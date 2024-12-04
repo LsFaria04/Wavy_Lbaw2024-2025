@@ -34,7 +34,7 @@ function addEventListeners() {
   }
 
   function sendAjaxRequest(method, url, data, handler) {
-    console.log(`Method: ${method}, URL: ${url}, Data:`, data); // Log method, URL, and data
+    // Debug Statement: console.log(`Method: ${method}, URL: ${url}, Data:`, data);
 
     let request = new XMLHttpRequest();
     request.open(method, url, true);
@@ -42,14 +42,14 @@ function addEventListeners() {
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
 
-    request.onerror = function () {
-        console.error('AJAX request failed.');
-    };
+    // Debug Statement: request.onerror = function () {
+      // Debug Statement: console.error('AJAX request failed.');
+    // Debug Statement: };
 
-    request.onload = function () {
-        console.log('Response Status:', this.status);
-        console.log('Response Text:', this.responseText);
-    };
+    // Debug Statement: request.onload = function () {
+        // Debug Statement: console.log('Response Status:', this.status);
+        // Debug Statement: console.log('Response Text:', this.responseText);
+    // Debug Statement: };
 
     request.addEventListener('load', handler);
     request.send(encodeForAjax(data));
