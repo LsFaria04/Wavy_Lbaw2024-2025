@@ -36,10 +36,10 @@ class PostController extends Controller
         if (Auth::check()){
             //$friendsId = Follow::where('follower',Auth::id())->pluck('followee')->toArray();
             //whereIn(userid, $friendsId) --> Posts of friends, do the same to groups and topics when implemented.
-            $posts = Post::with('user','media')->orderBy('createddate', 'desc')->paginate(10);  
+            $posts = Post::with('user','media')->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);  
         }
         else {
-            $posts = Post::with('user', 'media')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
+            $posts = Post::with('user', 'media')->whereNull('groupid')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
         }
 
         for($i = 0;$i < sizeof($posts); $i++){
@@ -110,7 +110,7 @@ class PostController extends Controller
             'message' => $request->message,
             'visibilitypublic' => true, 
             'createddate' => now(),
-            'groupid' => null, 
+            'groupid' => $request->groupid ?? null, // Use groupid if available, otherwise null
         ]);
         
         if ($request->hasFile('media')) {
@@ -126,7 +126,7 @@ class PostController extends Controller
 
                     Media::create([
                         'postid' => $post->postid, // Associate media with this post
-                        'userid' => NULL, 
+                        'userid' => null, 
                         'path' => $mediaPath, // Store the image path
                     ]);
                 }
@@ -134,6 +134,11 @@ class PostController extends Controller
                     return redirect()->route('home')->with('error', 'Could not upload the file!');
                 }
             }
+        }
+
+        // Redirect back to the group page or home page
+        if ($request->groupid) {
+            return redirect()->route('group', ['id' => $request->groupid])->with('success', 'Post created successfully!');
         }
     
         return redirect()->route('home')->with('success', 'Post created successfully!');

@@ -111,6 +111,7 @@
   }
 
   function loadGroupContent(tab) {
+    const addPost = document.getElementById('post-form');
     const groupContent = document.querySelector("#group-tab-content");
     if (!groupContent) return;
 
@@ -125,18 +126,26 @@
     switch (tab) {
         case 'group-posts':
             sendAjaxRequest('get', `/api/groups/${groupId}/posts?page=${currentPage}`, null, insertMoreGroupContent);
+            addPost.classList.add('flex');
+            addPost.classList.remove('hidden');
             break;
 
         case 'group-members':
             sendAjaxRequest('get', `/api/groups/${groupId}/members?page=${currentPage}`, null, insertMoreGroupContent);
+            addPost.classList.add('hidden');
+            addPost.classList.remove('flex');
             break;
 
         case 'group-invitations':
             sendAjaxRequest('get', `/api/groups/${groupId}/invitations?page=${currentPage}`, null, insertMoreGroupContent);
+            addPost.classList.add('hidden');
+            addPost.classList.remove('flex');
             break;
 
         case 'group-requests':
           sendAjaxRequest('get', `/api/groups/${groupId}/requests?page=${currentPage}`, null, insertMoreGroupContent);
+          addPost.classList.add('hidden');
+          addPost.classList.remove('flex');
           break;
     }
   }
