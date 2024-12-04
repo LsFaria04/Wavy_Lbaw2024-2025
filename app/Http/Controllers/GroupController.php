@@ -143,5 +143,58 @@ class GroupController extends Controller
         ]);
 
         return response()->json(['message' => 'Group created successfully.', 'group' => $group], 201);
-    }    
+    }
+    
+    public function cancelInvitation($groupId, $invitationId)
+    {
+        $invitation = GroupInvitation::where('groupID', $groupId)
+            ->where('invitationID', $invitationId)
+            ->firstOrFail();
+
+        $invitation->delete();
+
+        return response()->json(['status' => 'success', 'message' => 'Invitation canceled successfully.'], 200);
+    }
+
+    public function rejectJoinRequest($groupId, $requestId)
+    {
+        $joinRequest = JoinGroupRequest::where('groupID', $groupId)
+            ->where('requestID', $requestId)
+            ->firstOrFail();
+
+        $joinRequest->state = 'Rejected';
+        $joinRequest->save();
+
+        return response()->json(['status' => 'success', 'message' => 'Join request rejected successfully.'], 200);
+    }
+
+    public function acceptJoinRequest($groupid, $requestid)
+    {
+        $joinRequest = JoinGroupRequest::where('groupid', $groupid)
+            ->where('requestid', $requestid)
+            ->firstOrFail();
+
+        if ($joinRequest->state === 'Accepted') {
+            return response()->json(['status' => 'error', 'message' => 'Request already accepted.'], 400);
+        } else if ($joinRequest->state === 'Rejected') {
+            return response()->json(['status' => 'error', 'message' => 'Request already rejected.'], 400);
+        }
+
+        $joinRequest->state = 'Accepted';
+        $joinRequest->save();
+
+        $existingMembership = GroupMembership::where('groupid', $groupid)
+            ->where('userid', $joinRequest->userid)
+            ->first();
+
+        if (!$existingMembership) {
+            GroupMembership::create([
+                'groupid' => $groupid,
+                'userid' => $joinRequest->userid,
+            ]);
+        }
+
+        return response()->json(['status' => 'success', 'message' => 'Join request accepted and user added to group.'], 200);
+    }
+
 }

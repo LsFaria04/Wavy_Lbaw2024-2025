@@ -35,17 +35,26 @@ function addEventListeners() {
   }
 
   function sendAjaxRequest(method, url, data, handler) {
-    let request = new XMLHttpRequest();
+    console.log(`Method: ${method}, URL: ${url}, Data:`, data); // Log method, URL, and data
 
+    let request = new XMLHttpRequest();
     request.open(method, url, true);
     request.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
     request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
     request.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+
+    request.onerror = function () {
+        console.error('AJAX request failed.');
+    };
+
+    request.onload = function () {
+        console.log('Response Status:', this.status);
+        console.log('Response Text:', this.responseText);
+    };
+
     request.addEventListener('load', handler);
     request.send(encodeForAjax(data));
   }
-
-
 
   //gets the csrf token to insert in new forms
   function getCsrfToken(){

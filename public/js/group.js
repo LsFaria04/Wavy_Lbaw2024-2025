@@ -1,33 +1,40 @@
-function addEventListeners() {
+  function addEventListeners() {
     document.addEventListener('DOMContentLoaded', fadeAlert);
     document.addEventListener('DOMContentLoaded', switchGroupTab);
+
+    document.addEventListener('click', function (e) {
+      if (e.target && e.target.classList.contains('accept-btn')) {
+          const requestId = e.target.dataset.id;
   
-    let cancelButton = document.getElementById('cancelButton');
+          if (!groupId || !requestId) {
+              console.error('Group ID or Request ID is missing.');
+              return;
+          }
   
-    if(cancelButton !== null){
-      cancelButton.addEventListener('click', () => {
-        const deleteMenu = document.getElementById('deleteMenu');
-        html.classList.toggle('overflow-hidden');
-        deleteMenu.classList.add('hidden');
-      });
-    }
-    let confirmButton = document.getElementById('confirmButton');
-    if(confirmButton !== null){
-      confirmButton.addEventListener('click', () => {
-        const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-        deleteForm.submit();
-      });
-    }
+          // Send AJAX request to accept the join request
+          sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/accept`, {}, function () {
+              if (this.status === 200) {
+                  const response = JSON.parse(this.responseText);
+                  console.log(response.message);
   
-    document.addEventListener('DOMContentLoaded', function() {
-      handlePagination('posts-container');
-      handlePagination('users-container');
+                  // Remove the specific request element
+                  const requestElement = e.target.closest('.request');
+                  if (requestElement) requestElement.remove();
+
+                  // Check if the list is empty and reload content
+                  const groupContent = document.querySelector("#group-tab-content");
+                  if (!groupContent.firstChild) {
+                      loadGroupContent('group-requests'); // Reload the requests tab content
+                      alert(response.message);
+                  } else {
+                      alert(response.message); 
+                  }
+              } else {
+                console.error('Failed to accept request:', this.responseText);
+              }
+        });
+      }
     });
-  
-    document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
-    setupCreateUserMenu();
-    addEventListenerEditUserAdmin();
-    eventListernerFormsAdmin();
   }
 
   const buttonsG = document.querySelectorAll('.tab-btn');
@@ -123,7 +130,6 @@ function addEventListeners() {
     }
   }
 
-  // Creates an invitation container with all the necessary info
   function createInvitation(invitationInfo) {
     let invitation = document.createElement('div');
     invitation.classList.add("invitation", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
@@ -146,7 +152,7 @@ function addEventListeners() {
             <p>Invitation sent: ${invitationInfo.date || 'Date unavailable'}</p>
             <p>Status: ${invitationInfo.state}</p>
         </div>
-        <button class="cancel-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700" data-id="${invitationInfo.groupid}">
+        <button class="cancel-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700" data-id="${invitationInfo.invitationid}">
             Cancel
         </button>
     `;
@@ -162,7 +168,6 @@ function addEventListeners() {
     }
   }
 
-  // Creates an join request container with all the necessary info
   function createRequest(requestInfo) {
     let request = document.createElement('div');
     request.classList.add("request", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
@@ -170,7 +175,7 @@ function addEventListeners() {
     if (!requestInfo.user) {
         console.error("User data is missing in requestInfo:", requestInfo);
         request.innerHTML = `<p>Error: User information is unavailable.</p>`;
-        return requestInfo;
+        return request;
     }
 
     request.innerHTML = `
@@ -186,10 +191,10 @@ function addEventListeners() {
             <p>Status: ${requestInfo.state}</p>
         </div>
         <div class="request-actions">
-            <button class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" data-id="${requestInfo.groupid}">
+            <button class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" data-id="${requestInfo.requestid}">
                 Accept
             </button>
-            <button class="reject-btn bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700" data-id="${requestInfo.groupid}">
+            <button class="reject-btn bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700" data-id="${requestInfo.requestid}">
                 Reject
             </button>
         </div>
