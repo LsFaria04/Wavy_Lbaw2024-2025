@@ -32,7 +32,6 @@
                 @yield('content')
                 @yield('scripts')
             </section>
-            @include('partials.search_menu')
             
         </main>
         
