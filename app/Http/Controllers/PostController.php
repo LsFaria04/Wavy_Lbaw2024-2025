@@ -64,11 +64,13 @@ class PostController extends Controller
 
         if (Auth::check()){
             $posts = Post::with('user','media')
+            ->whereNull('groupid')
             ->where('userid',$user->userid)
             ->orderBy('createddate', 'desc')->paginate(10);  
         }
         else {
             $posts = Post::with('user', 'media')
+            ->whereNull('groupid')
             ->where('visibilitypublic', true)
             ->where('userid',$user->userid)
             ->orderBy('createddate', 'desc')->paginate(10);

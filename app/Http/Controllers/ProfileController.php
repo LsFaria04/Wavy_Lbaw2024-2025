@@ -25,7 +25,7 @@ class ProfileController extends Controller
             return redirect('/home');
         }
 
-        $posts = $user->posts()->orderBy('createddate', 'desc')->paginate(10);
+        $posts = $user->posts()->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);
         $comments = [];
     
         return view('pages.profile', compact('user', 'posts', 'comments'));

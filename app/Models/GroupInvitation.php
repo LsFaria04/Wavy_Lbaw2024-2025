@@ -13,11 +13,11 @@ class GroupInvitation extends Model
 
     protected $table = 'group_invitation';
 
-    protected $primaryKey = 'invitationid';
-
     protected $casts = [
         'date' => 'datetime',
     ];
+
+    protected $primaryKey = 'invitationid';
 
     public $timestamps = false;
 
@@ -27,6 +27,10 @@ class GroupInvitation extends Model
         'userid',
         'date',
         'state',
+    ];
+
+    protected $dates = [
+        'date',
     ];
 
     /**

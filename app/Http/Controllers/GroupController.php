@@ -63,6 +63,10 @@ class GroupController extends Controller
 
         $posts = $group->posts()->with('user', 'media')->orderBy('createddate', 'desc')->paginate(10);
 
+        for($i = 0;$i < sizeof($posts); $i++){
+            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+        }
+
         return response()->json($posts);
     }
 

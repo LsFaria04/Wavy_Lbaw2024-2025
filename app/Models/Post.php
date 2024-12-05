@@ -49,7 +49,7 @@ class Post extends Model
         'createddate',
     ];
 
-    public function user(): BelongsTo
+    public function user()
     {
         // Establishes the belongsTo relationship with User
         return $this->belongsTo(User::class, 'userid');
