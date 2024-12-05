@@ -96,7 +96,7 @@ Route::view('/about', 'pages.about')->name('about');
 
 //Contacts
 Route::view('/contacts', 'pages.contacts')->name('contacts');
-Route::view('/feedback', 'pages.feedback')->name('feedback');
+Route::post('/contact/submit', [ContactController::class, 'submit'])->name('contact.submit');
 
 //Main Features
 Route::view('/features', 'pages.features')->name('features');

@@ -5,40 +5,31 @@
 @section('content')
 <div class="container mx-auto py-12 px-4">
     <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-800">Contact Us</h1>
-        <p class="text-lg text-gray-600 mt-2">We’re here to help. Get in touch with us for any questions or support.</p>
+        <h1 class="text-4xl font-bold text-gray-800">Get in Touch with Wavy</h1>
+        <p class="text-lg text-gray-600 mt-2">Send us a message, ask a question, or share your thoughts. We’re here to help!</p>
     </div>
 
-    <!-- Support Contact -->
-    <section class="mb-8 bg-gray-100 p-6 rounded-lg shadow-lg">
-        <h2 class="text-3xl font-semibold text-gray-800 mb-4">Customer Support</h2>
-        <p class="text-lg text-gray-700">
-            Have issues or inquiries? Reach out to our support team via email or phone for quick assistance.
-        </p>
-        <ul class="list-none mt-4 text-lg text-gray-700">
-            <li><strong>Email:</strong> <a href="mailto:support@wavy.com" class="text-blue-500 hover:underline">support@wavy.com</a></li>
-            <li><strong>Phone:</strong> +123 456 789</li>
-        </ul>
-    </section>
+    <!-- Contact Form -->
+    <section class="mb-12">
+        <form class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md" method="POST" action="{{ route('contact.submit') }}">
+            @csrf
+            <div class="mb-4">
+                <label for="name" class="block text-lg font-semibold text-gray-700">Your Name</label>
+                <input type="text" id="name" name="name" placeholder="John Doe" required class="w-full mt-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200">
+            </div>
+            <div class="mb-4">
+                <label for="email" class="block text-lg font-semibold text-gray-700">Email Address</label>
+                <input type="email" id="email" name="email" placeholder="johndoe@example.com" required class="w-full mt-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200">
+            </div>
+            <div class="mb-4">
+                <label for="message" class="block text-lg font-semibold text-gray-700">Message</label>
+                <textarea id="message" name="message" rows="4" placeholder="How can we assist you?" required
+                    class="w-full mt-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
+                    style="resize: height; min-height: 50px;"></textarea>
 
-    <!-- Business Inquiries -->
-    <section class="mb-8">
-        <h2 class="text-3xl font-semibold text-gray-800 mb-4">Business Inquiries</h2>
-        <p class="text-lg text-gray-700">
-            For partnerships or other business-related inquiries, feel free to contact our team.
-        </p>
-        <ul class="list-none mt-4 text-lg text-gray-700">
-            <li><strong>Email:</strong> <a href="mailto:business@wavy.com" class="text-blue-500 hover:underline">business@wavy.com</a></li>
-        </ul>
-    </section>
-
-    <!-- Feedback -->
-    <section class="mb-8 bg-gray-100 p-6 rounded-lg shadow-lg">
-        <h2 class="text-3xl font-semibold text-gray-800 mb-4">Feedback</h2>
-        <p class="text-lg text-gray-700">
-            Your opinion matters! Send us your feedback to help us improve Wavy.
-        </p>
-        <a href="{{ route('feedback') }}" class="inline-block px-6 py-3 text-white bg-blue-500 rounded-full hover:bg-blue-600 transition duration-300">Give Feedback</a>
+            </div>
+            <button type="submit" class="w-full px-4 py-2 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 transition duration-300">Send Message</button>
+        </form>
     </section>
 </div>
 @endsection
