@@ -66,7 +66,7 @@ function addEventListeners() {
 
     // Append new files to the list (preserve existing files)
     Array.from(fileInput.files).forEach(file => {
-      if (file.size > 2097152){
+      if (file.size > 1048576){
         alert('File too big');
       }
       else{
