@@ -40,7 +40,7 @@ function addEventListeners() {
 }
 
 
-<//stores the authentication state
+//stores the authentication state
 let isAuthenticated = false; 
 let userId = -1;
 let isadmin = false;
@@ -578,16 +578,20 @@ function removeSpecificFile(index) {
 function likePost(postId) {
   const likeCountElement = document.getElementById(`like-count-${postId}`);
   const button = event.target.closest('button');
+  
+  const heartEmpty = document.getElementById(`heart-empty-${postId}`);
+  const heartFilled = document.getElementById(`heart-filled-${postId}`);
 
-  if (button.classList.contains('text-red-600')) {
-      button.classList.remove('text-red-600');
-      button.classList.add('text-gray-500');
-      likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
-  } else {
-      button.classList.remove('text-gray-500');
-      button.classList.add('text-red-600');
+  if (heartFilled.classList.contains('hidden')) {
+      heartEmpty.classList.add('hidden');
+      heartFilled.classList.remove('hidden');
       likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+  } else {
+      heartEmpty.classList.remove('hidden');
+      heartFilled.classList.add('hidden');
+      likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
   }
 }
+
 
 addEventListeners();
