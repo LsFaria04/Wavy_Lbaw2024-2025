@@ -126,26 +126,34 @@
     switch (tab) {
         case 'group-posts':
             sendAjaxRequest('get', `/api/groups/${groupId}/posts?page=${currentPage}`, null, insertMoreGroupContent);
-            addPost.classList.add('flex');
-            addPost.classList.remove('hidden');
+            if(addPost) {
+              addPost.classList.add('flex');
+              addPost.classList.remove('hidden');
+            }
             break;
 
         case 'group-members':
             sendAjaxRequest('get', `/api/groups/${groupId}/members?page=${currentPage}`, null, insertMoreGroupContent);
-            addPost.classList.add('hidden');
-            addPost.classList.remove('flex');
+            if(addPost) {
+              addPost.classList.add('hidden');
+              addPost.classList.remove('flex');
+            }
             break;
 
         case 'group-invitations':
             sendAjaxRequest('get', `/api/groups/${groupId}/invitations?page=${currentPage}`, null, insertMoreGroupContent);
-            addPost.classList.add('hidden');
-            addPost.classList.remove('flex');
+            if(addPost) {
+              addPost.classList.add('hidden');
+              addPost.classList.remove('flex');
+            }
             break;
 
         case 'group-requests':
           sendAjaxRequest('get', `/api/groups/${groupId}/requests?page=${currentPage}`, null, insertMoreGroupContent);
-          addPost.classList.add('hidden');
-          addPost.classList.remove('flex');
+          if(addPost) {
+            addPost.classList.add('hidden');
+            addPost.classList.remove('flex');
+          }
           break;
     }
   }
@@ -234,11 +242,13 @@
     // Open modal
     inviteButton.addEventListener('click', () => {
         inviteModal.classList.remove('hidden');
+        inviteModal.classList.add('flex');
     });
 
     // Close modal
     closeModal.addEventListener('click', () => {
         inviteModal.classList.add('hidden');
+        inviteModal.classList.remove('flex');
         searchResults.innerHTML = '';
         userSearchInput.value = '';
         sendInviteButton.disabled = true;
@@ -319,7 +329,7 @@
             </button>
         </div>
         <!-- Modal for inviting users -->
-        <div id="invite-modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+        <div id="invite-modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 justify-center items-center z-50">
             <div class="bg-white rounded-lg shadow-lg p-6 w-3/4 max-w-lg">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-bold">Invite Users</h3>
