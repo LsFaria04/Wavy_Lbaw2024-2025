@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Topic;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class TopicController extends Controller
 {   
@@ -58,32 +59,50 @@ class TopicController extends Controller
 
     }
 
+    //gets topics that a user can user
+    function getTopicsToAdd(Request $request, $userId){
+        if(!Auth::check()){
+            return response()->json(['message' => 'Not authenticated', 'response' => '403']);
+        }
+
+        //Can only access the topics if the authenticated user has the same id has the one sent in the request
+        if(Auth::user()->userid == $userId){
+            Log::info("here3");
+            $topics = DB::table('topic')
+                        ->leftjoin('user_topics', function($join) use ($userId) { 
+                            $join->on('topic.topicid', '=', 'user_topics.topicid') 
+                                ->where('user_topics.userid', '=', $userId);
+                        })
+                        ->WhereNull('user_topics.userid')
+                        ->select('topic.*')
+                        ->distinct()
+                        ->paginate(10);
+            return response()->json($topics);
+        }
+
+        return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
+    }
+
     /*
     Returns the topics that are associated to an user
     */
     function getUserTopics(Request $request, $userId){
         if(!Auth::check()){
-            return redirect()->route('home')
-            ->with('error', 'Please authenticate to access this feature');
+            return response()->json(['message' => 'Not authenticated', 'response' => '403']);
         }
 
         //Can only access the topics if the authenticated user has the same id has the one sent in the request
         if(Auth::user()->userid == $userId){
-
             $topics = DB::table('topic')
                         ->join('user_topics', 'topic.topicid', '=', 'user_topics.topicid')
-                        ->join('users', 'users.userid', '=', 'user_topics.userid')
-                        ->where('users.userid','?')
+                        ->where('user_topics.userid','?')
                         ->select('topic.*')
                         ->setBindings([$userId])
-                        ->get();
-
-            return $topics;
+                        ->paginate(10);
+            return response()->json($topics);
         }
 
-        return redirect()->route('home')
-            ->with('error', 'Your not allowed to access the topics of another user!');
-
+        return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
     }
 
     /*
@@ -105,15 +124,20 @@ class TopicController extends Controller
     Associates a topic to a user
     */
     function addTopicToUser(Request $request, $topicId, $userid){
-
-        DB::table('user_topics')
-            ->insert([
-                'topicid' => $topicId,
-                '$userid' => $userid
-            ]);
+        if(!Auth::check()){
+            return response()->json(['response' => '403']);
+        }
+        try{
+            DB::table('user_topics')
+                ->insert([
+                    'topicid' => $topicId,
+                    'userid' => $userid
+                ]);
+        } catch(\Exception $e){
+            return response()->json(['response' => '500']);
+        }
         
-        return redirect()->route('home')
-            ->with('success', 'Your topic was successfully added');  
+        return response()->json(['response' => '200']);  
     }
 
     /*

@@ -12,6 +12,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\TopicController;
 
 /*
 |--------------------------------------------------------------------------
@@ -56,6 +57,12 @@ Route::get('/api/groups/{id}/requests', [GroupController::class, 'getJoinRequest
 Route::delete('/api/groups/{group}/invitations/{invitation}', [GroupController::class, 'cancelInvitation']);
 Route::post('/api/groups/{group}/requests/{request}/reject', [GroupController::class, 'rejectJoinRequest']);
 Route::post('/api/groups/{group}/requests/{request}/accept', [GroupController::class, 'acceptJoinRequest']);
+Route::controller(TopicController::class)->group(function (){
+    Route::get('/api/topics/{userid}', 'getUserTopics');
+    Route::get('/api/topics/canAdd/{userid}', 'getTopicsToAdd');
+    Route::put('/api/topics/add/{topicid}/{userid}', 'addTopicToUser');
+});
+
 
 //Posts
 Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');

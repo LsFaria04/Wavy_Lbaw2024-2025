@@ -63,8 +63,9 @@
                     <!-- Dropdown Menu -->
                     <div id="dropdownMenu" class="hidden absolute top-16 right-4 w-40 bg-white border border-gray-200 rounded-md shadow-lg transition duration-300 ease-in-out">
                         <button
+                            onclick = "toggleMyTopics()"
                             class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
-                            Manage Topics
+                            My Topics
                         <button>
                         <button 
                             onclick="toggleConfirmationModal()" 
@@ -152,6 +153,65 @@
                         <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded-2xl hover:bg-red-800" onclick="confirmDeleteProfile()">Delete</button>
                     </div>
                 </form>
+            </div>
+        </div>
+
+        <!--topics menu-->
+        <div id="myTopics" class = "fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden">
+            <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
+                <header class = "grid grid-cols-3 justify-center w-full max-w-full mb-4">
+                    <button onclick = "toggleMyTopics()" class="col-start-1 col-span-1 justify-self-start">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <h2 class=" col-start-2  text-2xl self-center font-bold text-nowrap">My Topics</h2>  
+                    <button onclick = "toggleAddTopics()" class="justify-self-end mr-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" width="20" height="20">
+                            <g>
+                                <path d="M480,224H288V32c0-17.673-14.327-32-32-32s-32,14.327-32,32v192H32c-17.673,0-32,14.327-32,32s14.327,32,32,32h192v192   c0,17.673,14.327,32,32,32s32-14.327,32-32V288h192c17.673,0,32-14.327,32-32S497.673,224,480,224z" fill= "currentColor"/>
+                            </g>
+                        </svg>
+                    </button> 
+                </header>
+                <form onsubmit="searchMyTopics(event)">
+                    <input id="myTopicsSearch" type="search" autocomplete="off" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Topics" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
+                </form>
+                <section id="myTopicsList" class="border-[1px] rounded border-gray-300 h-60 overflow-y-scroll mb-4">
+                    <ul class = "topicList flex flex-col justify-center items-center"></ul>
+                    <button onclick="loadMoreTopics(true,false,'')" class= "flex w-full justify-center items-center">
+                        <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <p>Show More</p>
+                    <button>
+                </section>
+            </div>
+        </div>
+
+        <!-- Add Topic -->
+        <div id="addTopics" class = "fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden">
+            <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
+                <header class = "grid grid-cols-3 justify-center w-full max-w-full mb-4">
+                    <button onclick = "toggleAddTopics()" class="col-start-1 col-span-1 justify-self-start">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                    </button>
+                    <h2 class=" col-start-2  text-2xl self-center font-bold text-nowrap">Add a Topic</h2>  
+                </header>
+                <form onsubmit="searchTopics(event)">
+                    <input id="topicsSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Topics" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
+                </form>
+                <div id="topicsList" class="border-[1px] rounded border-gray-300 h-60 overflow-y-scroll mb-4">
+                    <ul class = "topicList flex flex-col justify-center items-center"></ul>
+                    <button onclick="loadMoreTopics(false,false,'')" class= "flex w-full justify-center items-center">
+                        <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                        </svg>
+                        <p>Show More</p>
+                    <button>
+                    </div>
             </div>
         </div>
     @endSection

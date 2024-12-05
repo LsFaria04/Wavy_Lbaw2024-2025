@@ -26,16 +26,10 @@ function addEventListeners() {
     handlePagination('users-container');
   });
 
-  document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
+  //preload some topics
+  //document.addEventListener('DOMContentLoaded', loadMoreTopics(true,false, ''));
+  //document.addEventListener('DOMContentLoaded', loadMoreTopics(false,false, ''));
 
-  setupCreateUserMenu();
-  //listeners related to the posts
-  addEventListenerToPostForms();
-  syncFilesWithInputEventListener()
-
-  addEventListenerEditUserAdmin();
-  eventListernerFormsAdmin();
-  
 }
 
   function handleProfileInfo(){
@@ -86,6 +80,47 @@ function addEventListeners() {
     const confirmationMenu = document.getElementById('confirmationModal');
     confirmationMenu.classList.toggle('hidden');
     confirmationMenu.classList.toggle('flex');
+  }
+
+  //opens the my topics menu in the profile
+  function toggleMyTopics(){
+    const myTopicsMenu = document.getElementById('myTopics');
+
+    if(myTopicsMenu.classList.contains('hidden')){
+      myTopicPage = 0;
+      loadMoreTopics(true,false, '');
+    }
+    else{
+      let topics = document.querySelectorAll('#myTopicsList.topicList li');
+      topics.forEach(function (e) {e.remove()}); 
+      
+    }
+
+    myTopicsMenu.classList.toggle('hidden');
+    myTopicsMenu.classList.toggle('flex');
+  }
+
+  //opens the submenu add topic in the profile page
+  function toggleAddTopics(){
+    //show add topics menu
+    const addTopicsMenu = document.getElementById('addTopics');
+
+    if(addTopicsMenu.classList.contains('hidden')){
+      addTopicPage = 0;
+      loadMoreTopics(false,false, '');
+    }
+    else{
+      let topics = document.querySelectorAll('#topicsList .topicList li');
+      topics.forEach( function (e) {e.remove()});
+    }
+
+    addTopicsMenu.classList.toggle('hidden');
+    addTopicsMenu.classList.toggle('flex');
+
+    //hide or show the my topics menu
+    const myTopicsMenu  = document.getElementById('myTopics');
+    myTopicsMenu.classList.toggle('hidden');
+    myTopicsMenu.classList.toggle('flex');
   }
 
   //handles the profile delete confirmation with requests via ajax
@@ -162,6 +197,125 @@ function addEventListeners() {
     }
   }
 
+  //loads more topics from the database and calls the insert more topics
+  let isMyTopics = true;
+  let myTopicPage = 0;
+  let myTopicPageMax = -1;
+  let addTopicPage = 0;
+  let addTopicPageMax = -1;
+  function loadMoreTopics(isMy,isSearch, query){
+    isMyTopics = isMy;
+
+    let topicsList = null;
+    if(isMyTopics){
+      topicsList = document.querySelector("#myTopicsList > ul");
+    }
+    else{
+      topicsList = document.querySelector("#topicsList > ul");
+    }
+    insertLoadingCircle(topicsList);
+
+    
+    if(isSearch){
+      
+    }
+    else{
+      if(isMyTopics){
+        myTopicPage++;
+        document.querySelector('#myTopicsList > button').classList.toggle('hidden');
+        sendAjaxRequest('get', '/api/topics/' + userId +'?page=' + myTopicPage, null,insertMoreTopics);
+      }
+      else{
+        addTopicPage++;
+        document.querySelector('#topicsList > button').classList.toggle('hidden');
+        sendAjaxRequest('get', '/api/topics/canAdd/' + userId + '?page=' + addTopicPage,null, insertMoreTopics);
+      }
+      
+    }
+
+
+  }
+
+  //insert topics in the topics list in the topics menu (my topics and add topics)
+  function insertMoreTopics(){
+      removeLoadingCircle();
+      
+      let topics = JSON.parse(this.responseText);
+
+      let topicsList = null;
+      if(isMyTopics){
+        myTopicPageMax = topics.last_page;
+        topicsList = document.querySelector("#myTopicsList > ul");
+
+        //already loaded everything from the db
+        if(myTopicPageMax < myTopicPage){
+          return;
+        }
+      }
+      else{
+        addTopicPageMax = topics.last_page;
+        topicsList = document.querySelector("#topicsList > ul");
+
+        //already loaded everything from the db
+        if(addTopicPageMax < addTopicPage){
+          return;
+        }
+      }
+
+      
+      console.log(topics);
+      //iterate throw the topics and add them in the list
+      for(let i = 0; i < topics.data.length; i++){
+        let topic = document.createElement('li');
+        topic.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow");
+        topic.setAttribute('id',`topic-${topics.data[i].topicid}`)
+        
+        if(isMyTopics){
+          topic.innerHTML = `
+            <p class="text-gray-800 font-semibold">${topics.data[i].topicname}</p>
+            <button class="text-red-500 hover:text-red-700 ml-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+          `;
+        }
+        else{
+          topic.innerHTML = `
+            <p class="text-gray-800 font-semibold">${topics.data[i].topicname}</p>
+            <button onclick=addTopicToUser(${topics.data[i].topicid}) class="text-green-500 hover:text-green-700 ml-2">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512 512" style="enable-background:new 0 0 512 512;" xml:space="preserve" width="20" height="20">
+                    <g>
+                        <path d="M480,224H288V32c0-17.673-14.327-32-32-32s-32,14.327-32,32v192H32c-17.673,0-32,14.327-32,32s14.327,32,32,32h192v192   c0,17.673,14.327,32,32,32s32-14.327,32-32V288h192c17.673,0,32-14.327,32-32S497.673,224,480,224z" fill= "currentColor"/>
+                    </g>
+                </svg>
+            </button>
+          `;
+        }
+        
+        topicsList.appendChild(topic);
+      }
+
+      //show the more topics button again if we found more topics. We also display a warning if no topics were found
+      if(topics.data.length != 0){
+        if(isMyTopics){
+          document.querySelector('#myTopicsList > button').classList.toggle('hidden');
+        }
+        else{
+          document.querySelector('#topicsList > button').classList.toggle('hidden');
+        }
+      }
+      else{
+        //there are no topics in the list and we could not found new ones with the ajax request so a warning is displayed
+        if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null){
+          let warning = document.createElement('p');
+          warning.innerHTML='No topics found';
+          topicsList.appendChild(warning);
+        }
+      }
+
+  }
+
   const html = document.documentElement;
 
   const buttons = document.querySelectorAll('.tab-btn');
@@ -206,6 +360,29 @@ function addEventListeners() {
         element.append(comment);
       }
     }
+  }
+
+
+  //search for all the topics
+  function searchTopics(event){
+    event.preventDefault();
+    console.log("teste");
+  }
+
+  //search for topics that are associated to a user
+  function searchMyTopics(event){
+    event.preventDefault();
+    console.log("teste");
+  }
+
+  //adds more topics to a user using an ajax request
+  function addTopicToUser(topicId){
+    console.log(topicId);
+    console.log(userId);
+    sendAjaxRequest('put', '/api/topics/add/' + topicId + '/' + userId, null, function(){
+      let response = JSON.parse(this.responseText);
+      console.log(response.response);
+    });
   }
 
   addEventListeners();

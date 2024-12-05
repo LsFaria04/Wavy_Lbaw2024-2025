@@ -35,7 +35,6 @@ function addEventListeners() {
 
   function sendAjaxRequest(method, url, data, handler) {
     // Debug Statement: console.log(`Method: ${method}, URL: ${url}, Data:`, data);
-
     let request = new XMLHttpRequest();
     request.open(method, url, true);
     request.setRequestHeader('X-CSRF-TOKEN', document.querySelector('meta[name="csrf-token"]').content);
