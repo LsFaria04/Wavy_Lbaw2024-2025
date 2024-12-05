@@ -18,6 +18,25 @@
             </a>
         </p>
     </div>
+
+    <!--Main Features -->
+    <div class="lg:mt-8 lg:pt-4 text-center">
+        <p class="text-sm">
+            <a href="{{ route('features') }}" class="text-white hover:text-sky-300">
+                Main Features
+            </a>
+        </p>
+    </div>
+
+    <!--Contacts -->
+    <div class="lg:mt-8 lg:pt-4 text-center">
+        <p class="text-sm">
+            <a href="{{ route('contacts') }}" class="text-white hover:text-sky-300">
+                Contacts
+            </a>
+        </p>
+    </div>
+
 </div>
 
 <div id="search-ball" 
