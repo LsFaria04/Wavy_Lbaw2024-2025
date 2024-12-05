@@ -144,13 +144,20 @@ class TopicController extends Controller
     Removes the association of a topic to a user
     */
     function removeTopicFromUser(Request $request,$topicId, $userid){
+        if(!Auth::check()){
+            return response()->json(['response' => '403']);
+        }
+        try{
         DB::table('user_topics')
-            ->where('topicid', $topicId)
-            ->where('userid', $userId)
+            ->where([
+            'topicid' => $topicId,
+            'userid' => $userid
+            ])
             ->delete();
-        
-        return redirect()->route('home')
-            ->with('success', 'Your topic was successfully deleted');  
+        }catch(\Exception $e){
+            return response()->json(['response' => '500']);
+        }
+        return response()->json(['response' => '200']); 
     }
 
 

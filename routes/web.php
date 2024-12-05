@@ -61,6 +61,7 @@ Route::controller(TopicController::class)->group(function (){
     Route::get('/api/topics/{userid}', 'getUserTopics');
     Route::get('/api/topics/canAdd/{userid}', 'getTopicsToAdd');
     Route::put('/api/topics/add/{topicid}/{userid}', 'addTopicToUser');
+    Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
 });
 
 
