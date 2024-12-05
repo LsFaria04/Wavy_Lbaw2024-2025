@@ -58,7 +58,6 @@
         });
       }
     });
-
     document.addEventListener('click', function (e) {
       if (e.target && e.target.classList.contains('reject-btn')) {
           const requestId = e.target.dataset.id;
