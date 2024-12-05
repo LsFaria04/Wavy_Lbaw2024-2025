@@ -62,6 +62,13 @@ Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('posts.update');
 Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+
+//Comments
+Route::post('/comments/update/{comment}', [CommentController::class, 'update'])->name('comments.update');
+Route::post('/comments/delete/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+Route::get('/comments/{id}', [CommentController::class, 'show'])->name('comments.show');
+Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');

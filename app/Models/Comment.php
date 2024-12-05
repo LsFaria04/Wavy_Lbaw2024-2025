@@ -75,4 +75,9 @@ class Comment extends Model
     {
         return Carbon::parse($value); // Ensure it's a Carbon instance
     }
+
+    public function media()
+    {
+        return $this->hasMany(Media::class, 'commentid');
+    }
 }

@@ -129,6 +129,7 @@ class PostController extends Controller
                     Media::create([
                         'postid' => $post->postid, // Associate media with this post
                         'userid' => null, 
+                        'commentid' => null,
                         'path' => $mediaPath, // Store the image path
                     ]);
                 }
@@ -144,6 +145,12 @@ class PostController extends Controller
         }
     
         return redirect()->route('home')->with('success', 'Post created successfully!');
+    }
+
+    public function show($id)
+    {
+        $post = Post::with(['user', 'media', 'comments.user', 'comments.media'])->findOrFail($id);
+        return view('pages.post', compact('post'));
     }
     
     /**

@@ -61,8 +61,9 @@ class Media extends Model
     /**
      * Relationship with the Comment model.
      */
-    // public function comment(): BelongsTo
-    // {
-    //     return $this->belongsTo(Comment::class, 'commentid', 'commentid');
-    // }
+    
+     public function comment(): BelongsTo
+     {
+         return $this->belongsTo(Comment::class, 'commentid', 'commentid');
+     }
 }
