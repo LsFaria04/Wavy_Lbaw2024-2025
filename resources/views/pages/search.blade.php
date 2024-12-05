@@ -10,7 +10,7 @@
                         </svg>
                     </a> -->
 
-                    <form action="{{ route('search') }}" method="GET" id="search-form" class="w-full max-w-3xl mx-auto">
+                    <form action="{{ route('search') }}" method="GET" id="search-form" class="w-full max-w-5xl mx-auto">
                         <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl p-2.5 pl-5 w-full shadow-md focus:outline-none">
                         <input type="hidden" name="category" value="{{ old('category', $category ?? 'posts') }}">
                     </form>

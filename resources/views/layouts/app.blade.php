@@ -32,9 +32,10 @@
                 @yield('content')
                 @yield('scripts')
             </section>
-            @include('partials.search_menu')
             
         </main>
+
+        @include('partials.footer')
         
     </body>
 </html>

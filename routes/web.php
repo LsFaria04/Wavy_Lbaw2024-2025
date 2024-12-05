@@ -70,6 +70,13 @@ Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');
 Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store');
 Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('posts.update');
 Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
+Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+
+//Comments
+Route::post('/comments/update/{comment}', [CommentController::class, 'update'])->name('comments.update');
+Route::post('/comments/delete/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
+Route::get('/comments/{id}', [CommentController::class, 'show'])->name('comments.show');
+Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');
@@ -97,7 +104,14 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
 
 // Group
-Route::get('/group/{id}', [GroupController::class, 'show'])->name('group');
+Route::get('/group/{groupname}', [GroupController::class, 'show'])->name('group');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');
+
+//Contacts
+Route::view('/contacts', 'pages.contacts')->name('contacts');
+Route::post('/contact/submit', [ContactController::class, 'submit'])->name('contact.submit');
+
+//Main Features
+Route::view('/features', 'pages.features')->name('features');

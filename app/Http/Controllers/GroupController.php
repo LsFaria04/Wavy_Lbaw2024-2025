@@ -15,21 +15,17 @@ class GroupController extends Controller
     /**
      * Display a specific group and its details.
      */
-    public function show($id)
+    public function show($name)
     {
-        $group = Group::with('members')->find($id);
+        $group = Group::where('groupname', $name)->first();
 
         if (!$group) {
             return redirect('/home')->withErrors(['Group not found.']);
         }
 
-        if (!$group->visibilitypublic 
-            && !$group->members->contains(Auth::id()) 
-            && $group->ownerid !== Auth::id()) {
-            return redirect('/home')->withErrors(['You do not have access to view this group.']);
-        }
+        $posts = $group->posts()->orderBy('createddate', 'desc')->paginate(10);
 
-        return view('pages.group', compact('group'));
+        return view('pages.group', compact('group', 'posts'));
     }
 
     /**
