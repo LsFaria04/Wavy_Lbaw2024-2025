@@ -8,16 +8,18 @@
             <h1 id="group-name" class="text-2xl font-bold text-gray-800">{{ $group->groupname }}</h1>
             <p class="text-gray-500 mt-2">{{ $group->description ?? 'No description available.' }}</p>
         </div>
-        <nav class="flex justify-around mt-4">
-            <button id="tab-posts" data-tab="group-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900 border-sky-900 text-sky-900">Posts</button>
-            <button id="tab-members" data-tab="group-members" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Members</button>
-            @auth
-                @if (auth()->id() === $group->ownerid || Auth::user()->isadmin)
-                    <button id="tab-invitations" data-tab="group-invitations" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Invitations</button>
-                    <button id="tab-requests" data-tab="group-requests" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Join Requests</button>
-                @endif
-            @endauth
-        </nav>
+        @if(($group->visibilitypublic == true || ($group->visibilitypublic === false && (Auth::user()->isadmin || $group->members->contains(Auth::user())))))
+            <nav class="flex justify-around mt-4">
+                <button id="tab-posts" data-tab="group-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900 border-sky-900 text-sky-900">Posts</button>
+                <button id="tab-members" data-tab="group-members" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Members</button>
+                @auth
+                    @if (auth()->id() === $group->ownerid || Auth::user()->isadmin)
+                        <button id="tab-invitations" data-tab="group-invitations" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Invitations</button>
+                        <button id="tab-requests" data-tab="group-requests" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Join Requests</button>
+                    @endif
+                @endauth
+            </nav>
+        @endif
     </header>
 
     <!-- Success and Error Messages -->
@@ -34,7 +36,7 @@
     @endif
 
     @auth
-        @if ($group->visibilitypublic || $group->members->contains(Auth::user()) || Auth::user()->isadmin)
+        @if ($group->members->contains(Auth::user()) || Auth::user()->isadmin)
             <div class="addPost px-6 pb-6 mt-4 bg-white rounded-xl shadow-md flex flex-col w-full max-w-full" id="post-form">
                 <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
                 <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
@@ -73,7 +75,7 @@
     <!-- Content Tabs -->
     <div class="flex flex-col w-full max-w-full bg-white shadow-md p-6 mt-4" id="group-tab-content">
         <!-- Content Section (starts with the posts) -->
-            @if(($group->visibilitypublic === false && !Auth::user()->isadmin && !$group->members->contains(Auth::user())))
+            @if(($group->visibilitypublic === false && (!Auth::user()->isadmin || !$group->members->contains(Auth::user()))))
                 <div class="flex justify-center items-center h-32">
                     <p class="text-gray-600 text-center">Group is private.</p>
                 </div>
@@ -82,7 +84,7 @@
                     <p class="text-gray-600 text-center">No posts found for this group.</p>
                 </div>
             @else
-                @each('partials.post', $group->posts, 'post')
+                @each('partials.post', $posts, 'post')
             @endif
     </div>
 </div>

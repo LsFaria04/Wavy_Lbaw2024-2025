@@ -23,13 +23,9 @@ class GroupController extends Controller
             return redirect('/home')->withErrors(['Group not found.']);
         }
 
-        if (!$group->visibilitypublic 
-            && !$group->members->contains(Auth::id()) 
-            && $group->ownerid !== Auth::id()) {
-            return redirect('/home')->withErrors(['You do not have access to view this group.']);
-        }
+        $posts = $group->posts()->orderBy('createddate', 'desc')->paginate(10);
 
-        return view('pages.group', compact('group'));
+        return view('pages.group', compact('group', 'posts'));
     }
 
     /**
