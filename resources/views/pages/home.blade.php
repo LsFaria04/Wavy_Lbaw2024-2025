@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
     <div class="flex flex-col items-center w-full max-w-full bg-white" id="homePage">
-        <header id="search-header" class="w-full max-w-full p-4 shadow-md items-center sticky top-0 backdrop-blur hidden md:block">
+        <header id="search-header" class="w-full max-w-full p-5 shadow-md items-center sticky top-0 z-10 backdrop-blur hidden md:block">
             <div class="flex items-center">
                 <!-- <a href="{{ url()->previous() }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4 pl-4">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -48,7 +48,7 @@
                                     <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
                                         <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                     </svg>
-                                    <span>Attach files (Optional)</span>
+                                    <span>Attach Media (Optional)</span>
                                 </label>
 
                                 <input type="file" name="media[]" id="image" class="hidden" multiple onchange="updateFileList()">
