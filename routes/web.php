@@ -54,6 +54,7 @@ Route::get('/api/groups/{id}/posts', [GroupController::class, 'getGroupPosts']);
 Route::get('/api/groups/{id}/members', [GroupController::class, 'getGroupMembers']);
 Route::get('/api/groups/{id}/invitations', [GroupController::class, 'getGroupInvitations']);
 Route::get('/api/groups/{id}/requests', [GroupController::class, 'getJoinRequests']);
+Route::post('/api/groups/{groupid}/invitations', [GroupController::class, 'sendInvitation']);
 Route::delete('/api/groups/{group}/invitations/{invitation}', [GroupController::class, 'cancelInvitation']);
 Route::post('/api/groups/{group}/requests/{request}/reject', [GroupController::class, 'rejectJoinRequest']);
 Route::post('/api/groups/{group}/requests/{request}/accept', [GroupController::class, 'acceptJoinRequest']);

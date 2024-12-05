@@ -86,6 +86,7 @@
         });
       }
     });
+
   }
 
   const buttonsG = document.querySelectorAll('.tab-btn');
@@ -220,11 +221,134 @@
     return invitation;
   }
 
+  function setupInviteModal() {
+    const inviteButton = document.getElementById('invite-users-btn');
+    const inviteModal = document.getElementById('invite-modal');
+    const closeModal = document.getElementById('close-invite-modal');
+    const userSearchInput = document.getElementById('user-search');
+    const searchResults = document.getElementById('search-results');
+    const sendInviteButton = document.getElementById('send-invite');
+
+    let selectedUserId = null;
+
+    // Open modal
+    inviteButton.addEventListener('click', () => {
+        inviteModal.classList.remove('hidden');
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', () => {
+        inviteModal.classList.add('hidden');
+        searchResults.innerHTML = '';
+        userSearchInput.value = '';
+        sendInviteButton.disabled = true;
+    });
+
+    // Search users
+    userSearchInput.addEventListener('input', function () {
+        const query = userSearchInput.value.trim();
+
+        if (query.length < 3) {
+            searchResults.innerHTML = '<p class="text-gray-500">Please type at least 3 characters.</p>';
+            return;
+        }
+
+        // Use category=users to limit search results
+        sendAjaxRequest('get', `/api/search?q=${encodeURIComponent(query)}&category=users`, null, function () {
+          if (this.status === 200) {
+              const response = JSON.parse(this.responseText);
+              const users = response[1]; // Users are in the second position of the response array
+
+              if (users.data.length === 0) {
+                  searchResults.innerHTML = '<p class="text-gray-500">No users found.</p>';
+              } else {
+                  searchResults.innerHTML = users.data.map(user => `
+                      <div class="search-result p-2 hover:bg-gray-100 flex items-center cursor-pointer" data-id="${user.userid}">
+                          <img src="" alt="mock" class="h-8 w-8 rounded-full mr-2">
+                          <span>${user.username}</span>
+                      </div>
+                  `).join('');
+              }
+          }
+        });
+    });
+
+    // Select a user
+    searchResults.addEventListener('click', function (e) {
+        const result = e.target.closest('.search-result');
+        if (result) {
+            selectedUserId = result.dataset.id;
+            sendInviteButton.disabled = false;
+        }
+    });
+
+    // Send invitation
+    sendInviteButton.addEventListener('click', function () {
+        if (!selectedUserId) return;
+
+        sendAjaxRequest('post', `/api/groups/${groupId}/invitations`, { userid: selectedUserId }, function () {
+            if (this.status === 200) {
+                const response = JSON.parse(this.responseText);
+        
+                // Display a success message
+                alert(response.message || 'Invitation sent successfully!');
+                
+                // Close the modal
+                inviteModal.classList.add('hidden');
+                searchResults.innerHTML = '';
+                userSearchInput.value = '';
+                sendInviteButton.disabled = true;
+        
+                loadGroupContent('group-invitations');
+            } else {
+                console.error('Failed to send invitation:', this.responseText);
+            }
+        });         
+    });
+  }
+
   function insertMoreInvitations(element, invitations) {
-    for (let i = 0; i < invitations.data.length; i++) {
-        let invitationElement = createInvitation(invitations.data[i]);
+    const inviteSection = document.createElement('div');
+    inviteSection.innerHTML = `
+        <div class="flex justify-end mb-4">
+            <button id="invite-users-btn" class="flex items-center justify-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Invite Users
+            </button>
+        </div>
+        <!-- Modal for inviting users -->
+        <div id="invite-modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-3/4 max-w-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Invite Users</h3>
+                    <button id="close-invite-modal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <input
+                    type="text"
+                    id="user-search"
+                    placeholder="Search for a user..."
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+                />
+                <div id="search-results" class="max-h-64 overflow-y-auto pb-3">
+                    <!-- Search results will be dynamically injected here -->
+                </div>
+                <button id="send-invite" class="bg-blue-500 text-white px-4 py-3 rounded-md hover:bg-blue-700 disabled:opacity-50" disabled>
+                    Send Invite
+                </button>
+            </div>
+        </div>
+    `;
+    element.appendChild(inviteSection);
+
+    // Add invitations to the content
+    invitations.data.forEach(invitationInfo => {
+        const invitationElement = createInvitation(invitationInfo);
         element.appendChild(invitationElement);
-    }
+    });
+
+    setupInviteModal();
   }
 
   function createRequest(requestInfo) {

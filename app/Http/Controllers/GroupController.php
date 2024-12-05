@@ -124,25 +124,33 @@ class GroupController extends Controller
         return response()->json($joinRequests);
     }
 
-    /**
-     * Create a new group.
-     */
-    public function create(Request $request)
+    public function sendInvitation(Request $request, $groupid)
     {
         $request->validate([
-            'groupname' => 'required|string|max:30|unique:groups,groupname',
-            'description' => 'nullable|string|max:255',
-            'visibilitypublic' => 'required|boolean',
+            'userid' => 'required|integer|exists:users,userid',
         ]);
 
-        $group = Group::create([
-            'groupname' => $request->groupname,
-            'description' => $request->description ?? '',
-            'visibilitypublic' => $request->visibilitypublic ?? true,
-            'ownerid' => Auth::id(),
+        $userid = $request->input('userid');
+        $group = Group::findOrFail($groupid);
+
+        // Check if user is already a member or invited
+        if ($group->members()->where('group_membership.userid', $userid)->exists()) {
+            return response()->json(['status' => 'error', 'message' => 'User is already a member.'], 400);
+        }
+
+        if (GroupInvitation::where('groupid', $groupid)->where('group_invitation.userid', $userid)->exists()) {
+            return response()->json(['status' => 'error', 'message' => 'User is already invited.'], 400);
+        }
+
+        // Create the invitation
+        GroupInvitation::create([
+            'groupid' => $groupid,
+            'userid' => $userid,
+            'state' => 'Pending',
+            'date' => now(),
         ]);
 
-        return response()->json(['message' => 'Group created successfully.', 'group' => $group], 201);
+        return response()->json(['status' => 'success', 'message' => 'User invited successfully.'], 200);
     }
     
     public function cancelInvitation($groupid, $invitationid)
