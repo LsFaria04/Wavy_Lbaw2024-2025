@@ -35,7 +35,7 @@ function addEventListeners() {
   addEventListenerEditUserAdmin();
   eventListernerFormsAdmin();
 
-  likePost(postid);
+  likePost();
   
 }
 
@@ -577,7 +577,6 @@ function removeSpecificFile(index) {
 
 function likePost(postId) {
   const likeCountElement = document.getElementById(`like-count-${postId}`);
-  const button = event.target.closest('button');
   
   const heartEmpty = document.getElementById(`heart-empty-${postId}`);
   const heartFilled = document.getElementById(`heart-filled-${postId}`);
