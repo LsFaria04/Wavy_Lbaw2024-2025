@@ -93,3 +93,10 @@ Route::get('/group/{id}', [GroupController::class, 'show'])->name('group');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');
+
+//Contacts
+Route::view('/contacts', 'pages.contacts')->name('contacts');
+Route::view('/feedback', 'pages.feedback')->name('feedback');
+
+//Main Features
+Route::view('/features', 'pages.features')->name('features');
