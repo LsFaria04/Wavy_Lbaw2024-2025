@@ -1,6 +1,21 @@
 @extends('layouts.app')
 @section('content')
     <div class="flex flex-col items-center w-full max-w-full bg-white" id="homePage">
+        <header id="search-header" class="w-full max-w-full p-4 shadow-md items-center sticky top-0 backdrop-blur hidden md:block">
+            <div class="flex items-center">
+                <!-- <a href="{{ url()->previous() }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4 pl-4">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </a> -->
+
+                <form action="{{ route('search') }}" method="GET" id="search-form" class="w-full max-w-5xl mx-auto">
+                    <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search..." class="border rounded-3xl p-2.5 pl-5 w-full shadow-md focus:outline-none">
+                    <input type="hidden" name="category" value="{{ old('category', $category ?? 'posts') }}">
+                </form>
+            </div>
+        </header>
+
         @if (session('error'))
             <div class = "absolute self-center alert w-full max-w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">             
                 {{ session('error')}}          
@@ -10,7 +25,7 @@
                 {{ session('success')}}          
             </div>
         @endif 
-        <section id="timeline" class="flex flex-col px-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
+        <section id="timeline" class="flex flex-col px-6 pt-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
             @if(Auth::check() && !Auth()->user()->isadmin)
                 <div class="addPost mb-6 p-4 bg-white rounded-xl shadow-md">
                     <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
