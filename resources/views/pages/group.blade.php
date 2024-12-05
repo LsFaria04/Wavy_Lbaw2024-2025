@@ -36,7 +36,7 @@
     @endif
 
     @auth
-        @if ($group->members->contains(Auth::user()) || Auth::user()->isadmin)
+        @if ($group->members->contains(Auth::user()))
             <div class="addPost px-6 pb-6 mt-4 bg-white rounded-xl shadow-md flex flex-col w-full max-w-full" id="post-form">
                 <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
                 <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">

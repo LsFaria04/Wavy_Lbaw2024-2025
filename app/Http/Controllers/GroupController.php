@@ -15,9 +15,9 @@ class GroupController extends Controller
     /**
      * Display a specific group and its details.
      */
-    public function show($id)
+    public function show($name)
     {
-        $group = Group::with('members')->find($id);
+        $group = Group::where('groupname', $name)->first();
 
         if (!$group) {
             return redirect('/home')->withErrors(['Group not found.']);

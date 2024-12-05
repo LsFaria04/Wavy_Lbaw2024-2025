@@ -96,7 +96,7 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
 
 // Group
-Route::get('/group/{id}', [GroupController::class, 'show'])->name('group');
+Route::get('/group/{groupname}', [GroupController::class, 'show'])->name('group');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');
