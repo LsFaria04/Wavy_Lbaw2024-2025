@@ -1,4 +1,4 @@
-<div id = "navigation-menu" class= "flex justify-items-center flex-row lg:flex-col lg:w-52 w-screen lg:max-h-screen bg-sky-900 p-4 text-white text-nowrap fixed bottom-0 lg:sticky lg:top-0 transition-w ease-in duration-300 z-10">
+<div id = "navigation-menu" class= "flex justify-items-center flex-row lg:flex-col lg:w-52 w-screen lg:max-h-screen bg-sky-900 p-4 text-white text-nowrap fixed bottom-0 lg:sticky lg:top-0 transition-w ease-in duration-300 z-10 border-r border-gray-300">
     <header class = "lg:flex items-center justify-between overflow-hidden">
             <h1 class = "text-xl font-bold">
                 <a href="{{ url('/home') }}" >
