@@ -76,6 +76,16 @@
         </div>
     </div>
 
+    <!-- Like Button -->
+    <div class="post-likes flex items-center gap-2 mt-4">
+        <button type="button" class="flex items-center text-gray-500 hover:text-red-600" onclick="likePost('{{ $post->postid }}')">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8" fill="currentColor" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927C9.579 2.062 7.415 2.434 6.528 3.91C5.836 5.12 6.059 6.735 7.121 7.72L11.049 10.67L14.879 7.72C15.941 6.735 16.164 5.12 15.472 3.91C14.585 2.434 12.421 2.062 10.951 2.927Z" />
+            </svg>
+            <span id="like-count-{{ $post->postid }}">0</span> likes
+        </button>
+    </div>
+
     @auth
         @if(auth()->id() === $post->userid || Auth::user()->isadmin) 
             <!-- Edit Section in post.blade.php -->
