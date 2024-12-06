@@ -8,6 +8,17 @@
             <h1 id="group-name" class="text-2xl font-bold text-gray-800">{{ $group->groupname }}</h1>
             <p class="text-gray-500 mt-2">{{ $group->description ?? 'No description available.' }}</p>
         </div>
+    
+        @auth
+            @if (!$group->members->contains(Auth::user()) && !Auth::user()->isadmin)
+                <div class="flex justify-center mt-4">
+                    <button id="ask-to-join-btn" class="px-4 py-2 bg-sky-700 text-white font-semibold rounded-md hover:bg-sky-800">
+                        Ask to Join
+                    </button>
+                </div>
+            @endif
+        @endauth
+    
         @if(($group->visibilitypublic == true || ($group->visibilitypublic === false && (Auth::user()->isadmin || $group->members->contains(Auth::user())))))
             <nav class="flex justify-around mt-4">
                 <button id="tab-posts" data-tab="group-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900 border-sky-900 text-sky-900">Posts</button>
@@ -20,7 +31,7 @@
                 @endauth
             </nav>
         @endif
-    </header>
+    </header>    
 
     <!-- Success and Error Messages -->
     @if (session('success'))

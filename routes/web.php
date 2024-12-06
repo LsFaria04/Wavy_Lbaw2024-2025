@@ -56,6 +56,7 @@ Route::get('/api/groups/{id}/invitations', [GroupController::class, 'getGroupInv
 Route::get('/api/groups/{id}/requests', [GroupController::class, 'getJoinRequests']);
 Route::post('/api/groups/{groupid}/invitations', [GroupController::class, 'sendInvitation']);
 Route::delete('/api/groups/{group}/invitations/{invitation}', [GroupController::class, 'cancelInvitation']);
+Route::post('/api/groups/{group}/requests', [GroupController::class, 'sendJoinRequest'])->middleware('auth');
 Route::post('/api/groups/{group}/requests/{request}/reject', [GroupController::class, 'rejectJoinRequest']);
 Route::post('/api/groups/{group}/requests/{request}/accept', [GroupController::class, 'acceptJoinRequest']);
 Route::controller(TopicController::class)->group(function (){

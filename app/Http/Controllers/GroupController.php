@@ -170,6 +170,36 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Invitation canceled successfully.'], 200);
     }
 
+    public function sendJoinRequest(Request $request, $groupid)
+    {
+        $user = Auth::user();
+
+        // Check if the user is already a member or has sent a request
+        $group = Group::findOrFail($groupid);
+        if ($group->members->contains($user)) {
+            return response()->json(['message' => 'You are already a member of this group.'], 400);
+        }
+
+        $existingRequest = JoinGroupRequest::where('groupid', $groupid)
+            ->where('userid', $user->userid)
+            ->where('state', 'Pending')
+            ->first();
+
+        if ($existingRequest) {
+            return response()->json(['message' => 'You already have a pending join request.'], 400);
+        }
+
+        // Create the join request
+        JoinGroupRequest::create([
+            'groupid' => $groupid,
+            'userid' => $user->userid,
+            'date' => now(),
+            'state' => 'Pending',
+        ]);
+
+        return response()->json(['message' => 'Your join request has been sent successfully.'], 200);
+    }
+
     public function rejectJoinRequest($groupid, $requestid)
     {
         $joinRequest = JoinGroupRequest::where('groupid', $groupid)

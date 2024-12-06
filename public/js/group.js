@@ -80,6 +80,23 @@ function addEventListeners() {
       }
   });
 
+  document.addEventListener('click', function (e) {
+      if (e.target && e.target.id === 'ask-to-join-btn') {
+          console.log('Ask to Join button clicked.');
+
+          // Send join request
+          sendAjaxRequest('post', `/api/groups/${groupId}/requests`, null, function () {
+              if (this.status === 200) {
+                  const response = JSON.parse(this.responseText);
+                  alert(response.message || 'Join request sent successfully!');
+                  e.target.disabled = true; // Disable button after sending request
+              } else {
+                  console.error('Failed to send join request:', this.responseText);
+              }
+          });
+      }
+  });
+
   // Invite modal functionality
   let selectedUserId = null;
   document.addEventListener('click', function (e) {
