@@ -1,93 +1,170 @@
-  function addEventListeners() {
-    document.addEventListener('DOMContentLoaded', fadeAlert);
-    document.addEventListener('DOMContentLoaded', switchGroupTab);
+function addEventListeners() {
+  document.addEventListener('DOMContentLoaded', fadeAlert);
+  document.addEventListener('DOMContentLoaded', switchGroupTab);
 
-    document.addEventListener('click', function (e) {
+  document.addEventListener('click', function (e) {
       if (e.target && e.target.classList.contains('cancel-btn')) {
           const invitationId = e.target.dataset.id;
-  
+
           if (!groupId || !invitationId) {
               console.error('Group ID or Invitation ID is missing.');
               return;
           }
-  
-          // Send AJAX request to cancel the invite
+
           sendAjaxRequest('delete', `/api/groups/${groupId}/invitations/${invitationId}`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
                   console.log(response.message);
-  
-                  // Remove the specific request element
+
                   const invitationElement = e.target.closest('.invitation');
                   if (invitationElement) invitationElement.remove();
 
-                  loadGroupContent('group-invitations'); // Reload the invitations tab content
+                  loadGroupContent('group-invitations');
                   alert(response.message);
               } else {
                 console.error('Failed to cancel the invitation:', this.responseText);
               }
         });
       }
-    });
+  });
 
-    document.addEventListener('click', function (e) {
+  document.addEventListener('click', function (e) {
       if (e.target && e.target.classList.contains('accept-btn')) {
           const requestId = e.target.dataset.id;
-  
+
           if (!groupId || !requestId) {
               console.error('Group ID or Request ID is missing.');
               return;
           }
-  
-          // Send AJAX request to accept the join request
+
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/accept`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
                   console.log(response.message);
-  
-                  // Remove the specific request element
+
                   const requestElement = e.target.closest('.request');
                   if (requestElement) requestElement.remove();
 
-                  // Reload content
                   loadGroupContent('group-requests');
-                  alert(response.message); 
+                  alert(response.message);
               } else {
-                console.error('Failed to accept request:', this.responseText);
+                  console.error('Failed to accept request:', this.responseText);
               }
-        });
+          });
       }
-    });
-    document.addEventListener('click', function (e) {
+  });
+
+  document.addEventListener('click', function (e) {
       if (e.target && e.target.classList.contains('reject-btn')) {
           const requestId = e.target.dataset.id;
-  
+
           if (!groupId || !requestId) {
               console.error('Group ID or Request ID is missing.');
               return;
           }
-  
-          // Send AJAX request to reject the join request
+
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/reject`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
                   console.log(response.message);
-  
-                  // Remove the specific request element
+
                   const requestElement = e.target.closest('.request');
                   if (requestElement) requestElement.remove();
 
-                  // Reload content
                   loadGroupContent('group-requests');
-                  alert(response.message); 
+                  alert(response.message);
               } else {
-                console.error('Failed to reject request:', this.responseText);
+                  console.error('Failed to reject request:', this.responseText);
               }
+          });
+      }
+  });
+
+  // Invite modal functionality
+  let selectedUserId = null;
+  document.addEventListener('click', function (e) {
+      const inviteModal = document.getElementById('invite-modal');
+      const searchResults = document.getElementById('search-results');
+      const userSearchInput = document.getElementById('user-search');
+      const sendInviteButton = document.getElementById('send-invite');
+
+      // Open modal
+      if (e.target && e.target.id === 'invite-users-btn') {
+          inviteModal.classList.remove('hidden');
+          inviteModal.classList.add('flex');
+      }
+
+      // Close modal
+      if (e.target && e.target.id === 'close-invite-modal') {
+          inviteModal.classList.add('hidden');
+          inviteModal.classList.remove('flex');
+          searchResults.innerHTML = '';
+          userSearchInput.value = '';
+          sendInviteButton.disabled = true;
+          selectedUserId = null;
+      }
+
+      // Select a user from search results
+      if (e.target && e.target.closest('.search-result')) {
+          const result = e.target.closest('.search-result');
+          selectedUserId = result.dataset.id;
+          console.log('User ID Found:', selectedUserId);
+          sendInviteButton.disabled = false;
+      }
+
+      // Send invitation
+      if (e.target && e.target.id === 'send-invite') {
+        console.log('Send Invite button clicked');  
+        if (!selectedUserId) return;
+
+        console.log('Sending invite to User ID:', selectedUserId);
+
+        sendAjaxRequest('post', `/api/groups/${groupId}/invitations`, { userid: selectedUserId }, function () {
+            if (this.status === 200) {
+                const response = JSON.parse(this.responseText);
+                alert(response.message || 'Invitation sent successfully!');
+                inviteModal.classList.add('hidden');
+                searchResults.innerHTML = '';
+                userSearchInput.value = '';
+                sendInviteButton.disabled = true;
+                loadGroupContent('group-invitations');
+            } else {
+                console.error('Failed to send invitation:', this.responseText);
+            }
         });
       }
-    });
+  });
 
-  }
+  document.addEventListener('input', function (e) {
+      if (e.target && e.target.id === 'user-search') {
+          const query = e.target.value.trim();
+          const searchResults = document.getElementById('search-results');
+
+          if (query.length < 3) {
+              searchResults.innerHTML = '<p class="text-gray-500">Please type at least 3 characters.</p>';
+              return;
+          }
+
+          sendAjaxRequest('get', `/api/search?q=${encodeURIComponent(query)}&category=users`, null, function () {
+              if (this.status === 200) {
+                  const response = JSON.parse(this.responseText);
+                  const users = response[1];
+
+                  if (users.data.length === 0) {
+                      searchResults.innerHTML = '<p class="text-gray-500">No users found.</p>';
+                  } else {
+                      searchResults.innerHTML = users.data.map(user => `
+                          <div class="search-result p-2 hover:bg-gray-100 flex items-center cursor-pointer" data-id="${user.userid}">
+                              <img src="" alt="mock" class="h-8 w-8 rounded-full mr-2">
+                              <span>${user.username}</span>
+                          </div>
+                      `).join('');
+                  }
+              }
+          });
+      }
+  });
+}
 
   const buttonsG = document.querySelectorAll('.tab-btn');
   let groupTab = "group-posts"; // Default tab
@@ -229,94 +306,6 @@
     return invitation;
   }
 
-  function setupInviteModal() {
-    const inviteButton = document.getElementById('invite-users-btn');
-    const inviteModal = document.getElementById('invite-modal');
-    const closeModal = document.getElementById('close-invite-modal');
-    const userSearchInput = document.getElementById('user-search');
-    const searchResults = document.getElementById('search-results');
-    const sendInviteButton = document.getElementById('send-invite');
-
-    let selectedUserId = null;
-
-    // Open modal
-    inviteButton.addEventListener('click', () => {
-        inviteModal.classList.remove('hidden');
-        inviteModal.classList.add('flex');
-    });
-
-    // Close modal
-    closeModal.addEventListener('click', () => {
-        inviteModal.classList.add('hidden');
-        inviteModal.classList.remove('flex');
-        searchResults.innerHTML = '';
-        userSearchInput.value = '';
-        sendInviteButton.disabled = true;
-    });
-
-    // Search users
-    userSearchInput.addEventListener('input', function () {
-        const query = userSearchInput.value.trim();
-
-        if (query.length < 3) {
-            searchResults.innerHTML = '<p class="text-gray-500">Please type at least 3 characters.</p>';
-            return;
-        }
-
-        // Use category=users to limit search results
-        sendAjaxRequest('get', `/api/search?q=${encodeURIComponent(query)}&category=users`, null, function () {
-          if (this.status === 200) {
-              const response = JSON.parse(this.responseText);
-              const users = response[1]; // Users are in the second position of the response array
-
-              if (users.data.length === 0) {
-                  searchResults.innerHTML = '<p class="text-gray-500">No users found.</p>';
-              } else {
-                  searchResults.innerHTML = users.data.map(user => `
-                      <div class="search-result p-2 hover:bg-gray-100 flex items-center cursor-pointer" data-id="${user.userid}">
-                          <img src="" alt="mock" class="h-8 w-8 rounded-full mr-2">
-                          <span>${user.username}</span>
-                      </div>
-                  `).join('');
-              }
-          }
-        });
-    });
-
-    // Select a user
-    searchResults.addEventListener('click', function (e) {
-        const result = e.target.closest('.search-result');
-        if (result) {
-            selectedUserId = result.dataset.id;
-            sendInviteButton.disabled = false;
-        }
-    });
-
-    // Send invitation
-    sendInviteButton.addEventListener('click', function () {
-        if (!selectedUserId) return;
-
-        sendAjaxRequest('post', `/api/groups/${groupId}/invitations`, { userid: selectedUserId }, function () {
-            if (this.status === 200) {
-                const response = JSON.parse(this.responseText);
-        
-                // Display a success message
-                alert(response.message || 'Invitation sent successfully!');
-                
-                // Close the modal
-                inviteModal.classList.add('hidden');
-                searchResults.innerHTML = '';
-                userSearchInput.value = '';
-                sendInviteButton.disabled = true;
-        
-                loadGroupContent('group-invitations');
-            } else {
-                console.error('Failed to send invitation:', this.responseText);
-            }
-        });         
-    });
-  }
-
   function insertMoreInvitations(element, invitations) {
     const inviteSection = document.createElement('div');
     inviteSection.innerHTML = `
@@ -357,8 +346,6 @@
         const invitationElement = createInvitation(invitationInfo);
         element.appendChild(invitationElement);
     });
-
-    setupInviteModal();
   }
 
   function createRequest(requestInfo) {
