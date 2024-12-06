@@ -16,6 +16,32 @@
                         Ask to Join
                     </button>
                 </div>
+            @elseif ($group->members->contains(Auth::user()) && auth()->id() !== $group->ownerid && !Auth::user()->isadmin)
+                <div class="flex justify-center mt-4">
+                    <button type="button" onclick="openExitGroupMenu()" class="px-4 py-2 bg-red-700 text-white font-semibold rounded-md hover:bg-red-800">
+                        Exit Group
+                    </button>
+                </div>
+                
+                <!-- Exit Group Confirmation Menu -->
+                <div id="exitGroupMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20">
+                    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+                        <h2 class="text-xl font-semibold text-gray-900">Leave Group</h2>
+                        <p class="mt-4 text-sm text-gray-600">Are you sure you want to leave this group? You will need to rejoin to regain access.</p>
+                        <div class="mt-6 flex justify-end gap-3">
+                            <button id="cancelExitButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
+                                Cancel
+                            </button>
+                            <form action="{{ route('groups.leave', $group->groupid) }}" method="POST">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" id="confirmExitButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
+                                    Leave
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
             @endif
         @endauth
     

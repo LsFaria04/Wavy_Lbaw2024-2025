@@ -181,7 +181,17 @@ function addEventListeners() {
           });
       }
   });
+
+  document.getElementById('cancelExitButton').addEventListener('click', () => {
+    const exitMenu = document.getElementById('exitGroupMenu');
+    exitMenu.classList.add('hidden');
+  });
 }
+
+  function openExitGroupMenu() {
+    const exitMenu = document.getElementById('exitGroupMenu');
+    exitMenu.classList.remove('hidden');
+  }
 
   const buttonsG = document.querySelectorAll('.tab-btn');
   let groupTab = "group-posts"; // Default tab

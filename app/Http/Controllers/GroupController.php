@@ -247,4 +247,29 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Join request accepted and user added to group.'], 200);
     }
 
+    public function leaveGroup($groupid)
+    {
+        $user = Auth::user();
+        $group = Group::findOrFail($groupid);
+
+        // Check if the user is a member
+        $membership = GroupMembership::where('groupid', $groupid)
+            ->where('userid', $user->userid)
+            ->first();
+
+        if (!$membership) {
+            return redirect()->back()->with('error', 'You are not a member of this group.');
+        }
+
+        // Prevent group owner from leaving the group
+        if ($group->ownerid === $user->userid) {
+            return redirect()->back()->with('error', 'Group owners cannot leave their own group.');
+        }
+
+        // Delete the membership
+        $membership->delete();
+
+        return redirect()->route('home')->with('success', 'You have successfully left the group.');
+    }
+
 }
