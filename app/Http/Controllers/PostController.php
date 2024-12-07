@@ -140,10 +140,11 @@ class PostController extends Controller
             }
         }
 
-        $group = Group::where('groupid', $request->groupid)->firstOrFail();
+        
 
         // Redirect back to the group page or home page
         if ($request->groupid) {
+            $group = Group::where('groupid', $request->groupid)->firstOrFail();
             return redirect()->route('group', ['groupname' => $group->groupname])->with('success', 'Post created successfully!');
         }
     
