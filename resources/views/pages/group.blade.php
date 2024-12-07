@@ -21,27 +21,32 @@
                     <button type="button" onclick="openExitGroupMenu()" class="px-4 py-2 bg-red-700 text-white font-semibold rounded-md hover:bg-red-800">
                         Exit Group
                     </button>
+                </div>                
+            @elseif(auth()->id() === $group->ownerid || Auth::user()->isadmin)
+                <div class="absolute top-0 right-0 mt-4 mr-4 flex items-center space-x-2">
+                    <!-- Edit Group Button -->
+                    <button 
+                        class="px-4 py-2 font-bold bg-gray-800 text-white rounded-2xl"
+                        onclick="toggleEditGroupMenu()">
+                        Edit Group
+                    </button>
+
+                    <!-- Dropdown Trigger 
+                    <button onclick="toggleDropdown()" class="focus:outline-none">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 hover:text-gray-600" fill="black" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm0 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm0 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
+                        </svg>
+                    </button> -->
                 </div>
-                
-                <!-- Exit Group Confirmation Menu -->
-                <div id="exitGroupMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
-                    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
-                        <h2 class="text-xl font-semibold text-gray-900">Leave Group</h2>
-                        <p class="mt-4 text-sm text-gray-600">Are you sure you want to leave this group? You will need to rejoin to regain access.</p>
-                        <div class="mt-6 flex justify-end gap-3">
-                            <button id="cancelExitButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
-                                Cancel
-                            </button>
-                            <form action="{{ route('groups.leave', $group->groupid) }}" method="POST">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" id="confirmExitButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
-                                    Leave
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-                </div>
+
+                <!-- Dropdown Menu
+                <div id="dropdownMenu" class="hidden absolute top-16 right-4 w-40 bg-white border border-gray-200 rounded-md shadow-lg transition duration-300 ease-in-out">
+                    <button 
+                        onclick="toggleConfirmationModal()" 
+                        class="w-full px-4 py-2 text-left text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
+                        Delete Account
+                    </button>
+                </div> -->
             @endif
         @endauth
     
@@ -108,6 +113,56 @@
             </div>
         @endif
     @endauth
+
+    <!-- Edit Group Menu -->
+    <div id="edit-group-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden">
+        <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
+            <h2 class="text-2xl font-bold mb-4">Edit Group</h2>
+            <form action="{{ route('group.update', $group->groupid) }}" method="POST">
+                @csrf
+                @method('PUT')
+                <div class="mb-4">
+                    <label for="groupname" class="block text-sm font-medium text-gray-700">Group Name</label>
+                    <input type="text" id="groupname" name="groupname" value="{{ $group->groupname }}" class="mt-1 block w-full p-2 border rounded-md" required>
+                </div>
+                <div class="mb-4">
+                    <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                    <textarea id="description" name="description" rows="3" class="mt-1 block w-full p-2 border rounded-md">{{ $group->description }}</textarea>
+                </div>
+                <div class="mb-4">
+                    <label for="visibilitypublic" class="block text-sm font-medium text-gray-700">Group Visibility</label>
+                    <select id="visibilitypublic" name="visibilitypublic" class="mt-1 block w-full p-2 border rounded-md">
+                        <option value="1" {{ $group->visibilitypublic ? 'selected' : '' }}>Public</option>
+                        <option value="0" {{ !$group->visibilitypublic ? 'selected' : '' }}>Private</option>
+                    </select>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-2xl hover:bg-gray-600" onclick="toggleEditGroupMenu()">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-2xl hover:bg-sky-900">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Exit Group Confirmation Menu -->
+    <div id="exitGroupMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
+        <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+            <h2 class="text-xl font-semibold text-gray-900">Leave Group</h2>
+            <p class="mt-4 text-sm text-gray-600">Are you sure you want to leave this group? You will need to rejoin to regain access.</p>
+            <div class="mt-6 flex justify-end gap-3">
+                <button id="cancelExitButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
+                    Cancel
+                </button>
+                <form action="{{ route('group.leave', $group->groupid) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" id="confirmExitButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
+                        Leave
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Remove Member Confirmation Menu -->
     <div id="removeMemberMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">

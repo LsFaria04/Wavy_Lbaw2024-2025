@@ -190,6 +190,12 @@ function addEventListeners() {
 
     
 }
+    function toggleEditGroupMenu() {
+        const editMenu = document.getElementById('edit-group-menu');
+        editMenu.classList.toggle('hidden');
+        editMenu.classList.toggle('flex');
+        html.classList.toggle('overflow-hidden');
+    }
 
   function openExitGroupMenu() {
     const exitMenu = document.getElementById('exitGroupMenu');

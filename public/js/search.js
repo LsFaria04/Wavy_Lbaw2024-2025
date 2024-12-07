@@ -149,7 +149,7 @@ function addEventListeners() {
     group.innerHTML = `
       <div class="group-header mb-2">
         <h3 class="font-bold">
-          <a href="/group/${groupInfo.groupname}" class="text-black hover:text-sky-900">
+          <a href="/groups/${groupInfo.groupname}" class="text-black hover:text-sky-900">
             ${groupInfo.groupname}
           </a>
         </h3>
