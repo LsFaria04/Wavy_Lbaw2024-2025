@@ -1,4 +1,4 @@
-<div class="post mb-4 p-4 bg-white rounded-md shadow">
+<div class="post mb-4 p-4 bg-white rounded-md shadow cursor-pointer" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
     <div class="post-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">
@@ -11,7 +11,7 @@
         @auth
             @if(auth()->id() === $post->userid || Auth::user()->isadmin) 
                 <div id= "postOptions" class="flex items-center gap-2">
-                    <button type="button" onclick="toggleEditPost('{{ $post->postid }}')" class="text-gray-500 hover:text-black">
+                    <button type="button" onclick="toggleEditPost('{{ $post->postid }}'); event.stopPropagation();" class="text-gray-500 hover:text-black">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="black" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.6" d="M10.973 1.506a18.525 18.525 0 00-.497-.006A4.024 4.024 0 006.45 5.524c0 .43.095.865.199 1.205.054.18.116.356.192.527v.002a.75.75 0 01-.15.848l-4.937 4.911a.871.871 0 000 1.229.869.869 0 001.227 0L7.896 9.31a.75.75 0 01.847-.151c.17.079.35.139.529.193.34.103.774.198 1.204.198A4.024 4.024 0 0014.5 5.524c0-.177-.002-.338-.006-.483-.208.25-.438.517-.675.774-.32.345-.677.696-1.048.964-.354.257-.82.512-1.339.512-.396 0-.776-.156-1.059-.433L9.142 5.627a1.513 1.513 0 01-.432-1.06c0-.52.256-.985.514-1.34.27-.37.623-.727.97-1.046.258-.237.529-.466.78-.675zm-2.36 9.209l-4.57 4.59a2.37 2.37 0 01-3.35-3.348l.002-.001 4.591-4.568a6.887 6.887 0 01-.072-.223 5.77 5.77 0 01-.263-1.64A5.524 5.524 0 0110.476 0 12 12 0 0112 .076c.331.044.64.115.873.264a.92.92 0 01.374.45.843.843 0 01-.013.625.922.922 0 01-.241.332c-.26.257-.547.487-.829.72-.315.26-.647.535-.957.82a5.947 5.947 0 00-.771.824c-.197.27-.227.415-.227.457 0 .003 0 .006.003.008l1.211 1.211a.013.013 0 00.008.004c.043 0 .19-.032.46-.227.253-.183.532-.45.826-.767.284-.308.56-.638.82-.95.233-.28.463-.565.72-.823a.925.925 0 01.31-.235.841.841 0 01.628-.033.911.911 0 01.467.376c.15.233.22.543.262.87.047.356.075.847.075 1.522a5.524 5.524 0 01-5.524 5.525c-.631 0-1.221-.136-1.64-.263a6.969 6.969 0 01-.222-.071z"/>
                         </svg>
@@ -19,7 +19,7 @@
 
                     <form action="{{ route('posts.destroy', $post->postid) }}" method="POST" id="deleteForm-{{ $post->postid }}">
                         @csrf
-                        <button type="button" onclick="openDeleteMenu('{{ $post->postid }}')" class="text-red-500 hover:text-red-700 ml-2">
+                        <button type="button" onclick="openDeleteMenu('{{ $post->postid }}'); event.stopPropagation();" class="text-red-500 hover:text-red-700 ml-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -50,7 +50,7 @@
         <p>{{ $post->message }}</p>
 
         <!-- Loop through media files associated with the post -->
-        <div class="post-media mt-4 grid grid-cols-2 gap-4">
+        <div class="post-media mt-4 grid grid-cols-2 gap-4" onclick="event.stopPropagation();">
             @foreach ($post->media as $media)
                 @php
                     $filePath = asset('storage/' . $media->path);
@@ -81,7 +81,7 @@
         <button 
             type="button" 
             class="flex items-center text-gray-500 hover:text-red-600" 
-            onclick="likePost('{{ $post->postid }}')">
+            onclick="likePost('{{ $post->postid }}'); event.stopPropagation();">
             
             <!-- No like -->
             <svg 

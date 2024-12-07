@@ -40,7 +40,7 @@
                             </ul>
                         </div>
                         
-                        <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Comment</button>
+                        <button type="submit" class=" py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Comment</button>
                     </div>       
                 </form>
             </div>
