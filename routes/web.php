@@ -47,7 +47,7 @@ Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
 Route::post('api/auth-id', function () {
-    return response()->json(['id' => auth()->id(), 'isadmin' => Auth::user()->isadmin]);
+    return response()->json(['id' => auth()->id(), 'isadmin' => Auth::user()->isadmin, 'username' => Auth::user()->username]);
 });
 Route::get('/api/groups/{id}', [GroupController::class, 'getGroupData']);
 Route::get('/api/groups/{id}/posts', [GroupController::class, 'getGroupPosts']);
