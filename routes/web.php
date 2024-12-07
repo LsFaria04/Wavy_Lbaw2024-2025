@@ -108,6 +108,7 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
 // Group
 Route::get('/group/{groupname}', [GroupController::class, 'show'])->name('group');
 Route::delete('/groups/{groupid}/leave', [GroupController::class, 'leaveGroup'])->name('groups.leave');
+Route::delete('/groups/{groupid}/remove/{userid}', [GroupController::class, 'removeMember'])->name('groups.removeMember');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');

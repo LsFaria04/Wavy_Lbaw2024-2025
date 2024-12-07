@@ -269,7 +269,30 @@ class GroupController extends Controller
         // Delete the membership
         $membership->delete();
 
-        return redirect()->route('home')->with('success', 'You have successfully left the group.');
+        return redirect()->back()->with('success', 'You have successfully left the group.');
+    }
+
+    public function removeMember(Request $request, $groupid, $userid)
+    {
+        $group = Group::findOrFail($groupid);
+        // Check if the user is a member
+        $membership = GroupMembership::where('groupid', $groupid)
+            ->where('userid', $userid)
+            ->first();
+            
+        if (!$membership) {
+            return redirect()->back()->with('error', 'The user is not a member of this group.');
+        }
+    
+        // Prevent group owner from leaving the group
+        if ((int) $userid === (int) $group->ownerid) {
+            return redirect()->back()->with('error', 'Group owners cannot be removed.');
+        }
+
+        // Delete the membership
+        $membership->delete();
+
+        return redirect()->back()->with('success', "User has been removed from the group.");
     }
 
 }

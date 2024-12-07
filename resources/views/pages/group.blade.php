@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex flex-col items-center w-full max-w-full bg-white" id="groupPage" data-groupid="{{ $group->groupid }}">
+<div class="flex flex-col items-center w-full max-w-full bg-white" id="groupPage" data-groupid="{{ $group->groupid }}" data-ownerid="{{ $group->ownerid }}">
     <!-- Group Info Section (Sticky Header) -->
     <header id="group-header" class="w-full pt-6 shadow-md flex flex-col bg-white sticky top-0 z-10">
         <div class="text-center mb-4">
@@ -24,7 +24,7 @@
                 </div>
                 
                 <!-- Exit Group Confirmation Menu -->
-                <div id="exitGroupMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20">
+                <div id="exitGroupMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
                     <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
                         <h2 class="text-xl font-semibold text-gray-900">Leave Group</h2>
                         <p class="mt-4 text-sm text-gray-600">Are you sure you want to leave this group? You will need to rejoin to regain access.</p>
@@ -109,20 +109,41 @@
         @endif
     @endauth
 
+    <!-- Remove Member Confirmation Menu -->
+    <div id="removeMemberMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
+        <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+            <h2 class="text-xl font-semibold text-gray-900">Remove Member</h2>
+            <p id="removeMemberMessage" class="mt-4 text-sm text-gray-600"></p>
+            <div class="mt-6 flex justify-end gap-3">
+                <button id="cancelRemoveButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
+                    Cancel
+                </button>
+                <form id="removeMemberForm" action="" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
+                        Remove
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <!-- Content Tabs -->
     <div class="flex flex-col w-full max-w-full bg-white shadow-md p-6 mt-4" id="group-tab-content">
+
         <!-- Content Section (starts with the posts) -->
-            @if(($group->visibilitypublic === false && (!Auth::user()->isadmin || !$group->members->contains(Auth::user()))))
-                <div class="flex justify-center items-center h-32">
-                    <p class="text-gray-600 text-center">Group is private.</p>
-                </div>
-            @elseif($group->posts->isEmpty())
-                <div class="flex justify-center items-center h-32">
-                    <p class="text-gray-600 text-center">No posts found for this group.</p>
-                </div>
-            @else
-                @each('partials.post', $posts, 'post')
-            @endif
+        @if(($group->visibilitypublic === false && (!Auth::user()->isadmin || !$group->members->contains(Auth::user()))))
+            <div class="flex justify-center items-center h-32">
+                <p class="text-gray-600 text-center">Group is private.</p>
+            </div>
+        @elseif($group->posts->isEmpty())
+            <div class="flex justify-center items-center h-32">
+                <p class="text-gray-600 text-center">No posts found for this group.</p>
+            </div>
+        @else
+            @each('partials.post', $posts, 'post')
+        @endif
     </div>
 </div>
 @endsection

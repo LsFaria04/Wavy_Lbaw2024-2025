@@ -180,22 +180,47 @@ function addEventListeners() {
               }
           });
       }
-  });
+    });
 
-  document.getElementById('cancelExitButton').addEventListener('click', () => {
-    const exitMenu = document.getElementById('exitGroupMenu');
-    exitMenu.classList.add('hidden');
-  });
+    document.getElementById('cancelExitButton').addEventListener('click', () => {
+        const exitMenu = document.getElementById('exitGroupMenu');
+        exitMenu.classList.add('hidden');
+        exitMenu.classList.remove('flex');
+    });
+
+    
 }
 
   function openExitGroupMenu() {
     const exitMenu = document.getElementById('exitGroupMenu');
     exitMenu.classList.remove('hidden');
+    exitMenu.classList.add('flex');
+  }
+
+  function openRemoveMemberMenu(memberId, username) {
+    const removeMenu = document.getElementById('removeMemberMenu');
+    const removeMessage = document.getElementById('removeMemberMessage');
+    const removeForm = document.getElementById('removeMemberForm');
+
+    // Update the confirmation message and form action
+    removeMessage.textContent = `Are you sure you want to remove ${username} from the group?`;
+    removeForm.action = `/groups/${groupId}/remove/${memberId}`;
+
+    // Show the dialog
+    removeMenu.classList.remove('hidden');
+    removeMenu.classList.add('flex');
+
+    document.getElementById('cancelRemoveButton').addEventListener('click', () => {
+        const removeMenu = document.getElementById('removeMemberMenu');
+        removeMenu.classList.add('hidden');
+        removeMenu.classList.remove('flex')
+    });
   }
 
   const buttonsG = document.querySelectorAll('.tab-btn');
   let groupTab = "group-posts"; // Default tab
   let groupId = document.getElementById('groupPage').dataset.groupid;
+  let ownerid = document.getElementById('groupPage').dataset.ownerid; 
 
   function switchGroupTab() {
     buttonsG.forEach(button => {
@@ -277,7 +302,7 @@ function addEventListeners() {
 
         case 'group-members':
             maxPage = results.last_page;
-            insertMoreUsers(groupContent, results);
+            insertMoreMembers(groupContent, results);
             break;
 
         case 'group-invitations':
@@ -414,6 +439,46 @@ function addEventListeners() {
     for (let i = 0; i < requests.data.length; i++) {
         let requestElement = createRequest(requests.data[i]);
         element.appendChild(requestElement);
+    }
+  }
+
+  //creates a member container with all the necessary info
+  function createMember(memberInfo) {
+    let member = document.createElement('div');
+    member.classList.add("member", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+
+    const canRemove = parseInt(memberInfo.userid) !== parseInt(ownerid);
+
+    // Member card structure
+    member.innerHTML = `
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="font-bold">
+                    <a href="../profile/${memberInfo.username}" class="text-black hover:text-sky-900">
+                        ${memberInfo.username}
+                    </a>
+                </h3>
+                <p class="text-sm text-gray-600">${memberInfo.bio || ''}</p>
+            </div>
+            ${canRemove ? `
+                <button type="button" onclick="openRemoveMemberMenu(${memberInfo.userid}, '${memberInfo.username}')" 
+                        class="text-red-500 hover:text-red-700 ml-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            ` : ''}
+        </div>
+    `;
+
+    return member;
+  }
+    
+  //inserts more members into an element
+  function insertMoreMembers(element, members){
+    for(let i = 0; i < members.data.length; i++){
+      let member = createMember(members.data[i]);
+      element.appendChild(member);
     }
   }
 
