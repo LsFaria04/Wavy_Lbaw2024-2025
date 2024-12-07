@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Post;
 use App\Models\Media;
 use App\Models\User;
+use App\Models\Group;
 
 class PostController extends Controller
 {
@@ -139,9 +140,11 @@ class PostController extends Controller
             }
         }
 
+        $group = Group::where('groupid', $request->groupid)->firstOrFail();
+
         // Redirect back to the group page or home page
         if ($request->groupid) {
-            return redirect()->route('group', ['id' => $request->groupid])->with('success', 'Post created successfully!');
+            return redirect()->route('group', ['groupname' => $group->groupname])->with('success', 'Post created successfully!');
         }
     
         return redirect()->route('home')->with('success', 'Post created successfully!');
