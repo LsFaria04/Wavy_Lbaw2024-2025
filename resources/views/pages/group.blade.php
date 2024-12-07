@@ -188,7 +188,7 @@
     <div class="flex flex-col w-full max-w-full bg-white shadow-md p-6 mt-4" id="group-tab-content">
 
         <!-- Content Section (starts with the posts) -->
-        @if(($group->visibilitypublic === false && (!Auth::user()->isadmin || !$group->members->contains(Auth::user()))))
+        @if(($group->visibilitypublic === false && !(Auth::id() === $group->ownerid || Auth::user()->isadmin || $group->members->contains(Auth::user()))))
             <div class="flex justify-center items-center h-32">
                 <p class="text-gray-600 text-center">Group is private.</p>
             </div>
