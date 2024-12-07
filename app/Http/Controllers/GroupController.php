@@ -166,7 +166,7 @@ class GroupController extends Controller
                     'required',
                     'string',
                     'max:30',
-                    'alpha_dash',
+                    'regex:/^[A-Za-z0-9 _-]+$/',
                     Rule::unique('groups', 'groupname')->ignore($groupid, 'groupid'),
                 ],
                 'description' => 'nullable|string|max:130',
@@ -177,7 +177,7 @@ class GroupController extends Controller
 
         
             return redirect()->route('group', $group->groupname)
-                             ->with('success', 'Profile updated successfully!');
+                             ->with('success', 'Group Page updated successfully!');
         } catch (\Exception $e) {
             Log::error('Failed to update group page', ['groupid' => $group->groupid, 'error' => $e->getMessage()]);
 
