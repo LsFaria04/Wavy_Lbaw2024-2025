@@ -48,7 +48,7 @@ Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
 Route::post('api/auth-id', function () {
-    return response()->json(['id' => auth()->id(), 'isadmin' => Auth::user()->isadmin]);
+    return response()->json(['id' => auth()->id(), 'isadmin' => Auth::user()->isadmin, 'username' => Auth::user()->username]);
 });
 Route::get('/api/groups/{id}', [GroupController::class, 'getGroupData']);
 Route::get('/api/groups/{id}/posts', [GroupController::class, 'getGroupPosts']);
@@ -107,9 +107,10 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
 
 // Group
-Route::get('/group/{groupname}', [GroupController::class, 'show'])->name('group');
-Route::delete('/groups/{groupid}/leave', [GroupController::class, 'leaveGroup'])->name('groups.leave');
-Route::delete('/groups/{groupid}/remove/{userid}', [GroupController::class, 'removeMember'])->name('groups.removeMember');
+Route::get('/groups/{groupname}', [GroupController::class, 'show'])->name('group');
+Route::delete('/groups/{groupid}/leave', [GroupController::class, 'leaveGroup'])->name('group.leave');
+Route::delete('/groups/{groupid}/remove/{userid}', [GroupController::class, 'removeMember'])->name('group.removeMember');
+Route::put('/groups/{groupid}', [GroupController::class, 'update'])->name('group.update');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');

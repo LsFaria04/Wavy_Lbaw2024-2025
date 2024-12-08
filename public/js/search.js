@@ -64,32 +64,6 @@ function addEventListeners() {
   }
 
   //loads the first content of a search when selecting another category
-  function loadProfileContent(category){
-    const profileContent = document.querySelector("#profile-tab-content");
-    if(!profileContent) return;
-
-    while (profileContent.firstChild) {
-      profileContent.removeChild(profileContent.firstChild);
-    }
-
-    insertLoadingCircle(profileContent);
-
-    switch(category){
-      case 'user-posts':
-          sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
-          break;
-      
-      case 'user-comments':
-        sendAjaxRequest('get', '/api/comments/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
-        break;
-      
-      case 'user-likes':
-        sendAjaxRequest('get', '/api/likes/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
-        break;
-    }
-  }
-
-  //loads the first content of a search when selecting another category
   function loadSearchContent(category, query){
     const searchResults = document.querySelector("#search-results");
     
@@ -149,7 +123,7 @@ function addEventListeners() {
     group.innerHTML = `
       <div class="group-header mb-2">
         <h3 class="font-bold">
-          <a href="/group/${groupInfo.groupname}" class="text-black hover:text-sky-900">
+          <a href="/groups/${groupInfo.groupname}" class="text-black hover:text-sky-900">
             ${groupInfo.groupname}
           </a>
         </h3>

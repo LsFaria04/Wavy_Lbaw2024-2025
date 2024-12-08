@@ -8,6 +8,8 @@ use App\Models\GroupMembership;
 use App\Models\JoinGroupRequest;
 use App\Models\GroupInvitation;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class GroupController extends Controller
@@ -153,6 +155,37 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'User invited successfully.'], 200);
     }
     
+    public function update(Request $request, $groupid) {
+        $group = Group::findOrFail($groupid);
+        $this->authorize('update', $group);
+        
+        //try the data input validation
+        try {
+            $validatedData = $request->validate([
+                'groupname' => [
+                    'required',
+                    'string',
+                    'max:30',
+                    'regex:/^[A-Za-z0-9 _-]+$/',
+                    Rule::unique('groups', 'groupname')->ignore($groupid, 'groupid'),
+                ],
+                'description' => 'nullable|string|max:130',
+                'visibilitypublic' => 'required|boolean',
+            ]);
+        
+            $group->update($validatedData);
+
+        
+            return redirect()->route('group', $group->groupname)
+                             ->with('success', 'Group Page updated successfully!');
+        } catch (\Exception $e) {
+            Log::error('Failed to update group page', ['groupid' => $group->groupid, 'error' => $e->getMessage()]);
+
+            return redirect()->route('group', $group->groupname)
+                             ->with('error', 'Your changes were rejected.');
+        }    
+    }
+
     public function cancelInvitation($groupid, $invitationid)
     {
         $invitation = GroupInvitation::where('groupid', $groupid)
