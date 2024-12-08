@@ -20,7 +20,7 @@ class CommentController extends Controller
             'userid' => $request->userid,
             'message' => $request->message,
             'postid' => $request->postid,
-            'createddate' => $request->createddate,
+            'createddate' => now(),
         ]);
     }
     /**
@@ -58,8 +58,7 @@ class CommentController extends Controller
         return view('pages.comment', compact('comment', 'subComments'));
     }
     
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         // Validate input
         $request->validate([
             'message' => 'required|string|max:255',
@@ -106,6 +105,22 @@ class CommentController extends Controller
                 }
             }
         }
+
+        // Notify owner of the post/comment being commented
+        if ($comment->parentcommentid) {
+            // Comment of a comment
+            $parentComment = $comment->parentComment;
+            if ($parentComment && $parentComment->userid !== Auth::id()) {
+                event(new PostComment($comment, $parentComment->userid));
+            }
+        } elseif ($comment->postid) {
+            // Comment of a post
+            $post = $comment->post;
+            if ($post && $post->userid !== Auth::id()) {
+                event(new PostComment($comment, $post->userid));
+            }
+        }
+
     
         return redirect()->route('posts.show',$request->postid)->with('success', 'Comment created successfully!');
     }

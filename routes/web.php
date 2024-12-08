@@ -13,6 +13,7 @@ use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\TopicController;
+use App\Http\Controllers\NotificationController;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,3 +120,6 @@ Route::post('/contact/submit', [ContactController::class, 'submit'])->name('cont
 
 //Main Features
 Route::view('/features', 'pages.features')->name('features');
+
+//Notifications
+Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
