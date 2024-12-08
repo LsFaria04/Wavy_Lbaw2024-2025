@@ -70,7 +70,8 @@ class CommentController extends Controller
         if ($request->user()->cannot('create', Comment::class)) {
             return redirect()->route('posts.show',$request->postid)->with('error', 'You cannot create a comment!');
         }
-    
+
+        $postId = $request->input('postid'); // Or $request->postid
         // Initialize image path variable
         $mediaPath = null;
     
@@ -78,7 +79,7 @@ class CommentController extends Controller
         $comment = comment::create([
             'userid' => Auth::id(),
             'message' => $request->message,
-            'postid' => $request->postid,
+            'postid' => $postId,
             'createddate' => now(),
         ]);
 
@@ -109,6 +110,61 @@ class CommentController extends Controller
     
         return redirect()->route('posts.show',$request->postid)->with('success', 'Comment created successfully!');
     }
+
+    public function storeSubcomment(Request $request)
+    {
+        // Validate input
+        $request->validate([
+            'message' => 'required|string|max:255',
+            'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:8192', 
+        ]);
+    
+        // Check if the user is authorized to create a comment
+        if ($request->user()->cannot('create', Comment::class)) {
+            return redirect()->route('comments.show',$request->commentid)->with('error', 'You cannot create a comment!');
+        }
+    
+        // Initialize image path variable
+        $mediaPath = null;
+    
+        // Create the comment
+        $comment = comment::create([
+            'userid' => Auth::id(),
+            'message' => $request->message,
+            'postid' => NULL,
+            'parentcommentid' => $request->commentid,
+            'createddate' => now(),
+        ]);
+
+        $comment->save();
+
+        if ($request->hasFile('media')) {
+            // Check if there are more than 4 files
+            if (count($request->file('media')) > 4) {
+                return redirect()->route('home')->with('error', 'You can only upload a maximum of 4 media files.');
+            }
+            
+            // Store the images in the 'images' directory under 'public'
+            foreach ($request->file('media') as $file) {
+                if($file->isValid()){
+                    $mediaPath = $file->store('images', 'public');
+
+                    Media::create([
+                        'commentid' => $comment->commentid, // Associate media with this comment
+                        'userid' => NULL, 
+                        'postid' => NULL,
+                        'path' => $mediaPath, // Store the image path
+                    ]);
+                }
+                else{
+                    return redirect()->route('comments.show',$request->commentid)->with('error', 'Could not upload the file!');
+                }
+            }
+        }
+    
+        return redirect()->route('comments.show',$request->commentid)->with('success', 'Comment created successfully!');
+    }
+
 
     public function update(Request $request, Comment $comment)
     {

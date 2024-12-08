@@ -12,6 +12,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupListController;
 use App\Http\Controllers\TopicController;
 
 /*
@@ -47,14 +48,16 @@ Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
 Route::post('api/auth-id', function () {
-    return response()->json(['id' => auth()->id(), 'isadmin' => Auth::user()->isadmin]);
+    return response()->json(['id' => auth()->id(), 'isadmin' => Auth::user()->isadmin, 'username' => Auth::user()->username]);
 });
 Route::get('/api/groups/{id}', [GroupController::class, 'getGroupData']);
 Route::get('/api/groups/{id}/posts', [GroupController::class, 'getGroupPosts']);
 Route::get('/api/groups/{id}/members', [GroupController::class, 'getGroupMembers']);
 Route::get('/api/groups/{id}/invitations', [GroupController::class, 'getGroupInvitations']);
 Route::get('/api/groups/{id}/requests', [GroupController::class, 'getJoinRequests']);
+Route::post('/api/groups/{groupid}/invitations', [GroupController::class, 'sendInvitation']);
 Route::delete('/api/groups/{group}/invitations/{invitation}', [GroupController::class, 'cancelInvitation']);
+Route::post('/api/groups/{group}/requests', [GroupController::class, 'sendJoinRequest'])->middleware('auth');
 Route::post('/api/groups/{group}/requests/{request}/reject', [GroupController::class, 'rejectJoinRequest']);
 Route::post('/api/groups/{group}/requests/{request}/accept', [GroupController::class, 'acceptJoinRequest']);
 Route::controller(TopicController::class)->group(function (){
@@ -77,6 +80,7 @@ Route::post('/comments/update/{comment}', [CommentController::class, 'update'])-
 Route::post('/comments/delete/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 Route::get('/comments/{id}', [CommentController::class, 'show'])->name('comments.show');
 Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/comments/storeSubcomment', [CommentController::class, 'storeSubcomment'])->name('comments.storeSubcomment');
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');
@@ -104,7 +108,11 @@ Route::prefix('admin')->middleware(['auth', 'isAdmin'])->group(function () {
     Route::post('/admin/users', [AdminController::class, 'storeUser'])->name('admin.users.store');
 
 // Group
-Route::get('/group/{groupname}', [GroupController::class, 'show'])->name('group');
+Route::get('/groups/{groupname}', [GroupController::class, 'show'])->name('group');
+Route::delete('/groups/{groupid}/leave', [GroupController::class, 'leaveGroup'])->name('group.leave');
+Route::delete('/groups/{groupid}/remove/{userid}', [GroupController::class, 'removeMember'])->name('group.removeMember');
+Route::put('/groups/{groupid}', [GroupController::class, 'update'])->name('group.update');
+Route::get('/groups', [GroupListController::class, 'index'])->name('groupList');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');

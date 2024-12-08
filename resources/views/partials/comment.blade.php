@@ -50,6 +50,9 @@
         <p>{{ $comment->message }}</p>
 
         <!-- Loop through media files associated with the comment -->
+        @php
+            Log::info($comment->media);
+        @endphp
         <div class="comment-media mt-4 grid grid-cols-2 gap-4">
             @foreach ($comment->media as $media)
                 @php
@@ -84,7 +87,10 @@
                     @csrf
                     <div class="mb-4">
                         <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
-                        <textarea id="message" name="message" rows="2" class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" placeholder="Edit your message">{{ $comment->message }}</textarea>
+                        <textarea id="message" name="message"
+                            class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" 
+                            placeholder="Edit your message" 
+                            style="resize: vertical; min-height: 200px;">{{ $comment->message }}</textarea>
                     </div>
 
                     <div class="mb-4">

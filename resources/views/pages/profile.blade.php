@@ -116,7 +116,7 @@
             <!-- Content Tabs -->
             <div class="flex flex-col w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4" id = "profile-tab-content">
                 <!-- Content Section (starts with the posts) -->
-                    @if(($user->visibilitypublic === false && !Auth::check())  || ($user->visibilitypublic === false && !Auth::user()->isadmin))
+                    @if((($user->visibilitypublic === false && !Auth::check())  || ($user->visibilitypublic === false && !Auth::user()->isadmin)) && ($user->userid != auth()->id()))
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">Account is private.</p>
                         </div>

@@ -1,96 +1,232 @@
-  function addEventListeners() {
-    document.addEventListener('DOMContentLoaded', fadeAlert);
-    document.addEventListener('DOMContentLoaded', switchGroupTab);
+function addEventListeners() {
+  document.addEventListener('DOMContentLoaded', fadeAlert);
+  document.addEventListener('DOMContentLoaded', switchGroupTab);
 
-    document.addEventListener('click', function (e) {
+  document.addEventListener('click', function (e) {
       if (e.target && e.target.classList.contains('cancel-btn')) {
           const invitationId = e.target.dataset.id;
-  
+
           if (!groupId || !invitationId) {
               console.error('Group ID or Invitation ID is missing.');
               return;
           }
-  
-          // Send AJAX request to cancel the invite
+
           sendAjaxRequest('delete', `/api/groups/${groupId}/invitations/${invitationId}`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
                   console.log(response.message);
-  
-                  // Remove the specific request element
+
                   const invitationElement = e.target.closest('.invitation');
                   if (invitationElement) invitationElement.remove();
 
-                  loadGroupContent('group-invitations'); // Reload the invitations tab content
+                  loadGroupContent('group-invitations');
                   alert(response.message);
               } else {
                 console.error('Failed to cancel the invitation:', this.responseText);
               }
         });
       }
-    });
+  });
 
-    document.addEventListener('click', function (e) {
+  document.addEventListener('click', function (e) {
       if (e.target && e.target.classList.contains('accept-btn')) {
           const requestId = e.target.dataset.id;
-  
+
           if (!groupId || !requestId) {
               console.error('Group ID or Request ID is missing.');
               return;
           }
-  
-          // Send AJAX request to accept the join request
+
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/accept`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
                   console.log(response.message);
-  
-                  // Remove the specific request element
+
                   const requestElement = e.target.closest('.request');
                   if (requestElement) requestElement.remove();
 
-                  // Reload content
                   loadGroupContent('group-requests');
-                  alert(response.message); 
+                  alert(response.message);
               } else {
-                console.error('Failed to accept request:', this.responseText);
+                  console.error('Failed to accept request:', this.responseText);
               }
-        });
+          });
       }
-    });
-    document.addEventListener('click', function (e) {
+  });
+
+  document.addEventListener('click', function (e) {
       if (e.target && e.target.classList.contains('reject-btn')) {
           const requestId = e.target.dataset.id;
-  
+
           if (!groupId || !requestId) {
               console.error('Group ID or Request ID is missing.');
               return;
           }
-  
-          // Send AJAX request to reject the join request
+
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/reject`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
                   console.log(response.message);
-  
-                  // Remove the specific request element
+
                   const requestElement = e.target.closest('.request');
                   if (requestElement) requestElement.remove();
 
-                  // Reload content
                   loadGroupContent('group-requests');
-                  alert(response.message); 
+                  alert(response.message);
               } else {
-                console.error('Failed to reject request:', this.responseText);
+                  console.error('Failed to reject request:', this.responseText);
               }
+          });
+      }
+  });
+
+  document.addEventListener('click', function (e) {
+      if (e.target && e.target.id === 'ask-to-join-btn') {
+          console.log('Ask to Join button clicked.');
+
+          // Send join request
+          sendAjaxRequest('post', `/api/groups/${groupId}/requests`, null, function () {
+              if (this.status === 200) {
+                  const response = JSON.parse(this.responseText);
+                  alert(response.message || 'Join request sent successfully!');
+                  e.target.disabled = true; // Disable button after sending request
+              } else {
+                  console.error('Failed to send join request:', this.responseText);
+              }
+          });
+      }
+  });
+
+  // Invite modal functionality
+  let selectedUserId = null;
+  document.addEventListener('click', function (e) {
+      const inviteModal = document.getElementById('invite-modal');
+      const searchResults = document.getElementById('search-results');
+      const userSearchInput = document.getElementById('user-search');
+      const sendInviteButton = document.getElementById('send-invite');
+
+      // Open modal
+      if (e.target && e.target.id === 'invite-users-btn') {
+          inviteModal.classList.remove('hidden');
+          inviteModal.classList.add('flex');
+      }
+
+      // Close modal
+      if (e.target && e.target.id === 'close-invite-modal') {
+          inviteModal.classList.add('hidden');
+          inviteModal.classList.remove('flex');
+          searchResults.innerHTML = '';
+          userSearchInput.value = '';
+          sendInviteButton.disabled = true;
+          selectedUserId = null;
+      }
+
+      // Select a user from search results
+      if (e.target && e.target.closest('.search-result')) {
+          const result = e.target.closest('.search-result');
+          selectedUserId = result.dataset.id;
+          console.log('User ID Found:', selectedUserId);
+          sendInviteButton.disabled = false;
+      }
+
+      // Send invitation
+      if (e.target && e.target.id === 'send-invite') {
+        console.log('Send Invite button clicked');  
+        if (!selectedUserId) return;
+
+        console.log('Sending invite to User ID:', selectedUserId);
+
+        sendAjaxRequest('post', `/api/groups/${groupId}/invitations`, { userid: selectedUserId }, function () {
+            if (this.status === 200) {
+                const response = JSON.parse(this.responseText);
+                alert(response.message || 'Invitation sent successfully!');
+                inviteModal.classList.add('hidden');
+                searchResults.innerHTML = '';
+                userSearchInput.value = '';
+                sendInviteButton.disabled = true;
+                loadGroupContent('group-invitations');
+            } else {
+                console.error('Failed to send invitation:', this.responseText);
+            }
         });
       }
+  });
+
+  document.addEventListener('input', function (e) {
+      if (e.target && e.target.id === 'user-search') {
+          const query = e.target.value.trim();
+          const searchResults = document.getElementById('search-results');
+
+          if (query.length < 3) {
+              searchResults.innerHTML = '<p class="text-gray-500">Please type at least 3 characters.</p>';
+              return;
+          }
+
+          sendAjaxRequest('get', `/api/search?q=${encodeURIComponent(query)}&category=users`, null, function () {
+              if (this.status === 200) {
+                  const response = JSON.parse(this.responseText);
+                  const users = response[1];
+
+                  if (users.data.length === 0) {
+                      searchResults.innerHTML = '<p class="text-gray-500">No users found.</p>';
+                  } else {
+                      searchResults.innerHTML = users.data.map(user => `
+                          <div class="search-result p-2 hover:bg-gray-100 flex items-center cursor-pointer" data-id="${user.userid}">
+                              <img src="" alt="mock" class="h-8 w-8 rounded-full mr-2">
+                              <span>${user.username}</span>
+                          </div>
+                      `).join('');
+                  }
+              }
+          });
+      }
+    });
+
+    document.getElementById('cancelExitButton').addEventListener('click', () => {
+        const exitMenu = document.getElementById('exitGroupMenu');
+        exitMenu.classList.add('hidden');
+        exitMenu.classList.remove('flex');
+    });
+
+    
+}
+    function toggleEditGroupMenu() {
+        const editMenu = document.getElementById('edit-group-menu');
+        editMenu.classList.toggle('hidden');
+        editMenu.classList.toggle('flex');
+        html.classList.toggle('overflow-hidden');
+    }
+
+  function openExitGroupMenu() {
+    const exitMenu = document.getElementById('exitGroupMenu');
+    exitMenu.classList.remove('hidden');
+    exitMenu.classList.add('flex');
+  }
+
+  function openRemoveMemberMenu(memberId, username) {
+    const removeMenu = document.getElementById('removeMemberMenu');
+    const removeMessage = document.getElementById('removeMemberMessage');
+    const removeForm = document.getElementById('removeMemberForm');
+
+    // Update the confirmation message and form action
+    removeMessage.textContent = `Are you sure you want to remove ${username} from the group?`;
+    removeForm.action = `/groups/${groupId}/remove/${memberId}`;
+
+    // Show the dialog
+    removeMenu.classList.remove('hidden');
+    removeMenu.classList.add('flex');
+
+    document.getElementById('cancelRemoveButton').addEventListener('click', () => {
+        const removeMenu = document.getElementById('removeMemberMenu');
+        removeMenu.classList.add('hidden');
+        removeMenu.classList.remove('flex')
     });
   }
 
   const buttonsG = document.querySelectorAll('.tab-btn');
   let groupTab = "group-posts"; // Default tab
   let groupId = document.getElementById('groupPage').dataset.groupid;
+  let ownerid = document.getElementById('groupPage').dataset.ownerid; 
 
   function switchGroupTab() {
     buttonsG.forEach(button => {
@@ -125,26 +261,34 @@
     switch (tab) {
         case 'group-posts':
             sendAjaxRequest('get', `/api/groups/${groupId}/posts?page=${currentPage}`, null, insertMoreGroupContent);
-            addPost.classList.add('flex');
-            addPost.classList.remove('hidden');
+            if(addPost) {
+              addPost.classList.add('flex');
+              addPost.classList.remove('hidden');
+            }
             break;
 
         case 'group-members':
             sendAjaxRequest('get', `/api/groups/${groupId}/members?page=${currentPage}`, null, insertMoreGroupContent);
-            addPost.classList.add('hidden');
-            addPost.classList.remove('flex');
+            if(addPost) {
+              addPost.classList.add('hidden');
+              addPost.classList.remove('flex');
+            }
             break;
 
         case 'group-invitations':
             sendAjaxRequest('get', `/api/groups/${groupId}/invitations?page=${currentPage}`, null, insertMoreGroupContent);
-            addPost.classList.add('hidden');
-            addPost.classList.remove('flex');
+            if(addPost) {
+              addPost.classList.add('hidden');
+              addPost.classList.remove('flex');
+            }
             break;
 
         case 'group-requests':
           sendAjaxRequest('get', `/api/groups/${groupId}/requests?page=${currentPage}`, null, insertMoreGroupContent);
-          addPost.classList.add('hidden');
-          addPost.classList.remove('flex');
+          if(addPost) {
+            addPost.classList.add('hidden');
+            addPost.classList.remove('flex');
+          }
           break;
     }
   }
@@ -164,7 +308,7 @@
 
         case 'group-members':
             maxPage = results.last_page;
-            insertMoreUsers(groupContent, results);
+            insertMoreMembers(groupContent, results);
             break;
 
         case 'group-invitations':
@@ -221,10 +365,45 @@
   }
 
   function insertMoreInvitations(element, invitations) {
-    for (let i = 0; i < invitations.data.length; i++) {
-        let invitationElement = createInvitation(invitations.data[i]);
+    const inviteSection = document.createElement('div');
+    inviteSection.innerHTML = `
+        <div class="flex justify-end mb-4">
+            <button id="invite-users-btn" class="flex items-center justify-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                Invite Users
+            </button>
+        </div>
+        <!-- Modal for inviting users -->
+        <div id="invite-modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 justify-center items-center z-50">
+            <div class="bg-white rounded-lg shadow-lg p-6 w-3/4 max-w-lg">
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-xl font-bold">Invite Users</h3>
+                    <button id="close-invite-modal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                </div>
+                <input
+                    type="text"
+                    id="user-search"
+                    placeholder="Search for a user..."
+                    class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+                />
+                <div id="search-results" class="max-h-64 overflow-y-auto pb-3">
+                    <!-- Search results will be dynamically injected here -->
+                </div>
+                <button id="send-invite" class="bg-blue-500 text-white px-4 py-3 rounded-md hover:bg-blue-700 disabled:opacity-50" disabled>
+                    Send Invite
+                </button>
+            </div>
+        </div>
+    `;
+    element.appendChild(inviteSection);
+
+    // Add invitations to the content
+    invitations.data.forEach(invitationInfo => {
+        const invitationElement = createInvitation(invitationInfo);
         element.appendChild(invitationElement);
-    }
+    });
   }
 
   function createRequest(requestInfo) {
@@ -266,6 +445,46 @@
     for (let i = 0; i < requests.data.length; i++) {
         let requestElement = createRequest(requests.data[i]);
         element.appendChild(requestElement);
+    }
+  }
+
+  //creates a member container with all the necessary info
+  function createMember(memberInfo) {
+    let member = document.createElement('div');
+    member.classList.add("member", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+
+    const canRemove = parseInt(memberInfo.userid) !== parseInt(ownerid);
+
+    // Member card structure
+    member.innerHTML = `
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="font-bold">
+                    <a href="../profile/${memberInfo.username}" class="text-black hover:text-sky-900">
+                        ${memberInfo.username}
+                    </a>
+                </h3>
+                <p class="text-sm text-gray-600">${memberInfo.bio || ''}</p>
+            </div>
+            ${canRemove ? `
+                <button type="button" onclick="openRemoveMemberMenu(${memberInfo.userid}, '${memberInfo.username}')" 
+                        class="text-red-500 hover:text-red-700 ml-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            ` : ''}
+        </div>
+    `;
+
+    return member;
+  }
+    
+  //inserts more members into an element
+  function insertMoreMembers(element, members){
+    for(let i = 0; i < members.data.length; i++){
+      let member = createMember(members.data[i]);
+      element.appendChild(member);
     }
   }
 

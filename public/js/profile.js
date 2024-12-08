@@ -142,6 +142,22 @@ function addEventListeners() {
       
   }
 
+  //stores the authentication state
+  let currentUsername = "";
+  sendAjaxRequest('post', '/api/auth-check', null, authInfo);
+  function authInfo(){
+    const response = JSON.parse(this.responseText);
+    isAuthenticated = response.authenticated;
+    if(isAuthenticated){
+      sendAjaxRequest('post', '/api/auth-id', null, authId);
+    }
+  }
+
+  function authId(){
+    const response = JSON.parse(this.responseText);
+    currentUsername = response.username;
+  }
+
   //toggles the password form when it is needed in the delete user menu
   function togglePasswordForm() {
     const passwordForm = document.getElementById('passwordForm');
@@ -158,7 +174,7 @@ function addEventListeners() {
 
     let results = JSON.parse(this.responseText);
 
-    if(!isPublic && !isadmin){
+    if((!isPublic && !isadmin) && (username != currentUsername)){
       profileContent.innerHTML = `
       <div class="flex justify-center items-center h-32">
               <p class="text-gray-600 text-center">Account is private.</p>
@@ -166,6 +182,8 @@ function addEventListeners() {
       `;
       return;   
     }
+    console.log(username);
+    console.log(currentUsername);
 
     switch(profileTab){
 
@@ -337,6 +355,34 @@ function addEventListeners() {
     return topic;
   }
 
+    //loads the first content of a search when selecting another category
+    function loadProfileContent(category){
+      const profileContent = document.querySelector("#profile-tab-content");
+      if(!profileContent) return;
+  
+      while (profileContent.firstChild) {
+        profileContent.removeChild(profileContent.firstChild);
+      }
+      console.log(username);
+      console.log(currentUsername);
+  
+      insertLoadingCircle(profileContent);
+  
+      switch(category){
+        case 'user-posts':
+            sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+            break;
+        
+        case 'user-comments':
+          sendAjaxRequest('get', '/api/comments/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+          break;
+        
+        case 'user-likes':
+          sendAjaxRequest('get', '/api/likes/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+          break;
+      }
+    }
+  
 
   const html = document.documentElement;
 
