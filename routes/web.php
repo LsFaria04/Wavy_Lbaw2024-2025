@@ -80,6 +80,7 @@ Route::post('/comments/update/{comment}', [CommentController::class, 'update'])-
 Route::post('/comments/delete/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 Route::get('/comments/{id}', [CommentController::class, 'show'])->name('comments.show');
 Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/comments/storeSubcomment', [CommentController::class, 'storeSubcomment'])->name('comments.storeSubcomment');
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');

@@ -50,6 +50,9 @@
         <p>{{ $comment->message }}</p>
 
         <!-- Loop through media files associated with the comment -->
+        @php
+            Log::info($comment->media);
+        @endphp
         <div class="comment-media mt-4 grid grid-cols-2 gap-4">
             @foreach ($comment->media as $media)
                 @php
