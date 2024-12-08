@@ -67,7 +67,6 @@ class TopicController extends Controller
 
         //Can only access the topics if the authenticated user has the same id has the one sent in the request
         if(Auth::user()->userid == $userId){
-            Log::info("here3");
             $topics = DB::table('topic')
                         ->leftjoin('user_topics', function($join) use ($userId) { 
                             $join->on('topic.topicid', '=', 'user_topics.topicid') 
@@ -111,7 +110,7 @@ class TopicController extends Controller
     function getPostTopics(Request $request, $postId){
             $topics = DB::table('topic')
                         ->join('post_topics', 'topic.topicid', '=', 'post_topics.topicid')
-                        ->join('post', 'post.postid', '=', 'post_topics.posyid')
+                        ->join('post', 'post.postid', '=', 'post_topics.postid')
                         ->where('post.postid','?')
                         ->select('topic.*')
                         ->setBindings([$postId])
@@ -125,7 +124,7 @@ class TopicController extends Controller
     */
     function addTopicToUser(Request $request, $topicId, $userid){
         if(!Auth::check()){
-            return response()->json(['response' => '403']);
+            return response()->json(['response' => '403', 'message' => 'Cannot add topics to other users']);
         }
         try{
             DB::table('user_topics')
@@ -134,7 +133,7 @@ class TopicController extends Controller
                     'userid' => $userid
                 ]);
         } catch(\Exception $e){
-            return response()->json(['response' => '500']);
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
         
         return response()->json(['response' => '200']);  
@@ -145,7 +144,7 @@ class TopicController extends Controller
     */
     function removeTopicFromUser(Request $request,$topicId, $userid){
         if(!Auth::check()){
-            return response()->json(['response' => '403']);
+            return response()->json(['response' => '403', 'message' => 'Cannot remove other users topics']);
         }
         try{
         DB::table('user_topics')
@@ -155,9 +154,71 @@ class TopicController extends Controller
             ])
             ->delete();
         }catch(\Exception $e){
-            return response()->json(['response' => '500']);
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
         return response()->json(['response' => '200']); 
+    }
+
+    /*
+    Searches for topics that belong to a user using a search query
+    */
+    function searchUserTopic(Request $request, $userid){
+        $query = $request->input('q');
+        Log::info(strval($query));
+        //sanitizes the query to separate the words
+        $sanitizedQuery = str_replace("'", "''", $query);
+        Log::info(strval($sanitizedQuery));
+
+        if(!Auth::check()){
+            return response()->json(['response' => '403', 'message' => 'Cannot search other users topics']);
+        }
+        try{
+            $topics = DB::table('topic')
+                ->join('user_topics', 'topic.topicid', '=', 'user_topics.topicid')
+                ->where('user_topics.userid','?')
+                ->whereRaw("topic.search @@ plainto_tsquery('english', ?)")
+                ->select('topic.*')
+                ->setBindings([$userid, $sanitizedQuery])
+                ->paginate(10);
+
+            return response()->json($topics);
+        }catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server Problem. Try again']);
+        }
+        return response()->json(['response' => '403', 'message' => 'Cannot access other users topics']);    
+    }
+
+    /*
+    Searches for topics that a user can add using a search query
+    */
+    function searchTopicsToAdd(Request $request, $userid){
+        $query = $request->input('q');
+        //sanitizes the query to separate the words
+        $sanitizedQuery = str_replace("'", "''", $query);
+
+        if(!Auth::check()){
+            return response()->json(['response' => '403', 'message' => 'You cannot search topics']);
+        }
+        try{
+            $topics = DB::table('topic')
+            ->leftjoin('user_topics', function($join) use ($userid) { 
+                $join->on('topic.topicid', '=', 'user_topics.topicid') 
+                    ->where('user_topics.userid', '=', $userid);
+            })
+            ->WhereNull('user_topics.userid')
+            ->whereRaw("topic.search @@ plainto_tsquery('english', ?)")
+            ->select('topic.*')
+            ->setBindings([$sanitizedQuery])
+            ->distinct()
+            ->paginate(10);
+
+            return response()->json($topics);
+
+        }catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
+        }
+        return response()->json(['response' => '403', 'message' => 'Cannot search other users topics']);   
+        
     }
 
 
