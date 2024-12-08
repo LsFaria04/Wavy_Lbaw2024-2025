@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class User extends Authenticatable
 {
@@ -66,7 +67,6 @@ class User extends Authenticatable
         return $this->passwordhash;
     }
 
-
     /**
      * Get the posts for a user.
      */
@@ -94,4 +94,13 @@ class User extends Authenticatable
     public function getIsAdmin(): bool {
         return (bool) $this->attributes['isadmin'];
     }
+
+    /**
+     * Get the groups that the user is a part of.
+     */
+    public function groups(): BelongsToMany
+    {
+        return $this->belongsToMany(Group::class, 'group_membership', 'userid', 'groupid');
+    }
+
 }

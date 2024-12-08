@@ -12,6 +12,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupListController;
 use App\Http\Controllers\TopicController;
 
 /*
@@ -110,6 +111,7 @@ Route::get('/groups/{groupname}', [GroupController::class, 'show'])->name('group
 Route::delete('/groups/{groupid}/leave', [GroupController::class, 'leaveGroup'])->name('group.leave');
 Route::delete('/groups/{groupid}/remove/{userid}', [GroupController::class, 'removeMember'])->name('group.removeMember');
 Route::put('/groups/{groupid}', [GroupController::class, 'update'])->name('group.update');
+Route::get('/groups', [GroupListController::class, 'index'])->name('groupList');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');

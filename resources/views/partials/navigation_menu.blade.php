@@ -7,7 +7,7 @@
             </h1>
     </header>
     <nav class = "grow lg:pt-14">
-        <ul class = "flex justify-center flex-row lg:flex-col gap-14 md:gap-16 overflow-scroll">
+        <ul class = "flex justify-center flex-row lg:flex-col gap-8 md:gap-12 overflow-scroll">
             <li class = "test-white font-medium text-lg">
                 <a class = "flex flex-row items-center gap-3" href = "{{ route('home')}}">
                     <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Capa_1" x="0px" y="0px" viewBox="0 0 512.001 512.001" style="enable-background:new 0 0 512.001 512.001;" xml:space="preserve" width="20" height="20">
@@ -26,6 +26,15 @@
             </li>
             <li class = "test-white font-medium text-lg">
                 <a class = "flex flex-row items-center gap-3">
+                <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" id="Isolation_Mode" data-name="Isolation Mode" viewBox="0 0 24 24" width="20" height="20">
+                    <path d="M23.608,17.013l-2.8-10.1A9.443,9.443,0,0,0,2.486,7.4L.321,17.14a2.5,2.5,0,0,0,2.441,3.042H6.905a5.285,5.285,0,0,0,10.154,0H21.2a2.5,2.5,0,0,0,2.409-3.169Zm-20.223.169,2.03-9.137a6.443,6.443,0,0,1,12.5-.326l2.628,9.463Z" fill = "currentColor"/>
+                </svg>
+
+                    <span class="hidden md:block">Notifications</span>
+                </a>
+            </li>
+            <li class = "test-white font-medium text-lg">
+                <a class = "flex flex-row items-center gap-3">
                 <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" id="Bold" viewBox="0 0 24 24" width="20" height="20">
                     <path d="M18.5,1H5.5A5.506,5.506,0,0,0,0,6.5v11A5.506,5.506,0,0,0,5.5,23h13A5.506,5.506,0,0,0,24,17.5V6.5A5.506,5.506,0,0,0,18.5,1Zm0,3a2.476,2.476,0,0,1,1.643.631l-6.5,6.5a2.373,2.373,0,0,1-3.278,0l-6.5-6.5A2.476,2.476,0,0,1,5.5,4Zm0,16H5.5A2.5,2.5,0,0,1,3,17.5V8.017l5.239,5.239a5.317,5.317,0,0,0,7.521,0L21,8.017V17.5A2.5,2.5,0,0,1,18.5,20Z" fill = "currentColor"/>
                 </svg>
@@ -34,12 +43,11 @@
                 </a>
             </li>
             <li class = "test-white font-medium text-lg">
-                <a class = "flex flex-row items-center gap-3">
-                <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" id="Isolation_Mode" data-name="Isolation Mode" viewBox="0 0 24 24" width="20" height="20">
-                    <path d="M23.608,17.013l-2.8-10.1A9.443,9.443,0,0,0,2.486,7.4L.321,17.14a2.5,2.5,0,0,0,2.441,3.042H6.905a5.285,5.285,0,0,0,10.154,0H21.2a2.5,2.5,0,0,0,2.409-3.169Zm-20.223.169,2.03-9.137a6.443,6.443,0,0,1,12.5-.326l2.628,9.463Z" fill = "currentColor"/>
-                </svg>
-
-                    <span class="hidden md:block">Notifications</span>
+                <a class = "flex flex-row items-center gap-3" href = "{{ route('groupList')}}">
+                    <svg class="feather feather-users" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span class="hidden md:block">Groups</span>
                 </a>
             </li>
             @if(Auth::check())
