@@ -30,8 +30,6 @@ function addEventListeners() {
 
   setupCreateUserMenu();
   //listeners related to the posts
-  addEventListenerToPostForms();
-  syncFilesWithInputEventListener()
 
   addEventListenerEditUserAdmin();
   eventListernerFormsAdmin();

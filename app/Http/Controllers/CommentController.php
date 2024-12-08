@@ -1,7 +1,9 @@
 <?php
 
 namespace App\Http\Controllers;
+use Illuminate\Support\Facades\Log;
 
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -60,12 +62,11 @@ class CommentController extends Controller
     
     public function store(Request $request)
     {
-        // Validate input
         $request->validate([
             'message' => 'required|string|max:255',
             'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:8192', 
         ]);
-    
+
         // Check if the user is authorized to create a comment
         if ($request->user()->cannot('create', Comment::class)) {
             return redirect()->route('posts.show',$request->postid)->with('error', 'You cannot create a comment!');
@@ -86,26 +87,31 @@ class CommentController extends Controller
         $comment->save();
 
         if ($request->hasFile('media')) {
-            // Check if there are more than 4 files
-            if (count($request->file('media')) > 4) {
-                return redirect()->route('home')->with('error', 'You can only upload a maximum of 4 media files.');
-            }
-            
-            // Store the images in the 'images' directory under 'public'
+            // Log the array of uploaded files
+            Log::info('Media files uploaded:', $request->file('media'));
+        
             foreach ($request->file('media') as $file) {
-                if($file->isValid()){
+                if ($file->isValid()) {
+                    // Log the individual file details
+                    Log::info('File name:', ['name' => $file->getClientOriginalName()]);
+                    Log::info('File size:', ['size' => $file->getSize()]);
+                    Log::info('File mime type:', ['type' => $file->getMimeType()]);
+        
+                    // Process the file as usual
                     $mediaPath = $file->store('images', 'public');
-
+        
                     Media::create([
-                        'commentid' => $comment->commentid, // Associate media with this comment
-                        'userid' => NULL, 
-                        'path' => $mediaPath, // Store the image path
+                        'commentid' => $comment->commentid,
+                        'userid' => NULL,
+                        'path' => $mediaPath,
                     ]);
-                }
-                else{
-                    return redirect()->route('posts.show',$request->postid)->with('error', 'Could not upload the file!');
+                } else {
+                    Log::error('File is invalid:', ['name' => $file->getClientOriginalName()]);
+                    return redirect()->route('posts.show', $request->postid)->with('error', 'Could not upload the file!');
                 }
             }
+        } else {
+            Log::warning('No media files uploaded.');
         }
     
         return redirect()->route('posts.show',$request->postid)->with('success', 'Comment created successfully!');
@@ -137,7 +143,7 @@ class CommentController extends Controller
         ]);
 
         $comment->save();
-
+        
         if ($request->hasFile('media')) {
             // Check if there are more than 4 files
             if (count($request->file('media')) > 4) {
@@ -259,7 +265,10 @@ class CommentController extends Controller
         if (request()->ajax()) {
             return response()->json(['success' => true, 'message' => 'Comment deleted successfully!']);
         }
-
-        return redirect()->route('posts.show',$comment->postid)->with('success', 'Comment deleted successfully!');
+        
+        if ($comment->postid != NULL){
+            return redirect()->route('posts.show',$comment->postid)->with('success', 'Comment deleted successfully!');
+        }
+        else return redirect()->route('comments.show',$comment->parentcommentid)->with('success', 'Comment deleted successfully!');
     }
 }

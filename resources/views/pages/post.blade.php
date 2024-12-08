@@ -1,13 +1,12 @@
 @extends('layouts.app')
 @section('content')
-    <section id="timeline" class="flex flex-col px-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
         
         @include('partials.post', ['post' => $post])
 
         @if(Auth::check() && !Auth()->user()->isadmin)
                 <div class="addComment mb-6 p-4 bg-white rounded-xl shadow-md">
                     <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
-                    <form action="{{ route('comments.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+                    <form id= "commentForm" action="{{ route('comments.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                         @csrf
                         <input type="hidden" name="postid" value="{{ $post->postid }}">
                         <div class="flex items-start">
@@ -51,5 +50,4 @@
                 <p class="text-gray-500">No comments yet.</p>
             @endforelse
         </div>
-    </section>
 @endsection
