@@ -44,6 +44,7 @@ function addEventListeners() {
 let isAuthenticated = false; 
 let userId = -1;
 let isadmin = false;
+let currentUsername = "";
 sendAjaxRequest('post', '/api/auth-check', null, authInfo);
 function authInfo(){
   const response = JSON.parse(this.responseText);
@@ -57,6 +58,8 @@ function authId(){
   const response = JSON.parse(this.responseText);
   userId = response.id;
   isadmin = response.isadmin;
+  currentUsername = response.username;
+ 
 }
 
 //Create Post Helper
@@ -575,20 +578,24 @@ function removeSpecificFile(index) {
   }
 }
 
+
 function likePost(postId) {
+  
   const likeCountElement = document.getElementById(`like-count-${postId}`);
   
   const heartEmpty = document.getElementById(`heart-empty-${postId}`);
   const heartFilled = document.getElementById(`heart-filled-${postId}`);
 
-  if (heartFilled.classList.contains('hidden')) {
+  if (heartFilled?.classList.contains('hidden')) {
       heartEmpty.classList.add('hidden');
       heartFilled.classList.remove('hidden');
       likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
   } else {
-      heartEmpty.classList.remove('hidden');
-      heartFilled.classList.add('hidden');
-      likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+      heartEmpty?.classList.remove('hidden');
+      heartFilled?.classList.add('hidden');
+      if(likeCountElement !== null){
+        likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+      }
   }
 }
 

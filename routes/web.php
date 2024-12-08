@@ -63,6 +63,8 @@ Route::post('/api/groups/{group}/requests/{request}/accept', [GroupController::c
 Route::controller(TopicController::class)->group(function (){
     Route::get('/api/topics/{userid}', 'getUserTopics');
     Route::get('/api/topics/canAdd/{userid}', 'getTopicsToAdd');
+    Route::get('/api/topics/search/{userid}', 'searchUserTopic');
+    Route::get('/api/topics/search/canAdd/{userid}', 'searchTopicsToAdd');
     Route::put('/api/topics/add/{topicid}/{userid}', 'addTopicToUser');
     Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
 });
