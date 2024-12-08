@@ -40,7 +40,7 @@ class SearchController extends Controller
                 case 'posts':
                     if(Auth::check()){
                         if(Auth::user()->isadmin){
-                            $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            $posts = Post::with('user','media')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                             ->orderBy('createddate', 'desc')
                             ->paginate(10);
                             for($i = 0;$i < sizeof($posts); $i++) {
@@ -49,7 +49,7 @@ class SearchController extends Controller
                             
                         }
                         else {
-                            $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            $posts = Post::with('user','media')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                             ->where('visibilitypublic', true)
                             ->orderBy('createddate', 'desc')
                             ->paginate(10);
@@ -60,7 +60,7 @@ class SearchController extends Controller
                     }
 
                     else {
-                        $posts = Post::with('user','media')->whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                        $posts = Post::with('user','media')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
@@ -74,7 +74,7 @@ class SearchController extends Controller
 
                     if(Auth::check()) {
                         $users = User::where(function($query) use ($sanitizedQuery) {
-                            $query->whereRaw("to_tsvector('english', username) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                                   ->orWhere('username', $sanitizedQuery);
                         })
                         ->where('state', '<>', 'deleted')
@@ -84,7 +84,7 @@ class SearchController extends Controller
 
                     else {
                         $users = User::where(function($query) use ($sanitizedQuery) {
-                            $query->whereRaw("to_tsvector('english', username) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                                   ->orWhere('username', $sanitizedQuery);
                         })
                         ->where('visibilitypublic', true)
@@ -95,11 +95,11 @@ class SearchController extends Controller
                     break;
 
                 case 'groups':
-                    $groups = Group::whereRaw("to_tsvector('english', groupName || ' ' || description) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                    $groups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->paginate(10);
                     break;
                 default:
-                    $posts = Post::whereRaw("to_tsvector('english', message) @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                    $posts = Post::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->paginate(10);
                         for($i = 0;$i < sizeof($posts); $i++){
