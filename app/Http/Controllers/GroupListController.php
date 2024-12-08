@@ -4,75 +4,89 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class GroupListController extends Controller
 {
     public function index(Request $request)
     {
         $query = $request->input('q');
-        $category = $request->input('category', 'your-groups');
-        $user = auth()->user(); // Get the logged-in user
-
-        // Initialize variables for groups
-        $userGroups = collect();
         $searchGroups = collect();
+        $userGroups = collect();
 
-        // If the user is logged in, fetch their groups for 'your-groups' category
-        if ($user && $category === 'your-groups') {
-            $userGroups = $user->groups()->paginate(10);  // Paginate user's groups
-        }
+        if(Auth::check()) {
+            $category = $request->input('category', 'your-groups');
+            $user = Auth::user(); 
+            // If the user is logged in, fetch their groups for 'your-groups' category
+            if ($category === 'your-groups') {
+                $userGroups = $user->groups()->paginate(10);  // Paginate user's groups
+            }
 
-        // If no search query, return empty JSON
-        if (empty($query)) {
-            if ($request->ajax()) {
-                return response()->json([
+            // If no search query, return empty JSON
+            if (empty($query)) {
+                if ($request->ajax()) {
+                    return response()->json([$userGroups]);
+                }
+
+                return view('pages.groupList', [
+                    'category' => $category,
                     'userGroups' => $userGroups,
                     'searchGroups' => $searchGroups,
-                    'lastPage' => $userGroups->lastPage() ?? 1,
                 ]);
+            } else {
+                $sanitizedQuery = str_replace("'", "''", $query); // Sanitize the query
+                switch($category) {
+                    case 'your-groups':
+                        $userGroups = $user->groups()->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            ->paginate(10);
+                        break;
+                    case 'search-groups':
+                        $searchGroups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                        ->paginate(10);
+                        break;
+                    default:
+                        $userGroups = $user->groups()->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            ->paginate(10);
+                        break;
+                }
             }
+            
+        } else {
+            $category = $request->input('category', 'search-groups');
+            // If no search query, return empty JSON
+            if (empty($query)) {
+                if ($request->ajax()) {
+                    return response()->json([]);
+                }
 
-            return view('pages.groupList', [
-                'category' => $category,
-                'userGroups' => $userGroups,
-                'searchGroups' => $searchGroups,
-            ]);
+                return view('pages.groupList', [
+                    'category' => $category,
+                    'userGroups' => $userGroups,
+                    'searchGroups' => $searchGroups,
+                ]);
+            } else {
+                $sanitizedQuery = str_replace("'", "''", $query); // Sanitize the query
+                switch($category) {
+                    case 'search-groups':
+                        $searchGroups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                        ->paginate(10);
+                        break;
+                    default:
+                        $searchGroups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            ->paginate(10);
+                        break;
+                }
+            }
         }
 
-        // If a search query exists and the category is 'search-groups', search across all groups
-        if (!empty($query)) {
-            $sanitizedQuery = str_replace("'", "''", $query); // Sanitize the query
-
-            if ($category === 'search-groups') {
-                $searchGroups = Group::whereRaw(
-                    "to_tsvector('english', groupName || ' ' || description) @@ plainto_tsquery('english', ?)",
-                    [$sanitizedQuery]
-                )
-                ->paginate(10); // Paginate search results
-            } elseif ($category === 'your-groups' && $user) {
-                // If the category is 'your-groups' and the user is logged in, filter user's groups based on the query
-                $userGroups = $user->groups()->whereRaw(
-                    "to_tsvector('english', groupName || ' ' || description) @@ plainto_tsquery('english', ?)",
-                    [$sanitizedQuery]
-                )->paginate(10);
-            }
-        }
+        $message = null;
 
         // Return JSON response for AJAX requests
         if ($request->ajax()) {
-            return response()->json([
-                'userGroups' => $userGroups,
-                'searchGroups' => $searchGroups,
-                'lastPage' => $searchGroups->lastPage() ?? 1,
-            ]);
+            return response()->json([$userGroups, $searchGroups]);
         }
 
         // Return the view if not an AJAX request
-        return view('pages.groupList', [
-            'userGroups' => $userGroups,
-            'searchGroups' => $searchGroups,
-            'query' => $query,
-            'category' => $category,
-        ]);
+        return view('pages.groupList', compact('message', 'userGroups', 'searchGroups', 'query', 'category'));
     }
 }

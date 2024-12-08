@@ -66,6 +66,16 @@ function addEventListeners() {
           sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchCategory, null, insertMoreSearchResults);
           loading = false;
       }
+
+      const groupListPage = document.querySelector("#group-results");
+      if((groupListPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ){
+        currentPage +=1;
+        loading = true;
+        insertLoadingCircle(groupListPage);
+        const query = document.querySelector('input[name="q"]').value;
+        sendAjaxRequest('get', '/groups?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchGroupCategory, null, insertMoreGroupSearchResults);
+        loading = false;
+    }
   
       //actions to take place in the profile page
       const profilePage = document.querySelector("#profile-tab-content");

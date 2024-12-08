@@ -23,6 +23,11 @@ function changeGroupCategory(category) {
     loadSearchGroupContent(category, query);
 }
 
+let searchGroupCategory = null;
+if(document.querySelector('input[name="category"]') !== null){
+    searchGroupCategory = document.querySelector('input[name="category"]').value;
+}
+
 // Loads the search content based on the selected category
 function loadSearchGroupContent(category, query) {
     const groupResults = document.querySelector("#group-results");
@@ -39,56 +44,35 @@ function insertMoreGroupSearchResults() {
     removeLoadingCircle();  // Remove the loading spinner
     const groupResults = document.querySelector("#group-results");
 
-    try {
-        let results = JSON.parse(this.responseText); // Parse the JSON response
+    let results = JSON.parse(this.responseText); // Parse the JSON response
 
-        // Ensure the results structure exists and has userGroups and searchGroups
-        if (results.userGroups && results.searchGroups) {
-            switch (searchGroupCategory) {
-                case 'your-groups':
-                    if (results.userGroups.data.length === 0) {
-                        groupResults.innerHTML = `
-                            <div class="flex justify-center items-center h-32">
-                                <p class="text-gray-600 text-center">You are not part of any groups.</p>
-                            </div>
-                        `;
-                        return;
-                    }
-                    maxPage = results.userGroups.lastPage;
-                    insertMoreGroups(groupResults, results.userGroups);
-                    break;
-
-                case 'search-groups':
-                    if (results.searchGroups.data.length === 0) {
-                        groupResults.innerHTML = `
-                            <div class="flex justify-center items-center h-32">
-                                <p class="text-gray-600 text-center">No groups found matching your search.</p>
-                            </div>
-                        `;
-                        return;
-                    }
-                    maxPage = results.searchGroups.lastPage;
-                    insertMoreGroups(groupResults, results.searchGroups);
-                    break;
-
-                default:
-                    return;
+    switch (searchGroupCategory) {
+        case 'your-groups':
+            if(results[0] === undefined) {
+                break;
             }
-        } else {
-            // If the results don't have userGroups or searchGroups, show a default message
-            groupResults.innerHTML = `
-                <div class="flex justify-center items-center h-32">
-                    <p class="text-gray-600 text-center">An error occurred, please try again later.</p>
-                </div>
-            `;
-        }
-    } catch (e) {
-        console.error('Failed to parse response:', e);
+            maxPage = results[0].lastPage;
+            insertMoreGroups(groupResults, results[0]);
+            break;
+
+        case 'search-groups':
+            if (results[1] === undefined) {
+                break;
+            }
+            maxPage = results[1].lastPage;
+            insertMoreGroups(groupResults, results[1]);
+            break;
+
+        default:
+            return;
+    }
+
+    if(groupResults.firstChild == null){
         groupResults.innerHTML = `
-            <div class="flex justify-center items-center h-32">
-                <p class="text-gray-600 text-center">An error occurred while fetching data. Please try again.</p>
-            </div>
-        `;
+          <div class="flex justify-center items-center h-32">
+              <p class="text-gray-600 text-center">No groups found matching your search.</p>
+          </div>
+        `;       
     }
 }
 
