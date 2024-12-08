@@ -90,7 +90,7 @@ function addEventListeners() {
     }
     else{
 
-      let topics = document.querySelectorAll('#myTopicsList .topicList li');
+      let topics = document.querySelectorAll('#myTopicsList .topicList li,#myTopicsList p ');
       topics.forEach(function (e) {e.remove()}); 
       
     }
@@ -110,7 +110,7 @@ function addEventListeners() {
 
     }
     else{
-      let topics = document.querySelectorAll('#topicsList .topicList li');
+      let topics = document.querySelectorAll('#topicsList .topicList li, #topicsList p');
       topics.forEach( function (e) {e.remove()});
     }
 
@@ -278,7 +278,7 @@ function addEventListeners() {
       if(isMyTopics){
         myTopicPageMax = topics.last_page;
         topicsList = document.querySelector("#myTopicsList > ul");
-
+        
         //already loaded everything from the db. Hide the button
         if(myTopicPageMax == myTopicPage){
           if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')){
