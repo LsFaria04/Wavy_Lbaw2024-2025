@@ -15,15 +15,15 @@ class PostComment
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $comment;
-    public $postOwnerId;
+    public $receiverid;
 
-    public function __construct($comment, $postOwnerId) {
+    public function __construct($comment, $receiverid) {
         $this->comment = $comment;
-        $this->postOwnerId = $postOwnerId;
+        $this->receiverid = $receiverid;
     }
 
     public function broadcastOn(): array {
-        return new PrivateChannel('user.' . $this->postOwnerId);
+        return new PrivateChannel('user.' . $this->receiverid);
     }
 
     public function broadcastAs() {

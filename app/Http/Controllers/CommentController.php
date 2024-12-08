@@ -9,6 +9,8 @@ use App\Models\User;
 use App\Models\Comment;
 use App\Models\Media;
 
+use App\Events\PostComment;
+
 
 class CommentController extends Controller
 {

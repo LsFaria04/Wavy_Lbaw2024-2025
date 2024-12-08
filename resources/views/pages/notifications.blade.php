@@ -1,30 +1,58 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col items-center w-full max-w-full bg-white">
-        <header id="notifications-header" class="w-full max-w-full p-4 shadow-md flex items-center sticky top-0 z-10 backdrop-blur">
+    <div class="w-full max-w-4xl mx-auto bg-white">
+        <!-- Notifications header -->
+        <header id="notifications-header" class="w-full p-4 shadow-md flex items-center sticky top-0 z-10 backdrop-blur bg-white">
             <h1 class="text-xl font-bold text-gray-800">Notifications</h1>
         </header>
 
-        <div class="w-full max-w-full p-6">
+        <div class="p-6">
+            <!-- Tabs for different notification types -->
+            <div class="tabs mb-6 flex space-x-6 text-sm font-medium">
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200">
+                    All Notifications
+                </button>
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200">
+                    Comments
+                </button>
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200 disabled">
+                    Likes
+                </button>
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200 disabled">
+                    Follows
+                </button>
+            </div>
+
             @if($notifications->isEmpty())
                 <div class="flex justify-center items-center h-32">
-                    <p class="text-gray-600 text-center">Nenhuma notificação disponível.</p>
+                    <p class="text-gray-600">Nenhuma notificação disponível.</p>
                 </div>
             @else
-                <ul class="space-y-4">
+                <div class="space-y-4">
                     @foreach($notifications as $notification)
-                        <li>
-                            @if(isset($notification->post_id))
-                                <a href="{{ route('posts.show', ['id' => $notification->post_id]) }}">
-                                    {{ $notification->message }}
-                                </a>
-                            @else
-                                <span>Post not available</span>
-                            @endif
-                        </li>
+                        <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+                            <!-- Notification message and post link -->
+                            <div class="flex-1">
+                                @if(isset($notification->comment) && isset($notification->comment->post))
+                                    <div class="text-sm font-semibold text-gray-800">
+                                        {{ $notification->comment->user->username }} commented on your post.
+                                    </div>
+                                    <div class="text-sm text-gray-500">
+                                        <a href="{{ route('posts.show', ['id' => $notification->comment->post->postid]) }}" class="text-blue-600 hover:underline">View Post</a>
+                                    </div>
+                                @else
+                                    <div class="text-gray-600 text-sm">Post not available.</div>
+                                @endif
+                            </div>
+
+                            <!-- Notification timestamp -->
+                            <div class="text-xs text-gray-400">
+                                {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
+                            </div>
+                        </div>
                     @endforeach
-                </ul>
+                </div>
             @endif
         </div>
     </div>

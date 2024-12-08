@@ -3,6 +3,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Carbon\Carbon;
 
 class Notification extends Model
 {
@@ -18,13 +19,23 @@ class Notification extends Model
         'receiverid', 'date', 'seen', 'followid', 'commentid', 'likeid',
     ];
 
-    // Relacionamento com o comentário
+    protected $casts = [
+        'date' => 'datetime',
+    ];
+
     public function comment() {
         return $this->belongsTo(Comment::class, 'commentid');
     }
 
-    // Relacionamento com o post
     public function post() {
-        return $this->hasOneThrough(Post::class, Comment::class, 'commentID', 'postID', 'commentID', 'postID');
+        return $this->hasOneThrough(
+            Post::class,
+            Comment::class,
+            'commentid',
+            'postid',   
+            'commentid',
+            'postid'    
+        );
     }
+    
 }

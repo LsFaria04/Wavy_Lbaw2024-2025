@@ -21,13 +21,16 @@ class NotificationController extends Controller
     protected function getCommentNotifications() {
         return Notification::with(['comment', 'comment.post', 'comment.post.user'])
             ->whereNotNull('commentid')
-            ->whereHas('comment.post', function ($query) {
-                $query->where('userid', Auth::id()); 
+            ->whereHas('comment', function ($query) {
+                $query->whereHas('post', function ($postQuery) {
+                    $postQuery->where('userid', Auth::id());
+                });
             })
-            ->where('receiverid', Auth::id()) 
+            ->where('receiverid', Auth::id())
             ->latest('date')
             ->get();
     }
+    
 
     protected function markNotificationsAsSeen($notifications) {
         foreach ($notifications as $notification) {
