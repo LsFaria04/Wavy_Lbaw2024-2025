@@ -160,6 +160,30 @@ class TopicController extends Controller
         return response()->json(['response' => '200']); 
     }
 
+    /*
+    Searches for topics that belong to a user using a search query
+    */
+    function searchUserTopic(Request $request,$topicId, $userid){
+        $query = $request->input('q');
+
+        if(!Auth::check()){
+            return response()->json(['response' => '403']);
+        }
+        
+    }
+
+    /*
+    Searches for topics that a user can add using a search query
+    */
+    function searchTopicsToAdd(Request $request,$topicId, $userid){
+        $query = $request->input('q');
+
+        if(!Auth::check()){
+            return response()->json(['response' => '403']);
+        }
+        
+    }
+
 
 
 }

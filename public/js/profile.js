@@ -389,15 +389,23 @@ function addEventListeners() {
   function searchTopics(event){
     event.preventDefault();
     console.log("teste");
+
+    //guardar query numa variavel para que esta são se perca quando for fazer pedidos ajax para a paginação
+    //Ter uma variável que guarda se a busca por topicos está a ser feita por pesquisa ou geral para que não se perca info nos pedidos ajax
+
   }
 
   //search for topics that are associated to a user
   function searchMyTopics(event){
     event.preventDefault();
     console.log("teste");
+
+    //guardar query numa variavel para que esta são se perca quando for fazer pedidos ajax para a paginação
+    //Ter uma variável que guarda se a busca por topicos está a ser feita por pesquisa ou geral para que não se perca info nos pedidos ajax
+
   }
 
-  //adds more topics to a user using an ajax request
+  //adds more topics to a user using an ajax request and removing from the DOM in the add topic page and adding the topic in the DOM in my topics page
   function addTopicToUser(topicId){
     sendAjaxRequest('put', '/api/topics/add/' + topicId + '/' + userId, null, function(){
       let response = JSON.parse(this.responseText);
@@ -437,6 +445,7 @@ function addEventListeners() {
     });
   }
 
+  //removes a topic from the user using an ajax request and removing the topic from the DOM.
   function removeTopicFromUser(topicId){
     sendAjaxRequest('delete', '/api/topics/remove/' + topicId + '/' + userId, null, function(){
       let response = JSON.parse(this.responseText);
