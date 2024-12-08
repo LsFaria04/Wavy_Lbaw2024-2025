@@ -179,14 +179,14 @@ function toggleEditComment(commentid) {
 }
 
 // Open delete confirmation menu
-function openDeleteMenu(commentid) {
+function openDeleteCommentMenu(commentid) {
   const deleteMenu = document.getElementById('deleteMenu');
   deleteMenu.classList.remove('hidden');
   document.documentElement.classList.add('overflow-hidden'); // Ensure the whole page is locked
   window.selectedcommentId = commentid;
 }
 
-function updateFileNameEdit(commentId) {
+function updateFileNameEditComment(commentId) {
   const fileInput = document.getElementById(`image-${commentId}`);
   const fileDisplay = document.getElementById(`fileDisplay-${commentId}`);
   const newFileDisplay = document.getElementById(`newFiles-${commentId}`)

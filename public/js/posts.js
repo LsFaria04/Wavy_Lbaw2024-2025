@@ -248,7 +248,6 @@ function removeFileEdit(postId, mediaId) {
 function syncPostFilesWithInputEventListener(){
   // Synchronize selectedFiles with the file input before form submission
   document.querySelector('form').addEventListener('submit', function (e) {
-    alert("gay");
     
     if (selectedFiles.length > 4) {
       e.preventDefault(); // Prevent the form from submitting

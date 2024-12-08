@@ -19,7 +19,7 @@
 
                     <form action="{{ route('comments.destroy', $comment->commentid) }}" method="POST" id="deleteForm-{{ $comment->commentid }}">
                         @csrf
-                        <button type="button" onclick="openDeleteMenu('{{ $comment->commentid }}')" class="text-red-500 hover:text-red-700 ml-2">
+                        <button type="button" onclick="openDeleteCommentMenu('{{ $comment->commentid }}')" class="text-red-500 hover:text-red-700 ml-2">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                             </svg>
@@ -33,7 +33,7 @@
     <!-- Delete Confirmation Menu -->
     <div id="deleteMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20">
         <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
-            <h2 class="text-xl font-semibold text-gray-900">Delete comment</h2>
+            <h2 class="text-xl font-semibold text-gray-900">Delete Comment</h2>
             <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this comment? This action cannot be undone.</p>
             <div class="mt-6 flex justify-end gap-3">
                 <button id="cancelButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
@@ -83,7 +83,7 @@
         @if(auth()->id() === $comment->userid || Auth::user()->isadmin) 
             <!-- Edit Section in comment.blade.php -->
             <div id="edit-comment-{{ $comment->commentid }}" class="edit-comment-form hidden mt-4 bg-white rounded-xl shadow-md p-4">
-                <form action="{{ route('comments.update', $comment->commentid) }}" method="comment" enctype="multipart/form-data" class="flex flex-col gap-4" data-comment-id="{{ $comment->commentid }}">
+                <form action="{{ route('comments.update', $comment->commentid) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4" data-comment-id="{{ $comment->commentid }}">
                     @csrf
                     <div class="mb-4">
                         <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
@@ -114,7 +114,7 @@
                                 <!-- New files to add appended via JS -->
                             </div>
                         </div>
-                        <input type="file" name="media[]" id="image-{{ $comment->commentid }}" class="hidden" onchange="updateFileNameEdit('{{ $comment->commentid }}')" multiple>
+                        <input type="file" name="media[]" id="image-{{ $comment->commentid }}" class="hidden" onchange="updateFileNameEditComment('{{ $comment->commentid }}')" multiple>
                         <input type="hidden" name="remove_media" id="removeMedia-{{ $comment->commentid }}" value="[]">
                     </div>
 

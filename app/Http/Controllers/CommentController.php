@@ -230,7 +230,8 @@ class CommentController extends Controller
                 ]);
             }
         }
-        return redirect()->route('home')->with('success', 'Comment updated successfully!');
+        if ($comment->postid != NULL) return redirect()->route('posts.show', $comment->postid)->with('success', 'Comment updated successfully!');
+        else return redirect()->route('comments.show', $comment->parentcommentid)->with('success', 'Comment updated successfully!');
     }
 
     /**
