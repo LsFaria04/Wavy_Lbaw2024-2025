@@ -502,7 +502,7 @@ function insertUpdateForm(post, id, message, media){
         <input type="hidden" name="_token" value= ${getCsrfToken()} />
         <div class="mb-4">
             <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
-            <textarea id="message" name="message" rows="2" class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" placeholder="Edit your message">${ message}</textarea>
+            <textarea name="message" rows="2" class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" placeholder="Edit your message">${ message}</textarea>
         </div>
   
         <div class="mb-4">
