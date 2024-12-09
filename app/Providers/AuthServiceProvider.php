@@ -11,6 +11,8 @@ use App\Models\User;
 use App\Policies\UserPolicy;
 use App\Models\Group;
 use App\Policies\GroupPolicy;
+use App\Models\Topic;
+use App\Policies\TopicPolicy;
 
 class AuthServiceProvider extends ServiceProvider
 {
@@ -24,6 +26,7 @@ class AuthServiceProvider extends ServiceProvider
         Post::class => PostPolicy::class,
         User::class => UserPolicy::class,
         Group::class => GroupPolicy::class,
+        Topic::class => TopicPolicy::class,
     ];
 
     /**

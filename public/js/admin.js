@@ -164,6 +164,7 @@ document.querySelectorAll('.delete-post-button').forEach(button => {
 //Admin Create User
 function setupCreateUserMenu() {
   const createUserBtn = document.getElementById("createUserBtn");
+  console.log("here");
   if(createUserBtn === null){
     return;
   }
