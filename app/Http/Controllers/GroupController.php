@@ -99,7 +99,6 @@ class GroupController extends Controller
 
         $invitations = GroupInvitation::with('user') 
             ->where('groupid', $id)
-            ->where('state', 'Pending') 
             ->orderBy('date', 'desc')
             ->paginate(10);
 
@@ -119,7 +118,6 @@ class GroupController extends Controller
 
         $joinRequests = JoinGroupRequest::with('user')
             ->where('groupid', $id)
-            ->where('state', 'Pending') 
             ->orderBy('date', 'desc')
             ->paginate(10);
 
@@ -148,7 +146,6 @@ class GroupController extends Controller
         GroupInvitation::create([
             'groupid' => $groupid,
             'userid' => $userid,
-            'state' => 'Pending',
             'date' => now(),
         ]);
 
@@ -192,12 +189,6 @@ class GroupController extends Controller
             ->where('invitationid', $invitationid)
             ->firstOrFail();
 
-        if ($invitation->state === 'Accepted') {
-            return response()->json(['status' => 'error', 'message' => 'Invitation already accepted.'], 400);
-        } else if ($invitation->state === 'Rejected') {
-            return response()->json(['status' => 'error', 'message' => 'Invitation already rejected.'], 400);
-        }
-
         $invitation->delete();
 
         return response()->json(['status' => 'success', 'message' => 'Invitation canceled successfully.'], 200);
@@ -215,7 +206,6 @@ class GroupController extends Controller
 
         $existingRequest = JoinGroupRequest::where('groupid', $groupid)
             ->where('userid', $user->userid)
-            ->where('state', 'Pending')
             ->first();
 
         if ($existingRequest) {
@@ -227,7 +217,6 @@ class GroupController extends Controller
             'groupid' => $groupid,
             'userid' => $user->userid,
             'date' => now(),
-            'state' => 'Pending',
         ]);
 
         return response()->json(['message' => 'Your join request has been sent successfully.'], 200);
@@ -239,14 +228,7 @@ class GroupController extends Controller
             ->where('requestid', $requestid)
             ->firstOrFail();
 
-        if ($joinRequest->state === 'Accepted') {
-            return response()->json(['status' => 'error', 'message' => 'Request already accepted.'], 400);
-        } else if ($joinRequest->state === 'Rejected') {
-            return response()->json(['status' => 'error', 'message' => 'Request already rejected.'], 400);
-        }
-
-        $joinRequest->state = 'Rejected';
-        $joinRequest->save();
+        $joinRequest->delete();
 
         return response()->json(['status' => 'success', 'message' => 'Join request rejected successfully.'], 200);
     }
@@ -257,14 +239,7 @@ class GroupController extends Controller
             ->where('requestid', $requestid)
             ->firstOrFail();
 
-        if ($joinRequest->state === 'Accepted') {
-            return response()->json(['status' => 'error', 'message' => 'Request already accepted.'], 400);
-        } else if ($joinRequest->state === 'Rejected') {
-            return response()->json(['status' => 'error', 'message' => 'Request already rejected.'], 400);
-        }
-
-        $joinRequest->state = 'Accepted';
-        $joinRequest->save();
+        $joinRequest->delete();
 
         $existingMembership = GroupMembership::where('groupid', $groupid)
             ->where('userid', $joinRequest->userid)
