@@ -17,7 +17,7 @@ class TopicController extends Controller
 
         //check if an user is authorized to create a topic
         try { 
-        $this->authorize('create', Auth::user());
+        $this->authorize('create', Topic::class);
         } catch (AuthorizationException $e) {
             return redirect()->route('home')->with('error', 'You are not authorized to create new topics.');
         }
@@ -44,7 +44,7 @@ class TopicController extends Controller
 
         //check if an user is authorized to delete a topic
         try{
-            $this->authorize('delete', Auth::user());
+            $this->authorize('delete', Topic::class);
         } catch (AuthorizationException $e) {
             return redirect()->route('home')->with('error', 'You are not authorized to delete topics.');
         }
@@ -61,12 +61,14 @@ class TopicController extends Controller
 
     //gets topics that a user can user
     function getTopicsToAdd(Request $request, $userId){
-        if(!Auth::check()){
-            return response()->json(['message' => 'Not authenticated', 'response' => '403']);
+        try{
+            $this->authorize('userTopics', [Topic::class,$userId]);
+        } catch(AuthorizationException $e){
+            return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
 
         //Can only access the topics if the authenticated user has the same id has the one sent in the request
-        if(Auth::user()->userid == $userId){
+        try{
             $topics = DB::table('topic')
                         ->leftjoin('user_topics', function($join) use ($userId) { 
                             $join->on('topic.topicid', '=', 'user_topics.topicid') 
@@ -77,6 +79,8 @@ class TopicController extends Controller
                         ->distinct()
                         ->paginate(10);
             return response()->json($topics);
+        }catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
         return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
@@ -86,12 +90,15 @@ class TopicController extends Controller
     Returns the topics that are associated to an user
     */
     function getUserTopics(Request $request, $userId){
-        if(!Auth::check()){
-            return response()->json(['message' => 'Not authenticated', 'response' => '403']);
+
+        try{
+            $this->authorize('userTopics', [Topic::class,$userId]);
+        } catch(AuthorizationException $e){
+            return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
 
         //Can only access the topics if the authenticated user has the same id has the one sent in the request
-        if(Auth::user()->userid == $userId){
+        try{
             $topics = DB::table('topic')
                         ->join('user_topics', 'topic.topicid', '=', 'user_topics.topicid')
                         ->where('user_topics.userid','?')
@@ -99,6 +106,8 @@ class TopicController extends Controller
                         ->setBindings([$userId])
                         ->paginate(10);
             return response()->json($topics);
+        } catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
         return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
@@ -123,9 +132,12 @@ class TopicController extends Controller
     Associates a topic to a user
     */
     function addTopicToUser(Request $request, $topicId, $userid){
-        if(!Auth::check()){
-            return response()->json(['response' => '403', 'message' => 'Cannot add topics to other users']);
+        try{
+            $this->authorize('userTopics', [Topic::class,$userid]);
+        } catch(AuthorizationException $e){
+            return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
+
         try{
             DB::table('user_topics')
                 ->insert([
@@ -143,9 +155,12 @@ class TopicController extends Controller
     Removes the association of a topic to a user
     */
     function removeTopicFromUser(Request $request,$topicId, $userid){
-        if(!Auth::check()){
-            return response()->json(['response' => '403', 'message' => 'Cannot remove other users topics']);
+        try{
+            $this->authorize('userTopics', [Topic::class,$userid]);
+        } catch(AuthorizationException $e){
+            return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
+
         try{
         DB::table('user_topics')
             ->where([
@@ -163,14 +178,14 @@ class TopicController extends Controller
     Searches for topics that belong to a user using a search query
     */
     function searchUserTopic(Request $request, $userid){
-        $query = $request->input('q');
         Log::info(strval($query));
         //sanitizes the query to separate the words
         $sanitizedQuery = str_replace("'", "''", $query);
-        Log::info(strval($sanitizedQuery));
 
-        if(!Auth::check()){
-            return response()->json(['response' => '403', 'message' => 'Cannot search other users topics']);
+        try{
+            $this->authorize('userTopics', [Topic::class,$userid]);
+        } catch(AuthorizationException $e){
+            return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
         try{
             $topics = DB::table('topic')
@@ -196,8 +211,10 @@ class TopicController extends Controller
         //sanitizes the query to separate the words
         $sanitizedQuery = str_replace("'", "''", $query);
 
-        if(!Auth::check()){
-            return response()->json(['response' => '403', 'message' => 'You cannot search topics']);
+        try{
+            $this->authorize('userTopics', [Topic::class,$userid]);
+        } catch(AuthorizationException $e){
+            return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
         try{
             $topics = DB::table('topic')

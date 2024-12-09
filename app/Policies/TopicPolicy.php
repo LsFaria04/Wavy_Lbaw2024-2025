@@ -3,6 +3,7 @@
 namespace App\Policies;
 
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 
 class TopicPolicy
 {
@@ -26,5 +27,12 @@ class TopicPolicy
     */
     public function delete(User $user){
         return $user->isadmin;
+    }
+
+    /*
+    Only users can manage their own topics
+    */
+    public function userTopics(User $user, $userid){
+        return $user->userid == $userid;
     }
 }

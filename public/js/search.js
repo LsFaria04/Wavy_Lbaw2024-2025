@@ -28,7 +28,6 @@ function addEventListeners() {
 
   document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
 
-  setupCreateUserMenu();
   //listeners related to the posts
 
   addEventListenerEditUserAdmin();
