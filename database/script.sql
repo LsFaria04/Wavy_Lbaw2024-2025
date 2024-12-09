@@ -813,8 +813,7 @@ VALUES
     ('Wellness and Yoga', 'A space for yoga practitioners to connect and share their journeys.', TRUE, 7),
     ('Garden Lovers', 'For gardening enthusiasts to share tips and grow together.', TRUE, 8),
     ('Book Club', 'A cozy club for book lovers to discuss and recommend their favorite reads.', TRUE, 9),
-    ('Music Jam', 'A group for musicians to come together, jam, and share their music.', TRUE, 10),
-    ('Tech Innovators', 'A community for tech enthusiasts to discuss the latest trends and innovations.', TRUE, 1);
+    ('Music Jam', 'A group for musicians to come together, jam, and share their music.', TRUE, 10);
 
 INSERT INTO GROUP_MEMBERSHIP (groupID, userID) 
 VALUES 
@@ -828,7 +827,6 @@ VALUES
     (7, 8), 
     (8, 9), 
     (9, 10),
-    (10,1), 
     (1, 3), 
     (2, 6); 
 
@@ -839,22 +837,17 @@ VALUES
     (3, 5, NOW(), 'Pending'),
     (3, 6, NOW(), 'Pending'),
     (4, 2, NOW(), 'Pending'),    
-    (5, 1, NOW(), 'Accepted'),   
     (6, 8, NOW(), 'Pending'),    
     (7, 4, NOW(), 'Rejected');    
 
 INSERT INTO MESSAGE (receiverID, senderID, message, date) 
 VALUES 
-    (2, 1, 'Welcome to the community, Bob!', '2024-11-04 10:00:00'),
-    (3, 1, 'Hi Charlie! Let’s collaborate on a project.', '2024-11-04 10:15:00'),
-    (4, 1, 'Dana, have you tried the new Italian restaurant?', '2024-11-04 10:30:00'),
     (5, 2, 'Eve, your portfolio is impressive!', '2024-11-04 10:45:00'),
     (6, 3, 'Hey Frank! Interested in joining my hiking group?', '2024-11-04 11:00:00'),
     (7, 4, 'Grace, I loved your recent yoga class!', '2024-11-04 11:15:00'),
     (8, 5, 'Henry, do you have any tips for starting a garden?', '2024-11-04 11:30:00'),
     (9, 6, 'Ivy, I think your story would make a great film!', '2024-11-04 11:45:00'),
-    (10, 7, 'Jack, I’d love to hear you play sometime!', '2024-11-04 12:00:00'),
-    (1, 8, 'Thanks for your feedback on my last project, Admin!', '2024-11-04 12:15:00');
+    (10, 7, 'Jack, I’d love to hear you play sometime!', '2024-11-04 12:00:00');
 
 INSERT INTO POST (userID, message, visibilityPublic, createdDate, groupID) 
 VALUES 
@@ -937,21 +930,16 @@ INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (6, 7, 'Accepted', NOW());
 
 INSERT INTO NOTIFICATION (receiverID, date, seen, followID, commentID, likeID) VALUES
-    (1, NOW(), FALSE, 2, NULL, NULL),
     (2, NOW(), TRUE, 1, NULL, NULL), 
     (3, NOW(), FALSE, NULL, 1, NULL),
     (4, NOW(), TRUE, NULL, NULL, 1), 
     (5, NOW(), FALSE, NULL, NULL, 2);
 
 INSERT INTO BLOCK (blockerID, blockedID) VALUES
-    (1, 2), 
-    (3, 1), 
     (4, 5); 
 
 INSERT INTO USER_TOPICS (userID, topicID) 
 VALUES 
-    (1, 2), 
-    (1, 3), 
     (2, 1), 
     (2, 4), 
     (3, 2),   
@@ -962,7 +950,6 @@ VALUES
     (7, 3);   
 
 INSERT INTO USER_REPORTS (userID, postID, commentID, reason) VALUES
-    (1, 1, NULL, 'Inappropriate content'),
     (2, NULL, 1, 'Spam'),                 
     (3, 3, NULL, 'Hate speech'),          
     (4, NULL, 3, 'Offensive language');   
@@ -970,8 +957,7 @@ INSERT INTO USER_REPORTS (userID, postID, commentID, reason) VALUES
 INSERT INTO GROUP_INVITATION (groupID, userID, date, state) VALUES
     (3, 2, NOW(), 'Pending'), 
     (3, 3, NOW(), 'Pending'),
-    (8, 3, NOW(), 'Accepted'),
-    (2, 1, NOW(), 'Rejected');
+    (8, 3, NOW(), 'Accepted');
 
 INSERT INTO POST_TOPICS (postID, topicID) 
 VALUES 
