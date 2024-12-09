@@ -354,7 +354,6 @@ function addEventListeners() {
         </div>
         <div class="invitation-body mb-2">
             <p>Invitation sent: ${invitationInfo.date || 'Date unavailable'}</p>
-            <p>Status: ${invitationInfo.state}</p>
         </div>
         <button class="cancel-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700" data-id="${invitationInfo.invitationid}">
             Cancel
@@ -426,7 +425,6 @@ function addEventListeners() {
         </div>
         <div class="request-body mb-2">
             <p>Join request received: ${requestInfo.date || 'Date unavailable'}</p>
-            <p>Status: ${requestInfo.state}</p>
         </div>
         <div class="request-actions">
             <button class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" data-id="${requestInfo.requestid}">

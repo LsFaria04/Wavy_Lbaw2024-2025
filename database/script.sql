@@ -73,7 +73,6 @@ CREATE TABLE JOIN_GROUP_REQUEST (
     groupID INTEGER NOT NULL,
     userID INTEGER NOT NULL,
     date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    state TEXT NOT NULL CHECK (state IN ('Pending', 'Accepted', 'Rejected')) DEFAULT 'Pending',
     FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE CASCADE,
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE,
     UNIQUE (groupID, userID)
@@ -204,7 +203,6 @@ CREATE TABLE GROUP_INVITATION (
     groupID INTEGER NOT NULL,
     userID INTEGER NOT NULL,
     date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    state TEXT NOT NULL CHECK (state IN ('Pending', 'Accepted', 'Rejected')),
     FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE CASCADE,
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE,
     UNIQUE (groupID, userID)
@@ -750,43 +748,6 @@ BEFORE INSERT ON FOLLOW
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions_follow();
 
--- Function to add a user to the group if the join request is accepted
-CREATE OR REPLACE FUNCTION add_user_to_group_from_request() RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.state = 'Accepted' THEN
-        INSERT INTO GROUP_MEMBERSHIP (groupID, userID) VALUES (NEW.groupID, NEW.userID)
-        ON CONFLICT (groupID, userID) DO NOTHING;  -- Avoid duplicate entries
-    END IF;
-    RETURN NEW;
-END
-$$ LANGUAGE plpgsql;
-
--- Trigger to add a user to the group when their join request is accepted (TRIGGER 19)
-CREATE TRIGGER add_user_to_group_from_request_trigger
-AFTER INSERT ON JOIN_GROUP_REQUEST
-FOR EACH ROW
-EXECUTE FUNCTION add_user_to_group_from_request();
-
--- Function to add a user to the group if the join request is accepted
-CREATE OR REPLACE FUNCTION add_user_to_group_from_invitation() RETURNS TRIGGER AS $$
-BEGIN
-    IF NEW.state = 'Accepted' THEN
-        INSERT INTO GROUP_MEMBERSHIP (groupID, userID) 
-        VALUES (NEW.groupID, NEW.userID)
-        ON CONFLICT (groupID, userID) DO NOTHING; 
-    END IF;
-    RETURN NEW;
-END
-$$ LANGUAGE plpgsql;
-
--- Trigger to add a user to the group when their join request is accepted (TRIGGER 20)
-CREATE TRIGGER add_user_to_group_from_invitation_trigger
-AFTER INSERT ON GROUP_INVITATION
-FOR EACH ROW
-EXECUTE FUNCTION add_user_to_group_from_invitation();
-
-
-
 --------------- POPULATE DATABASE ---------------------------------
 
 
@@ -830,15 +791,15 @@ VALUES
     (1, 3), 
     (2, 6); 
 
-INSERT INTO JOIN_GROUP_REQUEST (groupID, userID, date, state) 
+INSERT INTO JOIN_GROUP_REQUEST (groupID, userID, date) 
 VALUES 
-    (2, 5, NOW(), 'Pending'),  
-    (3, 7, NOW(), 'Rejected'), 
-    (3, 5, NOW(), 'Pending'),
-    (3, 6, NOW(), 'Pending'),
-    (4, 2, NOW(), 'Pending'),    
-    (6, 8, NOW(), 'Pending'),    
-    (7, 4, NOW(), 'Rejected');    
+    (2, 5, NOW()),  
+    (3, 7, NOW()), 
+    (3, 5, NOW()),
+    (3, 6, NOW()),
+    (4, 2, NOW()),    
+    (6, 8, NOW()),    
+    (7, 4, NOW());    
 
 INSERT INTO MESSAGE (receiverID, senderID, message, date) 
 VALUES 
@@ -954,10 +915,10 @@ INSERT INTO USER_REPORTS (userID, postID, commentID, reason) VALUES
     (3, 3, NULL, 'Hate speech'),          
     (4, NULL, 3, 'Offensive language');   
 
-INSERT INTO GROUP_INVITATION (groupID, userID, date, state) VALUES
-    (3, 2, NOW(), 'Pending'), 
-    (3, 3, NOW(), 'Pending'),
-    (8, 3, NOW(), 'Accepted');
+INSERT INTO GROUP_INVITATION (groupID, userID, date) VALUES
+    (3, 2, NOW()), 
+    (3, 3, NOW()),
+    (8, 3, NOW());
 
 INSERT INTO POST_TOPICS (postID, topicID) 
 VALUES 
