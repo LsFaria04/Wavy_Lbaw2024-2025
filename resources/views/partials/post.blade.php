@@ -31,7 +31,7 @@
     </div>
 
     <!-- Delete Confirmation Menu -->
-    <div id="deleteMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20">
+    <div id="deleteMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20" onclick="event.stopPropagation();">
         <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
             <h2 class="text-xl font-semibold text-gray-900">Delete Post</h2>
             <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this post? This action cannot be undone.</p>
@@ -109,17 +109,15 @@
         </button>
     </div>
 
-
-
     @auth
         @if(auth()->id() === $post->userid || Auth::user()->isadmin) 
             <!-- Edit Section in post.blade.php -->
-            <div id="edit-post-{{ $post->postid }}" class="edit-post-form hidden mt-4 bg-white rounded-xl shadow-md p-4">
+            <div id="edit-post-{{ $post->postid }}" class="edit-post-form hidden mt-4 bg-white rounded-xl shadow-md p-4" onclick="event.stopPropagation();">
                 <form action="{{ route('posts.update', $post->postid) }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4" data-post-id="{{ $post->postid }}">
                     @csrf
                     <div class="mb-4">
                         <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
-                        <textarea id="message" name="message"
+                        <textarea name="message"
                             class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" 
                             placeholder="Edit your message" 
                             style="resize: vertical; min-height: 200px;">{{ $post->message }}</textarea>

@@ -64,7 +64,6 @@ function addEventListeners() {
     const confirmationMenu = document.getElementById('confirmationModal');
     confirmationMenu.classList.toggle('hidden');
     confirmationMenu.classList.toggle('flex');
-    console.log("here");
     const dropdownMenu = document.getElementById('dropdownMenu');
     dropdownMenu.classList.toggle('hidden');
     if (isadmin) {
@@ -183,8 +182,6 @@ function addEventListeners() {
       `;
       return;   
     }
-    console.log(username);
-    console.log(currentUsername);
 
     switch(profileTab){
 
@@ -382,8 +379,6 @@ function addEventListeners() {
       while (profileContent.firstChild) {
         profileContent.removeChild(profileContent.firstChild);
       }
-      console.log(username);
-      console.log(currentUsername);
   
       insertLoadingCircle(profileContent);
   
@@ -496,7 +491,6 @@ function addEventListeners() {
   function addTopicToUser(topicId){
     sendAjaxRequest('put', '/api/topics/add/' + topicId + '/' + userId, null, function(){
       let response = JSON.parse(this.responseText);
-      console.log(response.response);
 
       if(response.response == '200'){
         //remove element from the add topics page
@@ -506,7 +500,6 @@ function addEventListeners() {
 
         //remove the warning if it is there
         let warning = document.querySelector("#myTopicsList .topicList > p");
-        console.log(warning);
         if(warning != null){
           warning.remove();
         }
@@ -539,7 +532,6 @@ function addEventListeners() {
   function removeTopicFromUser(topicId){
     sendAjaxRequest('delete', '/api/topics/remove/' + topicId + '/' + userId, null, function(){
       let response = JSON.parse(this.responseText);
-      console.log(response.response);
 
       if(response.response == '200'){
         //remove element from the my topics page

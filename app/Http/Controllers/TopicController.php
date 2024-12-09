@@ -178,7 +178,7 @@ class TopicController extends Controller
     Searches for topics that belong to a user using a search query
     */
     function searchUserTopic(Request $request, $userid){
-        Log::info(strval($query));
+        $query = $request->input('q');
         //sanitizes the query to separate the words
         $sanitizedQuery = str_replace("'", "''", $query);
 
