@@ -85,7 +85,7 @@ function addEventListeners() {
 
     if(myTopicsMenu.classList.contains('hidden')){
       myTopicPage = 0;
-      loadMoreTopics(true,false, '');
+      loadMoreTopics(true);
 
     }
     else{
@@ -106,7 +106,7 @@ function addEventListeners() {
 
     if(addTopicsMenu.classList.contains('hidden')){
       addTopicPage = 0;
-      loadMoreTopics(false,false, '');
+      loadMoreTopics(false);
 
     }
     else{
@@ -143,7 +143,7 @@ function addEventListeners() {
   }
 
   //stores the authentication state
-  let currentUsername = "";
+/*
   sendAjaxRequest('post', '/api/auth-check', null, authInfo);
   function authInfo(){
     const response = JSON.parse(this.responseText);
@@ -155,8 +155,9 @@ function addEventListeners() {
 
   function authId(){
     const response = JSON.parse(this.responseText);
-    currentUsername = response.username;
+    
   }
+*/
 
   //toggles the password form when it is needed in the delete user menu
   function togglePasswordForm() {
@@ -221,7 +222,9 @@ function addEventListeners() {
   let myTopicPageMax = -1;
   let addTopicPage = 0;
   let addTopicPageMax = -1;
-  function loadMoreTopics(isMy,isSearch, query){
+  let searchQuery = "";
+  let isQuery = false;
+  function loadMoreTopics(isMy){
     isMyTopics = isMy;
 
     let topicsList = null;
@@ -234,8 +237,15 @@ function addEventListeners() {
     insertLoadingCircle(topicsList);
 
     
-    if(isSearch){
-      
+    if(isQuery){
+      if(isMyTopics){
+        myTopicPage++;
+        sendAjaxRequest('get', '/api/topics/search/' + userId +'?page=' + myTopicPage + '&q=' + searchQuery, null,insertMoreTopics);
+      }
+      else{
+        addTopicPage++;
+        sendAjaxRequest('get', '/api/topics/search/canAdd/' + userId + '?page=' + addTopicPage + '&q=' + searchQuery,null, insertMoreTopics);
+      }   
     }
     else{
       if(isMyTopics){
@@ -258,15 +268,22 @@ function addEventListeners() {
       
       let topics = JSON.parse(this.responseText);
 
+      //received a response from the server that needs to be displayed (error messages)
+      if(topics.response !== undefined){
+        alert(topics.message);
+        return;
+      }
+
       let topicsList = null;
       if(isMyTopics){
         myTopicPageMax = topics.last_page;
         topicsList = document.querySelector("#myTopicsList > ul");
 
         //already loaded everything from the db. Hide the button
-        if(myTopicPageMax < myTopicPage){
-          document.querySelector('#myTopicsList > button').classList.toggle('hidden');
-          return;
+        if(myTopicPageMax == myTopicPage){
+          if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')){
+            document.querySelector('#myTopicsList > button').classList.toggle('hidden');
+          }
         }
       }
       else{
@@ -274,13 +291,14 @@ function addEventListeners() {
         topicsList = document.querySelector("#topicsList > ul");
 
         //already loaded everything from the db. Hide the button
-        if(addTopicPageMax < addTopicPage){
-          document.querySelector('#topicsList > button').classList.toggle('hidden');
-          return;
+        if(addTopicPageMax == addTopicPage){
+          if(!document.querySelector('#topicsList > button').classList.toggle('hidden')){
+            document.querySelector('#topicsList > button').classList.toggle('hidden');
+          }
         }
       }
 
-      //iterate throw the topics and add them in the list
+      //iterate throw the topics and add them into the list
       for(let i = 0; i < topics.data.length; i++){
         let topic = createTopic(topics.data[i], isMyTopics);
         topicsList.appendChild(topic, isMyTopics);
@@ -309,8 +327,9 @@ function addEventListeners() {
           warning.innerHTML='No topics found';
           topicsList.appendChild(warning);
         }
-        else if(isMyTopics){
-          console.log("here");
+        
+        //hide the button if it isn't hidden
+        if(isMyTopics){
           if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')){ 
           document.querySelector('#myTopicsList > button').classList.toggle('hidden');
           }
@@ -434,16 +453,46 @@ function addEventListeners() {
   //search for all the topics
   function searchTopics(event){
     event.preventDefault();
-    console.log("teste");
+    addTopicPage = 0;
+    isQuery = true;
+    searchQuery = document.querySelector('#topicsSearch').value;
+    
+    //cancel the search if there is not a query
+    if(searchQuery == ""){
+      isQuery = false;
+    }
+
+    //remove the existing topics from the list that is being displayed to the user 
+    let topics = document.querySelectorAll("#topicsList > ul li, #topicsList > ul p");
+    topics.forEach( function (topic){
+      topic.remove();
+    })
+
+    loadMoreTopics(false);
   }
 
   //search for topics that are associated to a user
   function searchMyTopics(event){
     event.preventDefault();
-    console.log("teste");
+    myTopicPage = 0;
+    isQuery = true;
+    searchQuery = document.querySelector('#myTopicsSearch ').value;
+    
+    //cancel the search if there is not a query
+    if(searchQuery == ""){
+      isQuery = false;
+    }
+
+    //remove the existing topics from the list that is being displayed to the user 
+    let topics = document.querySelectorAll("#myTopicsList > ul li, #myTopicsList > ul p");
+    topics.forEach( function (topic){
+      topic.remove();
+    })
+
+    loadMoreTopics(true);
   }
 
-  //adds more topics to a user using an ajax request
+  //adds more topics to a user using an ajax request and removing from the DOM in the add topic page and adding the topic in the DOM in my topics page
   function addTopicToUser(topicId){
     sendAjaxRequest('put', '/api/topics/add/' + topicId + '/' + userId, null, function(){
       let response = JSON.parse(this.responseText);
@@ -480,9 +529,13 @@ function addEventListeners() {
           }
         }
       }
+      else{
+        alert(response.message);
+      }
     });
   }
 
+  //removes a topic from the user using an ajax request and removing the topic from the DOM.
   function removeTopicFromUser(topicId){
     sendAjaxRequest('delete', '/api/topics/remove/' + topicId + '/' + userId, null, function(){
       let response = JSON.parse(this.responseText);
@@ -505,6 +558,9 @@ function addEventListeners() {
             topicsList.nextElementSibling.classList.toggle('hidden');
           }
         }
+      }
+      else{
+        alert(response.message);
       }
     });
   }

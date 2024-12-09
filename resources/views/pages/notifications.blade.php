@@ -1,5 +1,6 @@
 @extends('layouts.app')
 
+@auth
 @section('content')
     <div class="w-full max-w-4xl mx-auto bg-white">
         <!-- Notifications header -->
@@ -26,7 +27,7 @@
 
             @if($notifications->isEmpty())
                 <div class="flex justify-center items-center h-32">
-                    <p class="text-gray-600">Nenhuma notificação disponível.</p>
+                    <p class="text-gray-600">No notifications available.</p>
                 </div>
             @else
                 <div class="space-y-4">
@@ -57,3 +58,4 @@
         </div>
     </div>
 @endsection
+@endauth

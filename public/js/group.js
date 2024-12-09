@@ -182,7 +182,7 @@ function addEventListeners() {
       }
     });
 
-    document.getElementById('cancelExitButton').addEventListener('click', () => {
+    document.getElementById('cancelExitButton')?.addEventListener('click', () => {
         const exitMenu = document.getElementById('exitGroupMenu');
         exitMenu.classList.add('hidden');
         exitMenu.classList.remove('flex');
@@ -225,8 +225,8 @@ function addEventListeners() {
 
   const buttonsG = document.querySelectorAll('.tab-btn');
   let groupTab = "group-posts"; // Default tab
-  let groupId = document.getElementById('groupPage').dataset.groupid;
-  let ownerid = document.getElementById('groupPage').dataset.ownerid; 
+  let groupId = document.getElementById('groupPage')?.dataset.groupid;
+  let ownerid = document.getElementById('groupPage')?.dataset.ownerid; 
 
   function switchGroupTab() {
     buttonsG.forEach(button => {

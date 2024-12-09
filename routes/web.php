@@ -12,6 +12,7 @@ use App\Http\Controllers\CommentController;
 use App\Http\Controllers\LikeController;
 use App\Http\Controllers\MediaController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\GroupListController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\NotificationController;
 
@@ -63,6 +64,8 @@ Route::post('/api/groups/{group}/requests/{request}/accept', [GroupController::c
 Route::controller(TopicController::class)->group(function (){
     Route::get('/api/topics/{userid}', 'getUserTopics');
     Route::get('/api/topics/canAdd/{userid}', 'getTopicsToAdd');
+    Route::get('/api/topics/search/{userid}', 'searchUserTopic');
+    Route::get('/api/topics/search/canAdd/{userid}', 'searchTopicsToAdd');
     Route::put('/api/topics/add/{topicid}/{userid}', 'addTopicToUser');
     Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
 });
@@ -80,6 +83,7 @@ Route::post('/comments/update/{comment}', [CommentController::class, 'update'])-
 Route::post('/comments/delete/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 Route::get('/comments/{id}', [CommentController::class, 'show'])->name('comments.show');
 Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
+Route::post('/comments/storeSubcomment', [CommentController::class, 'storeSubcomment'])->name('comments.storeSubcomment');
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');
@@ -111,6 +115,7 @@ Route::get('/groups/{groupname}', [GroupController::class, 'show'])->name('group
 Route::delete('/groups/{groupid}/leave', [GroupController::class, 'leaveGroup'])->name('group.leave');
 Route::delete('/groups/{groupid}/remove/{userid}', [GroupController::class, 'removeMember'])->name('group.removeMember');
 Route::put('/groups/{groupid}', [GroupController::class, 'update'])->name('group.update');
+Route::get('/groups', [GroupListController::class, 'index'])->name('groupList');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');
