@@ -24,8 +24,7 @@ function addEventListeners() {
     });
   
     document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
-  
-    setupCreateUserMenu();
+
 
     syncCommentFilesWithInputEventListener();
     addEventListenerEditUserAdmin();
