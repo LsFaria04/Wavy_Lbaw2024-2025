@@ -1,7 +1,6 @@
 function addEventListeners() {
   document.addEventListener('DOMContentLoaded', fadeAlert);
   document.addEventListener('DOMContentLoaded', switchGroupTab);
-  window.addEventListener("scroll", infiniteScroll);
 
   let cancelButton = document.getElementById('cancelButton');
 
@@ -30,7 +29,7 @@ function addEventListeners() {
   setupCreateUserMenu();
   //listeners related to the posts
   addEventListenerToPostForms();
-  syncFilesWithInputEventListener()
+  syncPostFilesWithInputEventListener()
 
   addEventListenerEditUserAdmin();
   eventListernerFormsAdmin();
@@ -38,6 +37,7 @@ function addEventListeners() {
   likePost();
   
 }
+
 
 
 //stores the authentication state
@@ -63,6 +63,7 @@ function authId(){
 }
 
 //Create Post Helper
+
 let selectedFiles = [];
 
 function updateFileList() {
@@ -107,7 +108,7 @@ function updateFileList() {
   // Reset the file input to allow adding more files
   fileInput.value = '';
 }
-
+addEventListeners();
 // Object to store the original values and files for each post
 const originalFormData = {};
 
@@ -244,7 +245,7 @@ function removeFileEdit(postId, mediaId) {
 }
 
 
-function syncFilesWithInputEventListener(){
+function syncPostFilesWithInputEventListener(){
   // Synchronize selectedFiles with the file input before form submission
   document.querySelector('form').addEventListener('submit', function (e) {
     
@@ -354,7 +355,6 @@ function addEventListenerToForm(form){
     // Here you can do additional checks if necessary (e.g., clearing out old files)
   });
 }
-
 //creates the a post container with the message, username and date
 function createPost(postInfo){
   let post = document.createElement('div');

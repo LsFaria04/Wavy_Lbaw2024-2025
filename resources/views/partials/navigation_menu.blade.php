@@ -24,13 +24,15 @@
                     <span class="hidden md:block">Search</span>
                 </a>
             </li>
+            @auth
             <li class = "test-white font-medium text-lg">
-                <a class = "flex flex-row items-center gap-3">
+                <a class = "flex flex-row items-center gap-3" href = "{{ route('notifications') }}">
                 <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" id="Isolation_Mode" data-name="Isolation Mode" viewBox="0 0 24 24" width="20" height="20">
                     <path d="M23.608,17.013l-2.8-10.1A9.443,9.443,0,0,0,2.486,7.4L.321,17.14a2.5,2.5,0,0,0,2.441,3.042H6.905a5.285,5.285,0,0,0,10.154,0H21.2a2.5,2.5,0,0,0,2.409-3.169Zm-20.223.169,2.03-9.137a6.443,6.443,0,0,1,12.5-.326l2.628,9.463Z" fill = "currentColor"/>
                 </svg>
 
-                    <span class="hidden md:block">Notifications</span>
+                <span class="hidden md:block">Notifications</span>
+
                 </a>
             </li>
             <li class = "test-white font-medium text-lg">
@@ -42,7 +44,9 @@
                     <span class="hidden md:block">Messages</span>
                 </a>
             </li>
+            @endauth
             <li class = "test-white font-medium text-lg">
+
                 <a class = "flex flex-row items-center gap-3" href = "{{ route('groupList')}}">
                     <svg class="feather feather-users" fill="none" height="24" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg">
                         <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
