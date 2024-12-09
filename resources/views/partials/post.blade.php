@@ -109,8 +109,6 @@
         </button>
     </div>
 
-
-
     @auth
         @if(auth()->id() === $post->userid || Auth::user()->isadmin) 
             <!-- Edit Section in post.blade.php -->
