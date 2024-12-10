@@ -618,5 +618,59 @@ function likePost(postId) {
   }
 }
 
+function toggleAddPostTopics(){
+  if(document.getElementById("addTopics").classList.contains('hidden')){
+    postTopicPage = 0;
+    loadMorePostTopics();
+  }
+  document.getElementById("addTopics").classList.toggle('hidden');
+  document.getElementById("addTopics").classList.toggle('flex');
+  
+}
+
+//loads more post topics from the database and calls the insert more topics
+let postTopicPage = 0;
+let postTopicPageMax = -1;
+let searchQueryPost = "";
+let isQueryPost = false;
+function loadMorePostTopics(){
+
+  let topicsList = null;
+
+  topicsList = document.querySelector("#postTopicsList > ul");
+  
+
+  insertLoadingCircle(topicsList);
+
+  
+  if(isQueryPost){
+ 
+  }
+  else{
+    postTopicPage++;
+    sendAjaxRequest('get', '/api/topics/all?page=' + postTopicPage,null,insertMorePostTopics);
+  }
+
+
+}
+
+function insertMorePostTopics(){
+  removeLoadingCircle();
+  let topics = JSON.parse(this.responseText);
+  console.log(topics);
+
+  let topicsList = document.querySelector("#postTopicsList > ul");
+
+  if(topics.response !== undefined){
+    alert(topics.message);
+    return;
+  }
+
+  //iterate throw the topics and add them into the list
+  for(let i = 0; i < topics.data.length; i++){
+    let topic = createTopic(topics.data[i], false, true);
+    topicsList.appendChild(topic);
+  }
+}
 
 addEventListeners();

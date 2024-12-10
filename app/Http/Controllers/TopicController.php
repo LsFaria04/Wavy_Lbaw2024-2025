@@ -114,18 +114,15 @@ class TopicController extends Controller
     }
 
     /*
-    Returns the topics that are associated with a post
+    Returns all the topics that can be added to a new post
     */
-    function getPostTopics(Request $request, $postId){
+    function getAllTopics(Request $request){
             $topics = DB::table('topic')
-                        ->join('post_topics', 'topic.topicid', '=', 'post_topics.topicid')
-                        ->join('post', 'post.postid', '=', 'post_topics.postid')
-                        ->where('post.postid','?')
-                        ->select('topic.*')
-                        ->setBindings([$postId])
-                        ->get();
+                        ->paginate(10);
+            
+            Log::info("here");
 
-            return $topics;
+            return response()->json($topics);
     }
 
     /*
