@@ -551,6 +551,26 @@ function insertUpdateForm(post, id, message, media){
   return post
 }
 
+//inserts the topics into the posts
+function insertPostTopics(post, topics){
+  const postheader = post.querySelector('.post-header');
+  let postTopics = document.createElement('div');
+  postTopics.setAttribute('id', 'postTopics');
+  postTopics.classList.add('flex', 'flex-row');
+
+  for(let i = 0; i < topics.length; i++){
+    let topic = document.createElement('p');
+    topic.classList.add("text-xs");
+    topic.innerHTML = `
+      ${topics[i].topicname}
+    `
+    postTopics.appendChild(topic);
+  }
+  post.insertBefore(postTopics, postheader.nextSibling);
+
+  return post
+}
+
 //Create Post Helper
 function removeSpecificFile(index) {
   const fileDisplay = document.getElementById('fileDisplay');

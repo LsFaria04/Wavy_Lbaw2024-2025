@@ -37,10 +37,10 @@ class PostController extends Controller
         if (Auth::check()){
             //$friendsId = Follow::where('follower',Auth::id())->pluck('followee')->toArray();
             //whereIn(userid, $friendsId) --> Posts of friends, do the same to groups and topics when implemented.
-            $posts = Post::with('user','media')->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);  
+            $posts = Post::with('user','media', 'topics')->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);  
         }
         else {
-            $posts = Post::with('user', 'media')->whereNull('groupid')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
+            $posts = Post::with('user', 'media', 'topics')->whereNull('groupid')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
         }
 
         for($i = 0;$i < sizeof($posts); $i++){
@@ -64,13 +64,13 @@ class PostController extends Controller
         $user = User::where('username', $username)->firstOrFail();
 
         if (Auth::check()){
-            $posts = Post::with('user','media')
+            $posts = Post::with('user','media','topics')
             ->whereNull('groupid')
             ->where('userid',$user->userid)
             ->orderBy('createddate', 'desc')->paginate(10);  
         }
         else {
-            $posts = Post::with('user', 'media')
+            $posts = Post::with('user', 'media','topics')
             ->whereNull('groupid')
             ->where('visibilitypublic', true)
             ->where('userid',$user->userid)

@@ -487,7 +487,7 @@ function updateFileList() {
 
 function syncCommentFilesWithInputEventListener(){
   // Synchronize selectedFiles with the file input before form submission
-  document.getElementById('commentForm').addEventListener('submit', function (e) {
+  document.getElementById('commentForm')?.addEventListener('submit', function (e) {
     if (selectedFiles.length > 4) {
       e.preventDefault(); // Prevent the form from submitting
       alert('You can only submit up to 4 files.');

@@ -103,4 +103,9 @@ class User extends Authenticatable
         return $this->belongsToMany(Group::class, 'group_membership', 'userid', 'groupid');
     }
 
+    public function topics()
+    {
+        return $this->belongsToMany(Topic::class, 'user_topics', 'userid', 'topicid');
+    }
+
 }

@@ -46,6 +46,12 @@
         </div>
     </div>
 
+    <div id = "postTopics" class = "flex flex-row ">
+            @foreach ($post->topics as $topic)
+                <p class = "text-xs">{{$topic->topicname}}</p>
+            @endforeach
+    </div>
+
     <div class="post-body mb-2 cursor-pointer" id="post-content-{{ $post->postid }}" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
         <p>{{ $post->message }}</p>
 
