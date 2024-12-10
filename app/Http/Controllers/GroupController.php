@@ -14,6 +14,31 @@ use Illuminate\Support\Facades\Auth;
 
 class GroupController extends Controller
 {
+    public function store(Request $request)
+    {
+        $request->validate([
+            'groupname' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'visibilitypublic' => 'required|boolean',
+        ]);
+
+        // Create the group
+        $group = Group::create([
+            'groupname' => $request->input('groupname'),
+            'description' => $request->input('description'),
+            'visibilitypublic' => $request->input('visibilitypublic'),
+            'ownerid' => Auth::id(),
+        ]);
+
+        // Add the owner as a member
+        GroupMembership::create([
+            'groupid' => $group->groupid, // Use the ID from the created group
+            'userid' => Auth::id(),
+        ]);
+
+        return redirect()->back()->with('success', 'Group created successfully!');
+    }
+
     /**
      * Display a specific group and its details.
      */
