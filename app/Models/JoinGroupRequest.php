@@ -15,18 +15,22 @@ class JoinGroupRequest extends Model
 
     protected $primaryKey = 'requestid';
 
-    protected $casts = [
-        'date' => 'datetime',
-    ];
-
     public $timestamps = false;
 
     protected $fillable = [
         'requestid',
         'groupid',
         'userid',
-        'date',
-        'state',
+        'createddate',
+    ];
+    
+    protected $hidden = [
+        'userid',
+        'groupid',
+    ];
+
+    protected $dates = [
+        'createddate',
     ];
 
     /**
@@ -45,7 +49,7 @@ class JoinGroupRequest extends Model
         return $this->belongsTo(User::class, 'userid');
     }
 
-    public function getDateAttribute($value)
+    public function getCreatedDateAttribute($value)
     {
         return Carbon::parse($value);
     }

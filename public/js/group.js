@@ -353,7 +353,7 @@ function addEventListeners() {
             </h3>
         </div>
         <div class="invitation-body mb-2">
-            <p>Invitation sent: ${invitationInfo.date || 'Date unavailable'}</p>
+            <p>Invitation sent: ${invitationInfo.createddate || 'Date unavailable'}</p>
         </div>
         <button class="cancel-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700" data-id="${invitationInfo.invitationid}">
             Cancel
@@ -424,7 +424,7 @@ function addEventListeners() {
             </h3>
         </div>
         <div class="request-body mb-2">
-            <p>Join request received: ${requestInfo.date || 'Date unavailable'}</p>
+            <p>Join request received: ${requestInfo.createddate || 'Date unavailable'}</p>
         </div>
         <div class="request-actions">
             <button class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" data-id="${requestInfo.requestid}">
@@ -451,7 +451,7 @@ function addEventListeners() {
     let member = document.createElement('div');
     member.classList.add("member", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
 
-    const canRemove = parseInt(memberInfo.userid) !== parseInt(ownerid);
+    const canRemove = (parseInt(memberInfo.userid) !== parseInt(ownerid)) && (userId === parseInt(ownerid));
 
     // Member card structure
     member.innerHTML = `

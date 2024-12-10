@@ -99,8 +99,12 @@ class GroupController extends Controller
 
         $invitations = GroupInvitation::with('user') 
             ->where('groupid', $id)
-            ->orderBy('date', 'desc')
+            ->orderBy('createddate', 'desc')
             ->paginate(10);
+
+        for($i = 0;$i < sizeof($invitations); $i++){
+            $invitations[$i]->createddate = $invitations[$i]->createddate->diffForHumans();
+        }
 
         return response()->json($invitations);
     }
@@ -118,8 +122,12 @@ class GroupController extends Controller
 
         $joinRequests = JoinGroupRequest::with('user')
             ->where('groupid', $id)
-            ->orderBy('date', 'desc')
+            ->orderBy('createddate', 'desc')
             ->paginate(10);
+
+        for($i = 0;$i < sizeof($joinRequests); $i++){
+            $joinRequests[$i]->createddate = $joinRequests[$i]->createddate->diffForHumans();
+        }
 
         return response()->json($joinRequests);
     }
@@ -146,7 +154,7 @@ class GroupController extends Controller
         GroupInvitation::create([
             'groupid' => $groupid,
             'userid' => $userid,
-            'date' => now(),
+            'createddate' => now(),
         ]);
 
         return response()->json(['status' => 'success', 'message' => 'User invited successfully.'], 200);
@@ -216,7 +224,7 @@ class GroupController extends Controller
         JoinGroupRequest::create([
             'groupid' => $groupid,
             'userid' => $user->userid,
-            'date' => now(),
+            'createddate' => now(),
         ]);
 
         return response()->json(['message' => 'Your join request has been sent successfully.'], 200);

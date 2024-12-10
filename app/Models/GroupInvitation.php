@@ -13,10 +13,6 @@ class GroupInvitation extends Model
 
     protected $table = 'group_invitation';
 
-    protected $casts = [
-        'date' => 'datetime',
-    ];
-
     protected $primaryKey = 'invitationid';
 
     public $timestamps = false;
@@ -25,12 +21,16 @@ class GroupInvitation extends Model
         'invitationid',
         'groupid',
         'userid',
-        'date',
-        'state',
+        'createddate',
+    ];
+
+    protected $hidden = [
+        'userid',
+        'groupid',
     ];
 
     protected $dates = [
-        'date',
+        'createddate',
     ];
 
     /**
@@ -49,7 +49,7 @@ class GroupInvitation extends Model
         return $this->belongsTo(User::class, 'userid');
     }
 
-    public function getDateAttribute($value)
+    public function getCreatedDateAttribute($value)
     {
         return Carbon::parse($value);
     }

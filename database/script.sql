@@ -72,7 +72,7 @@ CREATE TABLE JOIN_GROUP_REQUEST (
     requestID SERIAL PRIMARY KEY,
     groupID INTEGER NOT NULL,
     userID INTEGER NOT NULL,
-    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE CASCADE,
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE,
     UNIQUE (groupID, userID)
@@ -202,7 +202,7 @@ CREATE TABLE GROUP_INVITATION (
     invitationID SERIAL PRIMARY KEY,
     groupID INTEGER NOT NULL,
     userID INTEGER NOT NULL,
-    date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    createdDate TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (groupID) REFERENCES GROUPS(groupID) ON DELETE CASCADE,
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE,
     UNIQUE (groupID, userID)
@@ -791,15 +791,15 @@ VALUES
     (1, 3), 
     (2, 6); 
 
-INSERT INTO JOIN_GROUP_REQUEST (groupID, userID, date) 
+INSERT INTO JOIN_GROUP_REQUEST (groupID, userID, createdDate) 
 VALUES 
-    (2, 5, NOW()),  
-    (3, 7, NOW()), 
-    (3, 5, NOW()),
+    (2, 5, '2024-10-03 14:00:00'),  
+    (3, 7, '2024-10-03 14:00:00'), 
+    (3, 5, '2024-10-03 14:00:00'),
     (3, 6, NOW()),
-    (4, 2, NOW()),    
-    (6, 8, NOW()),    
-    (7, 4, NOW());    
+    (4, 2, '2024-10-03 14:00:00'),    
+    (6, 8, '2024-10-03 14:00:00'),    
+    (7, 4, '2024-10-03 14:00:00');    
 
 INSERT INTO MESSAGE (receiverID, senderID, message, date) 
 VALUES 
@@ -915,9 +915,9 @@ INSERT INTO USER_REPORTS (userID, postID, commentID, reason) VALUES
     (3, 3, NULL, 'Hate speech'),          
     (4, NULL, 3, 'Offensive language');   
 
-INSERT INTO GROUP_INVITATION (groupID, userID, date) VALUES
-    (3, 2, NOW()), 
-    (3, 3, NOW()),
+INSERT INTO GROUP_INVITATION (groupID, userID, createdDate) VALUES
+    (3, 2, '2024-10-03 14:00:00'), 
+    (3, 3, '2024-12-03 16:00:00'),
     (8, 3, NOW());
 
 INSERT INTO POST_TOPICS (postID, topicID) 
