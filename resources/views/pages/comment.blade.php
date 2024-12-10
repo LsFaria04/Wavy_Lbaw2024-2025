@@ -20,7 +20,7 @@
             <!-- Add Sub-comment Section -->
             @if(Auth::check() && !Auth()->user()->isadmin)
                 <div class="addSubcomment mt-8 mb-6 p-4 bg-gray-50 rounded-xl shadow-md border">
-                    <form id="subcommentForm" action="{{ route('comments.storeSubcomment') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+                    <form id="commentForm" action="{{ route('comments.storeSubcomment') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                         @csrf
                         <!-- Hidden field to pass commentid -->
                         <input type="hidden" name="commentid" value="{{ $comment->commentid }}">
