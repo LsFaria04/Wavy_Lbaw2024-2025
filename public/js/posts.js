@@ -187,7 +187,6 @@ function updateFileNameEdit(postId) {
   // Append new files to the list (preserve existing files)
 
   Array.from(fileInput.files).forEach(file => {
-    console.log(file.size);
     if (file.size > 2097152){
       alert('File too big');
     }
@@ -198,9 +197,7 @@ function updateFileNameEdit(postId) {
 
   
   const lenStoreMedia = fileDisplay.querySelectorAll('div').length - 1;
-  console.log(lenStoreMedia);
   // Check if there are more than 4 files
-  console.log(lenStoreMedia + selectedFiles.length);
   if (lenStoreMedia + selectedFilesEdit.length > 4) {
       alert('You can only select up to 4 files.');
       // Remove the newly added files from the selectedFiles array
