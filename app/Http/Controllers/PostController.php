@@ -92,12 +92,22 @@ class PostController extends Controller
      * Stores a new post.
      */
     public function store(Request $request)
-    {
+    {   
+
+        $request->topics = explode(',', $request->topics[0]);
+        Log::info(strval($request->topics[0]));
+        Log::info(strval($request->topics[1]));
+
         // Validate input
         $request->validate([
             'message' => 'required|string|max:255',
-            'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:8192', 
+            'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:8192',
+            'topics.*' => 'nullable|string'
         ]);
+
+        Log::info("validated");
+
+        
     
         // Check if the user is authorized to create a post
         if ($request->user()->cannot('create', Post::class)) {
@@ -115,6 +125,12 @@ class PostController extends Controller
             'createddate' => now(),
             'groupid' => $request->groupid ?? null, // Use groupid if available, otherwise null
         ]);
+
+        //insert the topics to the post
+        foreach($request->topics as $topic){
+            Log::info(strval($topic));
+            $post->topics()->attach($topic);
+        }
         
         if ($request->hasFile('media')) {
             // Check if there are more than 4 files
