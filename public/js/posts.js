@@ -666,18 +666,55 @@ function insertMorePostTopics(){
 
   let topicsList = document.querySelector("#postTopicsList > ul");
 
+  postTopicPageMax = topics.last_page;
+
   if(topics.response !== undefined){
     alert(topics.message);
     return;
   }
 
+  if(postTopicPageMax === postTopicPage){
+    //hide the button if there is the last page is being displayed
+    if(!document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+      document.querySelector('#postTopicsList > button').classList.toggle('hidden');
+    }
+  }
+
   //iterate throw the topics and add them into the list
   for(let i = 0; i < topics.data.length; i++){
-    //only create and a dd a topic if it isn't already selected
-    if(!selectedTopics.includes(topics.data[i].topicid)){
-      let topic = createTopic(topics.data[i], false, true);
-      topicsList.appendChild(topic);
+    //only create and add a topic if it isn't already selected
+    if(selectedTopics.includes(topics.data[i].topicid)){
+      continue;
     }
+    //do not show the general topic because it is the default
+    if(topics.data[i].topicid === 1){
+      continue;
+    }
+    let topic = createTopic(topics.data[i], false, true);
+    topicsList.appendChild(topic);
+  }
+
+  if(topics.data.length > 0){
+    if(postTopicPageMax > postTopicPage){
+      //Show the button if there is more data to display
+      if(document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+        document.querySelector('#postTopicsList > button').classList.toggle('hidden');
+      }
+    }
+  }
+  else{
+    //there are no topics in the list and we could not found new ones with the ajax request so a warning is displayed
+    if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null){
+      let warning = document.createElement('p');
+      warning.innerHTML='No topics found';
+      topicsList.appendChild(warning);
+    }
+
+    //hide the button when there is no more content to display
+    if(!document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+      document.querySelector('#postTopicsList > button').classList.toggle('hidden');
+    }
+    
   }
 }
 
