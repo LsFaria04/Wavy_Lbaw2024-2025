@@ -114,18 +114,16 @@ class TopicController extends Controller
     }
 
     /*
-    Returns the topics that are associated with a post
+    Returns all the topics that can be added to a new post
     */
-    function getPostTopics(Request $request, $postId){
-            $topics = DB::table('topic')
-                        ->join('post_topics', 'topic.topicid', '=', 'post_topics.topicid')
-                        ->join('post', 'post.postid', '=', 'post_topics.postid')
-                        ->where('post.postid','?')
-                        ->select('topic.*')
-                        ->setBindings([$postId])
-                        ->get();
+    function getAllTopics(Request $request){
+        try{
+            $topics = Topic::paginate(10);
+        }catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
+        }
 
-            return $topics;
+        return response()->json($topics);
     }
 
     /*
@@ -236,6 +234,25 @@ class TopicController extends Controller
         }
         return response()->json(['response' => '403', 'message' => 'Cannot search other users topics']);   
         
+    }
+
+    /*
+    Searches all the topics that can be added to a post  using a search query
+    */
+    function searchAllTopics(Request $request){
+        $query = $request->input('q');
+        //sanitizes the query to separate the words
+        $sanitizedQuery = str_replace("'", "''", $query);
+
+        try{
+            $topics = Topic::whereRaw("search @@ plainto_tsquery('english', ?)")
+                    ->setBindings([$query])
+                    ->paginate(10);
+        }catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
+        }
+
+        return response()->json($topics);
     }
 
 

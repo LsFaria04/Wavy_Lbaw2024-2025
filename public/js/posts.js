@@ -28,7 +28,8 @@ function addEventListeners() {
 
   //listeners related to the posts
   addEventListenerToPostForms();
-  syncPostFilesWithInputEventListener()
+  syncPostFilesWithInputEventListener();
+  syncPostTopicsWithInputEventListener();
 
   addEventListenerEditUserAdmin();
   eventListernerFormsAdmin();
@@ -186,7 +187,6 @@ function updateFileNameEdit(postId) {
   // Append new files to the list (preserve existing files)
 
   Array.from(fileInput.files).forEach(file => {
-    console.log(file.size);
     if (file.size > 2097152){
       alert('File too big');
     }
@@ -197,9 +197,7 @@ function updateFileNameEdit(postId) {
 
   
   const lenStoreMedia = fileDisplay.querySelectorAll('div').length - 1;
-  console.log(lenStoreMedia);
   // Check if there are more than 4 files
-  console.log(lenStoreMedia + selectedFiles.length);
   if (lenStoreMedia + selectedFilesEdit.length > 4) {
       alert('You can only select up to 4 files.');
       // Remove the newly added files from the selectedFiles array
@@ -211,7 +209,6 @@ function updateFileNameEdit(postId) {
   newFileDisplay.innerHTML = '';
 
   // Show updated list of file names
-  console.log(selectedFilesEdit);
   selectedFilesEdit.forEach((file, index) => {
     if(newFileDisplay.classList.contains('hidden')){
       newFileDisplay.classList.toggle('hidden');
@@ -551,6 +548,26 @@ function insertUpdateForm(post, id, message, media){
   return post
 }
 
+//inserts the topics into the posts
+function insertPostTopics(post, topics){
+  const postheader = post.querySelector('.post-header');
+  let postTopics = document.createElement('div');
+  postTopics.setAttribute('id', 'postTopics');
+  postTopics.classList.add('flex', 'flex-row');
+
+  for(let i = 0; i < topics.length; i++){
+    let topic = document.createElement('p');
+    topic.classList.add("text-xs");
+    topic.innerHTML = `
+      ${topics[i].topicname}
+    `
+    postTopics.appendChild(topic);
+  }
+  post.insertBefore(postTopics, postheader.nextSibling);
+
+  return post
+}
+
 //Create Post Helper
 function removeSpecificFile(index) {
   const fileDisplay = document.getElementById('fileDisplay');
@@ -598,5 +615,177 @@ function likePost(postId) {
   }
 }
 
+function toggleAddPostTopics(){
+  if(document.getElementById("addTopics").classList.contains('hidden')){
+    postTopicPage = 0;
+    loadMorePostTopics();
+  }
+  else{
+    //remove the topics when we hide the the menu
+    let topics = document.querySelectorAll('#postTopicsList .topicList li,#postTopicsList .topicList p ');
+    topics.forEach(function (e) {e.remove()});
+  }
+  document.getElementById("addTopics").classList.toggle('hidden');
+  document.getElementById("addTopics").classList.toggle('flex');
+  
+}
+
+function searchPostTopics(e){
+  e.preventDefault();
+  postTopicPage = 0;
+  isQuery = true;
+  searchQuery = document.querySelector('#topicsSearch').value;
+
+   //cancel the search if there is not a query
+   if(searchQuery == ""){
+    isQuery = false;
+  }
+
+  //remove the existing topics from the list that is being displayed to the user 
+  let topics = document.querySelectorAll("#postTopicsList > ul li, #topicsList > ul p");
+  topics.forEach( function (topic){
+    topic.remove();
+  })
+
+  loadMorePostTopics();
+}
+
+//loads more post topics from the database and calls the insert more topics
+let postTopicPage = 0;
+let postTopicPageMax = -1;
+function loadMorePostTopics(){
+
+  let topicsList = null;
+
+  topicsList = document.querySelector("#postTopicsList > ul");
+  
+
+  insertLoadingCircle(topicsList);
+
+  
+  if(isQuery){
+    postTopicPage++;
+    sendAjaxRequest('get', '/api/topics/search/all?q=' + searchQuery + '&page=' + postTopicPage,null,insertMorePostTopics);
+  }
+  else{
+    postTopicPage++;
+    sendAjaxRequest('get', '/api/topics/all?page=' + postTopicPage,null,insertMorePostTopics);
+  }
+
+
+}
+
+let selectedTopics = [];
+function insertMorePostTopics(){
+  removeLoadingCircle();
+  let topics = JSON.parse(this.responseText);
+
+  let topicsList = document.querySelector("#postTopicsList > ul");
+
+  postTopicPageMax = topics.last_page;
+
+  if(topics.response !== undefined){
+    alert(topics.message);
+    return;
+  }
+
+  if(postTopicPageMax === postTopicPage){
+    //hide the button if there is the last page is being displayed
+    if(!document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+      document.querySelector('#postTopicsList > button').classList.toggle('hidden');
+    }
+  }
+
+  //iterate throw the topics and add them into the list
+  for(let i = 0; i < topics.data.length; i++){
+    //only create and add a topic if it isn't already selected
+    if(selectedTopics.includes(topics.data[i].topicid)){
+      continue;
+    }
+    //do not show the general topic because it is the default
+    if(topics.data[i].topicid === 1){
+      continue;
+    }
+    let topic = createTopic(topics.data[i], false, true);
+    topicsList.appendChild(topic);
+  }
+
+  if(topics.data.length > 0){
+    if(postTopicPageMax > postTopicPage){
+      //Show the button if there is more data to display
+      if(document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+        document.querySelector('#postTopicsList > button').classList.toggle('hidden');
+      }
+    }
+  }
+  else{
+    //there are no topics in the list and we could not found new ones with the ajax request so a warning is displayed
+    if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null){
+      let warning = document.createElement('p');
+      warning.innerHTML='No topics found';
+      topicsList.appendChild(warning);
+    }
+
+    //hide the button when there is no more content to display
+    if(!document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+      document.querySelector('#postTopicsList > button').classList.toggle('hidden');
+    }
+    
+  }
+}
+
+function addTopicToPost(topicid, topicname){
+
+  //maximum number of topics per post reached
+  if(selectedTopics.length == 5){
+    alert("Can only select up to 5 topics per post!");
+    return;
+  }
+  if(!selectedTopics.includes(topicid)){
+    selectedTopics.push(topicid);
+  }
+
+  //remove topic from the menu
+  const topic = document.getElementById(`topic-${topicid}`);
+  topic.remove();
+
+  //add the topic to the topic display
+  let topicDisplay = document.getElementById('topicDisplay');
+
+  const li = document.createElement('li');
+  li.classList.add('flex', 'items-center', 'gap-2');
+  li.setAttribute('id', `postTopic-${topicid}`);
+
+  li.innerHTML = `
+      <span class="text-sm text-gray-500">${topicname}</span>
+      <button type="button" onclick="removeSpecificTopic(${topicid})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+  `;
+
+  topicDisplay.appendChild(li);
+
+  if(topicDisplay.classList.contains('hidden')){
+    topicDisplay.classList.toggle('hidden');
+  }
+
+  
+}
+
+function removeSpecificTopic(topicid){
+  //remove from the display topics so that the user knows that the topic was removed
+  let topic = document.getElementById(`postTopic-${topicid}`);
+  topic.remove();
+
+  //remove from the selected array so that the the user can select it again
+  const index = selectedTopics.findIndex(id => id === topicid);
+  const deleted = selectedTopics.splice(index, 1);
+}
+
+function syncPostTopicsWithInputEventListener(){
+  document.querySelector('.addPost form')?.addEventListener('submit', function (e) {
+    //update the values before sending the form
+    let topicInput = document.getElementById('topicInput');
+    topicInput.value = selectedTopics;
+  });
+}
 
 addEventListeners();
