@@ -76,39 +76,62 @@
         </div>
     </div>
 
-    <!-- Like Button -->
-    <div class="post-likes flex items-center gap-2 mt-4">
-        <button 
-            type="button" 
-            class="flex items-center text-gray-500 hover:text-red-600" 
-            onclick="likePost('{{ $post->postid }}'); event.stopPropagation();">
-            
-            <!-- No like -->
-            <svg 
-                id="heart-empty-{{ $post->postid }}" 
-                viewBox="0 0 24 24" 
-                aria-hidden="true" 
-                class="h-5 w-5 fill-gray-500 hover:fill-red-600">
-                <g>
-                    <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                </g>
-            </svg>
-            
-            <!-- Yes like xd -->
-            <svg 
-                id="heart-filled-{{ $post->postid }}" 
-                viewBox="0 0 24 24" 
-                aria-hidden="true" 
-                class="h-5 w-5 fill-red-600 hidden">
-                <g>
-                    <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
-                </g>
-            </svg>
-            
-            <span id="like-count-{{ $post->postid }}" class="ml-1">0</span>
-        </button>
-    </div>
+    <div class="post-interactions flex items-center gap-4 mt-4">
+        <!-- Like Button -->
+        <div class="post-likes flex items-center gap-2">
+            <button 
+                type="button" 
+                class="flex items-center text-gray-500 hover:text-red-600" 
+                onclick="likePost('{{ $post->postid }}'); event.stopPropagation();">
+                
+                <!-- No like -->
+                <svg 
+                    id="heart-empty-{{ $post->postid }}" 
+                    viewBox="0 0 24 24" 
+                    aria-hidden="true" 
+                    class="h-5 w-5 fill-gray-500 hover:fill-red-600">
+                    <g>
+                        <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                    </g>
+                </svg>
+                
+                <!-- Yes like -->
+                <svg 
+                    id="heart-filled-{{ $post->postid }}" 
+                    viewBox="0 0 24 24" 
+                    aria-hidden="true" 
+                    class="h-5 w-5 fill-red-600 hidden">
+                    <g>
+                        <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                    </g>
+                </svg>
+                
+                <span id="like-count-{{ $post->postid }}" class="ml-1">0</span>
+            </button>
+        </div>
 
+        <!-- Comment Button -->
+        <div class="post-comments flex items-center gap-2">
+            <button 
+                type="button" 
+                class="flex items-center text-gray-500 hover:text-sky-600" 
+                onclick="window.location.href='{{ route('posts.show', $post->postid) }}'; event.stopPropagation();">
+
+                <!-- Comment Icon -->
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    id="comment-icon-{{ $post->postid }}" 
+                    class="h-5 w-5 fill-gray-500 hover:fill-sky-600" 
+                    viewBox="0 0 24 24">
+                    <path d="M12 3c4.963 0 9 3.075 9 7s-4.037 7-9 7c-.684 0-1.358-.06-2.003-.176-.397-.072-.824-.157-1.26-.248a.5.5 0 00-.525.223l-2.072 3.317a1 1 0 01-1.765-.095l-1.775-5.394c-.052-.157-.1-.3-.136-.429C2.022 13.17 2 12.59 2 12c0-3.925 4.037-7 9-7zm0-1C6.149 2 2 5.479 2 12c0 .646.035 1.274.1 1.885.037.332.16.742.304 1.19l1.78 5.396a2 2 0 003.53.19l2.073-3.317a1.5 1.5 0 011.572-.668c.43.094.84.18 1.226.252.668.121 1.343.172 2.015.172 5.851 0 10-3.479 10-8S17.851 2 12 2z"></path>
+                </svg>
+
+                <!-- Comment Count -->
+                <span id="comment-count-{{ $post->postid }}" class="ml-1 text-gray-500 hover:text-sky-600">{{ $post->comments_count ?? 0 }}</span>
+            </button>
+        </div>
+    </div>
+    
     @auth
         @if(auth()->id() === $post->userid || Auth::user()->isadmin) 
             <!-- Edit Section in post.blade.php -->

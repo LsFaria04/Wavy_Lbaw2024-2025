@@ -29,6 +29,7 @@ function addEventListeners() {
     syncCommentFilesWithInputEventListener();
     addEventListenerEditUserAdmin();
     eventListernerFormsAdmin();
+    likeComment();
     
   }
 //creates a new comment container with all the needed info
@@ -511,7 +512,7 @@ function syncCommentFilesWithInputEventListener(){
 function addEventListenerToCommentForms(){
 
   if(document.querySelectorAll('.edit-comment-form form').length === 0){
-    //did not found post edit forms
+    //did not found comment edit forms
     return;
   }
 
@@ -519,5 +520,27 @@ function addEventListenerToCommentForms(){
     addEventListenerToForm(form);
   });
 }
+
+
+function likeComment(commentId) {
+  
+  const likeCountElement = document.getElementById(`like-count-${commentId}`);
+  
+  const heartEmpty = document.getElementById(`heart-empty-${commentId}`);
+  const heartFilled = document.getElementById(`heart-filled-${commentId}`);
+
+  if (heartFilled?.classList.contains('hidden')) {
+      heartEmpty.classList.add('hidden');
+      heartFilled.classList.remove('hidden');
+      likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+  } else {
+      heartEmpty?.classList.remove('hidden');
+      heartFilled?.classList.add('hidden');
+      if(likeCountElement !== null){
+        likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+      }
+  }
+}
+
   addEventListeners();
   

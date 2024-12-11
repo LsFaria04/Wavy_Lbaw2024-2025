@@ -32,62 +32,75 @@ class PostController extends Controller
     /**
      * Gets the posts for the timeline
      */
-    public function getPostsTimeline(Request $request){
-
-        if (Auth::check()){
-            //$friendsId = Follow::where('follower',Auth::id())->pluck('followee')->toArray();
-            //whereIn(userid, $friendsId) --> Posts of friends, do the same to groups and topics when implemented.
-            $posts = Post::with('user','media')->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);  
+    public function getPostsTimeline(Request $request)
+    {
+        if (Auth::check()) {
+            // Include the comment count
+            $posts = Post::with('user', 'media')
+                        ->withCount('comments')  // This will add comments_count to the Post model
+                        ->whereNull('groupid')
+                        ->orderBy('createddate', 'desc')
+                        ->paginate(10);
+        } else {
+            $posts = Post::with('user', 'media')
+                        ->withCount('comments')  // Add the comment count
+                        ->whereNull('groupid')
+                        ->where('visibilitypublic', true)
+                        ->orderBy('createddate', 'desc')
+                        ->paginate(10);
         }
-        else {
-            $posts = Post::with('user', 'media')->whereNull('groupid')->where('visibilitypublic', true)->orderBy('createddate', 'desc')->paginate(10);
+    
+        // Format the created date to human-readable format
+        foreach ($posts as $post) {
+            $post->createddate = $post->createddate->diffForHumans();
         }
-
-        for($i = 0;$i < sizeof($posts); $i++){
-            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-        }
-
-        if($request->ajax()){
+    
+        if ($request->ajax()) {
             return response()->json($posts);
         }
-
+    
         // Return the view and pass the posts data
         return view('pages.home', compact('posts'));
-        
+
     }
+    
 
     /**
      * Gets the posts from a specific user 
      */
-    public function getUserPosts(Request $request, $username){
-
+    public function getUserPosts(Request $request, $username)
+    {
         $user = User::where('username', $username)->firstOrFail();
 
-        if (Auth::check()){
-            $posts = Post::with('user','media')
-            ->whereNull('groupid')
-            ->where('userid',$user->userid)
-            ->orderBy('createddate', 'desc')->paginate(10);  
-        }
-        else {
+        if (Auth::check()) {
             $posts = Post::with('user', 'media')
-            ->whereNull('groupid')
-            ->where('visibilitypublic', true)
-            ->where('userid',$user->userid)
-            ->orderBy('createddate', 'desc')->paginate(10);
+                        ->withCount('comments')  // Add the comment count
+                        ->whereNull('groupid')
+                        ->where('userid', $user->userid)
+                        ->orderBy('createddate', 'desc')
+                        ->paginate(10);
+        } else {
+            $posts = Post::with('user', 'media')
+                        ->withCount('comments')  // Add the comment count
+                        ->whereNull('groupid')
+                        ->where('visibilitypublic', true)
+                        ->where('userid', $user->userid)
+                        ->orderBy('createddate', 'desc')
+                        ->paginate(10);
         }
 
-        for($i = 0;$i < sizeof($posts); $i++){
-            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+        // Format the created date to human-readable format
+        foreach ($posts as $post) {
+            $post->createddate = $post->createddate->diffForHumans();
         }
 
-        if($request->ajax()){
+        if ($request->ajax()) {
             return response()->json($posts);
         }
 
         return $posts;
     }
-    
+
     /**
      * Stores a new post.
      */
@@ -153,9 +166,14 @@ class PostController extends Controller
 
     public function show($id)
     {
-        $post = Post::with(['user', 'media', 'comments.user', 'comments.media'])->findOrFail($id);
+        // Eager load user, media, comments (with their users and media) and also count the comments
+        $post = Post::with(['user', 'media', 'comments.user', 'comments.media'])
+                    ->withCount('comments')  // This will add comments_count to the Post model
+                    ->findOrFail($id);
+    
         return view('pages.post', compact('post'));
     }
+    
     
     /**
      * Updates the content of a post.

@@ -80,4 +80,8 @@ class Comment extends Model
     {
         return $this->hasMany(Media::class, 'commentid');
     }
+    public function getSubcommentsCountAttribute()
+{
+    return Comment::where('parentcommentid', $this->commentid)->count();
+}
 }

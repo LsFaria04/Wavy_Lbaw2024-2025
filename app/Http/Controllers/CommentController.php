@@ -11,10 +11,9 @@ use App\Models\User;
 use App\Models\Comment;
 use App\Models\Media;
 
-use App\Events\PostComment;
 
-
-class CommentController extends Controller {
+class CommentController extends Controller
+{
 
 
     public function create(Request $request)
@@ -23,7 +22,7 @@ class CommentController extends Controller {
             'userid' => $request->userid,
             'message' => $request->message,
             'postid' => $request->postid,
-            'createddate' => now(),
+            'createddate' => $request->createddate,
         ]);
     }
     /**
@@ -61,7 +60,8 @@ class CommentController extends Controller {
         return view('pages.comment', compact('comment', 'subComments'));
     }
     
-    public function store(Request $request) {
+    public function store(Request $request)
+    {
         $request->validate([
             'message' => 'required|string|max:255',
             'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:8192', 
@@ -167,22 +167,6 @@ class CommentController extends Controller {
                 }
             }
         }
-
-        // Notify owner of the post/comment being commented
-        if ($comment->parentcommentid) {
-            // Comment of a comment
-            $parentComment = $comment->parentComment;
-            if ($parentComment && $parentComment->userid !== Auth::id()) {
-                event(new PostComment($comment, $parentComment->userid));
-            }
-        } elseif ($comment->postid) {
-            // Comment of a post
-            $post = $comment->post;
-            if ($post && $post->userid !== Auth::id()) {
-                event(new PostComment($comment, $post->userid));
-            }
-        }
-
     
         return redirect()->route('comments.show',$request->commentid)->with('success', 'Comment created successfully!');
     }
