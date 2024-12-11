@@ -153,6 +153,31 @@
                         <input type="file" name="media[]" id="image-{{ $post->postid }}" class="hidden" onchange="updateFileNameEdit('{{ $post->postid }}')" multiple>
                         <input type="hidden" name="remove_media" id="removeMedia-{{ $post->postid }}" value="[]">
                     </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Edit Topics</label>
+
+                        <label for="topic-{{ $post->postid }}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                                <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                            </svg>
+                            <span>Add new topic</span>
+                        </label>
+                    
+                        <div id="topicDisplay-{{ $post->postid }}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 {{ $post->topics->isEmpty() ? 'hidden' : '' }}">
+                            @foreach ($post->topics as $topic)
+                                <div class="flex items-center gap-2" id="post-{{ $post->postid }}topic-{{ $topic->topicid }}">
+                                    <span class="text-sm text-gray-500">{{ $topic->topicname}}</span>
+                                    <button type="button" onclick="alert('Calma que o senhor Lucas ainda não implementou')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+                                </div>
+                            @endforeach
+                            <div id="newTopics-{{ $post->postid }}" class="flex-col gap-2">
+                                <!-- New Topics to add appended via JS -->
+                            </div>
+                        </div>
+                        <button type = "button" class = "hidden" id="topic-{{ $post->postid }}" onclick = "alert('Calma senhor Borges')//toggleAddPostTopics()"></button>
+                        <input type="hidden" id="topicInput-{{ $post->postid }}" name="topics[]" value="[]" multiple>
+                        <input type="hidden" name="remove_topics" id="removeTopics-{{ $post->postid }}" value="[]">
+                    </div>
 
                     <button type="submit" class="p-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
                 </form>

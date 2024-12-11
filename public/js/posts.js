@@ -784,7 +784,7 @@ function removeSpecificTopic(topicid){
 }
 
 function syncPostTopicsWithInputEventListener(){
-  document.querySelector('.addPost form').addEventListener('submit', function (e) {
+  document.querySelector('.addPost form')?.addEventListener('submit', function (e) {
     //update the values before sending the form
     let topicInput = document.getElementById('topicInput');
     topicInput.value = selectedTopics;

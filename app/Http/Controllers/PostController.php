@@ -129,7 +129,6 @@ class PostController extends Controller
 
         //insert the topics to the post
         foreach($request->topics as $topic){
-            Log::info(strval($topic));
             $post->topics()->attach($topic);
         }
         
