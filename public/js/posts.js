@@ -633,11 +633,29 @@ function toggleAddPostTopics(){
   
 }
 
+function searchPostTopics(e){
+  e.preventDefault();
+  postTopicPage = 0;
+  isQuery = true;
+  searchQuery = document.querySelector('#topicsSearch').value;
+
+   //cancel the search if there is not a query
+   if(searchQuery == ""){
+    isQuery = false;
+  }
+
+  //remove the existing topics from the list that is being displayed to the user 
+  let topics = document.querySelectorAll("#postTopicsList > ul li, #topicsList > ul p");
+  topics.forEach( function (topic){
+    topic.remove();
+  })
+
+  loadMorePostTopics();
+}
+
 //loads more post topics from the database and calls the insert more topics
 let postTopicPage = 0;
 let postTopicPageMax = -1;
-let searchQueryPost = "";
-let isQueryPost = false;
 function loadMorePostTopics(){
 
   let topicsList = null;
@@ -648,8 +666,9 @@ function loadMorePostTopics(){
   insertLoadingCircle(topicsList);
 
   
-  if(isQueryPost){
- 
+  if(isQuery){
+    postTopicPage++;
+    sendAjaxRequest('get', '/api/topics/search/all?q=' + searchQuery + '&page=' + postTopicPage,null,insertMorePostTopics);
   }
   else{
     postTopicPage++;
@@ -762,8 +781,6 @@ function removeSpecificTopic(topicid){
   //remove from the selected array so that the the user can select it again
   const index = selectedTopics.findIndex(id => id === topicid);
   const deleted = selectedTopics.splice(index, 1);
-  console.log(deleted);
-
 }
 
 function syncPostTopicsWithInputEventListener(){
@@ -771,7 +788,6 @@ function syncPostTopicsWithInputEventListener(){
     //update the values before sending the form
     let topicInput = document.getElementById('topicInput');
     topicInput.value = selectedTopics;
-    alert(topicInput.value);
   });
 }
 

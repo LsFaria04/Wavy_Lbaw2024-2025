@@ -95,8 +95,6 @@ class PostController extends Controller
     {   
 
         $request->topics = explode(',', $request->topics[0]);
-        Log::info(strval($request->topics[0]));
-        Log::info(strval($request->topics[1]));
 
         // Validate input
         $request->validate([
@@ -105,7 +103,10 @@ class PostController extends Controller
             'topics.*' => 'nullable|string'
         ]);
 
-        Log::info("validated");
+        //the general topic is the default
+        if($request->topics[0] == ""){
+            $request->topics[0] = "1";
+        }
 
         
     
