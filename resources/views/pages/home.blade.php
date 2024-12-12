@@ -3,17 +3,17 @@
     <div class="flex flex-col items-center w-full max-w-full bg-white" id="homePage">
 
         @if (session('error'))
-            <div class = "absolute self-center alert w-full max-w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">             
+            <div class = "absolute self-center alert w-full max-w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">             
                 {{ session('error')}}          
             </div>
         @elseif(session('success'))
-            <div class = "absolute self-center alert w-full max-w-full p-4 mb-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 rounded-lg z-10">             
+            <div class = "absolute self-center alert w-full max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">             
                 {{ session('success')}}          
             </div>
         @endif 
-        <section id="timeline" class="flex flex-col px-6 pt-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
+        <section id="timeline" class="flex flex-col max-w-full w-full bg-white shadow-lg mx-auto">
             @if(Auth::check() && !Auth()->user()->isadmin)
-                <div class="addPost mb-6 p-4 bg-white rounded-xl shadow-md">
+                <div class="addPost p-4 bg-white border-b border-gray-300 w-full max-w-full">
                     <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
                     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                         @csrf

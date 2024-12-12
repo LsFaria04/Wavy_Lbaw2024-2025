@@ -13,6 +13,7 @@ class NotificationController extends Controller
     public function index() {
         $notifications = Notification::with(['comment.post'])
             ->where('receiverid', Auth::id())
+            ->orderBy('date', 'desc')
             ->get();
 
         return view('pages.notifications', compact('notifications'));
@@ -27,7 +28,6 @@ class NotificationController extends Controller
                 });
             })
             ->where('receiverid', Auth::id())
-            ->latest('date')
             ->get();
     }
     

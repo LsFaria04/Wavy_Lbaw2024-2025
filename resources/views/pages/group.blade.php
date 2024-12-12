@@ -3,55 +3,34 @@
 @section('content')
 <div class="flex flex-col items-center w-full max-w-full bg-white" id="groupPage" data-groupid="{{ $group->groupid }}" data-ownerid="{{ $group->ownerid }}">
     <!-- Group Info Section (Sticky Header) -->
-    <header id="group-header" class="w-full pt-6 shadow-md flex flex-col bg-white sticky top-0 z-10">
+    <header id="group-header" class="w-full pt-6 shadow flex flex-col bg-white sticky top-0 z-10">
         <div class="text-center mb-4">
-            <h1 id="group-name" class="text-2xl font-bold text-gray-800">{{ $group->groupname }}</h1>
+            <h1 id="group-name" class="text-3xl font-extrabold text-gray-800">{{ $group->groupname }}</h1>
             <p class="text-gray-500 mt-2">{{ $group->description ?? 'No description available.' }}</p>
         </div>
     
         @auth
-            @if (!$group->members->contains(Auth::user()) && !Auth::user()->isadmin)
-                <div class="flex justify-center mt-4">
-                    <button id="ask-to-join-btn" class="px-4 py-2 bg-sky-700 text-white font-semibold rounded-md hover:bg-sky-800">
+            <div class="flex justify-center mt-2">
+                @if (!$group->members->contains(Auth::user()) && !Auth::user()->isadmin)
+                    <button id="ask-to-join-btn" class="px-5 py-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-900">
                         Ask to Join
                     </button>
-                </div>
-            @elseif ($group->members->contains(Auth::user()) && auth()->id() !== $group->ownerid && !Auth::user()->isadmin)
-                <div class="flex justify-center mt-4">
-                    <button type="button" onclick="openExitGroupMenu()" class="px-4 py-2 bg-red-700 text-white font-semibold rounded-md hover:bg-red-800">
+                @elseif ($group->members->contains(Auth::user()) && auth()->id() !== $group->ownerid && !Auth::user()->isadmin)
+                    <button type="button" onclick="openExitGroupMenu()" class="px-5 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700">
                         Exit Group
                     </button>
-                </div>                
-            @elseif(auth()->id() === $group->ownerid || Auth::user()->isadmin)
-                <div class="absolute top-0 right-0 mt-4 mr-4 flex items-center space-x-2">
-                    <!-- Edit Group Button -->
+                @elseif(auth()->id() === $group->ownerid || Auth::user()->isadmin)
                     <button 
-                        class="px-4 py-2 font-bold bg-gray-800 text-white rounded-2xl"
+                        class="px-5 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900"
                         onclick="toggleEditGroupMenu()">
                         Edit Group
                     </button>
-
-                    <!-- Dropdown Trigger 
-                    <button onclick="toggleDropdown()" class="focus:outline-none">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 hover:text-gray-600" fill="black" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm0 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm0 5.25a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" />
-                        </svg>
-                    </button> -->
-                </div>
-
-                <!-- Dropdown Menu
-                <div id="dropdownMenu" class="hidden absolute top-16 right-4 w-40 bg-white border border-gray-200 rounded-md shadow-lg transition duration-300 ease-in-out">
-                    <button 
-                        onclick="toggleConfirmationModal()" 
-                        class="w-full px-4 py-2 text-left text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
-                        Delete Account
-                    </button>
-                </div> -->
-            @endif
+                @endif
+            </div>
         @endauth
     
-        @if(($group->visibilitypublic == true || ($group->visibilitypublic === false && (Auth::user()->isadmin || $group->members->contains(Auth::user())))))
-            <nav class="flex justify-around mt-4">
+        @if(($group->visibilitypublic == true || Auth::user()->isadmin || $group->members->contains(Auth::user())))
+            <nav class="flex w-full justify-around mt-4">
                 <button id="tab-posts" data-tab="group-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900 border-sky-900 text-sky-900">Posts</button>
                 <button id="tab-members" data-tab="group-members" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Members</button>
                 @auth
@@ -66,20 +45,18 @@
 
     <!-- Success and Error Messages -->
     @if (session('success'))
-        <div class="alert w-full p-4 mb-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 rounded-lg z-10">
+        <div class="alert w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">
             {{ session('success') }}
         </div>
-    @endif
-
-    @if (session('error'))
-        <div class="alert w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">
+    @elseif (session('error'))
+        <div class="alert w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">
             {{ session('error') }}
         </div>
     @endif
 
     @auth
         @if ($group->members->contains(Auth::user()))
-            <div class="addPost px-6 pb-6 mt-4 bg-white rounded-xl shadow-md flex flex-col w-full max-w-full" id="post-form">
+            <div class="addPost px-6 pb-4 mt-4 bg-white border-b border-gray-300 flex flex-col w-full max-w-full" id="post-form">
                 <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
                 <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                     @csrf
@@ -115,7 +92,7 @@
     @endauth
 
     <!-- Edit Group Menu -->
-    <div id="edit-group-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden">
+    <div id="edit-group-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden z-20">
         <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
             <h2 class="text-2xl font-bold mb-4">Edit Group</h2>
             <form action="{{ route('group.update', $group->groupid) }}" method="POST">
@@ -185,8 +162,7 @@
     </div>
 
     <!-- Content Tabs -->
-    <div class="flex flex-col w-full max-w-full bg-white shadow-md p-6 mt-4" id="group-tab-content">
-
+    <div class="flex flex-col w-full max-w-full h-full max-h-full bg-white" id="group-tab-content">
         <!-- Content Section (starts with the posts) -->
         @if(($group->visibilitypublic === false && !(Auth::id() === $group->ownerid || Auth::user()->isadmin || $group->members->contains(Auth::user()))))
             <div class="flex justify-center items-center h-32">

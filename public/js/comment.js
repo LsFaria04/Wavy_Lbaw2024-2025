@@ -35,7 +35,7 @@ function addEventListeners() {
 //creates a new comment container with all the needed info
 function createComment(commentInfo){
     const comment = document.createElement('div');
-    comment.classList.add("mb-4", "p-4", "bg-white", "rounded-md", "shadow");
+    comment.classList.add("border-b", "border-gray-300", "p-4", "bg-white");
   
     comment.innerHTML = `
       <div class="flex justify-between items-center">
@@ -59,7 +59,7 @@ function createComment(commentInfo){
   
       reply.innerHTML = `
         <strong>Replying to:</strong>
-        ${ commentInfo.comment.user.username }`;
+        ${ commentInfo.post.user.username }`;
     }
   
     const commentInfoContainer = comment.querySelector("div");

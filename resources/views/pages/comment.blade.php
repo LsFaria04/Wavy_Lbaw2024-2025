@@ -28,7 +28,7 @@
                         <!-- Text Area -->
                         <textarea id="message" name="message" rows="3" 
                                   class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none resize-none placeholder-gray-400 text-gray-700 text-sm"
-                                  placeholder="Write your sub-comment here..."></textarea>
+                                  placeholder="Write your comment here..."></textarea>
 
                         <!-- Action Buttons -->
                         <div class="flex justify-between items-center">

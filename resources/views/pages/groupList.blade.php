@@ -22,7 +22,7 @@
 
         @auth
             <button id="create-group-btn" 
-                class="px-4 py-2 mt-3 mb-3 w-40 justify-center bg-green-700 text-white rounded-md hover:bg-green-800" onclick="toggleCreateGroupMenu()">
+                class="px-4 py-2 mt-3 w-40 justify-center bg-green-700 text-white rounded-md hover:bg-green-800" onclick="toggleCreateGroupMenu()">
                 Create Group
             </button>
         @endauth

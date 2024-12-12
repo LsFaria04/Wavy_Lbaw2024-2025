@@ -1,4 +1,4 @@
-<div class="post mb-4 p-4 bg-white rounded-md shadow cursor-pointer" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
+<div class="post p-4 bg-white cursor-pointer border-b border-gray-300 w-full max-w-full" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
     <div class="post-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">
@@ -31,7 +31,7 @@
     </div>
 
     <!-- Delete Confirmation Menu -->
-    <div id="deleteMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20" onclick="event.stopPropagation();">
+    <div id="deleteMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20" onclick="event.stopPropagation();">
         <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
             <h2 class="text-xl font-semibold text-gray-900">Delete Post</h2>
             <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this post? This action cannot be undone.</p>
@@ -123,14 +123,17 @@
                 class="flex items-center text-gray-500 hover:text-sky-600" 
                 onclick="window.location.href='{{ route('posts.show', $post->postid) }}'; event.stopPropagation();">
 
-                <!-- Comment Icon -->
+   
+
                 <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    id="comment-icon-{{ $post->postid }}" 
-                    class="h-5 w-5 fill-gray-500 hover:fill-sky-600" 
-                    viewBox="0 0 24 24">
-                    <path d="M12 3c4.963 0 9 3.075 9 7s-4.037 7-9 7c-.684 0-1.358-.06-2.003-.176-.397-.072-.824-.157-1.26-.248a.5.5 0 00-.525.223l-2.072 3.317a1 1 0 01-1.765-.095l-1.775-5.394c-.052-.157-.1-.3-.136-.429C2.022 13.17 2 12.59 2 12c0-3.925 4.037-7 9-7zm0-1C6.149 2 2 5.479 2 12c0 .646.035 1.274.1 1.885.037.332.16.742.304 1.19l1.78 5.396a2 2 0 003.53.19l2.073-3.317a1.5 1.5 0 011.572-.668c.43.094.84.18 1.226.252.668.121 1.343.172 2.015.172 5.851 0 10-3.479 10-8S17.851 2 12 2z"></path>
-                </svg>
+            xmlns="http://www.w3.org/2000/svg" 
+            id="comment-icon-{{ $post->postid }}" 
+            class="h-5 w-5 fill-gray-500 hover:fill-sky-600 transition duration-200 ease-in-out" 
+            viewBox="0 0 24 24" 
+            fill="currentColor">
+            <path d="M12 2C6.477 2 2 6.067 2 10.5c0 1.875.656 3.625 1.844 5.094l-1.308 3.922c-.19.57.474 1.065.997.736l3.875-2.325A9.435 9.435 0 0012 19c5.523 0 10-4.067 10-8.5S17.523 2 12 2zm0 2c4.418 0 8 3.067 8 6.5S16.418 17 12 17c-1.173 0-2.292-.232-3.318-.656a1 1 0 00-.97.035l-2.898 1.739.835-2.501a1 1 0 00-.176-.964A7.36 7.36 0 014 10.5C4 7.067 7.582 4 12 4z" />
+        </svg>
+        
 
                 <!-- Comment Count -->
                 <span id="comment-count-{{ $post->postid }}" class="ml-1 text-gray-500 hover:text-sky-600">{{ $post->comments_count ?? 0 }}</span>
