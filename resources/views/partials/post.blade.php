@@ -188,18 +188,18 @@
                     
                         <div id="topicDisplay-{{ $post->postid }}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 {{ $post->topics->isEmpty() ? 'hidden' : '' }}">
                             @foreach ($post->topics as $topic)
-                                <div class="flex items-center gap-2" id="post-{{ $post->postid }}topic-{{ $topic->topicid }}">
+                                <div class="flex items-center gap-2" id="post-{{ $post->postid }}Topic-{{ $topic->topicid }}">
                                     <span class="text-sm text-gray-500">{{ $topic->topicname}}</span>
-                                    <button type="button" onclick="alert('Calma que o senhor Lucas ainda não implementou')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+                                    <button type="button" onclick="addToDeleteTopic({{$topic->topicid}},{{ $post->postid}})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
                                 </div>
                             @endforeach
                             <div id="newTopics-{{ $post->postid }}" class="flex-col gap-2">
                                 <!-- New Topics to add appended via JS -->
                             </div>
                         </div>
-                        <button type = "button" class = "hidden" id="topic-{{ $post->postid }}" onclick = "toggleAddPostTopics()"></button>
-                        <input type="hidden" id="topicInput-{{ $post->postid }}" name="topics[]" value="[]" multiple>
-                        <input type="hidden" name="remove_topics" id="removeTopics-{{ $post->postid }}" value="[]">
+                        <button type = "button" class = "hidden" id="topic-{{ $post->postid }}" onclick = "toggleAddPostTopics({{$post->postid}},true)"></button>
+                        <input type="hidden" id="topicInput-{{ $post->postid }}" class="topicInput" name="topics[]" value="[]" multiple>
+                        <input type="hidden" name="remove_topics[]" id="removeTopics-{{ $post->postid }}" class="topicRemove" value="[]">
                     </div>
 
                     <button type="submit" class="p-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>

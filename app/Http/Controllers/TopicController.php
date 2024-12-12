@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Topic;
+use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Database\Eloquent\Builder;
 
 class TopicController extends Controller
 {   
@@ -127,6 +129,28 @@ class TopicController extends Controller
     }
 
     /*
+    Returns all the topics that can be added to a new post
+    */
+    function getAllTopicsToPost(Request $request, $postid){
+        try{
+            $topics = DB::table('topic')
+            ->leftjoin('post_topics', function($join) use ($postid) { 
+                $join->on('topic.topicid', '=', 'post_topics.topicid') 
+                    ->where('post_topics.postid', '=', $postid);
+            })
+            ->WhereNull('post_topics.postid')
+            ->select('topic.*')
+            ->distinct()
+            ->paginate(10);
+
+        }catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
+        }
+
+        return response()->json($topics);
+    }
+
+    /*
     Associates a topic to a user
     */
     function addTopicToUser(Request $request, $topicId, $userid){
@@ -239,15 +263,24 @@ class TopicController extends Controller
     /*
     Searches all the topics that can be added to a post  using a search query
     */
-    function searchAllTopics(Request $request){
+    function searchAllTopicsToPost(Request $request, $postid){
         $query = $request->input('q');
         //sanitizes the query to separate the words
         $sanitizedQuery = str_replace("'", "''", $query);
 
         try{
-            $topics = Topic::whereRaw("search @@ plainto_tsquery('english', ?)")
-                    ->setBindings([$query])
-                    ->paginate(10);
+            $topics = DB::table('topic')
+            ->leftjoin('post_topics', function($join) use ($postid) { 
+                $join->on('topic.topicid', '=', 'post_topics.topicid') 
+                    ->where('post_topics.postid', '=', $postid);
+            })
+            ->WhereNull('post_topics.postid')
+            ->whereRaw("search @@ plainto_tsquery('english', ?)")
+            ->select('topic.*')
+            ->distinct()  
+            ->setBindings([$query])
+            ->paginate(10);
+
         }catch(\Exception $e){
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }

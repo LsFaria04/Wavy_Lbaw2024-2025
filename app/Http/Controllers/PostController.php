@@ -107,7 +107,9 @@ class PostController extends Controller
     public function store(Request $request)
     {   
 
-        $request->topics = explode(',', $request->topics[0]);
+        if(count($request->topics) != 0){
+            $request->topics = explode(',', $request->topics[0]);
+        }
 
         // Validate input
         $request->validate([
@@ -202,16 +204,43 @@ class PostController extends Controller
             return redirect()->route('home')->with('error', 'You are not authorized to update this post.');
         }
 
+        
+        if(count($request->topics) != 0){
+            $request->topics = explode(',', $request->topics[0]);
+        }
+
+        if(count($request->remove_topics) != 0){
+            $request->remove_topics = explode(',', $request->remove_topics[0]);
+        }
+
         // Validate the input
         $request->validate([
             'message' => 'required|string|max:255',
             'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:10000', 
+            'topics.*' => 'nullable|string',
+            'remove_topics.*' => 'nullable|string'
         ]);
 
         // Update the post message
         $post->update([
             'message' => $request->message,
         ]);
+
+        //removes the topics from the post
+        foreach($request->remove_topics as $topic){
+            if($topic == ""){
+                continue;
+            }
+            $post->topics()->detach($topic);
+        }
+
+        //insert the topics to the post
+        foreach($request->topics as $topic){
+            if($topic == ""){
+                continue;
+            }
+            $post->topics()->attach($topic);
+        }
 
 
         // Handle file removals

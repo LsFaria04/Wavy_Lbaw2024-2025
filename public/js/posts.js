@@ -108,7 +108,6 @@ function updateFileList() {
   // Reset the file input to allow adding more files
   fileInput.value = '';
 }
-addEventListeners();
 // Object to store the original values and files for each post
 const originalFormData = {};
 
@@ -243,7 +242,7 @@ function removeFileEdit(postId, mediaId) {
 
 function syncPostFilesWithInputEventListener(){
   // Synchronize selectedFiles with the file input before form submission
-  document.querySelector('form').addEventListener('submit', function (e) {
+  document.querySelector('form')?.addEventListener('submit', function (e) {
     
     if (selectedFiles.length > 4) {
       e.preventDefault(); // Prevent the form from submitting
@@ -349,6 +348,20 @@ function addEventListenerToForm(form){
 
     // Make sure the form submits only the valid files
     // Here you can do additional checks if necessary (e.g., clearing out old files)
+
+    //adjust the arrays that will be sent with the topics to be added and deleted
+    let removeTopics = document.getElementById(`removeTopics-${postId}`);
+    let topicInput = document.getElementById(`topicInput-${postId}`);
+    topicInput.value = selectedTopics;
+    removeTopics.value = topicsToDelete;
+    let notRemovedLen = document.querySelectorAll(`topicDisplay-${postId} > div`).length - 1;
+
+    
+    if(selectedTopics + notRemovedLen - topicsToDelete > 5){
+      e.preventDefault();
+      alert('You can only submit up to 5 topics.');
+      return;
+    }
   });
 }
 //creates the a post container with the message, username and date
@@ -615,10 +628,12 @@ function likePost(postId) {
   }
 }
 
-function toggleAddPostTopics(){
+function toggleAddPostTopics(postid, isedit){
   if(document.getElementById("addTopics").classList.contains('hidden')){
     postTopicPage = 0;
-    loadMorePostTopics();
+    topicPostId = postid;
+    isEditPost = isedit;
+    loadMorePostTopics();   
   }
   else{
     //remove the topics when we hide the the menu
@@ -653,6 +668,7 @@ function searchPostTopics(e){
 //loads more post topics from the database and calls the insert more topics
 let postTopicPage = 0;
 let postTopicPageMax = -1;
+let isEditPost = false;
 function loadMorePostTopics(){
 
   let topicsList = null;
@@ -665,17 +681,19 @@ function loadMorePostTopics(){
   
   if(isQuery){
     postTopicPage++;
-    sendAjaxRequest('get', '/api/topics/search/all?q=' + searchQuery + '&page=' + postTopicPage,null,insertMorePostTopics);
+    sendAjaxRequest('get', '/api/topics/search/all/'+ topicPostId + '?q=' + searchQuery + '&page=' + postTopicPage,null,insertMorePostTopics);
   }
   else{
     postTopicPage++;
-    sendAjaxRequest('get', '/api/topics/all?page=' + postTopicPage,null,insertMorePostTopics);
+    console.log(topicPostId);
+    sendAjaxRequest('get', '/api/topics/all/' + topicPostId + '?page=' + postTopicPage,null,insertMorePostTopics);
   }
 
 
 }
 
 let selectedTopics = [];
+let topicPostId = -1;
 function insertMorePostTopics(){
   removeLoadingCircle();
   let topics = JSON.parse(this.responseText);
@@ -706,7 +724,8 @@ function insertMorePostTopics(){
     if(topics.data[i].topicid === 1){
       continue;
     }
-    let topic = createTopic(topics.data[i], false, true);
+
+    let topic = createTopic(topics.data[i], false, true, topicPostId);
     topicsList.appendChild(topic);
   }
 
@@ -734,7 +753,7 @@ function insertMorePostTopics(){
   }
 }
 
-function addTopicToPost(topicid, topicname){
+function addTopicToPost(topicid, topicname, postid){
 
   //maximum number of topics per post reached
   if(selectedTopics.length == 5){
@@ -750,15 +769,15 @@ function addTopicToPost(topicid, topicname){
   topic.remove();
 
   //add the topic to the topic display
-  let topicDisplay = document.getElementById('topicDisplay');
+  let topicDisplay = document.getElementById(`topicDisplay-${postid}`);
 
   const li = document.createElement('li');
   li.classList.add('flex', 'items-center', 'gap-2');
-  li.setAttribute('id', `postTopic-${topicid}`);
+  li.setAttribute('id', `post-${postid}Topic-${topicid}`);
 
   li.innerHTML = `
       <span class="text-sm text-gray-500">${topicname}</span>
-      <button type="button" onclick="removeSpecificTopic(${topicid})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+      <button type="button" onclick="removeSpecificTopic(${topicid},${postid})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
   `;
 
   topicDisplay.appendChild(li);
@@ -770,9 +789,9 @@ function addTopicToPost(topicid, topicname){
   
 }
 
-function removeSpecificTopic(topicid){
+function removeSpecificTopic(topicid, postid){
   //remove from the display topics so that the user knows that the topic was removed
-  let topic = document.getElementById(`postTopic-${topicid}`);
+  let topic = document.getElementById(`post-${postid}Topic-${topicid}`);
   topic.remove();
 
   //remove from the selected array so that the the user can select it again
@@ -780,12 +799,25 @@ function removeSpecificTopic(topicid){
   const deleted = selectedTopics.splice(index, 1);
 }
 
+let topicsToDelete = []
+//adds a topic to the list of topics that is going to be removed when the update is done
+function addToDeleteTopic(topicid, postid){
+  if(!topicsToDelete.includes(topicid)){
+    topicsToDelete.push(topicid);
+  }
+  //remove the topic from the screen
+  removeSpecificTopic(topicid,postid);
+}
+
+
+
 function syncPostTopicsWithInputEventListener(){
   document.querySelector('.addPost form')?.addEventListener('submit', function (e) {
     //update the values before sending the form
-    let topicInput = document.getElementById('topicInput');
+    let topicInput = document.getElementById('topicInput-0');
     topicInput.value = selectedTopics;
   });
 }
+
 
 addEventListeners();

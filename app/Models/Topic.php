@@ -24,5 +24,10 @@ class Topic extends Model
     protected $fillable = [
         'topicname'
     ];
+
+    public function post()
+    {
+        return $this->belongsToMany(Post::class, 'post_topics', 'topicid', 'postid');
+    }
     
 }
