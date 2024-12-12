@@ -657,7 +657,7 @@ function searchPostTopics(e){
   }
 
   //remove the existing topics from the list that is being displayed to the user 
-  let topics = document.querySelectorAll("#postTopicsList > ul li, #topicsList > ul p");
+  let topics = document.querySelectorAll("#postTopicsList > ul li, #postTopicsList > ul p");
   topics.forEach( function (topic){
     topic.remove();
   })

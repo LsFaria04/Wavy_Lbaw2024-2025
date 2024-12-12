@@ -188,10 +188,12 @@
                     
                         <div id="topicDisplay-{{ $post->postid }}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 {{ $post->topics->isEmpty() ? 'hidden' : '' }}">
                             @foreach ($post->topics as $topic)
-                                <div class="flex items-center gap-2" id="post-{{ $post->postid }}Topic-{{ $topic->topicid }}">
-                                    <span class="text-sm text-gray-500">{{ $topic->topicname}}</span>
-                                    <button type="button" onclick="addToDeleteTopic({{$topic->topicid}},{{ $post->postid}})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
-                                </div>
+                                @if($topic->topicid !== 1)
+                                    <div class="flex items-center gap-2" id="post-{{ $post->postid }}Topic-{{ $topic->topicid }}">
+                                        <span class="text-sm text-gray-500">{{ $topic->topicname}}</span>
+                                        <button type="button" onclick="addToDeleteTopic({{$topic->topicid}},{{ $post->postid}})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+                                    </div>
+                                @endif
                             @endforeach
                             <div id="newTopics-{{ $post->postid }}" class="flex-col gap-2">
                                 <!-- New Topics to add appended via JS -->

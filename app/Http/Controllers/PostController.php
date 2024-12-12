@@ -207,6 +207,8 @@ class PostController extends Controller
         
         if(count($request->topics) != 0){
             $request->topics = explode(',', $request->topics[0]);
+            //detach the general topic  because we are inserting specific topics
+            $post->topics()->detach(1);
         }
 
         if(count($request->remove_topics) != 0){
@@ -226,6 +228,7 @@ class PostController extends Controller
             'message' => $request->message,
         ]);
 
+        
         //removes the topics from the post
         foreach($request->remove_topics as $topic){
             if($topic == ""){
@@ -240,6 +243,11 @@ class PostController extends Controller
                 continue;
             }
             $post->topics()->attach($topic);
+        }
+
+        //attach the general topic if there are no topics in the post after the update
+        if($post->topics()->count() == 0){
+            $post->topics()->attach(1);
         }
 
 
