@@ -12,16 +12,16 @@
         @auth
             <div class="flex justify-center mt-2">
                 @if (!$group->members->contains(Auth::user()) && !Auth::user()->isadmin)
-                    <button id="ask-to-join-btn" class="px-5 py-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-900 transition">
+                    <button id="ask-to-join-btn" class="px-5 py-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-900">
                         Ask to Join
                     </button>
                 @elseif ($group->members->contains(Auth::user()) && auth()->id() !== $group->ownerid && !Auth::user()->isadmin)
-                    <button type="button" onclick="openExitGroupMenu()" class="px-5 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition">
+                    <button type="button" onclick="openExitGroupMenu()" class="px-5 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700">
                         Exit Group
                     </button>
                 @elseif(auth()->id() === $group->ownerid || Auth::user()->isadmin)
                     <button 
-                        class="px-5 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900 transition"
+                        class="px-5 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900"
                         onclick="toggleEditGroupMenu()">
                         Edit Group
                     </button>
@@ -45,11 +45,11 @@
 
     <!-- Success and Error Messages -->
     @if (session('success'))
-        <div class="alert w-full p-4 mb-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 rounded-lg z-10">
+        <div class="alert w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">
             {{ session('success') }}
         </div>
     @elseif (session('error'))
-        <div class="alert w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">
+        <div class="alert w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">
             {{ session('error') }}
         </div>
     @endif
@@ -92,7 +92,7 @@
     @endauth
 
     <!-- Edit Group Menu -->
-    <div id="edit-group-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden">
+    <div id="edit-group-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden z-20">
         <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
             <h2 class="text-2xl font-bold mb-4">Edit Group</h2>
             <form action="{{ route('group.update', $group->groupid) }}" method="POST">
