@@ -59,7 +59,7 @@ function createComment(commentInfo){
   
       reply.innerHTML = `
         <strong>Replying to:</strong>
-        ${ commentInfo.comment.user.username }`;
+        ${ commentInfo.user.username }`;
     }
   
     const commentInfoContainer = comment.querySelector("div");
