@@ -55,6 +55,6 @@ class Like extends Model
 
     public function getCreatedDateAttribute($value)
     {
-        return Carbon::parse($value); // Ensure it's a Carbon instance
+        return Carbon::parse($value);
     }
 }
