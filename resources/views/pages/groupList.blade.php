@@ -20,7 +20,14 @@
             </nav>
         </header>
 
-        <div id="create-group-menu" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden">
+        @auth
+            <button id="create-group-btn" 
+                class="px-4 py-2 mt-3 mb-3 w-40 justify-center bg-green-700 text-white rounded-md hover:bg-green-800" onclick="toggleCreateGroupMenu()">
+                Create Group
+            </button>
+        @endauth
+
+        <div id="create-group-menu" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-18">
             <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
                 <h2 class="text-2xl font-bold mb-4">Create Group</h2>
                 <form action="{{ route('group.store') }}" method="POST">
@@ -50,13 +57,6 @@
         
         <!-- Groups Results -->
         <section id="group-results" class="flex flex-col justify-items-center w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4">
-            @auth
-                <button id="create-group-btn" 
-                        class="px-4 py-2 w-40 justify-center bg-green-700 text-white rounded-md hover:bg-green-800"
-                        onclick="toggleCreateGroupMenu()">
-                    Create Group
-                </button>
-            @endauth
             @if($category == 'your-groups')
                 @if(Auth::user()->groups->isEmpty())
                     <div class="flex justify-center items-center h-32">

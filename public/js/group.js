@@ -451,7 +451,7 @@ function addEventListeners() {
     let member = document.createElement('div');
     member.classList.add("member", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
 
-    const canRemove = (parseInt(memberInfo.userid) !== parseInt(ownerid)) && (userId === parseInt(ownerid));
+    const canRemove = (parseInt(memberInfo.userid) !== parseInt(ownerid)) && ((userId === parseInt(ownerid)) || isadmin);
 
     // Member card structure
     member.innerHTML = `

@@ -79,6 +79,7 @@ function insertMoreGroupSearchResults() {
 function toggleCreateGroupMenu() {
     const menu = document.getElementById('create-group-menu');
     menu.classList.toggle('hidden');
+    menu.classList.toggle('flex');
 }
 
 addEventListeners();
