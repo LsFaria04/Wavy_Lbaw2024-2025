@@ -356,7 +356,7 @@ function addEventListenerToForm(form){
 //creates the a post container with the message, username and date
 function createPost(postInfo){
   let post = document.createElement('div');
-  post.classList.add("post", "mb-4", "p-4", "bg-white", "rounded-md", "shadow");
+  post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white");
   
   post.innerHTML = `
     <div class="post-header mb-2 flex justify-between items-center">

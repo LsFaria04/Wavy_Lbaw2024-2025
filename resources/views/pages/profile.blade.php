@@ -3,7 +3,7 @@
     @section('content')
         <div class="flex flex-col items-center w-full max-w-full bg-white">
             <!-- Profile Top Section -->
-            <header id="profile-header" class="w-full max-w-full p-4 shadow-md flex items-center sticky top-0 z-10 backdrop-blur">
+            <header id="profile-header" class="w-full max-w-full p-4 flex items-center sticky top-0 z-10 backdrop-blur shadow">
                 <!-- <a href="{{ url()->previous() }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
@@ -33,7 +33,7 @@
         </div>
 
         <!-- Profile Info Section -->
-        <div class="w-full max-w-full relative bg-white shadow-md">
+        <div class="w-full max-w-full relative bg-white shadow">
             <div class="absolute -top-16 left-4 w-32 h-32 bg-gray-200 rounded-full border-4 border-white overflow-hidden">
                 <!-- Profile Image To Add -->
             </div>
@@ -114,7 +114,7 @@
                 </div>
             </div>
             <!-- Content Tabs -->
-            <div class="flex flex-col w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4" id = "profile-tab-content">
+            <div class="flex flex-col w-full max-w-full bg-white" id = "profile-tab-content">
                 <!-- Content Section (starts with the posts) -->
                     @if((($user->visibilitypublic === false && !Auth::check())  || ($user->visibilitypublic === false && !Auth::user()->isadmin)) && ($user->userid != auth()->id()))
                         <div class="flex justify-center items-center h-32">

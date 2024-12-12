@@ -11,9 +11,9 @@
                 {{ session('success')}}          
             </div>
         @endif 
-        <section id="timeline" class="flex flex-col px-6 pt-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
+        <section id="timeline" class="flex flex-col max-w-full w-full bg-white shadow-lg mx-auto">
             @if(Auth::check() && !Auth()->user()->isadmin)
-                <div class="addPost mb-6 p-4 bg-white rounded-xl shadow-md">
+                <div class="addPost p-4 bg-white border-b border-gray-300 w-full max-w-full">
                     <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
                     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                         @csrf

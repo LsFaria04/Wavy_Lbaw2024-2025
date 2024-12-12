@@ -1,4 +1,4 @@
-<div class="post mb-4 p-4 bg-white rounded-md shadow cursor-pointer" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
+<div class="post p-4 bg-white cursor-pointer border-b border-gray-300 w-full max-w-full" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
     <div class="post-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">
