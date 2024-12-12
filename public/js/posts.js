@@ -6,9 +6,10 @@ function addEventListeners() {
 
   if(cancelButton !== null){
     cancelButton.addEventListener('click', () => {
-    const deleteMenu = document.getElementById('deleteMenu');
-    html.classList.toggle('overflow-hidden');
-    deleteMenu.classList.add('hidden');
+      const deleteMenu = document.getElementById('deleteMenu');
+      html.classList.remove('overflow-hidden');
+      deleteMenu.classList.add('hidden');
+      deleteMenu.classList.remove('flex');
     });
   }
   let confirmButton = document.getElementById('confirmButton');
@@ -171,7 +172,8 @@ function toggleEditPost(postid) {
 function openDeleteMenu(postid) {
     const deleteMenu = document.getElementById('deleteMenu');
     deleteMenu.classList.remove('hidden');
-    document.documentElement.classList.add('overflow-hidden'); // Ensure the whole page is locked
+    deleteMenu.classList.add('flex');
+    html.classList.add('overflow-hidden');
     window.selectedPostId = postid;
 }
 

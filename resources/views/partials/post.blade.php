@@ -31,7 +31,7 @@
     </div>
 
     <!-- Delete Confirmation Menu -->
-    <div id="deleteMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-20" onclick="event.stopPropagation();">
+    <div id="deleteMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20" onclick="event.stopPropagation();">
         <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
             <h2 class="text-xl font-semibold text-gray-900">Delete Post</h2>
             <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this post? This action cannot be undone.</p>
