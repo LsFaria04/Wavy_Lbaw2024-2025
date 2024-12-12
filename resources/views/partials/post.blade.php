@@ -197,7 +197,7 @@
                                 <!-- New Topics to add appended via JS -->
                             </div>
                         </div>
-                        <button type = "button" class = "hidden" id="topic-{{ $post->postid }}" onclick = "alert('Calma senhor Borges')//toggleAddPostTopics()"></button>
+                        <button type = "button" class = "hidden" id="topic-{{ $post->postid }}" onclick = "toggleAddPostTopics()"></button>
                         <input type="hidden" id="topicInput-{{ $post->postid }}" name="topics[]" value="[]" multiple>
                         <input type="hidden" name="remove_topics" id="removeTopics-{{ $post->postid }}" value="[]">
                     </div>

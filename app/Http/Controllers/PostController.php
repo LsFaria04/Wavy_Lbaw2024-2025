@@ -36,13 +36,13 @@ class PostController extends Controller
     {
         if (Auth::check()) {
             // Include the comment count
-            $posts = Post::with('user', 'media')
+            $posts = Post::with('user', 'media','topics')
                         ->withCount('comments')  // This will add comments_count to the Post model
                         ->whereNull('groupid')
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
         } else {
-            $posts = Post::with('user', 'media')
+            $posts = Post::with('user', 'media','topics')
                         ->withCount('comments')  // Add the comment count
                         ->whereNull('groupid')
                         ->where('visibilitypublic', true)
@@ -73,14 +73,14 @@ class PostController extends Controller
         $user = User::where('username', $username)->firstOrFail();
 
         if (Auth::check()) {
-            $posts = Post::with('user', 'media')
+            $posts = Post::with('user', 'media', 'topics')
                         ->withCount('comments')  // Add the comment count
                         ->whereNull('groupid')
                         ->where('userid', $user->userid)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
         } else {
-            $posts = Post::with('user', 'media')
+            $posts = Post::with('user', 'media', 'topics')
                         ->withCount('comments')  // Add the comment count
                         ->whereNull('groupid')
                         ->where('visibilitypublic', true)

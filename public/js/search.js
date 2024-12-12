@@ -156,7 +156,7 @@ function addEventListeners() {
         post = createPostOptions(post, posts.data[i].postid); 
       }
 
-      post = insertPostTopics(post, posts.data[i].topics)
+      post = insertPostTopics(post, posts.data[i].topics);
 
       const likeButtonHtml = createLikeButton(posts.data[i].postid, posts.data[i].like_count, posts.data[i].liked_by_user);
       
