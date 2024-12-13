@@ -88,9 +88,17 @@
 
     for(let i = 0; i < topics.data.length; i++){
       let row = document.createElement('tr');
+      row.classList.add("flex", "w-full", "shadow", "font-medium");
       row.innerHTML = `
-      <td>${topics.data[i].topicname}</td>
-      <td>Remove</td>
+      <td class="grow px-4 py-2 text-gray-700">${topics.data[i].topicname}</td>
+      <td class="px-4 py-2 self-end">
+          <button onclick="alert('Still need to implement')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </button>
+      </td>
+
       `
       sectionContentTable.appendChild(row);
     }

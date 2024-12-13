@@ -66,7 +66,7 @@
                 Create Topic
             </button>
         </div>
-        <table id="topics-table">
+        <table id="topics-table" class = "w-full my-4">
 
         </table>
     </section>
