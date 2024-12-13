@@ -123,6 +123,9 @@ function toggleEditPost(postid) {
     const fileDisplay = document.getElementById(`fileDisplay-${postid}`);
     const newFilesContainer = document.getElementById(`newFiles-${postid}`);
     const removeMediaInput = document.getElementById(`removeMedia-${postid}`);
+    
+    //Topic related elements
+    const topicsDisplay = document.getElementById(`topicDisplay-${postid}`);
 
     // Toggle visibility
     editForm.classList.toggle('hidden');
@@ -136,6 +139,7 @@ function toggleEditPost(postid) {
                 formValues: {},
                 mediaFiles: fileDisplay.innerHTML, // Store current files displayed
                 removeMedia: removeMediaInput.value, // Store any files marked for removal
+                topicList: topicsDisplay.innerHTML, //Store the current topics being displayed
             };
             editFormFields.forEach(field => {
                 originalFormData[postid].formValues[field.name] = field.value;
@@ -152,11 +156,15 @@ function toggleEditPost(postid) {
             // Restore original files
             fileDisplay.innerHTML = originalFormData[postid].mediaFiles;
             removeMediaInput.value = originalFormData[postid].removeMedia;
+            topicsDisplay.innerHTML = originalFormData[postid].topicList;
+            
             
             // Clear new files added during the edit session
             if (newFilesContainer) {
                 newFilesContainer.innerHTML = "";
             }
+
+            
 
             // Reset the file input
             fileInput.value = "";
@@ -164,6 +172,8 @@ function toggleEditPost(postid) {
 
         // Reset file input and media display if switching from edit form to post content
         selectedFilesEdit = []; // Reset media selection when returning to the post content view
+        topicsToDelete = [];
+        selectedTopics = [];
     }
 }
 

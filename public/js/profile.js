@@ -280,6 +280,10 @@ function addEventListeners() {
 
       //iterate throw the topics and add them into the list
       for(let i = 0; i < topics.data.length; i++){
+        //do not show the general topic because it is the default
+        if(topics.data[i].topicid === 1){
+          continue;
+        }
         let topic = createTopic(topics.data[i], isMyTopics, false,null);
         topicsList.appendChild(topic, isMyTopics);
       }

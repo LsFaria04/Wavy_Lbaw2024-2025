@@ -107,7 +107,7 @@ function addEventListeners() {
       // Handle group page
       const groupPage = document.querySelector("#group-tab-content");
       if (groupPage !== null && (maxPage > currentPage || maxPage === -1)) {
-        if (!isPublic && !isAdmin) {
+        if (!isPublic && !isadmin) {
             // Skip loading more for private groups
             return;
         }

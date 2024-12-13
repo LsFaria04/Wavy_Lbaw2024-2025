@@ -107,7 +107,7 @@ class PostController extends Controller
     public function store(Request $request)
     {   
 
-        if(count($request->topics) != 0){
+        if($request->topics !== null){
             $request->topics = explode(',', $request->topics[0]);
         }
 
@@ -119,8 +119,10 @@ class PostController extends Controller
         ]);
 
         //the general topic is the default
-        if($request->topics[0] == ""){
-            $request->topics[0] = "1";
+        if($request->topics !== null){
+            if($request->topics[0] == ""){
+                $request->topics[0] = "1";
+            }
         }
 
         
@@ -143,8 +145,10 @@ class PostController extends Controller
         ]);
 
         //insert the topics to the post
-        foreach($request->topics as $topic){
-            $post->topics()->attach($topic);
+        if($request->topics !== null){
+            foreach($request->topics as $topic){
+                $post->topics()->attach($topic);
+            }
         }
         
         if ($request->hasFile('media')) {
@@ -201,17 +205,22 @@ class PostController extends Controller
         // Check if the authenticated user is the owner of the post
         try { $this->authorize('edit', $post); 
         }catch (AuthorizationException $e) {
+            if($request->groupname !== null){
+                return redirect()->route('group', $request->groupname)
+                ->with('error', 'You are not authorized to update this post.');
+            }
             return redirect()->route('home')->with('error', 'You are not authorized to update this post.');
         }
 
         
-        if(count($request->topics) != 0){
+        if($request->topics !== null){
             $request->topics = explode(',', $request->topics[0]);
             //detach the general topic  because we are inserting specific topics
             $post->topics()->detach(1);
         }
 
-        if(count($request->remove_topics) != 0){
+
+        if(count($request->remove_topics) !== null){
             $request->remove_topics = explode(',', $request->remove_topics[0]);
         }
 
@@ -230,11 +239,13 @@ class PostController extends Controller
 
         
         //removes the topics from the post
-        foreach($request->remove_topics as $topic){
-            if($topic == ""){
-                continue;
+        if($request->topics !== null){
+            foreach($request->remove_topics as $topic){
+                if($topic == ""){
+                    continue;
+                }
+                $post->topics()->detach($topic);
             }
-            $post->topics()->detach($topic);
         }
 
         //insert the topics to the post
@@ -271,6 +282,10 @@ class PostController extends Controller
         $mediaCount = $request->hasFile('media') ? count($request->file('media')) : 0;
 
         if ($currentMediaCount + $mediaCount > 4) {
+            if($request->groupname !== null){
+                return redirect()->route('group', $request->groupname)
+                ->with('error', 'You can only upload a maximum of 4 files.');
+            }
             return redirect()->route('home', $post->postid)->with('error', 'You can only upload a maximum of 4 files.');
         }
 
@@ -287,6 +302,10 @@ class PostController extends Controller
                     'path' => $mediaPath,
                 ]);
             }
+        }
+        if($request->groupname !== null){
+            return redirect()->route('group', $request->groupname)
+            ->with('success', 'Group post updated successfully!');
         }
         return redirect()->route('home')->with('success', 'Post updated successfully!');
     }
