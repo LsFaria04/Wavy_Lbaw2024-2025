@@ -46,6 +46,7 @@
         </div>
     </div>
 
+    <!-- Post Topics -->
     <div id = "postTopics" class = "flex flex-row ">
             @foreach ($post->topics as $topic)
                 <p class = "text-xs">{{$topic->topicname}}</p>

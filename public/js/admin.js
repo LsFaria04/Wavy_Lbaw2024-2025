@@ -2,20 +2,21 @@
  function addEventListeners() {
   document.addEventListener('DOMContentLoaded', fadeAlert);
 
-  let cancelButton = document.getElementById('cancelButton');
+  let cancelButton = document.getElementById('cancelButtonAdmin');
 
   if(cancelButton !== null){
     cancelButton.addEventListener('click', () => {
-    const deleteMenu = document.getElementById('deleteMenu');
-    html.classList.toggle('overflow-hidden');
-    deleteMenu.classList.add('hidden');
+    const deleteMenu = document.getElementById('deleteMenuAdmin');
+    deleteMenu.classList.toggle('hidden');
+    deleteMenu.classList.toggle('flex');
   });
 }
-  let confirmButton = document.getElementById('confirmButton');
+  let confirmButton = document.getElementById('confirmButtonAdmin');
   if(confirmButton !== null){
     confirmButton.addEventListener('click', () => {
-      const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-      deleteForm.submit();
+      alert("will be implemented later");
+      //const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
+      //deleteForm.submit();
     });
   }
 
@@ -58,6 +59,12 @@
       
     }
 
+  
+  function showDeleteAdminMenu(){
+    document.getElementById('deleteMenuAdmin').classList.toggle('hidden');
+    document.getElementById('deleteMenuAdmin').classList.toggle('flex');
+  }
+
   function insertShowMoreAdmin(sectionId){
     const section = document.getElementById(sectionId);  
     let showMore = document.createElement('button');
@@ -92,7 +99,7 @@
       row.innerHTML = `
       <td class="grow px-4 py-2 text-gray-700">${topics.data[i].topicname}</td>
       <td class="px-4 py-2 self-end">
-          <button onclick="alert('Still need to implement')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+          <button onclick="showDeleteAdminMenu()" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
