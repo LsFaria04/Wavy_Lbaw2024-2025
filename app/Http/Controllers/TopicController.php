@@ -21,20 +21,20 @@ class TopicController extends Controller
         try { 
         $this->authorize('create', Topic::class);
         } catch (AuthorizationException $e) {
-            return redirect()->route('home')->with('error', 'You are not authorized to create new topics.');
+            return redirect()->route('admin.index')->with('error', 'You are not authorized to create new topics.');
         }
 
         try{
             $request->validate([
-                'topicmessage' => 'required|string|max:30'
+                'topicname' => 'required|string|max:30'
             ]);
 
-            Topic::create(['topicmessage' => $request->topicname]);
+            Topic::create(['topicname' => $request->topicname]);
 
-            return redirect()->route('home')
+            return redirect()->route('admin.index')
             ->with('success', 'Your new topic was created successfully');
         } catch (\Exception $e) {
-            return redirect()->route('home')
+            return redirect()->route('admin.index')
             ->with('error', 'Something went wrong. Please verify that the topic name has less than 30 characters');
         }
     }
@@ -42,21 +42,42 @@ class TopicController extends Controller
     /*
     Used to delete topics on the database. Only admins can delete topics
     */
-    function delete(Request $request, Topic $topic){
+    function delete(Request $request, $topicid){
+        try{
+            $topic = Topic::findOrFail($topicid);
+        }
+        catch (\Exception $e){
+            return redirect()->route('admin.index')->with('error', 'Topic does not exist');
+        }
 
         //check if an user is authorized to delete a topic
         try{
             $this->authorize('delete', Topic::class);
-        } catch (AuthorizationException $e) {
-            return redirect()->route('home')->with('error', 'You are not authorized to delete topics.');
+        } catch (\Exception $e) {
+            return redirect()->route('admin.index')->with('error', 'You are not authorized to delete topics.');
         }
 
         try{
+            //update the topics in the posts and give them the general topic if they don't have any
+            $posts = Post::whereHas('topics', function ($query) use ($topicid) { Log::info(strval($topicid)); $query->where('topic.topicid', $topicid); })->get();
+            Log::info("not the query");
+
+            foreach($posts as $post){
+                $post->topics()->detach($topicid);
+                if($post->topics()->count() == 0){
+                    $post->topics()->attach(1);
+                }
+            }
+
             $topic->delete();
         } catch (\Exception $e) {
-            return redirect()->route('home')
+            Log::debug(strval($e));
+            return redirect()->route('admin.index')
             ->with('error', 'Something went wrong when deleting the topic. Please try again');
         }
+
+        return redirect()->route('admin.index')
+        ->with('success', 'Topic Deleted successfully!');
 
 
     }

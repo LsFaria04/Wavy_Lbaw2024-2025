@@ -145,6 +145,7 @@
             @foreach ($posts as $post )
                 @include('partials.post', ['post' => $post, 'group' => $group])
             @endforeach
+            @include('partials.addPostTopics')
         @endif
     </div>
 </div>

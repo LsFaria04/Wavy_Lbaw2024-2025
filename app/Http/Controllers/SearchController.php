@@ -40,7 +40,7 @@ class SearchController extends Controller
                 case 'posts':
                     if(Auth::check()){
                         if(Auth::user()->isadmin){
-                            $posts = Post::with('user','media')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                             ->orderBy('createddate', 'desc')
                             ->paginate(10);
                             for($i = 0;$i < sizeof($posts); $i++) {

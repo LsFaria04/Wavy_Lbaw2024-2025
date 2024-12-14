@@ -579,6 +579,7 @@ function insertPostTopics(post, topics){
   let postTopics = document.createElement('div');
   postTopics.setAttribute('id', 'postTopics');
   postTopics.classList.add('flex', 'flex-row');
+  console.log(topics);
 
   for(let i = 0; i < topics.length; i++){
     let topic = document.createElement('p');
@@ -641,7 +642,7 @@ function likePost(postId) {
 }
 
 function toggleAddPostTopics(postid, isedit){
-  if(document.getElementById("addTopics").classList.contains('hidden')){
+  if(document.getElementById("addPostTopics").classList.contains('hidden')){
     postTopicPage = 0;
     topicPostId = postid;
     isEditPost = isedit;
@@ -652,8 +653,8 @@ function toggleAddPostTopics(postid, isedit){
     let topics = document.querySelectorAll('#postTopicsList .topicList li,#postTopicsList .topicList p ');
     topics.forEach(function (e) {e.remove()});
   }
-  document.getElementById("addTopics").classList.toggle('hidden');
-  document.getElementById("addTopics").classList.toggle('flex');
+  document.getElementById("addPostTopics").classList.toggle('hidden');
+  document.getElementById("addPostTopics").classList.toggle('flex');
   
 }
 
@@ -661,7 +662,7 @@ function searchPostTopics(e){
   e.preventDefault();
   postTopicPage = 0;
   isQuery = true;
-  searchQuery = document.querySelector('#topicsSearch').value;
+  searchQuery = document.querySelector('#topicsPostSearch').value;
 
    //cancel the search if there is not a query
    if(searchQuery == ""){

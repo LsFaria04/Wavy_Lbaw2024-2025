@@ -214,4 +214,5 @@
                     </div>
             </div>
         </div>
+        @include('partials.addPostTopics')
     @endSection

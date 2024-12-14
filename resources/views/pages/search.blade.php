@@ -41,6 +41,7 @@
                         <p class="text-gray-600 text-center">No results matched your search.</p>
                     </div>
                 @endif
+                @include('partials.addPostTopics');
             </section>
         </div>
     @endsection

@@ -14,9 +14,8 @@
   let confirmButton = document.getElementById('confirmButtonAdmin');
   if(confirmButton !== null){
     confirmButton.addEventListener('click', () => {
-      alert("will be implemented later");
-      //const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-      //deleteForm.submit();
+      const deleteForm = document.getElementById(`deleteForm-${window.elementToDelete}`);
+      deleteForm.submit();
     });
   }
 
@@ -28,6 +27,7 @@
   document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
 
   setupCreateUserMenu();
+  setupCreateTopicMenu()
 
   addEventListenerEditUserAdmin();
   eventListernerFormsAdmin();
@@ -60,9 +60,10 @@
     }
 
   
-  function showDeleteAdminMenu(){
+  function showDeleteAdminMenu(elementId){
     document.getElementById('deleteMenuAdmin').classList.toggle('hidden');
     document.getElementById('deleteMenuAdmin').classList.toggle('flex');
+    window.elementToDelete = elementId;
   }
 
   function insertShowMoreAdmin(sectionId){
@@ -94,16 +95,25 @@
     maxAdminPage = topics.last_page;
 
     for(let i = 0; i < topics.data.length; i++){
+
+      //ignore the default topic 
+      if(topics.data[i].topicid == 1){
+        continue;
+      }
+
       let row = document.createElement('tr');
       row.classList.add("flex", "w-full", "shadow", "font-medium");
       row.innerHTML = `
       <td class="grow px-4 py-2 text-gray-700">${topics.data[i].topicname}</td>
       <td class="px-4 py-2 self-end">
-          <button onclick="showDeleteAdminMenu()" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+        <form action="../topics/delete/${topics.data[i].topicid}" method="POST" id="deleteForm-${topics.data[i].topicid}">
+          <input type="hidden" name="_token" value= ${getCsrfToken()} />
+          <button type="button" onclick="showDeleteAdminMenu(${topics.data[i].topicid})" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
           </button>
+        </form>
       </td>
 
       `
@@ -281,6 +291,39 @@ function setupCreateUserMenu() {
     cancelCreateUserBtn.addEventListener("click", () => { 
       createUserMenu.classList.add("hidden");
       createUserMenu.classList.toggle("flex");
+    });
+  } else {
+    console.error("One or more elements are missing. Check your HTML."); 
+  }
+}
+
+//Admin Create Topic
+function setupCreateTopicMenu() {
+  const createTopicBtn = document.getElementById("createTopicBtn");
+
+  if(createTopicBtn === null){
+    return;
+  }
+  const createTopicMenu = document.getElementById("createTopicMenu");
+  const cancelCreateTopicBtn = document.getElementById("cancelCreateTopicBtn");
+
+  if (createTopicBtn && createTopicMenu && cancelCreateTopicBtn) {
+    createTopicBtn.addEventListener("click", () => {
+      createTopicMenu.classList.toggle("hidden");
+      createTopicMenu.classList.add("flex");
+      
+    });
+
+    document.addEventListener("click", (event) => {
+      if (!createTopicMenu.contains(event.target) && event.target !== createTopicBtn) {
+        createTopicMenu.classList.add("hidden");
+        createTopicMenu.classList.toggle("flex");
+      }
+    });
+
+    cancelCreateTopicBtn.addEventListener("click", () => { 
+      createTopicMenu.classList.add("hidden");
+      createTopicMenu.classList.toggle("flex");
     });
   } else {
     console.error("One or more elements are missing. Check your HTML."); 

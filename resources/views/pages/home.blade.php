@@ -22,6 +22,7 @@
                 @each('partials.post', $posts, 'post')
             @endif
         </section>
+        @include('partials.addPostTopics')
     </div>
 
 @endsection

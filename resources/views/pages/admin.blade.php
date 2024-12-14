@@ -8,7 +8,7 @@
         <nav class="flex justify-around bg-blue-600 text-white py-3 rounded-lg shadow-lg">
             <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
                 onclick="showSectionAdmin('users')">Manage Users</button>
-            <button class="tab-btn px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
+            <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
                 onclick="showSectionAdmin('topics')">Manage Topics</button>
         </nav>
     </header>
@@ -117,6 +117,25 @@
                     required>
             </div>
             <button type="button" id="cancelCreateUserBtn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
+                Cancel
+            </button>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Create
+            </button>
+        </form>
+    </div>
+</div>
+<div id="createTopicMenu" class="hidden fixed inset-0 items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+    <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
+        <form action = "{{url('/topics/add')}}" method = "POST" id ="createTopicForm" class="space-y-4">
+            @csrf
+            <div>
+                <label for="topicName" class="block text-gray-700 font-medium">Topic Name:</label>
+                <input type="text" id="create-Topic" name="topicname"
+                    class="w-full border border-gray-300 rounded p-2 bg-white focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    required>
+            </div>
+            <button type="button" id="cancelCreateTopicBtn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                 Cancel
             </button>
             <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">

@@ -26,6 +26,7 @@ class TopicPolicy
     Only admins can delete topics
     */
     public function delete(User $user){
+        Log::info(strval($user->isadmin));
         return $user->isadmin;
     }
 

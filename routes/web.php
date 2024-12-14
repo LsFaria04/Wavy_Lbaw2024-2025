@@ -73,6 +73,12 @@ Route::controller(TopicController::class)->group(function (){
     Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
 });
 
+//Topics
+Route::controller(TopicController::class)->group(function (){
+    Route::post('/topics/add', 'create');
+    Route::post('/topics/delete/{topicid}', 'delete');
+});
+
 
 //Posts
 Route::get('/home', [PostController::class, 'getPostsTimeline'])->name('home');
