@@ -613,9 +613,7 @@ function likePost(postId,event) {
   event?.stopPropagation();
 
   if(isadmin) return;
-
-  if (userId == -1) return;
-  
+  if (userId == -1) return; 
   if (postId == null) return;
 
   const likeCountElement = document.getElementById(`like-count-${postId}`);
@@ -632,12 +630,14 @@ function likePost(postId,event) {
         heartEmpty.classList.add('hidden');
         heartFilled.classList.remove('hidden');
         likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+        likeCountElement.classList.add('text-red-600');
     } else {
         heartEmpty?.classList.remove('hidden');
         heartFilled?.classList.add('hidden');
         if (likeCountElement !== null) {
           likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
         }
+        likeCountElement.classList.remove('text-red-600');
     }
   }
 }
