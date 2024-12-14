@@ -172,7 +172,6 @@ function addEventListeners() {
       if(editForm !== null){
         addEventListenerToForm(editForm);
       }
-      console.log("here");
       element.appendChild(post);
     }
   }
@@ -183,7 +182,7 @@ function addEventListeners() {
             <button 
                 type="button" 
                 class="flex items-center text-gray-500 hover:text-red-600" 
-                onclick="likePost(${postId}); event.stopPropagation();">
+                onclick="likePost(${postId}, event); event.stopPropagation();">
                 
                 <!-- No like -->
                 <svg 

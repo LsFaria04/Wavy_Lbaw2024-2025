@@ -70,4 +70,20 @@ function addEventListeners() {
       });// Time before fade-out
   }
 
+  function passwordRecovery(){
+    //hide the email form and show the token form 
+    const recoveryEmail = document.getElementById('recoveryEmail');
+    const recoveryToken = document.getElementById('recoveryToken');
+
+    recoveryEmail.classList.add('hidden');
+    recoveryEmail.classList.remove('flex');
+
+    recoveryToken.classList.remove('hidden');
+    recoveryToken.classList.add('flex');
+  }
+
+  function tokenCheck(){
+    alert("Not implemented");
+  }
+
   addEventListeners();
