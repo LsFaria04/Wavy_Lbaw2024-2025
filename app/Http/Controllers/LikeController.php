@@ -32,5 +32,15 @@ class LikeController extends Controller
 
         return $likes;
     }
+    public function create(Request $request){~
+
+        Like::create([
+            'userid' => $request->userid,
+            'postid' => $request->postid,
+            'commentid' => $request->commentid,
+            'createddate' => $request->createddate,
+        ]);
+        
+    }
     
 }

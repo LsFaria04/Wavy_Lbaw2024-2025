@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+
 class Comment extends Model
 {
     use HasFactory;
@@ -80,8 +81,15 @@ class Comment extends Model
     {
         return $this->hasMany(Media::class, 'commentid');
     }
+
     public function getSubcommentsCountAttribute()
-{
-    return Comment::where('parentcommentid', $this->commentid)->count();
-}
+    {
+        return Comment::where('parentcommentid', $this->commentid)->count();
+    }
+
+    public function commentLikes()
+    {
+        return $this->hasMany(Like::class, 'commentid','commentid');
+    }
+
 }

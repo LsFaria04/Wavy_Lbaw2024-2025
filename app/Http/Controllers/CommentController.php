@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Media;
+use App\Models\Like;
 
 
 class CommentController extends Controller
@@ -46,18 +47,77 @@ class CommentController extends Controller
     public function show($id)
     {
         // Fetch the main comment and its related data
-        $comment = Comment::with(['user', 'post', 'media', 'parentComment.user'])->findOrFail($id);
-    
+        $comment = Comment::with(['user', 'post', 'media', 'parentComment.user'])->withCount('commentLikes')->findOrFail($id);
+
+        if (Auth::check()){
+            $comment->liked = $comment->commentLikes()->where('userid', Auth::user()->userid)->exists();
+            $comment->createddate = $comment->createddate->diffForHumans();  
+        }
+        else{
+            $comment->liked = false;  
+            $comment->createddate = $comment->createddate->diffForHumans(); 
+        }
+
         // Fetch all sub-comments for the given comment ID
         $subComments = Comment::with(['user', 'media'])
             ->where('parentcommentid', $id)
+            ->withCount('commentLikes')
             ->orderBy('createddate', 'asc')
             ->get();
-    
+        if (Auth::check()){
+            foreach ($subComments as $subComment) {
+                $subComment->liked = $subComment->commentLikes()->where('userid', Auth::user()->userid)->exists();
+                $subComment->createddate = $subComment->createddate->diffForHumans();  // Format the created date
+            }
+        }
+        else{
+            foreach ($subComments as $subComment) {
+                $subComment->liked = false;  // If the user is not authenticated, they cannot like a subCom$subComment
+                $subComment->createddate = $subComment->createddate->diffForHumans();  // Format the created date
+            }
+        }
         // Pass both the main comment and its sub-comments to the view
         return view('pages.comment', compact('comment', 'subComments'));
     }
+
+    public function likeComment(Request $request, $commentId)
+    {
+
+        $user = Auth::user(); // Get the authenticated user
+        $comment = Comment::findOrFail($commentId);
+        
+        // Check if the user has already liked this comments
+        $existingLike = Like::where('commentid', $commentId)
+                            ->where('userid', $user->userid)
+                            ->first();
     
+
+        Log::info($existingLike);
+        if ($existingLike) {
+            // If the user has already liked the comments, remove the like
+            Log::info("Olá");
+            $existingLike->delete();
+            $liked = false;
+        } else {
+            // If the user has not liked the comments, add the like
+            Like::create([
+                'userid' => $user->userid,
+                'commentid' => $commentId,
+                'createddate' => now(),
+            ]);
+            $liked = true;
+        }
+    
+        // Get the updated like count
+        $likeCount = $comment->commentLikes()->count();
+    
+        // Return the updated like status and like count
+        return response()->json([
+            'liked' => $liked,
+            'likeCount' => $likeCount
+        ]);
+    }
+
     public function store(Request $request)
     {
         $request->validate([

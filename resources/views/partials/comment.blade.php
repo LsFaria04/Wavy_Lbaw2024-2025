@@ -80,61 +80,49 @@
     </div>
     
     <div class="comment-interactions flex items-center gap-4 mt-4">
-        <!-- Like Button -->
         <div class="comment-likes flex items-center gap-2">
-            <button 
-                type="button" 
-                class="flex items-center text-gray-500 hover:text-red-600" 
-                onclick="likeComment('{{ $comment->commentid }}'); event.stopPropagation();">
-                
+            <button type="button" class="flex items-center text-gray-500 hover:text-red-600" 
+                    onclick="likeComment('{{ $comment->commentid }}', event)">
                 <!-- No like -->
-                <svg 
-                    id="heart-empty-{{ $comment->commentid }}" 
-                    viewBox="0 0 24 24" 
-                    aria-hidden="true" 
-                    class="h-5 w-5 fill-gray-500 hover:fill-red-600">
+                <svg id="heart-empty-{{ $comment->commentid }}" viewBox="0 0 24 24" aria-hidden="true" 
+                    class="h-5 w-5 fill-gray-500 hover:fill-red-600 {{ $comment->liked ? 'hidden' : '' }}">
                     <g>
                         <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
                     </g>
                 </svg>
                 
                 <!-- Yes like -->
-                <svg 
-                    id="heart-filled-{{ $comment->commentid }}" 
-                    viewBox="0 0 24 24" 
-                    aria-hidden="true" 
-                    class="h-5 w-5 fill-red-600 hidden">
+                <svg id="heart-filled-{{ $comment->commentid }}" viewBox="0 0 24 24" aria-hidden="true" 
+                    class="h-5 w-5 fill-red-600 {{ $comment->liked ? '' : 'hidden' }}">
                     <g>
                         <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
                     </g>
                 </svg>
                 
-                <span id="like-count-{{ $comment->commentid }}" class="ml-1">0</span>
+                <span id="like-count-{{ $comment->commentid }}" class="ml-1">{{ $comment->comment_likes_count ?? 0 }}</span>
             </button>
         </div>
 
         <!-- Comment Button -->
         <div class="comment-comments flex items-center gap-2">
-            <button 
-                type="button" 
-                class="flex items-center text-gray-500 hover:text-sky-600" 
-                onclick="window.location.href='{{ route('comments.show', $comment->commentid) }}'; event.stopPropagation();">
-
-                <!-- Comment Icon -->
-                <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    id="comment-icon-{{ $comment->commentid }}" 
-                    class="h-5 w-5 fill-gray-500 hover:fill-sky-600 transition duration-200 ease-in-out" 
-                    viewBox="0 0 24 24" 
-                    fill="currentColor">
-                    <path d="M12 2C6.477 2 2 6.067 2 10.5c0 1.875.656 3.625 1.844 5.094l-1.308 3.922c-.19.57.474 1.065.997.736l3.875-2.325A9.435 9.435 0 0012 19c5.523 0 10-4.067 10-8.5S17.523 2 12 2zm0 2c4.418 0 8 3.067 8 6.5S16.418 17 12 17c-1.173 0-2.292-.232-3.318-.656a1 1 0 00-.97.035l-2.898 1.739.835-2.501a1 1 0 00-.176-.964A7.36 7.36 0 014 10.5C4 7.067 7.582 4 12 4z" />
-                </svg>
-
-                <!-- Comment Count -->
-                <span id="comment-count-{{ $comment->commentid }}" class="ml-1 text-gray-500 hover:text-sky-600">{{ $comment->subcomments_count ?? 0 }}</span>
-            </button>
+                <button 
+                    type="button" 
+                    class="flex items-center text-gray-500 hover:text-sky-600" 
+                    onclick="window.location.href='{{ route('comments.show', $comment->commentid) }}'; event.stopPropagation();">
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        id="comment-icon-{{ $comment->commentid }}" 
+                        class="h-5 w-5 fill-gray-500 hover:fill-sky-600 transition duration-200 ease-in-out" 
+                        viewBox="0 0 24 24" 
+                        fill="currentColor">
+                        <path d="M12 2C6.477 2 2 6.067 2 10.5c0 1.875.656 3.625 1.844 5.094l-1.308 3.922c-.19.57.474 1.065.997.736l3.875-2.325A9.435 9.435 0 0012 19c5.523 0 10-4.067 10-8.5S17.523 2 12 2zm0 2c4.418 0 8 3.067 8 6.5S16.418 17 12 17c-1.173 0-2.292-.232-3.318-.656a1 1 0 00-.97.035l-2.898 1.739.835-2.501a1 1 0 00-.176-.964A7.36 7.36 0 014 10.5C4 7.067 7.582 4 12 4z" />
+                    </svg>
+                    <!-- Comment Count -->
+                    <span id="comment-count-{{ $comment->commentid }}" class="ml-1 text-gray-500 hover:text-sky-600">{{ $comment->subcomments_count ?? 0 }}</span>
+                </button>
         </div>
     </div>
+
 
     @auth
         @if(auth()->id() === $comment->userid || Auth::user()->isadmin) 
