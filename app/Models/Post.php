@@ -75,4 +75,9 @@ class Post extends Model
         return $this->belongsToMany(Topic::class, 'post_topics', 'postid', 'topicid');
     }
 
+    public function likes()
+    {
+        return $this->hasMany(Like::class, 'postid');
+    }
+
 }

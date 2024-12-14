@@ -87,6 +87,8 @@ Route::post('/posts/store', [PostController::class, 'store'])->name('posts.store
 Route::post('/posts/update/{post}', [PostController::class, 'update'])->name('posts.update');
 Route::post('/posts/delete/{post}', [PostController::class, 'destroy'])->name('posts.destroy');
 Route::get('/posts/{id}', [PostController::class, 'show'])->name('posts.show');
+Route::post('/like-post/{postId}', [PostController::class, 'likePost'])->name('likePost');
+
 
 //Comments
 Route::post('/comments/update/{comment}', [CommentController::class, 'update'])->name('comments.update');
@@ -94,6 +96,7 @@ Route::post('/comments/delete/{comment}', [CommentController::class, 'destroy'])
 Route::get('/comments/{id}', [CommentController::class, 'show'])->name('comments.show');
 Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
 Route::post('/comments/storeSubcomment', [CommentController::class, 'storeSubcomment'])->name('comments.storeSubcomment');
+Route::post('/like-comment/{commentId}', [CommentController::class, 'likeComment'])->name('likeComment');
 
 //Media
 Route::post('/media/store', [MediaController::class, 'store'])->name('media.store');

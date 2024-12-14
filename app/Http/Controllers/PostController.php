@@ -11,6 +11,7 @@ use App\Models\Post;
 use App\Models\Media;
 use App\Models\User;
 use App\Models\Group;
+use App\Models\Like;
 
 class PostController extends Controller
 {
@@ -37,10 +38,16 @@ class PostController extends Controller
         if (Auth::check()) {
             // Include the comment count
             $posts = Post::with('user', 'media','topics')
-                        ->withCount('comments')  // This will add comments_count to the Post model
+                        ->withCount('comments')  // This will add comments_count to the Post model~
+                        ->withCount('likes')
                         ->whereNull('groupid')
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
+
+            foreach ($posts as $post) {
+                $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
+                $post->createddate = $post->createddate->diffForHumans();  // Format the created date
+            }
         } else {
             $posts = Post::with('user', 'media','topics')
                         ->withCount('comments')  // Add the comment count
@@ -48,6 +55,11 @@ class PostController extends Controller
                         ->where('visibilitypublic', true)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
+
+            foreach ($posts as $post) {
+                $post->liked = false;  // If the user is not authenticated, they cannot like a post
+                $post->createddate = $post->createddate->diffForHumans();  // Format the created date
+            }
         }
     
         // Format the created date to human-readable format
@@ -75,10 +87,15 @@ class PostController extends Controller
         if (Auth::check()) {
             $posts = Post::with('user', 'media', 'topics')
                         ->withCount('comments')  // Add the comment count
+                        ->withCount('likes')
                         ->whereNull('groupid')
                         ->where('userid', $user->userid)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
+            foreach ($posts as $post) {
+                $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
+                $post->createddate = $post->createddate->diffForHumans();  // Format the created date
+            }
         } else {
             $posts = Post::with('user', 'media', 'topics')
                         ->withCount('comments')  // Add the comment count
@@ -87,6 +104,10 @@ class PostController extends Controller
                         ->where('userid', $user->userid)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
+            foreach ($posts as $post) {
+                $post->liked = false;  // If the user is not authenticated, they cannot like a post
+                $post->createddate = $post->createddate->diffForHumans();  // Format the created date
+            }
         }
 
         // Format the created date to human-readable format
@@ -101,6 +122,45 @@ class PostController extends Controller
         return $posts;
     }
 
+
+    public function likePost(Request $request, $postId)
+    {
+
+        $user = Auth::user(); // Get the authenticated user
+        $post = Post::findOrFail($postId);
+        
+        // Check if the user has already liked this post
+        $existingLike = Like::where('postid', $postId)
+                            ->where('userid', $user->userid)
+                            ->first();
+    
+
+        Log::info($existingLike);
+        if ($existingLike) {
+            // If the user has already liked the post, remove the like
+            Log::info("Olá");
+            $existingLike->delete();
+            $liked = false;
+        } else {
+            // If the user has not liked the post, add the like
+            Like::create([
+                'userid' => $user->userid,
+                'postid' => $postId,
+                'createddate' => now(),
+            ]);
+            $liked = true;
+        }
+    
+        // Get the updated like count
+        $likeCount = $post->likes()->count();
+    
+        // Return the updated like status and like count
+        return response()->json([
+            'liked' => $liked,
+            'likeCount' => $likeCount
+        ]);
+    }
+    
     /**
      * Stores a new post.
      */
@@ -188,11 +248,39 @@ class PostController extends Controller
 
     public function show($id)
     {
-        // Eager load user, media, comments (with their users and media) and also count the comments
-        $post = Post::with(['user', 'media', 'comments.user', 'comments.media'])
-                    ->withCount('comments')  // This will add comments_count to the Post model
-                    ->findOrFail($id);
+        // Eager load user, media, and comments (with their users, media, and likes count for each comment)
+        $post = Post::with([
+                'user', 
+                'media', 
+                'comments.user', 
+                'comments.media',
+                'comments.commentLikes'  // Eager load commentLikes to get the likes count
+            ])
+            ->withCount('comments')  // This will add comments_count to the Post model
+            ->withCount('likes')     // This will add likes_count to the Post model
+            ->findOrFail($id);
     
+        // Check if the user is authenticated
+        if (Auth::check()) {
+            $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
+            $post->createddate = $post->createddate->diffForHumans();  // Format the created date    
+            
+            // Now, we also need to check each comment for the current user's like status
+            foreach ($post->comments as $comment) {
+                $comment->liked = $comment->commentLikes()->where('userid', Auth::user()->userid)->exists();
+                $comment->comment_likes_count = $comment->commentLikes()->where('userid', Auth::user()->userid)->count();
+            }
+        } else {
+            $post->liked = false;  // If the user is not authenticated, they cannot like a post
+            $post->createddate = $post->createddate->diffForHumans();  // Format the created date
+            
+            // Set liked to false for each comment when the user is not logged in
+            foreach ($post->comments as $comment) {
+                $comment->liked = false;
+            }
+        }
+    
+        // Pass the post data to the view
         return view('pages.post', compact('post'));
     }
     
