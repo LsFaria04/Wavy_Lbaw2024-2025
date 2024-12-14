@@ -14,7 +14,6 @@
         <section id="timeline" class="flex flex-col max-w-full w-full bg-white shadow-lg mx-auto">
             @if(Auth::check() && !Auth()->user()->isadmin)
                @include('partials.createPost')
-
             @endif
             @if($posts->isEmpty())
                 <p>No posts found.</p>

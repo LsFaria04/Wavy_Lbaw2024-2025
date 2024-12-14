@@ -20,5 +20,6 @@
                 </svg>
                 <p>Show More</p>
             <button>
-            </div>
+        </div>
     </div>
+</div>

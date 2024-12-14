@@ -172,6 +172,7 @@ function addEventListeners() {
       if(editForm !== null){
         addEventListenerToForm(editForm);
       }
+      console.log("here");
       element.appendChild(post);
     }
   }
