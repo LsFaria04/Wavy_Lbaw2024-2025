@@ -51,6 +51,7 @@ class PostController extends Controller
         } else {
             $posts = Post::with('user', 'media','topics')
                         ->withCount('comments')  // Add the comment count
+                        ->withCount('likes')
                         ->whereNull('groupid')
                         ->where('visibilitypublic', true)
                         ->orderBy('createddate', 'desc')
