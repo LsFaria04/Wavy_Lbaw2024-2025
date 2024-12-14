@@ -34,8 +34,6 @@ function addEventListeners() {
 
   addEventListenerEditUserAdmin();
   eventListernerFormsAdmin();
-
-  likePost();
   
 }
 
@@ -569,7 +567,6 @@ function insertPostTopics(post, topics){
   let postTopics = document.createElement('div');
   postTopics.setAttribute('id', 'postTopics');
   postTopics.classList.add('flex', 'flex-row');
-  console.log(topics);
 
   for(let i = 0; i < topics.length; i++){
     let topic = document.createElement('p');
@@ -615,6 +612,8 @@ function likePost(postId,event) {
 
   event?.stopPropagation();
 
+  if(isadmin) return;
+
   if (userId == -1) return;
   
   if (postId == null) return;
@@ -623,7 +622,6 @@ function likePost(postId,event) {
   const heartEmpty = document.getElementById(`heart-empty-${postId}`);
   const heartFilled = document.getElementById(`heart-filled-${postId}`);
 
-  console.log("Aqui nos likers");
 
   // Make the AJAX request to like/unlike the post
   sendAjaxRequest('post', '/like-post/' + postId, null,  updateLikePost);
@@ -701,7 +699,6 @@ function loadMorePostTopics(){
   }
   else{
     postTopicPage++;
-    console.log(topicPostId);
     sendAjaxRequest('get', '/api/topics/all/' + topicPostId + '?page=' + postTopicPage,null,insertMorePostTopics);
   }
 

@@ -40,9 +40,11 @@
     
       document.querySelectorAll('.tab-section').forEach((el) => {
           el.classList.add('hidden');
+          el.classList.remove('flex');
       });
 
       document.getElementById(sectionId).classList.remove('hidden');
+      document.getElementById(sectionId).classList.add('flex');
 
       const section = document.getElementById(sectionId);  
       const sectionContentTable = section.querySelector('table');

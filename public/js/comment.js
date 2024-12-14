@@ -29,7 +29,7 @@ function addEventListeners() {
     syncCommentFilesWithInputEventListener();
     addEventListenerEditUserAdmin();
     eventListernerFormsAdmin();
-    likeComment();
+    //likeComment();
     
   }
 //creates a new comment container with all the needed info
@@ -194,7 +194,6 @@ function updateFileNameEditComment(commentId) {
   // Append new files to the list (preserve existing files)
 
   Array.from(fileInput.files).forEach(file => {
-    console.log(file.size);
     if (file.size > 2097152){
       alert('File too big');
     }
@@ -205,9 +204,7 @@ function updateFileNameEditComment(commentId) {
 
   
   const lenStoreMedia = fileDisplay.querySelectorAll('div').length - 1;
-  console.log(lenStoreMedia);
   // Check if there are more than 4 files
-  console.log(lenStoreMedia + selectedFiles.length);
   if (lenStoreMedia + selectedFilesEdit.length > 4) {
       alert('You can only select up to 4 files.');
       // Remove the newly added files from the selectedFiles array
@@ -219,7 +216,6 @@ function updateFileNameEditComment(commentId) {
   newFileDisplay.innerHTML = '';
 
   // Show updated list of file names
-  console.log(selectedFilesEdit);
   selectedFilesEdit.forEach((file, index) => {
     if(newFileDisplay.classList.contains('hidden')){
       newFileDisplay.classList.toggle('hidden');
@@ -521,7 +517,7 @@ function addEventListenerToCommentForms(){
   });
 }
 
-
+/*
 function likeComment(commentId) {
   
   const likeCountElement = document.getElementById(`like-count-${commentId}`);
@@ -541,10 +537,12 @@ function likeComment(commentId) {
       }
   }
 }
-
+*/
 function likeComment(commentId,event) {
 
   event?.stopPropagation();
+
+  if(isadmin) return;
 
   if (userId == -1) return;
   
@@ -554,7 +552,6 @@ function likeComment(commentId,event) {
   const heartEmpty = document.getElementById(`heart-empty-${commentId}`);
   const heartFilled = document.getElementById(`heart-filled-${commentId}`);
 
-  console.log("Aqui nos likers");
 
   // Make the AJAX request to like/unlike the comment
   sendAjaxRequest('post', '/like-comment/' + commentId, null,  updateLikeComment);
