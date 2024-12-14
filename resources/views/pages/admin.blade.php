@@ -65,6 +65,9 @@
             <button id="createTopicBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                 Create Topic
             </button>
+            <form onsubmit="searchAdmin(event,'topics')">
+                <input id="topicsAdminSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Topics" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
+            </form>
         </div>
         <table id="topics-table" class = "w-full my-4">
 

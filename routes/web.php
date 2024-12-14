@@ -65,6 +65,7 @@ Route::controller(TopicController::class)->group(function (){
     Route::get('/api/topics/all/{postid}', 'getAllTopicsToPost');
     Route::get('/api/topics/search/all/{postid}', 'searchAllTopicsToPost');
     Route::get('/api/topics/all', 'getAllTopics');
+    Route::get('/api/topics/search/all', 'searchAllTopics');
     Route::get('/api/topics/{userid}', 'getUserTopics');
     Route::get('/api/topics/canAdd/{userid}', 'getTopicsToAdd');
     Route::get('/api/topics/search/{userid}', 'searchUserTopic');

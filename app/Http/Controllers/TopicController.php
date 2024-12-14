@@ -59,8 +59,7 @@ class TopicController extends Controller
 
         try{
             //update the topics in the posts and give them the general topic if they don't have any
-            $posts = Post::whereHas('topics', function ($query) use ($topicid) { Log::info(strval($topicid)); $query->where('topic.topicid', $topicid); })->get();
-            Log::info("not the query");
+            $posts = Post::whereHas('topics', function ($query) use ($topicid) {$query->where('topic.topicid', $topicid); })->get();
 
             foreach($posts as $post){
                 $post->topics()->detach($topicid);
@@ -71,7 +70,6 @@ class TopicController extends Controller
 
             $topic->delete();
         } catch (\Exception $e) {
-            Log::debug(strval($e));
             return redirect()->route('admin.index')
             ->with('error', 'Something went wrong when deleting the topic. Please try again');
         }
@@ -302,6 +300,22 @@ class TopicController extends Controller
             ->setBindings([$query])
             ->paginate(10);
 
+        }catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
+        }
+
+        return response()->json($topics);
+    }
+
+    function searchAllTopics(Request $request){
+        $query = $request->input('q');
+        //sanitizes the query to separate the words
+        $sanitizedQuery = str_replace("'", "''", $query);
+
+        try{
+            $topics = Topic::whereRaw("search @@ plainto_tsquery('english', ?)")
+                        ->setBindings([$query])
+                        ->paginate(10);
         }catch(\Exception $e){
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }

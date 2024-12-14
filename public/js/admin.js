@@ -141,7 +141,12 @@
 
       switch(sectionId){
         case 'topics':
-          sendAjaxRequest('get', '/api/topics/all?page=' + currentAdminPage, null, insertMoreAdminTopics);
+          if(isQuery){
+            sendAjaxRequest('get', '/api/topics/search/all?page=' + currentAdminPage + "&q=" + searchQuery, null, insertMoreAdminTopics);
+          }
+          else{
+            sendAjaxRequest('get', '/api/topics/all?page=' + currentAdminPage, null, insertMoreAdminTopics);
+          }
           break;
 
       }
@@ -155,6 +160,31 @@
         sendAjaxRequest('get',`/admin/users/${userId}/edit`, null, adminEditUser);
     })
   });
+
+  function searchAdmin(event, sectionId){
+    event.preventDefault();
+
+    currentAdminPage = 0;
+    isQuery = true;
+    searchQuery = document.querySelector(`#${sectionId}AdminSearch`).value;
+  
+     //cancel the search if there is not a query
+     if(searchQuery == ""){
+      isQuery = false;
+    }
+  
+    //remove the existing topics from the list that is being displayed to the user 
+    const section = document.getElementById(sectionId);  
+    const sectionContentTable = section.querySelector('table');
+    if(sectionContentTable == null){
+      return;
+    }
+    while(sectionContentTable.firstChild){
+      sectionContentTable.firstChild.remove();
+    }
+  
+    loadMoreAdminContent(sectionId);
+  }
 
   //loads the edit user form when receive a positive response from the server
 function adminEditUser(){
