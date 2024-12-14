@@ -49,7 +49,7 @@ class SearchController extends Controller
                             
                         }
                         else {
-                            $posts = Post::with('user','media')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                             ->where('visibilitypublic', true)
                             ->orderBy('createddate', 'desc')
                             ->paginate(10);
@@ -60,7 +60,7 @@ class SearchController extends Controller
                     }
 
                     else {
-                        $posts = Post::with('user','media')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                        $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);

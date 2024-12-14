@@ -84,7 +84,7 @@ class GroupController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $posts = $group->posts()->with('user', 'media')->orderBy('createddate', 'desc')->paginate(10);
+        $posts = $group->posts()->with('user', 'media','topics')->orderBy('createddate', 'desc')->paginate(10);
 
         for($i = 0;$i < sizeof($posts); $i++){
             $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();

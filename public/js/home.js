@@ -107,10 +107,13 @@ function addEventListeners() {
       // Handle group page
       const groupPage = document.querySelector("#group-tab-content");
       if (groupPage !== null && (maxPage > currentPage || maxPage === -1)) {
+        /*
         if (!isPublic && !isadmin) {
+          console.log("here2")
             // Skip loading more for private groups
             return;
         }
+        */
 
         currentPage += 1;
         insertLoadingCircle(groupPage);
