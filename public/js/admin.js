@@ -2,20 +2,21 @@
  function addEventListeners() {
   document.addEventListener('DOMContentLoaded', fadeAlert);
 
-  let cancelButton = document.getElementById('cancelButton');
+  let cancelButton = document.getElementById('cancelButtonAdmin');
 
   if(cancelButton !== null){
     cancelButton.addEventListener('click', () => {
-    const deleteMenu = document.getElementById('deleteMenu');
-    html.classList.toggle('overflow-hidden');
-    deleteMenu.classList.add('hidden');
+    const deleteMenu = document.getElementById('deleteMenuAdmin');
+    deleteMenu.classList.toggle('hidden');
+    deleteMenu.classList.toggle('flex');
   });
 }
-  let confirmButton = document.getElementById('confirmButton');
+  let confirmButton = document.getElementById('confirmButtonAdmin');
   if(confirmButton !== null){
     confirmButton.addEventListener('click', () => {
-      const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-      deleteForm.submit();
+      alert("will be implemented later");
+      //const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
+      //deleteForm.submit();
     });
   }
 
@@ -36,13 +37,104 @@
  
  //used to switch from section in the admin page(only for the final product)
   function showSectionAdmin(sectionId) {
-    /*
+    
       document.querySelectorAll('.tab-section').forEach((el) => {
           el.classList.add('hidden');
       });
 
       document.getElementById(sectionId).classList.remove('hidden');
-      */
+
+      const section = document.getElementById(sectionId);  
+      const sectionContentTable = section.querySelector('table');
+      if(sectionContentTable == null){
+        return;
+      }
+      while(sectionContentTable.firstChild){
+        sectionContentTable.firstChild.remove();
+      }
+
+      maxAdminPage = -1;
+      currentAdminPage = 0;
+      loadMoreAdminContent(sectionId);
+      
+    }
+
+  
+  function showDeleteAdminMenu(){
+    document.getElementById('deleteMenuAdmin').classList.toggle('hidden');
+    document.getElementById('deleteMenuAdmin').classList.toggle('flex');
+  }
+
+  function insertShowMoreAdmin(sectionId){
+    const section = document.getElementById(sectionId);  
+    let showMore = document.createElement('button');
+    showMore.classList.add("flex", "w-full", "justify-center", "items-center");
+    showMore.setAttribute('onclick', `loadMoreAdminContent('${sectionId}')`);
+    showMore.setAttribute('id', 'showMore');
+    showMore.innerHTML = `
+                <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+                <p>Show More</p>
+    `;
+    section.appendChild(showMore);
+  }
+
+  function removeShowMoreAdmin(){
+    document.getElementById('showMore')?.remove();
+  }
+
+  function insertMoreAdminTopics(){
+    removeLoadingCircle();
+    removeShowMoreAdmin();
+    const section = document.getElementById('topics');  
+    const sectionContentTable = section.querySelector('table');
+
+    let topics =  JSON.parse(this.responseText);
+    maxAdminPage = topics.last_page;
+
+    for(let i = 0; i < topics.data.length; i++){
+      let row = document.createElement('tr');
+      row.classList.add("flex", "w-full", "shadow", "font-medium");
+      row.innerHTML = `
+      <td class="grow px-4 py-2 text-gray-700">${topics.data[i].topicname}</td>
+      <td class="px-4 py-2 self-end">
+          <button onclick="showDeleteAdminMenu()" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </button>
+      </td>
+
+      `
+      sectionContentTable.appendChild(row);
+    }
+
+    if(currentAdminPage < maxAdminPage){
+      insertShowMoreAdmin('topics');
+    }
+  }
+  
+  let maxAdminPage = -1;
+  let currentAdminPage = 0;
+  function loadMoreAdminContent(sectionId){
+
+      if((maxAdminPage < currentPage) && (maxAdminPage != -1)){
+        return;
+      }
+
+      const section = document.getElementById('topics');  
+      const sectionContentTable = section.querySelector('table');
+      
+      insertLoadingCircle(sectionContentTable);
+      currentAdminPage++;
+
+      switch(sectionId){
+        case 'topics':
+          sendAjaxRequest('get', '/api/topics/all?page=' + currentAdminPage, null, insertMoreAdminTopics);
+          break;
+
+      }
     }
 
   //Admin Edit User

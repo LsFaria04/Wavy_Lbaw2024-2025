@@ -6,10 +6,10 @@
     <header class="w-full max-w-5xl mb-8 px-4">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Administration</h1>
         <nav class="flex justify-around bg-blue-600 text-white py-3 rounded-lg shadow-lg">
-           <!-- <button class="tab-btn px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
-                onclick="showSectionAdmin('posts')">Manage Posts</button> -->
             <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
                 onclick="showSectionAdmin('users')">Manage Users</button>
+            <button class="tab-btn px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
+                onclick="showSectionAdmin('topics')">Manage Topics</button>
         </nav>
     </header>
 
@@ -57,6 +57,34 @@
         </div> 
 -->
     </section> 
+
+    <section id="topics" class="hidden admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Topics</h2>
+        
+        <div class="mb-4 flex justify-between items-center">
+            <button id="createTopicBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Create Topic
+            </button>
+        </div>
+        <table id="topics-table" class = "w-full my-4">
+
+        </table>
+    </section>
+</div>
+
+<div id="deleteMenuAdmin" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
+    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+        <h2 class="text-xl font-semibold text-gray-900">Delete Topic</h2>
+        <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this Topic? This action cannot be undone.</p>
+        <div class="mt-6 flex justify-end gap-3">
+            <button id="cancelButtonAdmin" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
+                Cancel
+            </button>
+            <button id="confirmButtonAdmin" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
+                Delete
+            </button>
+        </div>
+    </div>
 </div>
 
 
