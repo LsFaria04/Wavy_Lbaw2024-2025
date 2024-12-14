@@ -31,16 +31,17 @@
                 </div>
             @else
                 <div class="space-y-4">
-                    @foreach($notifications as $notification)
+                    @foreach($notifications->filter(function($notification) {return isset($notification->comment);}) as $notification)  <!-- only gets comment notificiations --> 
                         <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
                             <!-- Notification message and post link -->
                             <div class="flex-1">
                                 @if(isset($notification->comment) && isset($notification->comment->post))
                                     <div class="text-sm font-semibold text-gray-800">
-                                        {{ $notification->comment->user->username }} commented on your post.
+                                        {{ $notification->comment->user->username }} commented:
+                                        <span class="italic text-gray-600">"{{ Str::limit($notification->comment->message, 50) }}"</span>
                                     </div>
                                     <div class="text-sm text-gray-500">
-                                        <a href="{{ route('posts.show', ['id' => $notification->comment->post->postid]) }}" class="text-blue-600 hover:underline">View Post</a>
+                                        <a href="{{ route('posts.show', ['id' => $notification->comment->post->postid]) }}" class="text-blue-600 hover:underline">On post: "{{ Str::limit($notification->comment->post->message, 50) }}"</a>
                                     </div>
                                 @else
                                     <div class="text-gray-600 text-sm">Post not available.</div>

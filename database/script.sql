@@ -352,9 +352,19 @@ BEGIN
     IF NEW.postID IS NOT NULL THEN
         SELECT userID INTO content_owner FROM POST WHERE postID = NEW.postID;
 
+        --Don't notify if like was done by post owner
+        IF content_owner = NEW.userID THEN
+            RETURN NEW;
+        END IF;
+
     -- If the like is for a comment, get the comment owner
     ELSIF NEW.commentID IS NOT NULL THEN
         SELECT userID INTO content_owner FROM COMMENT WHERE commentID = NEW.commentID;
+
+        --Don't notify if like was done by comment owner
+        IF content_owner = NEW.userID THEN
+            RETURN NEW;
+        END IF;
     END IF;
 
     -- Insert the notification for the content owner
@@ -380,9 +390,19 @@ BEGIN
     IF NEW.postID IS NOT NULL THEN
         SELECT userID INTO content_owner FROM POST WHERE postID = NEW.postID;
 
+        --Don't notify if comment was made by post owner
+        IF content_owner = NEW.userID THEN
+            RETURN NEW;
+        END IF;
+
     -- If the like is for a comment, get the comment owner
     ELSIF NEW.parentCommentID IS NOT NULL THEN
         SELECT userID INTO content_owner FROM COMMENT WHERE commentID = NEW.parentCommentID;
+
+        --Don't notify if comment was made by comment owner
+        IF content_owner = NEW.userID THEN
+            RETURN NEW;
+        END IF;
     END IF;
 
     -- Insert the notification for the content owner
