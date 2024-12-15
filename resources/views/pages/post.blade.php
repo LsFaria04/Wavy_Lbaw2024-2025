@@ -66,6 +66,6 @@
                 @endforelse
             </div>
         </section>
-        @include('partials.addPostTopics');
+        @include('partials.addPostTopics')
     </div>
 @endsection

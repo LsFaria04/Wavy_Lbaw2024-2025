@@ -98,13 +98,11 @@ class User extends Authenticatable
     /**
      * Get the groups that the user is a part of.
      */
-    public function groups(): BelongsToMany
-    {
+    public function groups(): BelongsToMany {
         return $this->belongsToMany(Group::class, 'group_membership', 'userid', 'groupid');
     }
 
-    public function topics()
-    {
+    public function topics() {
         return $this->belongsToMany(Topic::class, 'user_topics', 'userid', 'topicid');
     }
 
