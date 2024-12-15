@@ -17,10 +17,10 @@
                 <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="comments-tab" onclick="changeCategory('comments')">
                     Comments
                 </button>
-                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200 disabled" id="likes-tab" onclick="changeCategory('likes')">
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="likes-tab" onclick="changeCategory('likes')">
                     Likes
                 </button>
-                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200 disabled" id="follows-tab" onclick="changeCategory('follows')">
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="follows-tab" onclick="changeCategory('follows')">
                     Follows
                 </button>
             </div>
@@ -47,8 +47,19 @@
                                                     On post: "{{ Str::limit($notification->comment->post->message, 50) }}"
                                                 </a>
                                             </div>
-                                        @else
-                                            <div class="text-gray-600 text-sm">Post not available.</div>
+                                        @elseif(isset($notification->like) && isset($notification->like->post))
+                                            <div class="text-sm font-semibold text-gray-800">
+                                                {{ $notification->like->user->username }} liked your post
+                                            </div>
+                                            <div class="text-sm text-gray-500">
+                                                <a href="{{ route('posts.show', ['id' => $notification->like->post->postid]) }}" class="text-blue-600 hover:underline">
+                                                    "{{ Str::limit($notification->like->post->message, 50) }}"
+                                                </a>
+                                            </div>
+                                        @elseif(isset($notification->follow) && isset($notification->follow->user))
+                                            <div class="text-sm font-semibold text-gray-800">
+                                                {{ $notification->follow->user->username }} started following you
+                                            </div>
                                         @endif
                                     </div>
                                     <div class="text-xs text-gray-400">
@@ -57,18 +68,22 @@
                                 </div>
                             @endforeach
                         </div>
+                        <!-- Pagination for infinite scroll -->
+                        <div class="mt-6">
+                            {{ $notifications->links() }}
+                        </div>
                     @endif
                 </div>
 
                 <!-- Comments Section -->
                 <div class="notifications-section hidden" id="comments-content">
-                    @if($notifications->filter(function($notification) { return isset($notification->comment); })->isEmpty())
+                    @if($commentNotifications->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600">No comment notifications available.</p>
                         </div>
                     @else
                         <div class="space-y-4">
-                            @foreach($notifications->filter(function($notification) { return isset($notification->comment); }) as $notification)
+                            @foreach($commentNotifications as $notification)
                                 <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
                                     <div class="flex-1">
                                         @if(isset($notification->comment) && isset($notification->comment->post))
@@ -81,8 +96,6 @@
                                                     On post: "{{ Str::limit($notification->comment->post->message, 50) }}"
                                                 </a>
                                             </div>
-                                        @else
-                                            <div class="text-gray-600 text-sm">Post not available.</div>
                                         @endif
                                     </div>
                                     <div class="text-xs text-gray-400">
@@ -94,16 +107,61 @@
                     @endif
                 </div>
 
-                <!-- Likes Section (TODO) -->
+                <!-- Likes Section -->
                 <div class="notifications-section hidden" id="likes-content">
-                    <!-- Add the content for likes notifications here -->
-                    <p>No like notifications yet.</p>
+                    @if($likeNotifications->isEmpty())
+                        <div class="flex justify-center items-center h-32">
+                            <p class="text-gray-600">No like notifications yet.</p>
+                        </div>
+                    @else
+                        <div class="space-y-4">
+                            @foreach($likeNotifications as $notification)
+                                <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+                                    <div class="flex-1">
+                                        @if(isset($notification->like) && isset($notification->like->post))
+                                            <div class="text-sm font-semibold text-gray-800">
+                                                {{ $notification->like->user->username }} liked your post
+                                            </div>
+                                            <div class="text-sm text-gray-500">
+                                                <a href="{{ route('posts.show', ['id' => $notification->like->post->postid]) }}" class="text-blue-600 hover:underline">
+                                                    "{{ Str::limit($notification->like->post->message, 50) }}"
+                                                </a>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="text-xs text-gray-400">
+                                        {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
-
-                <!-- Follows Section (TODO) -->
+                                                        
+                <!-- Follows Section -->
                 <div class="notifications-section hidden" id="follows-content">
-                    <!-- Add the content for follows notifications here -->
-                    <p>No follow notifications yet.</p>
+                    @if($followNotifications->isEmpty())
+                        <div class="flex justify-center items-center h-32">
+                            <p class="text-gray-600">No follow notifications yet.</p>
+                        </div>
+                    @else
+                        <div class="space-y-4">
+                            @foreach($followNotifications as $notification)
+                                <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+                                    <div class="flex-1">
+                                        @if(isset($notification->follow) && isset($notification->follow->user))
+                                            <div class="text-sm font-semibold text-gray-800">
+                                                {{ $notification->follow->user->username }} started following you
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div class="text-xs text-gray-400">
+                                        {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    @endif
                 </div>
             </div>
         </div>
