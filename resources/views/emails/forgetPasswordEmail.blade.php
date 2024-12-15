@@ -1,5 +1,5 @@
-<h3>Hi {{ $mailData['email'] }},</h3>
-<h4>Welcome to LBAW Tutorial 01</h4>
-<h4>You should personalize your email according to your needs</h4>
+<h3>Hi,</h3>
+<h4>Your token is: {{ $mailData['token'] }}</h4>
+<h4>Your previous password is no longer available</h4>
 <h5>-------</h5>
-<h5>LBAW Staff</h5>
+<h5>Wavy Support</h5>

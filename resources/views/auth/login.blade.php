@@ -5,6 +5,20 @@
     <header>
         <h1 class= "text-3xl font-bold">Login<h1>
     </header>
+    @if ($errors->has('email'))
+            <div class = "mt-8 self-center alert rounded max-w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">             
+                {{ $errors->first('email') }}         
+            </div>
+        @elseif($errors->has('password'))
+            <div class = "mt-8 self-center alert max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">             
+                {{ $errors->first('password')}}          
+            </div>
+        @endif 
+        @if (session('success'))
+            <div class = "mt-8 self-center alert max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">
+                        {{ session('success') }}
+            </div>
+            @endif
     <div class = "grow flex items-center justify-center">
         <form method="POST" action="{{ route('login') }}" class = "max-w-xl grid-start-1 bg-slate-100 shadow-md rounded px-8 pt-6 pb-8 my-4" >
             {{ csrf_field() }}
@@ -28,23 +42,7 @@
                 </button>
             </div>
             <a class="font-medium underline" href="{{route('forgotPassword')}}">Forgot password?</a>
-            <div class="mt-4">
-            @if ($errors->has('email'))
-                <p class= "text-red-900 font-extrabold">
-                {{ $errors->first('email') }}
-                </p>
-            @endif
-            @if ($errors->has('password'))
-                <p class="text-red-900 font-extrabold">
-                    {{ $errors->first('password') }}
-                </p>
-            @endif
-            @if (session('success'))
-                    <p class="text-green-900 font-extrabold">
-                        {{ session('success') }}
-                    </p>
-                @endif
-            </div>
+
         </form>
     </div>
 </section>

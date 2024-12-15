@@ -70,20 +70,79 @@ function addEventListeners() {
       });// Time before fade-out
   }
 
+  function createAlert(element,message, isError){
+    const alert = document.createElement('div');
+    alert.classList.add("self-center", "alert", "rounded","w-full", "max-w-full", "p-4", isError ? "bg-red-100" : "bg-green-100" , isError ?  "text-red-800" : "text-green-800" , "border", "shadow-md", "text-center", isError ? "border-red-300" : "border-green-300", "z-10");
+    alert.innerHTML = message;
+    element.appendChild(alert);
+    setTimeout(() => { alert.remove()}, 3000);
+  }
+
   function passwordRecovery(){
     //hide the email form and show the token form 
     const recoveryEmail = document.getElementById('recoveryEmail');
-    const recoveryToken = document.getElementById('recoveryToken');
-
+    
+    const email = document.getElementById('email');
+    const recoverPasswordDiv = document.getElementById('recoveryContainer');
+    
     recoveryEmail.classList.add('hidden');
     recoveryEmail.classList.remove('flex');
 
-    recoveryToken.classList.remove('hidden');
-    recoveryToken.classList.add('flex');
+    insertLoadingCircle(recoverPasswordDiv);
+    sendAjaxRequest('post', '/forgot-password', {'email': email.value}, emailSentConfirmation);
+  }
+
+  function emailSentConfirmation(){
+    removeLoadingCircle();
+    const response = JSON.parse(this.responseText);
+    const messageDiv = document.getElementById('messageContainer');
+
+    if(response.response !== '200'){
+      recoveryEmail.classList.remove('hidden');
+      recoveryEmail.classList.add('flex');
+      createAlert(messageDiv, response.message, true);
+    }
+    else{
+      const recoveryToken = document.getElementById('recoveryToken');
+      recoveryToken.classList.remove('hidden');
+      recoveryToken.classList.add('flex');
+      createAlert(messageDiv, response.message, false);
+    }
+    
   }
 
   function tokenCheck(){
-    alert("Not implemented");
+    const recoverPasswordDiv = document.getElementById('recoveryContainer');
+    insertLoadingCircle(recoverPasswordDiv);
+
+    const email = document.getElementById('email');
+    const token = document.getElementById('token');
+    const password = document.getElementById('password');
+    const passwordConf = document.getElementById('password-confirm');
+
+    const recoveryToken = document.getElementById('recoveryToken');
+      recoveryToken.classList.add('hidden');
+      recoveryToken.classList.remove('flex');
+    
+    sendAjaxRequest('post', '/reset-password', {'email': email.value, 'password':password.value, 'password_confirmation': passwordConf.value, 'token':token.value}, tokenCheckConfirmation);
+  }
+
+  function tokenCheckConfirmation(){
+    removeLoadingCircle();
+    const response = JSON.parse(this.responseText);
+    let messageDiv = document.getElementById('messageContainer');
+
+    if(response.response !== '200'){
+      const recoveryToken = document.getElementById('recoveryToken');
+      recoveryToken.classList.remove('hidden');
+      recoveryToken.classList.add('flex');
+      createAlert(messageDiv, response.message, true);
+    }
+    else{
+      window.location.replace("/login");
+       
+    }
+
   }
 
   addEventListeners();
