@@ -556,17 +556,19 @@ function likeComment(commentId,event) {
   // Make the AJAX request to like/unlike the comment
   sendAjaxRequest('post', '/like-comment/' + commentId, null,  updateLikeComment);
 
-  function updateLikeComment() {
+function updateLikeComment() {
     const response = JSON.parse(this.responseText);
     if (response.liked) {
         heartEmpty.classList.add('hidden');
         heartFilled.classList.remove('hidden');
         likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+        likeCountElement.classList.add('text-red-600');
     } else {
         heartEmpty?.classList.remove('hidden');
         heartFilled?.classList.add('hidden');
         if (likeCountElement !== null) {
           likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+          likeCountElement.classList.remove('text-red-600');
         }
     }
   }

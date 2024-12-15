@@ -3,29 +3,32 @@ function addEventListeners() {
   document.addEventListener('DOMContentLoaded', switchGroupTab);
 
   document.addEventListener('click', function (e) {
-      if (e.target && e.target.classList.contains('cancel-btn')) {
-          const invitationId = e.target.dataset.id;
+        // Find the closest element with the 'cancel-btn' class
+        const cancelButton = e.target.closest('.cancel-btn');
 
-          if (!groupId || !invitationId) {
-              console.error('Group ID or Invitation ID is missing.');
-              return;
-          }
+        if (cancelButton) {
+            const invitationId = cancelButton.dataset.id;
 
-          sendAjaxRequest('delete', `/api/groups/${groupId}/invitations/${invitationId}`, {}, function () {
-              if (this.status === 200) {
-                  const response = JSON.parse(this.responseText);
-                  console.log(response.message);
+            if (!groupId || !invitationId) {
+                console.error('Group ID or Invitation ID is missing.');
+                return;
+            }
 
-                  const invitationElement = e.target.closest('.invitation');
-                  if (invitationElement) invitationElement.remove();
+            sendAjaxRequest('delete', `/api/groups/${groupId}/invitations/${invitationId}`, {}, function () {
+                if (this.status === 200) {
+                    const response = JSON.parse(this.responseText);
+                    console.log(response.message);
 
-                  loadGroupContent('group-invitations');
-                  alert(response.message);
-              } else {
-                console.error('Failed to cancel the invitation:', this.responseText);
-              }
-        });
-      }
+                    const invitationElement = cancelButton.closest('.invitation');
+                    if (invitationElement) invitationElement.remove();
+
+                    loadGroupContent('group-invitations');
+                    alert(response.message);
+                } else {
+                    console.error('Failed to cancel the invitation:', this.responseText);
+                }
+            });
+        }
   });
 
   document.addEventListener('click', function (e) {
@@ -239,6 +242,13 @@ function addEventListeners() {
           btn.classList.remove('text-sky-900', 'border-sky-900');
         });
         button.classList.add('text-sky-900', 'border-sky-900');
+
+        // Show or hide the Add Post Section based on the active tab
+        if (groupTab === "group-posts" && addPostSection) {
+            addPostSection.classList.remove('hidden');
+        } else if (addPostSection) {
+            addPostSection.classList.add('hidden');
+        }
         
         loadGroupContent(groupTab);
       });
@@ -336,7 +346,7 @@ function addEventListeners() {
 
   function createInvitation(invitationInfo) {
     let invitation = document.createElement('div');
-    invitation.classList.add("invitation", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+    invitation.classList.add("invitation", "border-b", "border-gray-300", "p-4", "bg-white");
 
     if (!invitationInfo.user) {
         console.error("User data is missing in invitationInfo:", invitationInfo);
@@ -345,19 +355,22 @@ function addEventListeners() {
     }
 
     invitation.innerHTML = `
-        <div class="invitation-header mb-2">
-            <h3 class="font-bold">
-                <a href="../profile/${invitationInfo.user.username}" class="text-black hover:text-sky-900">
-                    ${invitationInfo.user.username}
-                </a>
-            </h3>
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="font-bold">
+                    <a href="../profile/${invitationInfo.user.username}" class="text-black hover:text-sky-900">
+                        ${invitationInfo.user.username}
+                    </a>
+                </h3>
+                <p class="text-sm text-gray-600">Sent ${invitationInfo.createddate || 'Date unavailable'}</p>
+            </div>
+            <button type="button" class="cancel-btn text-red-500 hover:text-red-700 ml-2" 
+                    data-id="${invitationInfo.invitationid}">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
         </div>
-        <div class="invitation-body mb-2">
-            <p>Invitation sent: ${invitationInfo.createddate || 'Date unavailable'}</p>
-        </div>
-        <button class="cancel-btn bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-700" data-id="${invitationInfo.invitationid}">
-            Cancel
-        </button>
     `;
 
     return invitation;
@@ -405,39 +418,41 @@ function addEventListeners() {
     });
   }
 
-  function createRequest(requestInfo) {
-    let request = document.createElement('div');
-    request.classList.add("request", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+    function createRequest(requestInfo) {
+        let request = document.createElement('div');
+        request.classList.add("request", "border-b", "border-gray-300", "p-4", "bg-white");
 
-    if (!requestInfo.user) {
-        console.error("User data is missing in requestInfo:", requestInfo);
-        request.innerHTML = `<p>Error: User information is unavailable.</p>`;
+        if (!requestInfo.user) {
+            console.error("User data is missing in requestInfo:", requestInfo);
+            request.innerHTML = `<p>Error: User information is unavailable.</p>`;
+            return request;
+        }
+
+        request.innerHTML = `
+            <div class="flex justify-between items-center">
+                <div>
+                    <h3 class="font-bold">
+                        <a href="../profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
+                            ${requestInfo.user.username}
+                        </a>
+                    </h3>
+                    <p class="text-sm text-gray-600">Request received: ${requestInfo.createddate || 'Date unavailable'}</p>
+                </div>
+                <div class="flex space-x-2">
+                    <button type="button" class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" 
+                            data-id="${requestInfo.requestid}">
+                        Accept
+                    </button>
+                    <button type="button" class="reject-btn bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700" 
+                            data-id="${requestInfo.requestid}">
+                        Reject
+                    </button>
+                </div>
+            </div>
+        `;
+
         return request;
     }
-
-    request.innerHTML = `
-        <div class="request-header mb-2">
-            <h3 class="font-bold">
-                <a href="../profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
-                    ${requestInfo.user.username}
-                </a>
-            </h3>
-        </div>
-        <div class="request-body mb-2">
-            <p>Join request received: ${requestInfo.createddate || 'Date unavailable'}</p>
-        </div>
-        <div class="request-actions">
-            <button class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" data-id="${requestInfo.requestid}">
-                Accept
-            </button>
-            <button class="reject-btn bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700" data-id="${requestInfo.requestid}">
-                Reject
-            </button>
-        </div>
-    `;
-
-    return request;
-  }
 
   function insertMoreRequests(element, requests) {
     for (let i = 0; i < requests.data.length; i++) {
@@ -449,7 +464,7 @@ function addEventListeners() {
   //creates a member container with all the necessary info
   function createMember(memberInfo) {
     let member = document.createElement('div');
-    member.classList.add("member", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+    member.classList.add("member", "border-b", "border-gray-300", "p-4", "bg-white");
 
     const canRemove = (parseInt(memberInfo.userid) !== parseInt(ownerid)) && ((userId === parseInt(ownerid)) || isadmin);
 

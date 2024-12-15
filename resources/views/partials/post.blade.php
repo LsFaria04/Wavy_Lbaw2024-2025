@@ -104,8 +104,10 @@
                     </g>
                 </svg>
                 
-                <span id="like-count-{{ $post->postid }}" class="ml-1">{{ $post->likes_count ?? 0 }}</span>
-            </button>
+                <span id="like-count-{{ $post->postid }}" class="ml-1 {{ $post->liked ? 'text-red-600' : '' }}">
+                    {{ $post->likes_count ?? 0 }}
+                </span>
+                </button>
         </div>
 
         <!-- Comment Button -->

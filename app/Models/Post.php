@@ -70,13 +70,11 @@ class Post extends Model
         return $this->hasMany(Comment::class, 'postid');
     }
 
-    public function topics()
-    {
+    public function topics() {
         return $this->belongsToMany(Topic::class, 'post_topics', 'postid', 'topicid');
     }
 
-    public function likes()
-    {
+    public function likes() {
         return $this->hasMany(Like::class, 'postid');
     }
 
