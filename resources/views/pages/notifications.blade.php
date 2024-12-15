@@ -11,16 +11,16 @@
         <div class="p-6">
             <!-- Tabs for different notification types -->
             <div class="tabs mb-6 flex space-x-6 text-sm font-medium">
-                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="all-notifications-tab" onclick="changeCategory('all')">
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="all-notifications-tab">
                     All Notifications
                 </button>
-                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="comments-tab" onclick="changeCategory('comments')">
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="comments-tab">
                     Comments
                 </button>
-                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="likes-tab" onclick="changeCategory('likes')">
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="likes-tab">
                     Likes
                 </button>
-                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="follows-tab" onclick="changeCategory('follows')">
+                <button class="tab-btn px-4 py-2 text-gray-600 rounded-lg hover:bg-gray-200 transition duration-200" id="follows-tab">
                     Follows
                 </button>
             </div>
@@ -67,10 +67,6 @@
                                     </div>
                                 </div>
                             @endforeach
-                        </div>
-                        <!-- Pagination for infinite scroll -->
-                        <div class="mt-6">
-                            {{ $notifications->links() }}
                         </div>
                     @endif
                 </div>
