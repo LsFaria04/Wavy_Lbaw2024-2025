@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Models\Post;
 use App\Models\User;
 use App\Models\Comment;
 use App\Models\Media;
@@ -47,11 +48,12 @@ class CommentController extends Controller
     public function show($id)
     {
         // Fetch the main comment and its related data
-        $comment = Comment::with(['user', 'post', 'media', 'parentComment.user'])->withCount('commentLikes')->findOrFail($id);
+        $comment = Comment::with(['user', 'post', 'media', 'parentComment.user'])->findOrFail($id);
 
         if (Auth::check()){
             $comment->liked = $comment->commentLikes()->where('userid', Auth::user()->userid)->exists();
             $comment->createddate = $comment->createddate->diffForHumans();  
+            $comment->comment_likes_count = $comment->commentLikes()->where('userid', Auth::user()->userid)->count();
         }
         else{
             $comment->liked = false;  
@@ -77,7 +79,7 @@ class CommentController extends Controller
             }
         }
         // Pass both the main comment and its sub-comments to the view
-        return view('pages.comment', compact('comment', 'subComments'));
+        return view('partials.comment', compact('comment', 'subComments'));
     }
 
     public function likeComment(Request $request, $commentId)
@@ -190,18 +192,22 @@ class CommentController extends Controller
     
         // Initialize image path variable
         $mediaPath = null;
-    
+        
         // Create the comment
         $comment = comment::create([
             'userid' => Auth::id(),
             'message' => $request->message,
             'postid' => NULL,
-            'parentcommentid' => $request->commentid,
+            'parentcommentid' => $request->parent_comment_id,
             'createddate' => now(),
         ]);
 
         $comment->save();
-        
+
+        $topcomment = $comment;
+        while ($topcomment->parentcommentid != NULL){
+            $topcomment = $topcomment->parentComment;
+        }
         if ($request->hasFile('media')) {
             // Check if there are more than 4 files
             if (count($request->file('media')) > 4) {
@@ -221,12 +227,11 @@ class CommentController extends Controller
                     ]);
                 }
                 else{
-                    return redirect()->route('comments.show',$request->commentid)->with('error', 'Could not upload the file!');
+                    return redirect()->route('posts.show', $topcomment->postid)->with('error', 'Could not upload the file!');
                 }
             }
         }
-    
-        return redirect()->route('comments.show',$request->commentid)->with('success', 'Comment created successfully!');
+        return redirect()->route('posts.show', $topcomment->postid)->with('success', 'Comment created successfully!');
     }
 
 
@@ -272,6 +277,7 @@ class CommentController extends Controller
         if ($currentMediaCount + $mediaCount > 4) {
             return redirect()->route('home', $comment->commentid)->with('error', 'You can only upload a maximum of 4 files.');
         }
+        Log::info("the files:", $request->file('media'));
 
         // Handle new file uploads
         if ($request->hasFile('media')) {
@@ -288,8 +294,11 @@ class CommentController extends Controller
                 ]);
             }
         }
-        if ($comment->postid != NULL) return redirect()->route('posts.show', $comment->postid)->with('success', 'Comment updated successfully!');
-        else return redirect()->route('comments.show', $comment->parentcommentid)->with('success', 'Comment updated successfully!');
+        $topcomment = $comment;
+        while ($topcomment->parentcommentid != NULL){
+            $topcomment = $topcomment->parentComment;
+        }
+        return redirect()->route('posts.show', $topcomment->postid)->with('success', 'Comment updated successfully!');
     }
 
     /**
@@ -318,16 +327,18 @@ class CommentController extends Controller
 
         $comment->media()->delete();
         
+        $topcomment = $comment;
+        while ($topcomment->parentcommentid != NULL){
+            $topcomment = $topcomment->parentComment;
+        }
+        
         // Delete the comment
         $comment->delete();
 
         if (request()->ajax()) {
             return response()->json(['success' => true, 'message' => 'Comment deleted successfully!']);
         }
-        
-        if ($comment->postid != NULL){
-            return redirect()->route('posts.show',$comment->postid)->with('success', 'Comment deleted successfully!');
-        }
-        else return redirect()->route('comments.show',$comment->parentcommentid)->with('success', 'Comment deleted successfully!');
+
+        return redirect()->route('posts.show', $topcomment->postid)->with('success', 'Comment deleted successfully!');
     }
 }

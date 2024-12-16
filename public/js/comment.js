@@ -379,6 +379,49 @@ function insertDeleteMenu(comment){
   return comment;
 }
 
+function toggleCommentSection(commentId) {
+  // Get the comment input section or create it if not present
+  const commentElement = document.getElementById(`comment-${commentId}`);
+  let subCommentInput = document.getElementById(`sub-comment-input-${commentId}`);
+  let subCommentList = document.getElementById(`sub-comments-${commentId}`);
+
+  if (!subCommentInput) {
+      // Create the input section dynamically if it doesn't exist
+      subCommentInput = document.createElement('div');
+      subCommentInput.id = `sub-comment-input-${commentId}`;
+      subCommentInput.className = 'sub-comment-input mt-2 bg-gray-50 rounded-md shadow-md p-4';
+      subCommentInput.innerHTML = `
+          <textarea rows="2" 
+                    class="w-full p-2 rounded-md border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none text-sm placeholder-gray-400 text-gray-700" 
+                    placeholder="Write a reply..."></textarea>
+          <div class="flex justify-end mt-2">
+              <button type="button" class="px-4 py-2 bg-sky-600 text-white text-sm font-semibold rounded-md hover:bg-sky-700">
+                  Reply
+              </button>
+          </div>
+      `;
+      commentElement.appendChild(subCommentInput);
+  } else {
+      // Toggle visibility of the input field
+      subCommentInput.classList.toggle('hidden');
+  }
+
+  // Show the list of subcomments if it's not present
+  if (!subCommentList) {
+      subCommentList = document.createElement('div');
+      subCommentList.id = `sub-comments-${commentId}`;
+      subCommentList.className = 'sub-comments mt-4 pl-4 border-l-2 border-gray-300';
+      subCommentList.innerHTML = `<p class="text-sm text-gray-500">No replies yet.</p>`; // Placeholder content
+      commentElement.appendChild(subCommentList);
+  }
+
+  // Focus on the input field when opened
+  if (!subCommentInput.classList.contains('hidden')) {
+      subCommentInput.querySelector('textarea').focus();
+  }
+}
+
+
 //inserts the update comment form into a comment container. Return the updated comment container.
 function insertUpdateForm(comment, id, message, media){
   let formContainer = document.createElement('div');
@@ -573,6 +616,20 @@ function updateLikeComment() {
     }
   }
 }
+
+function toggleSubcommentForm(commentId) {
+  // Hide all other subcomment forms
+  document.querySelectorAll('.addComment').forEach(function(form) {
+      form.classList.add('hidden');
+  });
+
+  // Toggle the specific subcomment form
+  var subcommentForm = document.getElementById('subcomment-form-' + commentId);
+  if (subcommentForm) {
+      subcommentForm.classList.toggle('hidden');
+  }
+}
+
 
   addEventListeners();
   
