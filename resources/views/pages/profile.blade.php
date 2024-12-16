@@ -111,7 +111,7 @@
                         @method('PUT')
                         <div class="mb-4">
                             <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                            <input type="text" id="username" name="username" value="{{ $user->username }}" class="mt-1 block w-full p-2 border rounded-md" required>
+                            <input type="text" id="username" name="username" value="{{ $user->username }}" class="mt-1 block w-full p-2 border rounded-md" required autocomplete="username">
                         </div>
                         <div class="mb-4">
                             <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
@@ -158,11 +158,14 @@
                 <form action="{{ route('profile.delete', $user->userid) }}" method="POST" id="deleteProfileForm">
                     @csrf
                     @method('DELETE')
+
+                    <!-- Hidden username field for accessibility -->
+                    <input type="hidden" name="username" value="{{ $user->username }}" autocomplete="username">
                     
                     <!-- Password input section will only appear if the user is the owner -->
                     <div id="passwordForm" class="mb-4">
                         <label for="password" class="block text-sm font-medium text-gray-700">Enter your password</label>
-                        <input type="password" id="password" name="password" class="mt-1 block w-full p-2 border rounded-md" required>
+                        <input type="password" id="password" name="password" class="mt-1 block w-full p-2 border rounded-md" required autocomplete="current-password">
                         <p id="passwordError" class="text-sm text-red-600 hidden">Incorrect password. Please try again.</p>
                     </div>
                     

@@ -37,7 +37,7 @@ Route::view('/home', 'pages.home')->name('home');
 Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile');
 Route::put('/profile/{userid}', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile/{id}/delete', [ProfileController::class, 'delete'])->name('profile.delete');
-Route::post('profile/{userid}/follow', [ProfileController::class, 'follow'])->name('follow');
+Route::post('profile/{userid}/follow', [ProfileController::class, 'follow'])->name('follow')->middleware('auth');
 
 // API
 Route::controller(PostController::class)->group(function (){

@@ -546,25 +546,41 @@ function removeTopicFromUser(topicId){
 }
 
 function toggleFollow() {
-  $('#follow-btn').on('click', function(e) {
-      e.preventDefault();  
+  const followButton = document.getElementById('follow-btn');
 
-      let userId = $(this).data('userid');  
+  followButton.addEventListener('click', function(e) {
+      e.preventDefault();  // Prevents the default behavior of the button (if it's in a form)
 
-      $.ajax({
-          url: '/user/' + userId + '/follow',  
-          type: 'POST',
-          data: {
-              _token: '{{ csrf_token() }}', 
+      let userId = followButton.getAttribute('data-userid');
+
+            console.log('User ID:', userId); // Log userId
+
+
+      const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+      
+      fetch('/profile/' + userId + '/follow', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',  
+              'X-CSRF-TOKEN': csrfToken             
           },
-          success: function(response) {
-              if(response.success) {
-                  $(this).text(response.isFollowing ? 'Unfollow' : 'Follow');
-              }
-          },
-          error: function(xhr, status, error) {
-              console.error('Something went wrong with the follow/unfollow request.', error);
+          body: JSON.stringify({
+              user_id: userId 
+          })
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Something went wrong with the follow/unfollow request.');
           }
+          return response.json();
+      })
+      .then(data => {
+          if (data.success) {
+              followButton.textContent = data.isFollowing ? 'Unfollow' : 'Follow';
+          }
+      })
+      .catch(error => {
+          console.error('Something went wrong with the follow/unfollow request.', error);
       });
   });
 }

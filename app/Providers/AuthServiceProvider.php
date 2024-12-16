@@ -13,28 +13,27 @@ use App\Models\Group;
 use App\Policies\GroupPolicy;
 use App\Models\Topic;
 use App\Policies\TopicPolicy;
+use App\Models\Follow;
+use App\Policies\FollowPolicy;
 
-class AuthServiceProvider extends ServiceProvider
-{
+class AuthServiceProvider extends ServiceProvider {
     /**
      * The model to policy mappings for the application.
      *
      * @var array<class-string, class-string>
      */
     protected $policies = [
-        // Register the Post model with the PostPolicy
         Post::class => PostPolicy::class,
         User::class => UserPolicy::class,
         Group::class => GroupPolicy::class,
         Topic::class => TopicPolicy::class,
+        Follow::class => FollowPolicy::class,
     ];
 
     /**
      * Register any authentication / authorization services.
      */
-    public function boot(): void
-    {
-        // Register the policies
+    public function boot(): void {
         $this->registerPolicies();
 
         // Optional: Define additional Gates if needed

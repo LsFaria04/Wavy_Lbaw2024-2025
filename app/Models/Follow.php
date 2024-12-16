@@ -1,7 +1,5 @@
 <?php
 
-// app/Models/Follow.php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +11,12 @@ class Follow extends Model {
 
     protected $table = 'follow';
 
+    const STATE_PENDING = 'pending';
+    const STATE_APPROVED = 'approved';
+
+    const REQUESTSTATE_PENDING = 'pending';
+    const REQUESTSTATE_APPROVED = 'approved';
+
     protected $casts = [
         'followdate' => 'datetime',
     ];
@@ -20,26 +24,32 @@ class Follow extends Model {
     public $timestamps = false;
 
     protected $fillable = [
-        'followerid',
-        'followeeid',
+        'follower_id',
+        'followee_id',
         'state',
         'requeststate',
         'followdate',
     ];
 
     public function follower() {
-        return $this->belongsTo(User::class, 'followerid');
+        return $this->belongsTo(User::class, 'follower_id');
     }
 
     public function followee() {
-        return $this->belongsTo(User::class, 'followeeid');
+        return $this->belongsTo(User::class, 'followee_id');
     }
 
     public function scopePending($query) {
-        return $query->where('requeststate', 'pending');
+        return $query->where('requeststate', self::REQUESTSTATE_PENDING);
     }
 
     public function scopeApproved($query) {
-        return $query->where('requeststate', 'approved');
+        return $query->where('requeststate', self::REQUESTSTATE_APPROVED);
+    }
+
+    public function isFollowing(User $user) {
+        return $this->where('follower_id', $this->follower_id)
+                    ->where('followee_id', $user->id)
+                    ->exists();
     }
 }
