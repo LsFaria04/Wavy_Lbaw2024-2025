@@ -15,6 +15,8 @@ use App\Http\Controllers\GroupController;
 use App\Http\Controllers\GroupListController;
 use App\Http\Controllers\TopicController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\MailController;
+use App\Http\Controllers\Auth\ResetPasswordController;
 
 /*
 |--------------------------------------------------------------------------
@@ -113,6 +115,9 @@ Route::controller(RegisterController::class)->group(function () {
     Route::get('/register', 'showRegistrationForm')->name('register');
     Route::post('/register', 'register');
 });
+Route::view('/forgot-password', 'auth.recoverPassword')->name('forgotPassword');
+Route::post('/forgot-password', [MailController::class, 'sendPasswordReset']);
+Route::post('/reset-password', [ResetPasswordController::class, 'resetPassword']);
 
 // Search
 Route::get('/search', [SearchController::class, 'search'])->name('search');
