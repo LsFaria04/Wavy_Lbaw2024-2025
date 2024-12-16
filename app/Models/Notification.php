@@ -5,8 +5,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
 
-class Notification extends Model
-{
+class Notification extends Model {
     use HasFactory;
 
     protected $table = 'notification';
@@ -31,11 +30,22 @@ class Notification extends Model
         return $this->hasOneThrough(
             Post::class,
             Comment::class,
-            'commentid',
-            'postid',   
-            'commentid',
-            'postid'    
+            'commentid', // Foreign key in Comment
+            'postid',   // Foreign key in Post
+            'commentid', // Local key in Notification
+            'postid'    // Local key in Comment
         );
     }
-    
+
+    public function like() {
+        return $this->belongsTo(Like::class, 'likeid');
+    }
+
+    public function follower() {
+        return $this->belongsTo(User::class, 'followerid');
+    }
+
+    public function followee() {
+        return $this->belongsTo(User::class, 'followeeid');
+    }
 }

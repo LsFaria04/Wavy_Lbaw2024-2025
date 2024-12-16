@@ -1,40 +1,42 @@
 <?php
+
 namespace App\Http\Controllers;
 
 use App\Models\Notification;
-use App\Models\Comment;
-use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    // Shows notifications about comments on posts (for now, in the future it should show all notifications)
-    public function index() {
-        $notifications = Notification::with(['comment.post'])
+    public function index()
+    {
+        $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user'])
             ->where('receiverid', Auth::id())
             ->orderBy('date', 'desc')
-            ->get();
+            ->paginate(10);  
 
-        return view('pages.notifications', compact('notifications'));
+
+        $commentNotifications = $notifications->filter(function($notification) {
+            return isset($notification->comment);
+        });
+
+        $likeNotifications = $notifications->filter(function($notification) {
+            return isset($notification->like);
+        });
+
+
+        $followNotifications = $notifications->filter(function($notification) {
+            return isset($notification->follower) && isset($notification->followee);
+        });
+
+        
+        return view('pages.notifications', compact('notifications', 'commentNotifications', 'likeNotifications', 'followNotifications'));
     }
 
-    protected function getCommentNotifications() {
-        return Notification::with(['comment', 'comment.post', 'comment.post.user'])
-            ->whereNotNull('commentid')
-            ->whereHas('comment', function ($query) {
-                $query->whereHas('post', function ($postQuery) {
-                    $postQuery->where('userid', Auth::id());
-                });
-            })
-            ->where('receiverid', Auth::id())
-            ->get();
-    }
-    
-
-    protected function markNotificationsAsSeen($notifications) {
-        foreach ($notifications as $notification) {
-            $notification->update(['seen' => true]); 
-        }
+    // Function to mark notifications as seen (still needs to be fully implemented)
+    protected function markNotificationsAsSeen($notifications)
+    {
+        Notification::whereIn('notificationid', $notifications->pluck('notificationid'))
+            ->update(['seen' => true]);
     }
 }

@@ -11,7 +11,14 @@
                 {{ session('success')}}          
             </div>
         @endif 
+        
         <section id="timeline" class="flex flex-col max-w-full w-full bg-white shadow-lg mx-auto">
+            <form action="{{url('/forgot-password')}}" method="POST">
+                <input type= "hidden" name="email" value="example@example.com">
+                <button>
+                    Teste do mail
+                </button>
+                <form>
             @if(Auth::check() && !Auth()->user()->isadmin)
                @include('partials.createPost')
             @endif

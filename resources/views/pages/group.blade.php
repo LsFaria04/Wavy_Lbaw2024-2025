@@ -54,12 +54,6 @@
         </div>
     @endif
 
-    @auth
-        @if ($group->members->contains(Auth::user()))
-            @include('partials.createPost', ["group" => $group])
-        @endif
-    @endauth
-
     <!-- Edit Group Menu -->
     <div id="edit-group-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden z-20">
         <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
@@ -129,6 +123,14 @@
             </div>
         </div>
     </div>
+
+    @auth
+        @if ($group->members->contains(Auth::user()))
+            <div id="addPostSection" class="w-full">
+                @include('partials.createPost', ["group" => $group])
+            </div>
+        @endif
+    @endauth
 
     <!-- Content Tabs -->
     <div class="flex flex-col w-full max-w-full h-full max-h-full bg-white" id="group-tab-content">
