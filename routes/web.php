@@ -78,9 +78,11 @@ Route::controller(TopicController::class)->group(function (){
     Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
 });
 Route::get('/api/reports/all', [ReportController::class, 'getReports']);
-Route::get('/api/reports/delete/{reportid}', [ReportController::class, 'delete']);
+Route::post('/api/reports/delete/{reportid}', [ReportController::class, 'delete']);
 Route::get('/api/notifications', [NotificationController::class, 'getNotifications']);
 
+//Reports
+Route::post('/reports/delete/{reportid}', [ReportController::class, 'delete']);
 
 //Topics
 Route::controller(TopicController::class)->group(function (){

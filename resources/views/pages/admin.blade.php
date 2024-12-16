@@ -62,7 +62,7 @@
                 <input id="reportsAdminSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Reports" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
             </form>
         </div>
-        <table id="reports-table" class = "table-auto  self-center w-full my-4">
+        <table id="reports-table" class = "table-auto self-center w-full my-4">
             <!-- filled with JS -->
         </table>
     </section>

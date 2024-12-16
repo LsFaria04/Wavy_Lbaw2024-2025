@@ -48,18 +48,18 @@ class ReportController extends Controller
 
     function delete (Request $request, $reportId){
         try{
-            $this->authorize('delete');
+            $this->authorize('delete',[Report::class]);
         } catch(AuthorizationException $e){
             return response()->json(['message' => 'You do not have authorization to delete a report', 'response' => '403']);
         }
 
         try{
-            Report::find($reportId)->firstOrFail()->remove();
+            Report::find($reportId)->firstOrFail()->delete();
         } catch(\Exception $e){
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
-        redirect()->route('admin.index')->with('success', 'Report Deleted successfully!');
+        return redirect()->route('admin.index')->with('success', 'Report Deleted successfully!');
 
         //return response()->json(['response' => '200', 'message' => 'Report removed sucessfully']);
     }

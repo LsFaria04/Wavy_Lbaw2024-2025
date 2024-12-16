@@ -93,13 +93,16 @@
 
   function insertMoreReports(){
     removeLoadingCircle();
+    const loadingWrapper = document.getElementById('loadingWrapper');
+    loadingWrapper.remove();
+
     let reports =  JSON.parse(this.responseText);
     maxAdminPage = reports.last_page;
     const section = document.getElementById('reports');  
     const sectionContentTable = section.querySelector('table');
 
     let header = document.createElement('tr');
-    header.classList.add("shadow", "font-medium", );
+    header.classList.add("shadow", "font-medium");
     header.innerHTML = `
     <th class = "w-1/4 text-start px-4 py-2" >Content</th>
     <th class = "w-1/4 text-start px-4 py-2" >Reason</th>
@@ -113,7 +116,11 @@
       let row = document.createElement('tr');
       row.classList.add("shadow", "font-medium");
       row.innerHTML = `
-        <td class="w-1/3 px-4 py-2 text-gray-700">${reports.data[i].commentid === null ? `Post ID${reports.data[i].postid}` : `Comment ID${reports.data[i].commentid}`}</td>
+        <td class="w-1/3 px-4 py-2 text-gray-700">
+          <a href =${reports.data[i].commentid === null ? `/posts/${reports.data[i].postid}` : `/comments/${reports.data[i].commentid}`}>
+            ${reports.data[i].commentid === null ? `Post ID${reports.data[i].postid}` : `Comment ID${reports.data[i].commentid}`}
+          </a>
+        </td>
         <td class="w-1/3 px-4 py-2 text-gray-700 truncate ...">${reports.data[i].reason}</td>
         <td class="w-1/3 px-4 py-2 text-gray-700">${reports.data[i].user.username}</td>
          <td class="px-4 py-2 self-end">
@@ -139,9 +146,12 @@
 
   function insertMoreAdminTopics(){
     removeLoadingCircle();
-    removeShowMoreAdmin();
+    const loadingWrapper = document.getElementById('loadingWrapper');
+    loadingWrapper.remove();
+
     const section = document.getElementById('topics');  
     const sectionContentTable = section.querySelector('table');
+    
     
 
     let topics =  JSON.parse(this.responseText);
@@ -186,10 +196,15 @@
         return;
       }
 
+      removeShowMoreAdmin();
+
       const section = document.getElementById(sectionId);  
       const sectionContentTable = section.querySelector('table');
-      
-      insertLoadingCircle(sectionContentTable);
+      const loadingWrapper = document.createElement('div');
+      loadingWrapper.setAttribute('id', 'loadingWrapper')
+      loadingWrapper.classList.add("flex", "justify-center", "items-center", "h-32","w-full");
+      insertLoadingCircle(loadingWrapper);
+      sectionContentTable.appendChild(loadingWrapper);
       currentAdminPage++;
 
       switch(sectionId){
