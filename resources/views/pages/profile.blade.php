@@ -42,9 +42,20 @@
             <div class="pt-20 px-6 pb-4">
                 <div class="flex justify-between items-center">
                     <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
-                    <button class="px-4 py-1.5 font-semibold bg-sky-700 text-white rounded-2xl hover:bg-sky-900">
-                        Follow
-                    </button>
+                    @auth
+                        @if (auth()->id() !== $user->userid && !Auth::user()->isadmin)
+                            <form action="{{ route('follow', ['userid' => $user->userid]) }}" method="POST">
+                                @csrf
+                                <button id="follow-btn" data-userid="{{ $user->userid }}" type="submit" class="px-4 py-1.5 font-semibold bg-sky-700 text-white rounded-2xl hover:bg-sky-900">
+                                    @if(auth()->user()->isFollowing($user))
+                                        Unfollow
+                                    @else
+                                        Follow
+                                    @endif
+                                </button>
+                            </form>
+                        @endif
+                    @endauth
                 </div>
 
                 <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>

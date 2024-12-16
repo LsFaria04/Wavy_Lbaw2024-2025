@@ -37,6 +37,7 @@ Route::view('/home', 'pages.home')->name('home');
 Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile');
 Route::put('/profile/{userid}', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile/{id}/delete', [ProfileController::class, 'delete'])->name('profile.delete');
+Route::post('profile/{userid}/follow', [ProfileController::class, 'follow'])->name('follow');
 
 // API
 Route::controller(PostController::class)->group(function (){
@@ -75,7 +76,7 @@ Route::controller(TopicController::class)->group(function (){
     Route::put('/api/topics/add/{topicid}/{userid}', 'addTopicToUser');
     Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
 });
-Route::get('api/notifications', [NotificationController::class, 'getNotifications']);
+Route::get('/api/notifications', [NotificationController::class, 'getNotifications']);
 
 
 //Topics

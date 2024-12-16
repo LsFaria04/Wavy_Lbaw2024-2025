@@ -22,7 +22,7 @@ class ProfileController extends Controller
         $user = User::where('username', $username)->first();
 
         if (!$user) {
-            return redirect('/home');
+            return redirect('/home')->with('error', 'User not found.');
         }
 
         $posts = $user->posts()->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);
@@ -155,4 +155,21 @@ class ProfileController extends Controller
             return redirect()->route('home')->with('error', 'Failed to delete the user.');
         }
     }
+
+    public function follow($userid) {
+        $user = User::findOrFail($userid);
+        $follower = auth()->user();
+
+        if ($follower->isFollowing($user)) {
+            $follower->unfollow($user);
+            $isFollowing = false;
+        } else {
+            $follower->follow($user);
+            $isFollowing = true;
+        }
+
+        return response()->json(['success' => true, 'isFollowing' => $isFollowing]);
+    }
+
+
 }
