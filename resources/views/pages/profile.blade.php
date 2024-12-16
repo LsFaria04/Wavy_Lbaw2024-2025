@@ -40,8 +40,15 @@
 
             <!-- Edit Profile only visible if Account owner -->
             <div class="pt-20 px-6 pb-4">
-                <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
+                <div class="flex justify-between items-center">
+                    <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
+                    <button class="px-4 py-1.5 font-semibold bg-sky-700 text-white rounded-2xl hover:bg-sky-900">
+                        Follow
+                    </button>
+                </div>
+
                 <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>
+
                 @auth
                 @if(auth()->id() === $user->userid || Auth::user()->isadmin)
                     <div class="absolute top-0 right-0 mt-4 mr-4 flex items-center space-x-2">

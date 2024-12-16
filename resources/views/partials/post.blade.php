@@ -112,21 +112,21 @@
 
         <!-- Comment Button -->
         <div class="post-comments flex items-center gap-2">
-                <button 
-                    type="button" 
-                    class="flex items-center text-gray-500 hover:text-sky-600" 
-                    onclick="window.location.href='{{ route('posts.show', $post->postid) }}'; event.stopPropagation();">
-                    <svg 
-                        xmlns="http://www.w3.org/2000/svg" 
-                        id="comment-icon-{{ $post->postid }}" 
-                        class="h-5 w-5 fill-gray-500 hover:fill-sky-600 transition duration-200 ease-in-out" 
-                        viewBox="0 0 24 24" 
-                        fill="currentColor">
-                        <path d="M12 2C6.477 2 2 6.067 2 10.5c0 1.875.656 3.625 1.844 5.094l-1.308 3.922c-.19.57.474 1.065.997.736l3.875-2.325A9.435 9.435 0 0012 19c5.523 0 10-4.067 10-8.5S17.523 2 12 2zm0 2c4.418 0 8 3.067 8 6.5S16.418 17 12 17c-1.173 0-2.292-.232-3.318-.656a1 1 0 00-.97.035l-2.898 1.739.835-2.501a1 1 0 00-.176-.964A7.36 7.36 0 014 10.5C4 7.067 7.582 4 12 4z" />
-                    </svg>
-                    <!-- Comment Count -->
-                    <span id="comment-count-{{ $post->postid }}" class="ml-1 text-gray-500 hover:text-sky-600">{{ $post->comments_count ?? 0 }}</span>
-                </button>
+            <button 
+                type="button" 
+                class="flex items-center text-gray-500 hover:text-sky-600" 
+                onclick="window.location.href='{{ route('posts.show', $post->postid) }}'; event.stopPropagation();">
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    id="comment-icon-{{ $post->postid }}" 
+                    class="h-5 w-5 fill-gray-500 hover:fill-sky-600" 
+                    viewBox="0 0 24 24" 
+                    fill="currentColor">
+                    <path d="M12 2C6.477 2 2 6.067 2 10.5c0 1.875.656 3.625 1.844 5.094l-1.308 3.922c-.19.57.474 1.065.997.736l3.875-2.325A9.435 9.435 0 0012 19c5.523 0 10-4.067 10-8.5S17.523 2 12 2zm0 2c4.418 0 8 3.067 8 6.5S16.418 17 12 17c-1.173 0-2.292-.232-3.318-.656a1 1 0 00-.97.035l-2.898 1.739.835-2.501a1 1 0 00-.176-.964A7.36 7.36 0 014 10.5C4 7.067 7.582 4 12 4z" />
+                </svg>
+                <!-- Comment Count -->  
+                <span id="comment-count-{{ $post->postid }}" class="ml-1 text-gray-500 hover:text-sky-600">{{ $post->comments_count ?? 0 }}</span>
+            </button>
         </div>
     </div>
 
