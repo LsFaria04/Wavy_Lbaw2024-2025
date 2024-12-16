@@ -6,18 +6,9 @@ use App\Models\User;
 use Illuminate\Support\Facades\Log;
 
 
-class UserPolicy
-{
-    /**
-     * Create a new policy instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+class UserPolicy {
 
-    public function update(User $authUser, User $user)
-    {
+    public function update(User $authUser, User $user) {
         return $authUser->id === $user->id;
     }
 

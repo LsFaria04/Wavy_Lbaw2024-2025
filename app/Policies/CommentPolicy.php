@@ -6,28 +6,20 @@ use App\Models\Comment;
 use App\Models\User;
 
 
-class CommentPolicy
-{
-    /**
-     * Create a new policy instance.
-     */
-    public function __construct()
-    {
-        //
-    }
+class CommentPolicy {
 
-    public function create(User $user){
-        //Only allow the user to post if it is not an admin
+
+    public function create(User $user) {
+        //Only allows the user to post if they are not an admin
         return !$user->isadmin;
     }
 
-    public function delete(User $user, Comment $comment)
-    {
+    public function delete(User $user, Comment $comment) {
         // Allow the delete action only if the user owns the post or is an admin
         return $user->userid === $comment->userid || $user->isadmin;
     }
 
-    public function edit(User $user, Comment $comment){
+    public function edit(User $user, Comment $comment) {
         // Allow the edit action only if the user owns the post or is an admin
         return $user->userid === $comment->userid || $user->isadmin;
     }

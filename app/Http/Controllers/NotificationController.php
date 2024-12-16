@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
@@ -30,6 +31,8 @@ class NotificationController extends Controller
     }
 
     public function getNotifications(Request $request) {
+
+        Log::error('Failed');
         $page = $request->get('page', 1);
     
         $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user'])
@@ -37,6 +40,8 @@ class NotificationController extends Controller
             ->orderBy('date', 'desc')
             ->paginate(10, ['*'], 'page', $page);
     
+        Log::error('Notifications', ['comment.post', 'like.post', 'comment.user', 'like.user']);
+
         return response()->json([
             'notifications' => $notifications->items(),
             'next_page' => $notifications->hasMorePages() ? $notifications->currentPage() + 1 : null,

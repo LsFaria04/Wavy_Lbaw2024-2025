@@ -42,9 +42,20 @@
             <div class="pt-20 px-6 pb-4">
                 <div class="flex justify-between items-center">
                     <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
-                    <button class="px-4 py-1.5 font-semibold bg-sky-700 text-white rounded-2xl hover:bg-sky-900">
-                        Follow
-                    </button>
+                    @auth
+                        @if (auth()->id() !== $user->userid && !Auth::user()->isadmin)
+                            <form action="{{ route('follow', ['userid' => $user->userid]) }}" method="POST">
+                                @csrf
+                                <button id="follow-btn" data-userid="{{ $user->userid }}" type="submit" class="px-4 py-1.5 font-semibold bg-sky-700 text-white rounded-2xl hover:bg-sky-900">
+                                    @if(auth()->user()->isFollowing($user))
+                                        Unfollow
+                                    @else
+                                        Follow
+                                    @endif
+                                </button>
+                            </form>
+                        @endif
+                    @endauth
                 </div>
 
                 <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>
@@ -100,7 +111,7 @@
                         @method('PUT')
                         <div class="mb-4">
                             <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
-                            <input type="text" id="username" name="username" value="{{ $user->username }}" class="mt-1 block w-full p-2 border rounded-md" required>
+                            <input type="text" id="username" name="username" value="{{ $user->username }}" class="mt-1 block w-full p-2 border rounded-md" required autocomplete="username">
                         </div>
                         <div class="mb-4">
                             <label for="bio" class="block text-sm font-medium text-gray-700">Bio</label>
@@ -147,11 +158,14 @@
                 <form action="{{ route('profile.delete', $user->userid) }}" method="POST" id="deleteProfileForm">
                     @csrf
                     @method('DELETE')
+
+                    <!-- Hidden username field for accessibility -->
+                    <input type="hidden" name="username" value="{{ $user->username }}" autocomplete="username">
                     
                     <!-- Password input section will only appear if the user is the owner -->
                     <div id="passwordForm" class="mb-4">
                         <label for="password" class="block text-sm font-medium text-gray-700">Enter your password</label>
-                        <input type="password" id="password" name="password" class="mt-1 block w-full p-2 border rounded-md" required>
+                        <input type="password" id="password" name="password" class="mt-1 block w-full p-2 border rounded-md" required autocomplete="current-password">
                         <p id="passwordError" class="text-sm text-red-600 hidden">Incorrect password. Please try again.</p>
                     </div>
                     

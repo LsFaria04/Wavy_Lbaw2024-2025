@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Follow;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
@@ -11,8 +12,7 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 
-class ProfileController extends Controller
-{   
+class ProfileController extends Controller {   
     /*
     * Show the profile of the user with the same username as the one provided
     */
@@ -22,7 +22,7 @@ class ProfileController extends Controller
         $user = User::where('username', $username)->first();
 
         if (!$user) {
-            return redirect('/home');
+            return redirect('/home')->with('error', 'User not found.');
         }
 
         $posts = $user->posts()->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);
@@ -155,4 +155,34 @@ class ProfileController extends Controller
             return redirect()->route('home')->with('error', 'Failed to delete the user.');
         }
     }
+
+    public function follow(Request $request, $userid) {
+        $follower = Auth::user();
+        $userId = $request->input('user_id');
+        
+        if (!$follower) {
+            return response()->json(['error' => 'You must be logged in to follow someone.'], 401);
+        }
+    
+        $user = User::findOrFail($userid);
+    
+        // Check if the user can follow the target user
+        if ($follower->cannot('follow', $user)) {
+            return response()->json(['error' => 'You cannot follow this user.'], 403);
+        }
+    
+        // Perform follow/unfollow logic
+        if ($follower->isFollowing($user)) {
+            $follower->unfollow($user);
+            $isFollowing = false;
+        } else {
+            $follower->follow($user);
+            $isFollowing = true;
+        }
+    
+        return response()->json(['success' => true, 'isFollowing' => $isFollowing]);
+    }
+    
+    
+    
 }

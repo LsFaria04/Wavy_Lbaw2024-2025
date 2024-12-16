@@ -106,4 +106,25 @@ class User extends Authenticatable
         return $this->belongsToMany(Topic::class, 'user_topics', 'userid', 'topicid');
     }
 
+    public function follows() {
+        return $this->belongsToMany(User::class, 'follow', 'followerid', 'followeeid');
+    }
+
+    public function isFollowing(User $user) {
+        return $this->follows()->where('followeeid', $user->userid)->exists();
+    }
+
+    public function follow(User $user) {
+        if (!$this->isFollowing($user)) {
+            return $this->follows()->attach($user);
+        }
+    }
+    
+    public function unfollow(User $user) {
+        if ($this->isFollowing($user)) {
+            return $this->follows()->detach($user);
+        }
+    }
+
+
 }
