@@ -255,7 +255,8 @@ class PostController extends Controller
                 'media', 
                 'comments.user', 
                 'comments.media',
-                'comments.commentLikes'  // Eager load commentLikes to get the likes count
+                'comments.commentLikes', // Eager load commentLikes to get the likes count
+                'comments.subcomments'
             ])
             ->withCount('comments')  // This will add comments_count to the Post model
             ->withCount('likes')     // This will add likes_count to the Post model

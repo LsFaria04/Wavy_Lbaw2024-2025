@@ -1,4 +1,4 @@
-<div class="comment mb-4 p-4 bg-white rounded-md shadow cursor-pointer" onclick="window.location.href='{{ route('comments.show', $comment->commentid) }}'; event.stopPropagation();">
+<div class="comment mb-4 p-4 bg-white rounded-md shadow cursor-pointer">
     <div class="comment-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">
@@ -100,7 +100,7 @@
                 </svg>
                 
                 <span id="like-count-{{ $comment->commentid }}" class="ml-1 {{ $comment->liked ? 'text-red-600' : '' }}">
-                    {{ $comment->likes_count ?? 0 }}
+                    {{ $comment->comment_likes_count ?? 0 }}
                 </span>            
             </button>
         </div>
@@ -109,8 +109,7 @@
         <div class="comment-comments flex items-center gap-2">
                 <button 
                     type="button" 
-                    class="flex items-center text-gray-500 hover:text-sky-600" 
-                    onclick="window.location.href='{{ route('comments.show', $comment->commentid) }}'; event.stopPropagation();">
+                    class="flex items-center text-gray-500 hover:text-sky-600" onclick="toggleSubcommentForm('{{ $comment->commentid }}')">
                     <svg 
                         xmlns="http://www.w3.org/2000/svg" 
                         id="comment-icon-{{ $comment->commentid }}" 
@@ -124,8 +123,46 @@
                 </button>
         </div>
     </div>
+    <div class="subcomments mt-4 pl-4 border-l border-gray-200">
+    <!-- Loop through subcomments -->
+    @foreach ($comment->subcomments as $subcomment)
+        @include('partials.comment', ['comment' => $subcomment])
+    @endforeach
+    </div>
+    <!-- Hidden form for adding subcomment -->
+    <div id="subcomment-form-{{ $comment->commentid }}" class="addComment mt-4 p-4 bg-gray-50 rounded-xl shadow-md border hidden">
+        <form id="subCommentForm" action="{{ route('comments.storeSubcomment') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+            @csrf
+            <input type="hidden" name="postid" value="{{ $post->postid }}">
+            <input type="hidden" name="parent_comment_id" value="{{ $comment->commentid }}">
 
+            <!-- Text Area -->
+            <textarea id="message" name="message" rows="3"
+                    class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none resize-none placeholder-gray-400 text-gray-700 text-sm"
+                    placeholder="Write your comment here..."></textarea>
 
+            <!-- Action Buttons -->
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <label for="image" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
+                            <path d="M19.828 11.244L12.707 18.364C10.755 20.317 7.589 20.317 5.636 18.364C3.684 16.411 3.684 13.246 5.636 11.293L12.472 4.458C13.774 3.156 15.884 3.156 17.186 4.458C18.488 5.759 18.488 7.87 17.186 9.172L10.361 15.996C9.71 16.647 8.655 16.647 8.004 15.996C7.353 15.345 7.353 14.29 8.004 13.639L14.226 7.418" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <span class="text-sm">Attach Media</span>
+                    </label>
+                    <input type="file" name="media[]" id="image" class="hidden" multiple onchange="updateFileList()">
+                </div>
+
+                <button type="submit" class="px-6 py-2 bg-sky-700 text-white font-semibold rounded-xl hover:bg-sky-800 text-sm">
+                    Comment
+                </button>
+            </div>
+
+            <ul id="fileDisplay" class="text-sm text-gray-500 mt-2 hidden">
+                <!-- File names appended dynamically -->
+            </ul>
+        </form>
+    </div>
     @auth
         @if(auth()->id() === $comment->userid || Auth::user()->isadmin) 
             <!-- Edit Section in comment.blade.php -->
@@ -170,4 +207,5 @@
             </div>
         @endif
     @endauth
+
 </div>

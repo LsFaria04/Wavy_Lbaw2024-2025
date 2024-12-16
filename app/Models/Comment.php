@@ -91,5 +91,9 @@ class Comment extends Model
     {
         return $this->hasMany(Like::class, 'commentid','commentid');
     }
+    public function subcomments()
+    {
+        return $this->hasMany(Comment::class, 'parentcommentid', 'commentid');
+    }
 
 }
