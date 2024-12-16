@@ -10,8 +10,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
-class User extends Authenticatable
-{
+class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
 
     // Don't add create and update timestamps in database.
@@ -86,8 +85,7 @@ class User extends Authenticatable
     /**
      * Get the likes made by the user.
      */
-    public function likes(): HasMany
-    {
+    public function likes(): HasMany {
         return $this->hasMany(Like::class, 'userid', 'userid');
     }
 
@@ -107,24 +105,12 @@ class User extends Authenticatable
     }
 
     public function follows() {
-        return $this->belongsToMany(User::class, 'follow', 'followerid', 'followeeid');
-    }
-
-    public function isFollowing(User $user) {
-        return $this->follows()->where('followeeid', $user->userid)->exists();
-    }
-
-    public function follow(User $user) {
-        if (!$this->isFollowing($user)) {
-            return $this->follows()->attach($user);
-        }
+        return $this->belongsToMany(User::class, 'follow', 'followerid', 'followeeid')
+                    ->withPivot('state', 'followdate');
     }
     
-    public function unfollow(User $user) {
-        if ($this->isFollowing($user)) {
-            return $this->follows()->detach($user);
-        }
+    public function isPrivate() {
+        return !$this->visibilitypublic;
     }
-
 
 }

@@ -11,11 +11,9 @@ class Follow extends Model {
 
     protected $table = 'follow';
 
-    const STATE_PENDING = 'pending';
-    const STATE_APPROVED = 'approved';
-
-    const REQUESTSTATE_PENDING = 'pending';
-    const REQUESTSTATE_APPROVED = 'approved';
+    const STATE_PENDING = 'Pending';
+    const STATE_ACCEPTED = 'Accepted';
+    const STATE_REJECTED = 'Rejected';  
 
     protected $casts = [
         'followdate' => 'datetime',
@@ -24,32 +22,39 @@ class Follow extends Model {
     public $timestamps = false;
 
     protected $fillable = [
-        'follower_id',
-        'followee_id',
+        'followerid',
+        'followeeid',
         'state',
-        'requeststate',
         'followdate',
     ];
 
     public function follower() {
-        return $this->belongsTo(User::class, 'follower_id');
+        return $this->belongsTo(User::class, 'followerid');
     }
 
     public function followee() {
-        return $this->belongsTo(User::class, 'followee_id');
+        return $this->belongsTo(User::class, 'followeeid');
     }
 
     public function scopePending($query) {
-        return $query->where('requeststate', self::REQUESTSTATE_PENDING);
+        return $query->where('state', self::STATE_PENDING);
     }
 
-    public function scopeApproved($query) {
-        return $query->where('requeststate', self::REQUESTSTATE_APPROVED);
+    public function scopeAccepted($query) {
+        return $query->where('state', self::STATE_ACCEPTED);
     }
 
-    public function isFollowing(User $user) {
-        return $this->where('follower_id', $this->follower_id)
-                    ->where('followee_id', $user->id)
-                    ->exists();
+    public static function isFollowing(int $followerId, int $followeeId): bool {
+        return self::where('followerid', $followerId)
+                   ->where('followeeid', $followeeId)
+                   ->where('state', self::STATE_ACCEPTED)
+                   ->exists();
+    }
+
+    public static function isPending(int $followerId, int $followeeId): bool {
+        return self::where('followerid', $followerId)
+                   ->where('followeeid', $followeeId)
+                   ->where('state', self::STATE_PENDING)
+                   ->exists();
     }
 }
