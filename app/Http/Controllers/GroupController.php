@@ -14,8 +14,7 @@ use Illuminate\Support\Facades\Auth;
 
 class GroupController extends Controller
 {
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'groupname' => 'required|string|max:255',
             'description' => 'nullable|string',
@@ -42,8 +41,7 @@ class GroupController extends Controller
     /**
      * Display a specific group and its details.
      */
-    public function show($name)
-    {
+    public function show($name) {
         $group = Group::where('groupname', $name)->first();
 
         if (!$group) {
@@ -58,8 +56,7 @@ class GroupController extends Controller
     /**
      * Get all the data of a group and send it as JSON.
      */
-    public function getGroupData($id)
-    {
+    public function getGroupData($id) {
         $group = Group::findOrFail($id);
 
         if (!$group->visibilitypublic && 
@@ -74,8 +71,7 @@ class GroupController extends Controller
     /**
      * Get paginated posts for a specific group.
      */
-    public function getGroupPosts($id)
-    {
+    public function getGroupPosts($id) {
         $group = Group::findOrFail($id);
 
         if (!$group->visibilitypublic &&
@@ -96,8 +92,7 @@ class GroupController extends Controller
     /**
      * Get paginated members for a specific group.
      */
-    public function getGroupMembers($id)
-    {
+    public function getGroupMembers($id) {
         $group = Group::findOrFail($id);
 
         if (!$group->visibilitypublic &&
@@ -114,8 +109,7 @@ class GroupController extends Controller
     /**
      * Get paginated invitations for a specific group.
      */
-    public function getGroupInvitations($id)
-    {
+    public function getGroupInvitations($id) {
         $group = Group::findOrFail($id);
 
         if ($group->ownerid !== Auth::id() && !Auth::user()->isadmin) {
@@ -137,8 +131,7 @@ class GroupController extends Controller
     /**
      * Get paginated join requests for a specific group.
      */
-    public function getJoinRequests($id)
-    {
+    public function getJoinRequests($id) {
         $group = Group::findOrFail($id);
 
         if ($group->ownerid !== Auth::id() && !Auth::user()->isadmin) {
@@ -157,8 +150,7 @@ class GroupController extends Controller
         return response()->json($joinRequests);
     }
 
-    public function sendInvitation(Request $request, $groupid)
-    {
+    public function sendInvitation(Request $request, $groupid) {
         $request->validate([
             'userid' => 'required|integer|exists:users,userid',
         ]);
@@ -216,8 +208,7 @@ class GroupController extends Controller
         }    
     }
 
-    public function cancelInvitation($groupid, $invitationid)
-    {
+    public function cancelInvitation($groupid, $invitationid) {
         $invitation = GroupInvitation::where('groupid', $groupid)
             ->where('invitationid', $invitationid)
             ->firstOrFail();
@@ -227,8 +218,7 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Invitation canceled successfully.'], 200);
     }
 
-    public function sendJoinRequest(Request $request, $groupid)
-    {
+    public function sendJoinRequest(Request $request, $groupid) {
         $user = Auth::user();
 
         // Check if the user is already a member or has sent a request
@@ -255,8 +245,7 @@ class GroupController extends Controller
         return response()->json(['message' => 'Your join request has been sent successfully.'], 200);
     }
 
-    public function rejectJoinRequest($groupid, $requestid)
-    {
+    public function rejectJoinRequest($groupid, $requestid) {
         $joinRequest = JoinGroupRequest::where('groupid', $groupid)
             ->where('requestid', $requestid)
             ->firstOrFail();
@@ -266,8 +255,7 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Join request rejected successfully.'], 200);
     }
 
-    public function acceptJoinRequest($groupid, $requestid)
-    {
+    public function acceptJoinRequest($groupid, $requestid) {
         $joinRequest = JoinGroupRequest::where('groupid', $groupid)
             ->where('requestid', $requestid)
             ->firstOrFail();
@@ -288,8 +276,7 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Join request accepted and user added to group.'], 200);
     }
 
-    public function leaveGroup($groupid)
-    {
+    public function leaveGroup($groupid) {
         $user = Auth::user();
         $group = Group::findOrFail($groupid);
 
@@ -313,8 +300,7 @@ class GroupController extends Controller
         return redirect()->back()->with('success', 'You have successfully left the group.');
     }
 
-    public function removeMember(Request $request, $groupid, $userid)
-    {
+    public function removeMember(Request $request, $groupid, $userid) {
         $group = Group::findOrFail($groupid);
         // Check if the user is a member
         $membership = GroupMembership::where('groupid', $groupid)

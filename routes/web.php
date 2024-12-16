@@ -73,6 +73,8 @@ Route::controller(TopicController::class)->group(function (){
     Route::put('/api/topics/add/{topicid}/{userid}', 'addTopicToUser');
     Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
 });
+Route::get('api/notifications', [NotificationController::class, 'getNotifications']);
+
 
 //Topics
 Route::controller(TopicController::class)->group(function (){

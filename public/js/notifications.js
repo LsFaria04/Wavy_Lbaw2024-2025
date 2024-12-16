@@ -1,58 +1,84 @@
 function addEventListeners() {
-    document.addEventListener('DOMContentLoaded', fadeAlert);
-    document.addEventListener('DOMContentLoaded', switchGroupTab);
+    document.addEventListener('DOMContentLoaded', () => {
+        fadeAlert();
+        switchGroupTab();
+        initializeNotificationTabs();
+        showTab('all-notifications'); //default tab
+    });
+
     window.addEventListener("scroll", infiniteScroll);
-    
-    document.addEventListener('DOMContentLoaded', function() {
-        if (document.getElementById('all-notifications-tab')) {
-            document.getElementById('all-notifications-tab').addEventListener('click', function() {
-                showTab('all-notifications');
-            });
-        }
+}
 
-        if (document.getElementById('comments-tab')) {
-            document.getElementById('comments-tab').addEventListener('click', function() {
-                showTab('comments');
-            });
-        }
+function initializeNotificationTabs() {
+    const tabs = ['all-notifications', 'comments', 'likes', 'follows'];
 
-        if (document.getElementById('likes-tab')) {
-            document.getElementById('likes-tab').addEventListener('click', function() {
-                showTab('likes');
-            });
+    tabs.forEach(tab => {
+        const tabElement = document.getElementById(`${tab}-tab`);
+        if (tabElement) {
+            tabElement.addEventListener('click', () => showTab(tab));
         }
-
-        if (document.getElementById('follows-tab')) {
-            document.getElementById('follows-tab').addEventListener('click', function() {
-                showTab('follows');
-            });
-        }
-
-        showTab('all-notifications');
     });
 }
 
 function showTab(tab) {
-    const contentElement = document.getElementById(tab + '-content');
-    if (contentElement) {
-        const sections = document.querySelectorAll('.notifications-section');
-        sections.forEach(function(section) {
-            section.classList.add('hidden');
-        });
-        contentElement.classList.remove('hidden');
-    }
+    toggleVisibility(tab + '-content', '.notifications-section');
+    toggleTabHighlight(tab + '-tab', '.tab-btn');
+}
 
-    const tabElement = document.getElementById(tab + '-tab');
-    if (tabElement) {
-        const tabs = document.querySelectorAll('.tab-btn');
-        tabs.forEach(function(tab) {
-            tab.classList.remove('text-blue-600');
-            tab.classList.add('text-gray-600');
-        });
-        tabElement.classList.add('text-blue-600');
-        tabElement.classList.remove('text-gray-600');
+function toggleVisibility(activeId, groupSelector) {
+    const sections = document.querySelectorAll(groupSelector);
+    sections.forEach(section => {
+        section.classList.add('hidden');
+    });
+
+    const activeElement = document.getElementById(activeId);
+    if (activeElement) {
+        activeElement.classList.remove('hidden');
     }
 }
 
+function toggleTabHighlight(activeTabId, groupSelector) {
+    const tabs = document.querySelectorAll(groupSelector);
+    tabs.forEach(tab => {
+        tab.classList.remove('text-blue-600');
+        tab.classList.add('text-gray-600');
+    });
+
+    const activeTab = document.getElementById(activeTabId);
+    if (activeTab) {
+        activeTab.classList.add('text-blue-600');
+        activeTab.classList.remove('text-gray-600');
+    }
+}
+
+function insertMoreNotifications() {
+    removeLoadingCircle();
+
+    const notificationsContainer = document.querySelector("#notifications-content");
+    if (!notificationsContainer) return;
+
+    try {
+        let notifications = JSON.parse(this.responseText);
+
+        console.log(notifications);
+
+        maxPage = notifications.last_page || 0;
+
+        if (notifications.data && notifications.data.length > 0) {
+            notifications.data.forEach(notification => {
+                const notificationElement = document.createElement("div");
+                notificationElement.classList.add("notification-item");
+                notificationElement.innerHTML = `
+                    <div class="notification-content">
+                        <p>${notification.message}</p>
+                        <span class="notification-time">${notification.created_at}</span>
+                    </div>`;
+                notificationsContainer.appendChild(notificationElement);
+            });
+        }
+    } catch (error) {
+        console.error("Failed to load notifications:", error);
+    }
+}
 
 addEventListeners();

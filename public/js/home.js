@@ -140,7 +140,7 @@ function addEventListeners() {
         currentPage += 1;
         loading = true;
         insertLoadingCircle(notificationsPage);
-        sendAjaxRequest('get', '/api/notifications?page=' + currentPage, null, insertMoreNotifications);
+        sendAjaxRequest('get', `/api/notifications?page=${currentPage}`, null, insertMoreNotifications);
       }
     }
   }
@@ -179,26 +179,7 @@ function insertMoreTimeline(){
 
 }
 
-// Insert more notifications into the page
-function insertMoreNotifications() {
-  removeLoadingCircle(); 
-  const notificationsContainer = document.querySelector("#notifications-content");
-  let notifications = JSON.parse(this.responseText);
 
-  maxPage = notifications.last_page;
-
-  notifications.data.forEach(notification => {
-    let notificationElement = document.createElement("div");
-    notificationElement.classList.add("notification-item");
-    notificationElement.innerHTML = `
-      <div class="notification-content">
-        <p>${notification.message}</p>
-        <span class="notification-time">${notification.created_at}</span>
-      </div>
-    `;
-    notificationsContainer.appendChild(notificationElement);
-  });
-}
 
 
 addEventListeners();
