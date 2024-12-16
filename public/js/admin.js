@@ -62,11 +62,15 @@
     }
 
   
-  function showDeleteAdminMenu(elementId){
-    document.getElementById('deleteMenuAdmin').classList.toggle('hidden');
-    document.getElementById('deleteMenuAdmin').classList.toggle('flex');
+  function showDeleteAdminMenu(elementId, category){
+    let deleteMenu = document.getElementById('deleteMenuAdmin');
+    deleteMenu.querySelector('h2').innerHTML = `Delete ${category == 'topic' ? 'Topic' : 'Report'}`
+    deleteMenu.querySelector('p').innerHTML = `Are you sure you want to delete this ${category == 'topics' ? 'topic' : 'report'}? This action cannot be undone.`
+    deleteMenu.classList.toggle('hidden');
+    deleteMenu.classList.toggle('flex');
     window.elementToDelete = elementId;
   }
+
 
   function insertShowMoreAdmin(sectionId){
     const section = document.getElementById(sectionId);  
@@ -87,11 +91,58 @@
     document.getElementById('showMore')?.remove();
   }
 
+  function insertMoreReports(){
+    removeLoadingCircle();
+    let reports =  JSON.parse(this.responseText);
+    maxAdminPage = reports.last_page;
+    const section = document.getElementById('reports');  
+    const sectionContentTable = section.querySelector('table');
+
+    let header = document.createElement('tr');
+    header.classList.add("shadow", "font-medium", );
+    header.innerHTML = `
+    <th class = "w-1/4 text-start px-4 py-2" >Content</th>
+    <th class = "w-1/4 text-start px-4 py-2" >Reason</th>
+    <th class = "w-1/4 text-start px-4 py-2" >Reported By</th>
+    <th></th>
+    `;
+
+    sectionContentTable.appendChild(header);
+
+    for(let i = 0; i < reports.data.length; i++){
+      let row = document.createElement('tr');
+      row.classList.add("shadow", "font-medium");
+      row.innerHTML = `
+        <td class="w-1/3 px-4 py-2 text-gray-700">${reports.data[i].commentid === null ? `Post ID${reports.data[i].postid}` : `Comment ID${reports.data[i].commentid}`}</td>
+        <td class="w-1/3 px-4 py-2 text-gray-700 truncate ...">${reports.data[i].reason}</td>
+        <td class="w-1/3 px-4 py-2 text-gray-700">${reports.data[i].user.username}</td>
+         <td class="px-4 py-2 self-end">
+        <form action="../reports/delete/${reports.data[i].reportid}" method="POST" id="deleteForm-${reports.data[i].reportid}">
+          <input type="hidden" name="_token" value= ${getCsrfToken()} />
+          <button type="button" onclick="showDeleteAdminMenu(${reports.data[i].reportid}, 'reports')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </button>
+        </form>
+      </td>
+
+      `
+      sectionContentTable.appendChild(row);
+    }
+
+    if(currentAdminPage < maxAdminPage){
+      insertShowMoreAdmin('reports'); 
+    }
+
+  }
+
   function insertMoreAdminTopics(){
     removeLoadingCircle();
     removeShowMoreAdmin();
     const section = document.getElementById('topics');  
     const sectionContentTable = section.querySelector('table');
+    
 
     let topics =  JSON.parse(this.responseText);
     maxAdminPage = topics.last_page;
@@ -110,7 +161,7 @@
       <td class="px-4 py-2 self-end">
         <form action="../topics/delete/${topics.data[i].topicid}" method="POST" id="deleteForm-${topics.data[i].topicid}">
           <input type="hidden" name="_token" value= ${getCsrfToken()} />
-          <button type="button" onclick="showDeleteAdminMenu(${topics.data[i].topicid})" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+          <button type="button" onclick="showDeleteAdminMenu(${topics.data[i].topicid}, 'topics')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -135,7 +186,7 @@
         return;
       }
 
-      const section = document.getElementById('topics');  
+      const section = document.getElementById(sectionId);  
       const sectionContentTable = section.querySelector('table');
       
       insertLoadingCircle(sectionContentTable);
@@ -150,7 +201,9 @@
             sendAjaxRequest('get', '/api/topics/all?page=' + currentAdminPage, null, insertMoreAdminTopics);
           }
           break;
-
+        case 'reports':
+          sendAjaxRequest('get', '/api/reports/all?page=' + currentAdminPage, null, insertMoreReports);
+          break;
       }
     }
 

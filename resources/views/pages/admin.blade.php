@@ -7,9 +7,11 @@
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Administration</h1>
         <nav class="flex justify-around bg-blue-600 text-white py-3 rounded-lg shadow-lg">
             <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
-                onclick="showSectionAdmin('users')">Manage Users</button>
+                onclick="showSectionAdmin('users')">Users</button>
             <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
-                onclick="showSectionAdmin('topics')">Manage Topics</button>
+                onclick="showSectionAdmin('topics')">Topics</button>
+            <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
+                onclick="showSectionAdmin('reports')">Reports</button>
         </nav>
     </header>
 
@@ -24,20 +26,7 @@
                 {{ session('error') }}
             </div>
     @endif
-    <!--
-    <section id="posts" class="admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
-        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Posts</h2>
-        
-        <div class="admin-tools mb-4 flex flex-wrap gap-4 items-center">
-            <input type="text" placeholder="Search posts..." 
-                class="input-field flex-grow p-2 border border-gray-300 rounded-lg" id="search-posts" />
-        </div>
 
-        <div id="posts-container">
-            
-        </div>
-    </section>
--->
     <section id="users" class="admin-section flex flex-col tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Users</h2>
         
@@ -46,18 +35,10 @@
                 Create User
             </button>
         </div>
-<!--
-        <div class="admin-tools mb-4 flex flex-wrap gap-4 items-center">
-            <input type="text" placeholder="Search users..." 
-                class="input-field flex-grow p-2 border border-gray-300 rounded-lg" id="search-users" />
-        </div>
-        <div id = "users-container">
-            
-
-        </div> 
--->
+        <table id="users-table" class = "flex flex-col self-center items-center w-full my-4">
+            <!-- filled with JS -->
+        </table>
     </section> 
-
     <section id="topics" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Topics</h2>
         
@@ -70,7 +51,19 @@
             </form>
         </div>
         <table id="topics-table" class = "flex flex-col self-center items-center w-full my-4">
-
+            <!-- filled with JS -->
+        </table>
+    </section>
+    <section id="reports" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
+        <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Reports</h2>
+        
+        <div class="mb-4 flex justify-between items-center">
+            <form class= "m-0" onsubmit="alert('not implemented')">
+                <input id="reportsAdminSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Reports" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
+            </form>
+        </div>
+        <table id="reports-table" class = "table-auto  self-center w-full my-4">
+            <!-- filled with JS -->
         </table>
     </section>
 </div>

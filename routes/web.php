@@ -17,6 +17,7 @@ use App\Http\Controllers\TopicController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\MailController;
 use App\Http\Controllers\Auth\ResetPasswordController;
+use App\Http\Controllers\ReportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -75,6 +76,8 @@ Route::controller(TopicController::class)->group(function (){
     Route::put('/api/topics/add/{topicid}/{userid}', 'addTopicToUser');
     Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
 });
+Route::get('api/reports/all', [ReportController::class, 'getReports']);
+Route::get('api/reports/delete/{reportid}', [ReportController::class, 'delete']);
 Route::get('api/notifications', [NotificationController::class, 'getNotifications']);
 
 
