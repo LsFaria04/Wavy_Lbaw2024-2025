@@ -247,6 +247,19 @@ function handleTopicDelete(){
 
 //Admin menu toggles ---------------------------------------------------------------------------------------------
  
+function toggleReasonDetails(reportid){
+  const reasonDetailsText = document.querySelector("#reasonDetails textarea ");
+  const reasonDetails = document.querySelector("#reasonDetails");
+  if(reportid !== null){
+  const report =  document.getElementById("Report-" + reportid);
+  const reason = report.querySelector("#reportReason").innerHTML;
+
+  
+  reasonDetailsText.innerHTML = reason;
+  }
+ reasonDetails.classList.toggle('hidden');
+ reasonDetails.classList.toggle('flex');
+}
  //used to switch from section in the admin page(only for the final product)
   function showSectionAdmin(sectionId) {
     
@@ -345,7 +358,7 @@ function handleTopicDelete(){
             ${reports.data[i].commentid === null ? `Post ID${reports.data[i].postid}` : `Comment ID${reports.data[i].commentid}`}
           </a>
         </td>
-        <td class="w-1/3 px-4 py-2 text-gray-700 truncate ...">${reports.data[i].reason}</td>
+        <td  class="w-1/3 max-w-40 px-4 py-2 text-gray-700 truncate ..."><button id = "reportReason" onclick = "toggleReasonDetails(${reports.data[i].reportid})">${reports.data[i].reason}</button></td>
         <td class="w-1/3 px-4 py-2 text-gray-700">${reports.data[i].user.username}</td>
          <td class="px-4 py-2 self-end">
         <form action="../reports/delete/${reports.data[i].reportid}" method="POST" id="deleteForm-${reports.data[i].reportid}">

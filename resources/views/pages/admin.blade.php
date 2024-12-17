@@ -74,5 +74,6 @@
 @include("partials.admin.deleteMenu")
 @include("partials.admin.createUserMenu")
 @include("partials.admin.createTopicMenu")
+@include("partials.admin.reasonDetails")
 
 @endsection
