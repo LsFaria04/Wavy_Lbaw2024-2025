@@ -150,8 +150,6 @@ class PostController extends Controller
             ]);
             $liked = true;
         }
-
-        event(new PostLike($postId));
     
         // Get the updated like count
         $likeCount = $post->likes()->count();
