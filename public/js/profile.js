@@ -530,7 +530,11 @@ function toggleFollow() {
       let userId = followButton.getAttribute('data-userid');
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-      const followStatus = followButton.getAttribute('data-follow-status');  // Possible values: "following", "pending", "not-following", "admin"
+      const followStatus = followButton.getAttribute('data-follow-status');  // Possible values: "following", "Pending", "not-following", "admin"
+      const isPrivate = followButton.getAttribute('data-is-private') === 'true';  
+
+      console.log("Follow Status:", followStatus);  // Debugging output
+      console.log("Is Private:", isPrivate);        // Debugging output
 
       // if the user is trying to follow an admin, prevent it
       if (followStatus === 'admin') {
@@ -539,19 +543,28 @@ function toggleFollow() {
       }
 
       // Handle private profiles (only allow "Follow" or "Request Follow" based on the state)
-      if (followStatus === 'private' && followButton.textContent === 'Follow') {
-          sendFollowRequest(userId, csrfToken, followButton);
+      if (isPrivate && followStatus === 'not-following') {
+        console.log("1")
+        sendFollowRequest(userId, csrfToken, followButton);
+
       } else if (followStatus === 'following') {
+        console.log("2")
           unfollowUser(userId, csrfToken, followButton);
-      } else if (followStatus === 'pending') {
+
+      } else if (followStatus === 'Pending') {
+        console.log("3")
           cancelPendingRequest(userId, csrfToken, followButton);
+
       } else {
+        console.log("4")
           followUser(userId, csrfToken, followButton);
       }
   });
 }
 
 function sendFollowRequest(userId, csrfToken, followButton) {
+  console.log("5")
+
   // Send the follow request (pending state)
   fetch('/profile/' + userId + '/follow', {
       method: 'POST',
@@ -575,7 +588,7 @@ function sendFollowRequest(userId, csrfToken, followButton) {
           followButton.textContent = 'Pending Request';
           followButton.classList.remove('bg-sky-700', 'hover:bg-sky-900');
           followButton.classList.add('bg-yellow-500', 'hover:bg-yellow-700');
-          followButton.setAttribute('data-follow-status', 'pending');
+          followButton.setAttribute('data-follow-status', 'Pending');
       }
   })
   .catch(error => {
@@ -583,28 +596,9 @@ function sendFollowRequest(userId, csrfToken, followButton) {
   });
 }
 
-function cancelPendingRequest(userId, csrfToken, followButton) {
-  fetch('/profile/' + userId + '/cancel-pending', {
-      method: 'POST',
-      headers: {
-          'Content-Type': 'application/json',
-          'X-CSRF-TOKEN': csrfToken
-      },
-      body: JSON.stringify({ user_id: userId })
-  })
-  .then(response => response.json())
-  .then(data => {
-      if (data.success) {
-          followButton.textContent = 'Follow';  
-          followButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-700');
-          followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
-          followButton.setAttribute('data-follow-status', 'not-following');
-      }
-  })
-  .catch(error => console.error('Error:', error));
-}
-
 function followUser(userId, csrfToken, followButton) {
+  console.log("6")
+
   // Send the follow request (accepted state)
   fetch('/profile/' + userId + '/follow', {
       method: 'POST',
@@ -618,7 +612,6 @@ function followUser(userId, csrfToken, followButton) {
       })
   })
   .then(response => {
-    console.log(response)
       if (!response.ok) {
           throw new Error('Something went wrong with the follow request.');
       }
@@ -638,6 +631,8 @@ function followUser(userId, csrfToken, followButton) {
 }
 
 function unfollowUser(userId, csrfToken, followButton) {
+  console.log("7");
+
   // Send the unfollow request (remove follow relationship)
   fetch('/profile/' + userId + '/unfollow', {
       method: 'POST',
@@ -656,17 +651,63 @@ function unfollowUser(userId, csrfToken, followButton) {
       return response.json();
   })
   .then(data => {
-      if (data.success) {
+    if (data.success) {
+      const isPrivate = followButton.getAttribute('data-is-private') === 'true';
+
+      if (isPrivate) {
+          // if private, show "Request to Follow"
+          followButton.textContent = 'Request to Follow';
+          followButton.classList.remove('bg-red-500', 'hover:bg-red-700');
+          followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
+          followButton.setAttribute('data-follow-status', 'not-following');
+      } else {
+          // if public, show "Follow"
           followButton.textContent = 'Follow';
           followButton.classList.remove('bg-red-500', 'hover:bg-red-700');
           followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
-          followButton.setAttribute('data-follow-status', 'not-following'); 
+          followButton.setAttribute('data-follow-status', 'not-following');
       }
+  }
   })
   .catch(error => {
       console.error('Something went wrong with the unfollow request.', error);
   });
 }
+
+function cancelPendingRequest(userId, csrfToken, followButton) {
+  console.log("cancelPendingRequest");
+
+  fetch('/profile/' + userId + '/unfollow', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({ user_id: userId })
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          const isPrivate = followButton.getAttribute('data-is-private') === 'true';
+          
+          if (isPrivate) {
+              console.log("11");
+              followButton.textContent = 'Request to Follow';  
+              followButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-700');
+              followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
+              followButton.setAttribute('data-follow-status', 'not-following');
+          } else {
+              console.log("10");
+              followButton.textContent = 'Follow';  
+              followButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-700');
+              followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
+              followButton.setAttribute('data-follow-status', 'not-following');
+          }
+      }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
 
 
 addEventListeners();

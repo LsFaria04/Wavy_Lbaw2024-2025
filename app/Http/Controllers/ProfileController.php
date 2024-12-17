@@ -18,26 +18,32 @@ class ProfileController extends Controller {
     */
     public function show($username) {
         $user = User::where('username', $username)->first();
-
+    
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');
         }
 
+        if ($user->getIsAdmin() && Auth::id() !== $user->userid) {
+            return redirect('/home')->with('error', 'User not found.');
+        }
+    
         $posts = $user->posts()->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);
         $comments = [];
-
-        $followStatus = null;
-
+    
+        $followStatus = 'not-following'; 
+    
         if (Auth::check() && Auth::id() !== $user->userid) {
+            // Check the follow status
             if (Follow::isFollowing(Auth::id(), $user->userid)) {
                 $followStatus = Follow::STATE_ACCEPTED;
             } elseif (Follow::isPending(Auth::id(), $user->userid)) {
                 $followStatus = Follow::STATE_PENDING;
             }
         }
-
+    
         return view('pages.profile', compact('user', 'posts', 'comments', 'followStatus'));
     }
+    
 
     //gets all the data of a user and sends it as json 
     public function getProfileUserData($username) {
@@ -215,7 +221,11 @@ class ProfileController extends Controller {
             return $this->unfollow($existingFollow);
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
             \Log::info('10');
-            $existingFollow->delete();
+
+            Follow::where('followerid', $existingFollow->followerid)
+            ->where('followeeid', $existingFollow->followeeid)
+            ->delete();
+
             \Log::info('11');
             return response()->json([
                 'success' => true,
@@ -242,7 +252,7 @@ class ProfileController extends Controller {
         ]);
     }
     
-    private function unfollow(Follow $existingFollow) {
+    public function unfollow(Follow $existingFollow) {
         \Log::info('15');
     
         Follow::where('followerid', $existingFollow->followerid)

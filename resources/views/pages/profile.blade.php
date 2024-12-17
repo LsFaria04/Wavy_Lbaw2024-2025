@@ -50,6 +50,8 @@
                         @if (!Auth::user()->isadmin && auth()->id() !== $user->userid)
                             <button id="follow-btn" 
                                     data-userid="{{ $user->userid }}" 
+                                    data-follow-status="{{ $followStatus }}"
+                                    data-is-private="{{ !$user->visibilitypublic ? 'true' : 'false' }}"
                                     class="px-4 py-1.5 font-semibold text-white rounded-2xl
                                         @if ($followStatus === 'Accepted') bg-red-500 hover:bg-red-700 
                                         @elseif ($followStatus === 'Pending') bg-yellow-500 hover:bg-yellow-700 
@@ -58,6 +60,8 @@
                                     Unfollow
                                 @elseif ($followStatus === 'Pending')
                                     Pending Request
+                                @elseif (!$user->visibilitypublic)
+                                    Request to Follow
                                 @else
                                     Follow
                                 @endif
