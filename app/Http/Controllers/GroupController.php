@@ -154,28 +154,29 @@ class GroupController extends Controller
         $request->validate([
             'userid' => 'required|integer|exists:users,userid',
         ]);
-
-        $userid = $request->input('userid');
+    
         $group = Group::findOrFail($groupid);
-
-        // Check if user is already a member or invited
+    
+        $this->authorize('sendInvitation', $group);
+    
+        $userid = $request->input('userid');
+    
         if ($group->members()->where('group_membership.userid', $userid)->exists()) {
             return response()->json(['status' => 'error', 'message' => 'User is already a member.'], 400);
         }
-
+    
         if (GroupInvitation::where('groupid', $groupid)->where('group_invitation.userid', $userid)->exists()) {
             return response()->json(['status' => 'error', 'message' => 'User is already invited.'], 400);
         }
-
-        // Create the invitation
+    
         GroupInvitation::create([
             'groupid' => $groupid,
             'userid' => $userid,
             'createddate' => now(),
         ]);
-
+    
         return response()->json(['status' => 'success', 'message' => 'User invited successfully.'], 200);
-    }
+    }    
     
     public function update(Request $request, $groupid) {
         $group = Group::findOrFail($groupid);
@@ -209,14 +210,18 @@ class GroupController extends Controller
     }
 
     public function cancelInvitation($groupid, $invitationid) {
+        $group = Group::findOrFail($groupid);
+        $this->authorize('sendInvitation', $group);
+    
         $invitation = GroupInvitation::where('groupid', $groupid)
             ->where('invitationid', $invitationid)
             ->firstOrFail();
-
+    
         $invitation->delete();
-
+    
         return response()->json(['status' => 'success', 'message' => 'Invitation canceled successfully.'], 200);
     }
+    
 
     public function sendJoinRequest(Request $request, $groupid) {
         $user = Auth::user();
@@ -246,6 +251,9 @@ class GroupController extends Controller
     }
 
     public function rejectJoinRequest($groupid, $requestid) {
+        $group = Group::findOrFail($groupid);
+        $this->authorize('rejectJoinRequest', $group);
+        
         $joinRequest = JoinGroupRequest::where('groupid', $groupid)
             ->where('requestid', $requestid)
             ->firstOrFail();
@@ -256,6 +264,9 @@ class GroupController extends Controller
     }
 
     public function acceptJoinRequest($groupid, $requestid) {
+        $group = Group::findOrFail($groupid);
+        $this->authorize('acceptJoinRequest', $group);
+        
         $joinRequest = JoinGroupRequest::where('groupid', $groupid)
             ->where('requestid', $requestid)
             ->firstOrFail();
@@ -279,47 +290,59 @@ class GroupController extends Controller
     public function leaveGroup($groupid) {
         $user = Auth::user();
         $group = Group::findOrFail($groupid);
-
-        // Check if the user is a member
+    
+        $this->authorize('leaveGroup', $group);
+    
         $membership = GroupMembership::where('groupid', $groupid)
             ->where('userid', $user->userid)
             ->first();
-
+    
         if (!$membership) {
             return redirect()->back()->with('error', 'You are not a member of this group.');
         }
-
-        // Prevent group owner from leaving the group
-        if ($group->ownerid === $user->userid) {
-            return redirect()->back()->with('error', 'Group owners cannot leave their own group.');
-        }
-
-        // Delete the membership
+    
         $membership->delete();
-
+    
         return redirect()->back()->with('success', 'You have successfully left the group.');
-    }
+    }   
 
     public function removeMember(Request $request, $groupid, $userid) {
         $group = Group::findOrFail($groupid);
-        // Check if the user is a member
+        $this->authorize('removeMember', $group);
+    
         $membership = GroupMembership::where('groupid', $groupid)
             ->where('userid', $userid)
             ->first();
-            
+    
         if (!$membership) {
             return redirect()->back()->with('error', 'The user is not a member of this group.');
         }
     
-        // Prevent group owner from leaving the group
         if ((int) $userid === (int) $group->ownerid) {
             return redirect()->back()->with('error', 'Group owners cannot be removed.');
         }
-
-        // Delete the membership
+    
         $membership->delete();
-
+    
         return redirect()->back()->with('success', "User has been removed from the group.");
     }
+    
+    public function deleteGroup($groupid) {
+        $group = Group::findOrFail($groupid);
+    
+        $this->authorize('delete', $group);
+    
+        try {
+            $group->delete();
+    
+            return redirect()->route('groups.index') // Redirect to the group list page
+                             ->with('success', 'Group deleted successfully.');
+        } catch (\Exception $e) {
+            Log::error('Failed to delete group', ['groupid' => $groupid, 'error' => $e->getMessage()]);
+    
+            return redirect()->route('group', $group->groupname)
+                             ->with('error', 'Failed to delete the group. Please try again later.');
+        }
+    }    
 
 }

@@ -153,6 +153,7 @@ Route::delete('/groups/{groupid}/remove/{userid}', [GroupController::class, 'rem
 Route::put('/groups/{groupid}', [GroupController::class, 'update'])->name('group.update');
 Route::get('/groups', [GroupListController::class, 'index'])->name('groupList');
 Route::post('/groups', [GroupController::class, 'store'])->name('group.store')->middleware('auth');
+Route::delete('/groups/{groupid}', [GroupController::class, 'deleteGroup'])->name('groups.delete');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');
