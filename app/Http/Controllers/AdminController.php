@@ -53,32 +53,35 @@ class AdminController extends Controller
     //stores a user when it is created in the admin page
     public function storeUser(Request $request)
     {   
-        if(Auth::user()->isadmin){
-            try{
-            $validated = $request->validate([
-                'username' => 'required|string|max:255|unique:users,username',
-                'email' => 'required|email|max:255|unique:users,email',
-                'password' => 'required|string|min:8|confirmed',
-            ]);
-            }catch(\Exception $e){
-                return redirect()->route('admin.index')->with('error', "Please verify the password length, username and email");
-            }
-
-
-            User::create([
-                'username' => $validated['username'],
-                'email' => $validated['email'],
-                'passwordhash' => Hash::make($validated['password']),
-                'state' => 'active',
-                'visibilitypublic' => true,
-                'isadmin' => false,
-            ]);
-
-            return redirect()->route('admin.index')->with('success', "Created a user successfully");
+        
+        try{
+            $this->authorize('createAdmin', User::class);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Your not an admin', 'response' => '403']);
         }
-        else{
-            return redirect()->route('admin.index')->with('error', "You are not an admin");
+        try{
+        $validated = $request->validate([
+            'username' => 'required|string|max:255|unique:users,username',
+            'email' => 'required|email|max:255|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Bad credentials. Password len < 8 or username/email not unique or password is not confirmed', 'response' => '403']);
         }
+
+        try{
+        User::create([
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'passwordhash' => Hash::make($validated['password']),
+            'state' => 'active',
+            'visibilitypublic' => true,
+            'isadmin' => false,
+        ]);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Server problem', 'response' => '500']);
+        }
+        return response()->json(['message' => 'User created sucessfully', 'response' => '200']);
 
     }
 }

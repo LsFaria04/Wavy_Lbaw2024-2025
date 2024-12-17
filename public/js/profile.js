@@ -1,31 +1,7 @@
 function addEventListeners() {
-  document.addEventListener('DOMContentLoaded', fadeAlert);
   document.addEventListener('DOMContentLoaded', switchProfileTab);
   document.addEventListener('DOMContentLoaded', switchGroupTab);
   window.addEventListener("scroll", infiniteScroll);
-
-  let cancelButton = document.getElementById('cancelButton');
-
-  if(cancelButton !== null){
-    cancelButton.addEventListener('click', () => {
-    const deleteMenu = document.getElementById('deleteMenu');
-    html.classList.toggle('overflow-hidden');
-    deleteMenu.classList.add('hidden');
-    });
-  }
-
-  let confirmButton = document.getElementById('confirmButton');
-  if(confirmButton !== null){
-    confirmButton.addEventListener('click', () => {
-      const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-      deleteForm.submit();
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    handlePagination('posts-container');
-    handlePagination('users-container');
-  });
 
   document.addEventListener('DOMContentLoaded', toggleFollow);
 
@@ -548,7 +524,7 @@ function removeTopicFromUser(topicId){
 function toggleFollow() {
   const followButton = document.getElementById('follow-btn');
 
-  followButton.addEventListener('click', function(e) {
+  followButton?.addEventListener('click', function(e) {
       e.preventDefault();  // Prevents the default behavior of the button (if it's in a form)
 
       let userId = followButton.getAttribute('data-userid');

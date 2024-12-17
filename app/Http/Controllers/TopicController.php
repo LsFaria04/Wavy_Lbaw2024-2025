@@ -21,7 +21,7 @@ class TopicController extends Controller
         try { 
         $this->authorize('create', Topic::class);
         } catch (AuthorizationException $e) {
-            return redirect()->route('admin.index')->with('error', 'You are not authorized to create new topics.');
+            return response()->json(['message' => 'Your not authorized to create topics', 'response' => '403']);
         }
 
         try{
@@ -31,11 +31,12 @@ class TopicController extends Controller
 
             Topic::create(['topicname' => $request->topicname]);
 
-            return redirect()->route('admin.index')
-            ->with('success', 'Your new topic was created successfully');
+            $newId = Topic::where('topicname', $request->topicname)->firstOrFail()->topicid;
+
+            return response()->json(['message' => 'Topic added sucessfully', 'response' => '200', 'topicname' => $request->topicname, 'topicid' => $newId]);
         } catch (\Exception $e) {
-            return redirect()->route('admin.index')
-            ->with('error', 'Something went wrong. Please verify that the topic name has less than 30 characters');
+            return response()->json(['message' => 'Server Problem', 'response' => '500']);
+
         }
     }
 
@@ -47,14 +48,14 @@ class TopicController extends Controller
             $topic = Topic::findOrFail($topicid);
         }
         catch (\Exception $e){
-            return redirect()->route('admin.index')->with('error', 'Topic does not exist');
+            return response()->json(['message' => 'Topic does not exist', 'response' => '404']);
         }
 
         //check if an user is authorized to delete a topic
         try{
             $this->authorize('delete', Topic::class);
         } catch (\Exception $e) {
-            return redirect()->route('admin.index')->with('error', 'You are not authorized to delete topics.');
+            return response()->json(['message' => 'Your not authorized to delete Topics', 'response' => '403']);
         }
 
         try{
@@ -70,12 +71,10 @@ class TopicController extends Controller
 
             $topic->delete();
         } catch (\Exception $e) {
-            return redirect()->route('admin.index')
-            ->with('error', 'Something went wrong when deleting the topic. Please try again');
+            return response()->json(['message' => 'Serve Problem', 'response' => '500']);
         }
 
-        return redirect()->route('admin.index')
-        ->with('success', 'Topic Deleted successfully!');
+        return response()->json(['message' => 'Topic deleted sucessfully', 'response' => '200']);
 
 
     }

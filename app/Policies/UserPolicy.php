@@ -15,4 +15,8 @@ class UserPolicy {
     public function delete(User $authUser, User $user) {
         return $authUser->id === $user->id || $authUser->isadmin;
     }
+
+    public function createAdmin(User $user){
+        return $user->isadmin;
+    }
 }
