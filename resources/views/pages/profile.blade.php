@@ -46,25 +46,28 @@
             <div class="pt-20 px-6 pb-4">
                 <div class="flex justify-between items-center">
                     <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
-                        @auth
-                            @if (!Auth::user()->isadmin && auth()->id() !== $user->userid)
-                            <form action="{{ $followStatus === 'Accepted' ? route('unfollow', ['userid' => $user->userid]) : route('follow', ['userid' => $user->userid]) }}" method="POST">
-                                @csrf
-                                <button id="follow-btn" data-userid="{{ $user->userid }}" type="submit" class="px-4 py-1.5 font-semibold text-white rounded-2xl hover:bg-sky-900
-                                    @if ($followStatus === 'Accepted') bg-red-500 
-                                    @elseif ($followStatus === 'Pending') bg-yellow-500 
-                                    @else bg-sky-700 @endif">
-                                    @if ($followStatus === 'Accepted')
-                                        Unfollow
-                                    @elseif ($followStatus === 'Pending')
-                                        Pending Request
-                                    @else
-                                        Follow
-                                    @endif
-                                </button>
-                            </form>
-                            @endif
-                        @endauth
+                    @auth
+                        @if (!Auth::user()->isadmin && auth()->id() !== $user->userid)
+                            <button id="follow-btn" 
+                                    data-userid="{{ $user->userid }}" 
+                                    data-follow-status="{{ $followStatus }}"
+                                    data-is-private="{{ !$user->visibilitypublic ? 'true' : 'false' }}"
+                                    class="px-4 py-1.5 font-semibold text-white rounded-2xl
+                                        @if ($followStatus === 'Accepted') bg-red-500 hover:bg-red-700 
+                                        @elseif ($followStatus === 'Pending') bg-yellow-500 hover:bg-yellow-700 
+                                        @else bg-sky-700 hover:bg-sky-900 @endif">
+                                @if ($followStatus === 'Accepted')
+                                    Unfollow
+                                @elseif ($followStatus === 'Pending')
+                                    Pending Request
+                                @elseif (!$user->visibilitypublic)
+                                    Request to Follow
+                                @else
+                                    Follow
+                                @endif
+                            </button>
+                        @endif
+                    @endauth
                 </div>
 
                 <p class="text-gray-500 mt-2">{{ $user->bio ?? 'No bio available.' }}</p>

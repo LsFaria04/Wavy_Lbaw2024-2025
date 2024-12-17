@@ -18,26 +18,32 @@ class ProfileController extends Controller {
     */
     public function show($username) {
         $user = User::where('username', $username)->first();
-
+    
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');
         }
 
+        if ($user->getIsAdmin() && Auth::id() !== $user->userid) {
+            return redirect('/home')->with('error', 'User not found.');
+        }
+    
         $posts = $user->posts()->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);
         $comments = [];
-
-        $followStatus = null;
-
+    
+        $followStatus = 'not-following'; 
+    
         if (Auth::check() && Auth::id() !== $user->userid) {
+            // Check the follow status
             if (Follow::isFollowing(Auth::id(), $user->userid)) {
                 $followStatus = Follow::STATE_ACCEPTED;
             } elseif (Follow::isPending(Auth::id(), $user->userid)) {
                 $followStatus = Follow::STATE_PENDING;
             }
         }
-
+    
         return view('pages.profile', compact('user', 'posts', 'comments', 'followStatus'));
     }
+    
 
     //gets all the data of a user and sends it as json 
     public function getProfileUserData($username) {
@@ -189,24 +195,38 @@ class ProfileController extends Controller {
                 'details' => $e->getMessage()
             ], 500);
         }
-    
+        \Log::info('5');
+
         // check if a follow already exists
         $existingFollow = Follow::where('followerid', $follower->userid)
                                 ->where('followeeid', $followee->userid)
                                 ->first();
-    
+
+        \Log::info($existingFollow);
+
         if ($existingFollow) {
+            \Log::info('6');
             return $this->handleExistingFollow($existingFollow);
         } else {
+            \Log::info('7');
             return $this->createFollowRequest($follower, $followee);
         }
     }
     
     private function handleExistingFollow(Follow $existingFollow) {
+        \Log::info('8');
+        \Log::info($existingFollow);
         if ($existingFollow->state === Follow::STATE_ACCEPTED) {
+            \Log::info('9');
             return $this->unfollow($existingFollow);
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
-            $existingFollow->delete();
+            \Log::info('10');
+
+            Follow::where('followerid', $existingFollow->followerid)
+            ->where('followeeid', $existingFollow->followeeid)
+            ->delete();
+
+            \Log::info('11');
             return response()->json([
                 'success' => true,
                 'status' => 'Unfollowed',
@@ -232,7 +252,7 @@ class ProfileController extends Controller {
         ]);
     }
     
-    private function unfollow(Follow $existingFollow) {
+    public function unfollow(Follow $existingFollow) {
         \Log::info('15');
     
         Follow::where('followerid', $existingFollow->followerid)

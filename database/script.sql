@@ -792,6 +792,24 @@ BEFORE INSERT ON FOLLOW
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions_follow();
 
+-- Create function to delete rejected follow requests
+CREATE OR REPLACE FUNCTION delete_rejected_follow_request()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if the follow state is updated to 'rejected'
+    IF NEW.state = 'rejected' THEN
+        DELETE FROM follow WHERE id = NEW.id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER delete_rejected_follow
+AFTER UPDATE ON follow
+FOR EACH ROW
+EXECUTE FUNCTION delete_rejected_follow_request();
+
+
 --------------- POPULATE DATABASE ---------------------------------
 
 
@@ -931,7 +949,6 @@ INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (7, 2, 'Accepted', NOW()),
     (2, 10, 'Pending', NOW()),
     (4, 5, 'Accepted', NOW()),
-    (5, 3, 'Rejected', NOW()),
     (6, 7, 'Accepted', NOW());
 
 INSERT INTO NOTIFICATION (receiverID, date, seen, followID, commentID, likeID) VALUES
