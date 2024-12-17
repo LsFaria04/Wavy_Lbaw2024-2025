@@ -41,9 +41,45 @@
                 Create User
             </button>
         </div>
-        <table id="users-table" class = "flex flex-col self-center items-center w-full my-4">
+        <table id="users-table" class = "table-auto self-center items-center w-full my-4">
+            <tr class = "shadow font-medium">
+                <th class = "w-1/2 text-start px-4 py-2" >Username</th>
+                <th class = "w-1/2 text-start px-4 py-2" >State</th>
+                <th></th>
+            </tr>
+            @foreach ($users as $user )
+                <tr class = "shadow font-medium">
+                    <td class="w-1/2 px-4 py-2 text-gray-700">
+                        <a href = '/profile/{{$user->username}}'>
+                          {{$user->username}}
+                        </a>
+                    </td>
+                    <td  class="w-1/2 max-w-40 px-4 py-2 text-gray-700">{{$user->state}}</td>
+                    <td class="px-4 py-2 self-end flex flex-row">
+                        <button>Ban</button>
+                        <form action="../profile/{{$user->userid}}/delete" method="POST" id="deleteForm-{{$user->userid}}">
+                            @csrf
+                            <button type="button" onclick="alert('not implemented')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                </svg>
+                            </button>
+                        </form>
+                    </td>
+
+                </tr>
+                
+            @endforeach
             <!-- filled with JS -->
         </table>
+        @if($users->hasMorePages())
+                <button class = "flex w-full justify-center items-center" onclick = "loadMoreAdminContent('users')" id = 'showMore'>
+                    <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                    <p>Show More</p>
+                </button>
+        @endif
     </section> 
     <section id="topics" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Topics</h2>

@@ -87,6 +87,8 @@ Route::get('/api/reports/search/all', [ReportController::class, 'searchReports']
 Route::post('/api/reports/delete/{reportid}', [ReportController::class, 'delete']);
 Route::post('/api/reports/create', [ReportController::class, 'create']);
 Route::post('/api/admin/users/create', [AdminController::class, 'storeUser']);
+Route::get('/api/admin/users/all', [AdminController::class, 'getUsersForAdmin']);
+Route::get('/api/admin/users/search/all', [AdminController::class, 'searchUsersForAdmin']);
 Route::get('/api/notifications', [NotificationController::class, 'getNotifications']);
 
 //Reports

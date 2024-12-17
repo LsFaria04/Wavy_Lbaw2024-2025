@@ -6,9 +6,9 @@ function addEventListeners() {
   createUserListener()
 
   setupCreateUserMenu();
-  setupCreateTopicMenu()
+  setupCreateTopicMenu();
 
-  
+  currentAdminPage = 1;
 }
 
 //Admin menu setups ---------------------------------------------------------------------
@@ -179,8 +179,10 @@ function handleCreateTopic(){
     const section = document.getElementById('topics');  
     const sectionContentTable = section.querySelector('table');
     createAlert(messageContainer, response.message,false);
-    topic = createAdminTopic(response.topicname, response.topicid);
-    sectionContentTable.appendChild(topic);
+    if(sectionContentTable.childElementCount < 9){
+      topic = createAdminTopic(response.topicname, response.topicid);
+      sectionContentTable.appendChild(topic);
+    }
   }
   else{
     createAlert(messageContainer, response.message,true);
@@ -330,7 +332,9 @@ function toggleReasonDetails(reportid){
     let reports =  JSON.parse(this.responseText);
 
     if(reports.response){
-      console.log(reports.response);
+      let messageDiv = document.getElementById('messageContainer');
+      createAlert(messageDiv, response.message, true);
+      return;
     }
     maxAdminPage = reports.last_page;
     const section = document.getElementById('reports');  
@@ -419,6 +423,12 @@ function toggleReasonDetails(reportid){
     let topics =  JSON.parse(this.responseText);
     maxAdminPage = topics.last_page;
 
+    if(reports.response){
+      let messageDiv = document.getElementById('messageContainer');
+      createAlert(messageDiv, response.message, true);
+      return;
+    }
+
     for(let i = 0; i < topics.data.length; i++){
 
       //ignore the default topic 
@@ -433,6 +443,69 @@ function toggleReasonDetails(reportid){
     if(currentAdminPage < maxAdminPage){
       insertShowMoreAdmin('topics');
     }
+  }
+
+  function insertMoreAdminUsers(){
+    removeLoadingCircle();
+    const loadingWrapper = document.getElementById('loadingWrapper');
+    loadingWrapper.remove();
+
+    let users =  JSON.parse(this.responseText);
+
+    if(reports.response){
+      let messageDiv = document.getElementById('messageContainer');
+      createAlert(messageDiv, response.message, true);
+      return;
+    }
+    maxAdminPage = users.last_page;
+    const section = document.getElementById('users');  
+    const sectionContentTable = section.querySelector('table');
+
+    if(document.querySelector('th') === null){
+      let header = document.createElement('tr');
+      header.classList.add("shadow", "font-medium");
+      header.innerHTML = `
+      <th class = "w-1/2 text-start px-4 py-2" >Username</th>
+      <th class = "w-1/2 text-start px-4 py-2" >State</th>
+      <th></th>
+      `;
+      sectionContentTable.appendChild(header);
+    }
+
+    for(let i = 0; i < users.data.length; i++){
+      let row = document.createElement('tr');
+      row.setAttribute('id', 'Report-' + users.data[i].reportid);
+      row.classList.add("shadow", "font-medium");
+      row.innerHTML = `
+        <td class="w-1/2 px-4 py-2 text-gray-700">
+          <a href = '/profile/${users.data[i].username}'>
+            ${users.data[i].username}
+          </a>
+        </td>
+        <td  class="w-1/2 max-w-40 px-4 py-2 text-gray-700">${users.data[i].state}</td>
+        <td class="flex flex-row px-4 py-2 self-end">
+        <button>Ban</button>
+        <form action="../profile/${users.data[i].userid}/delete" method="POST" id="deleteForm-${users.data[i].userid}">  
+          <input type="hidden" name="_token" value= ${getCsrfToken()} />
+          <button type="button" onclick="alert('not implemented')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </button>
+        </form>
+      </td>
+
+      `
+      console.log("here");
+      sectionContentTable.appendChild(row);
+    }
+
+    if(currentAdminPage < maxAdminPage){
+      insertShowMoreAdmin('users'); 
+    }
+
+    
+
   }
   
   //Loads more content and calls calls the apropriated insert function to insert the loaded content
@@ -472,6 +545,13 @@ function toggleReasonDetails(reportid){
             sendAjaxRequest('get', '/api/reports/all?page=' + currentAdminPage, null, insertMoreReports);
           }
           break;
+        case 'users':
+          if(isQuery){
+            sendAjaxRequest('get', '/api/admin/users/search/all?page=' + currentAdminPage +"&q=" + searchQuery, null, insertMoreAdminUsers);
+          }
+          else{
+            sendAjaxRequest('get', '/api/admin/users/all?page=' + currentAdminPage, null, insertMoreAdminUsers);
+          }
       }
     }
 

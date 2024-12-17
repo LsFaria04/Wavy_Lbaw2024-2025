@@ -12,37 +12,10 @@ use Illuminate\Support\Facades\Auth;
 class AdminController extends Controller
 {
     public function index(Request $request) {
-        // Search and Filter logic
-        $query = Post::query();
-
-        if ($request->has('search')) {
-            $query->where('message', 'like', '%' . $request->input('search') . '%');
-        }
-
-        if ($request->has('filter')) {
-            $query->where('visibilitypublic', $request->input('filter'));
-        }
-
-        $posts = $query->with('user')->paginate(10); // Paginate 10 posts per page
-
-        // Similarly for users
         $usersQuery = User::query();
+        $users = $usersQuery->Where('isadmin', false)->paginate(10);
 
-        if ($request->has('search_users')) {
-            $usersQuery->where('username', 'like', '%' . $request->input('search_users') . '%');
-        }
-
-        $users = $usersQuery->paginate(10);
-
-        if ($request->ajax()) {
-            if ($request->has('section') && $request->input('section') === 'posts') {
-                return view('partials.admin.posts-table', compact('posts'))->render();
-            } elseif ($request->has('section') && $request->input('section') === 'users') {
-                return view('partials.admin.users-table', compact('users'))->render();
-            }
-        }
-
-        return view('pages.admin', compact('posts', 'users'));
+        return view('pages.admin', compact('users'));
     }
     
     //returns the create user form to the admin page
@@ -83,5 +56,42 @@ class AdminController extends Controller
         }
         return response()->json(['message' => 'User created sucessfully', 'response' => '200']);
 
+    }
+
+    public function getUsersForAdmin(Request $request){
+        
+        try{
+            $this->authorize('getForAdmin', User::class);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Your not an admin', 'response' => '403']);
+        }
+
+        try{
+           $users = User::where('isadmin', false)->paginate(10);
+        } catch(\Exception $e){
+            return response()->json(["message" => 'Server problem', 'response' => '500']);
+        }
+
+        return response()->json($users);
+    }
+
+    public function searchUsersForAdmin(Request $request){
+        $query = $request->input('q');
+        //sanitizes the query to separate the words
+        $sanitizedQuery = str_replace("'", "''", $query);
+
+        try{
+            $this->authorize('getForAdmin', User::class);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Your not an admin', 'response' => '403']);
+        }
+
+        try{
+           $users = User::Where('username',$sanitizedQuery )->paginate(10);
+        } catch(\Exception $e){
+            return response()->json(["message" => 'Server problem', 'response' => '500']);
+        }
+
+        return response()->json($users);
     }
 }
