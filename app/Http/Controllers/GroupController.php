@@ -335,7 +335,7 @@ class GroupController extends Controller
         try {
             $group->delete();
     
-            return redirect()->route('groups.index') // Redirect to the group list page
+            return redirect()->route('groupList')
                              ->with('success', 'Group deleted successfully.');
         } catch (\Exception $e) {
             Log::error('Failed to delete group', ['groupid' => $groupid, 'error' => $e->getMessage()]);
