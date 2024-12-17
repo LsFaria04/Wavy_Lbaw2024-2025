@@ -26,6 +26,8 @@
         <script type="text/javascript" src="{{ url('js/search.js') }}" defer></script>
         <script type="text/javascript" src="{{ url('js/groupList.js') }}" defer></script>
         <script type="text/javascript" src="{{ url('js/notifications.js') }}" defer></script>
+        <script src="https://js.pusher.com/7.0/pusher.min.js" defer></script>
+
     </head>
     <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">
         <main class = "flex flex-col grow lg:flex-row bg-white ">

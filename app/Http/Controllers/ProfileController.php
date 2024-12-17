@@ -168,57 +168,48 @@ class ProfileController extends Controller {
         // logged-in user (follower)
         $follower = Auth::user();
 
-        // ser to be followed (followee)
+        // check if user is authenticated
+        if (!$follower) {
+            return response()->json(['error' => 'You must be logged in to follow someone.'], 401);
+        }
+
+        // user to be followed (followee)
         $followee = User::findOrFail($userid);
 
         \Log::info("Attempting to follow: Follower ID = {$follower->userid}, Followee ID = {$followee->userid}");
 
 
-        if ($follower->cannot('follow', $followee)) {
+        try {
+            $this->authorize('follow', [Follow::class, $followee]); 
+        } catch (AuthorizationException $e) {
             \Log::info("Authorization failed: User cannot follow this user.");
             return response()->json(['error' => 'You cannot follow this user.'], 403);
         }
-        
-        // Ensure the user is authenticated
-        if (!$follower) {
-            return response()->json(['error' => 'You must be logged in to follow someone.'], 401);
-        }
 
-        // Check if the current user is allowed to follow the other user
         try {
-            $this->authorize('follow', $followee);  
-        } catch (AuthorizationException $e) {
-            return response()->json(['error' => 'You cannot follow this user.'], 403);
-        }
+            // Check if a follow relationship already exists
+            $existingFollow = Follow::where('followerid', $follower->userid)
+                ->where('followeeid', $followee->userid)
+                ->first();
 
-        // Check if a follow relationship already exists
-        $existingFollow = Follow::where('followerid', $follower->userid)
-            ->where('followeeid', $followee->userid)
-            ->first();
-
-        // Handle the case where the follow relationship already exists
-        try {
+            // Handle existing relationships
             if ($existingFollow) {
-                // If already following and accepted, unfollow the user
                 if ($existingFollow->state === Follow::STATE_ACCEPTED) {
+                    // Unfollow the user
                     $existingFollow->delete();
                     return response()->json([
                         'success' => true,
                         'status' => 'Unfollowed'
                     ]);
-                }
-
-                // If follow request is pending, inform the user
-                if ($existingFollow->state === Follow::STATE_PENDING) {
+                } elseif ($existingFollow->state === Follow::STATE_PENDING) {
+                    // Follow request already sent
                     return response()->json([
                         'success' => false,
                         'message' => 'Follow request already sent.',
                         'status' => 'Pending'
                     ]);
-                }
-
-                // If the follow request was rejected, allow resending the request
-                if ($existingFollow->state === Follow::STATE_REJECTED) {
+                } elseif ($existingFollow->state === Follow::STATE_REJECTED) {
+                    // Resend the follow request
                     $existingFollow->update([
                         'state' => Follow::STATE_PENDING,
                         'followdate' => now(),
@@ -229,7 +220,7 @@ class ProfileController extends Controller {
                     ]);
                 }
             } else {
-                // No existing follow relationship, create a new follow relationship
+                // No existing follow relationship, create a new one
                 $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
 
                 Follow::create([
@@ -244,7 +235,7 @@ class ProfileController extends Controller {
                     'status' => $status === Follow::STATE_ACCEPTED ? 'Accepted' : 'Pending'
                 ]);
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return response()->json([
                 'error' => 'Server problem. Try again.',
                 'message' => $e->getMessage(),

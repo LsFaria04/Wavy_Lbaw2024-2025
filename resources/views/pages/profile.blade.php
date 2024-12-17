@@ -47,7 +47,7 @@
                 <div class="flex justify-between items-center">
                     <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
                         @auth
-                            @if (auth()->id() !== $user->userid && !Auth::user()->isadmin)
+                            @if (!Auth::user()->isadmin && auth()->id() !== $user->userid)
                                 <form action="{{ route('follow', ['userid' => $user->userid]) }}" method="POST">
                                     @csrf
                                     <button id="follow-btn" data-userid="{{ $user->userid }}" type="submit" class="px-4 py-1.5 font-semibold text-white rounded-2xl hover:bg-sky-900

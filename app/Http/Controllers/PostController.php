@@ -124,8 +124,7 @@ class PostController extends Controller
     }
 
 
-    public function likePost(Request $request, $postId)
-    {
+    public function likePost(Request $request, $postId) {
 
         $user = Auth::user(); // Get the authenticated user
         $post = Post::findOrFail($postId);
@@ -151,6 +150,8 @@ class PostController extends Controller
             ]);
             $liked = true;
         }
+
+        event(new PostLike($postId));
     
         // Get the updated like count
         $likeCount = $post->likes()->count();
