@@ -139,7 +139,7 @@ function insertMoreSearchResults(){
 // Creates a new group container with all the needed info
 function createGroup(groupInfo) {
   let group = document.createElement('div');
-  group.classList.add("group", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
+  group.classList.add("group", "border-b", "border-gray-300", "p-4", "bg-white");
 
   group.innerHTML = `
     <div class="group-header mb-2">

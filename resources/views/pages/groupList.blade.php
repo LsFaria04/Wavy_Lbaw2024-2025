@@ -3,12 +3,18 @@
 
 @section('content')
     <div class="flex flex-col items-center w-full bg-white" id="groupsPage">
-        <header id="groups-header" class="w-full max-w-full pt-4 shadow-md items-center sticky top-0 z-10 backdrop-blur">
-            <div class="flex items-center">
+        <header id="groups-header" class="w-full max-w-full pt-4 shadow items-center sticky top-0 z-10 backdrop-blur">
+            <div class="flex flex-col items-center">
                 <form action="{{ route('groupList') }}" method="GET" id="searchGroup-form" class="w-full max-w-5xl mx-auto">
                     <input type="text" name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search for groups..." class="border rounded-3xl p-2.5 pl-5 w-full shadow-md focus:outline-none">
                     <input type="hidden" name="category" value="{{ old('category', $category ?? '') }}">
                 </form>
+                @auth
+                    <button id="create-group-btn" 
+                        class="px-5 py-2 mt-4 flex justify-center bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-900" onclick="toggleCreateGroupMenu()">
+                        Create Group
+                    </button>
+                @endauth
             </div>
 
             <!-- Category Buttons -->
@@ -20,15 +26,8 @@
             </nav>
         </header>
 
-        @auth
-            <button id="create-group-btn" 
-                class="px-4 py-2 mt-3 w-40 justify-center bg-green-700 text-white rounded-md hover:bg-green-800" onclick="toggleCreateGroupMenu()">
-                Create Group
-            </button>
-        @endauth
-
-        <div id="create-group-menu" class="fixed inset-0 bg-black bg-opacity-50 items-center justify-center hidden z-18">
-            <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
+        <div id="create-group-menu" class="fixed inset-0 bg-black/50 items-center justify-center hidden z-30">
+            <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-lg">
                 <h2 class="text-2xl font-bold mb-4">Create Group</h2>
                 <form action="{{ route('group.store') }}" method="POST">
                     @csrf
@@ -49,14 +48,14 @@
                     </div>
                     <div class="flex justify-end space-x-2">
                         <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-2xl hover:bg-gray-600" onclick="toggleCreateGroupMenu()">Cancel</button>
-                        <button type="submit" class="px-4 py-2 bg-green-700 text-white rounded-2xl hover:bg-green-900">Create</button>
+                        <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-2xl hover:bg-sky-900">Create</button>
                     </div>
                 </form>
             </div>
         </div>        
         
         <!-- Groups Results -->
-        <section id="group-results" class="flex flex-col justify-items-center w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4">
+        <section id="group-results" class="flex flex-col justify-items-center w-full max-w-full bg-white">
             @if($category == 'your-groups')
                 @if(Auth::user()->groups->isEmpty())
                     <div class="flex justify-center items-center h-32">

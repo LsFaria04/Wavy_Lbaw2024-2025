@@ -377,45 +377,10 @@ function addEventListeners() {
   }
 
   function insertMoreInvitations(element, invitations) {
-    const inviteSection = document.createElement('div');
-    inviteSection.innerHTML = `
-        <div class="flex justify-end mb-4">
-            <button id="invite-users-btn" class="flex items-center justify-center bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Invite Users
-            </button>
-        </div>
-        <!-- Modal for inviting users -->
-        <div id="invite-modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 justify-center items-center z-50">
-            <div class="bg-white rounded-lg shadow-lg p-6 w-3/4 max-w-lg">
-                <div class="flex justify-between items-center mb-4">
-                    <h3 class="text-xl font-bold">Invite Users</h3>
-                    <button id="close-invite-modal" class="text-gray-500 hover:text-gray-700">&times;</button>
-                </div>
-                <input
-                    type="text"
-                    id="user-search"
-                    placeholder="Search for a user..."
-                    class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
-                />
-                <div id="search-results" class="max-h-64 overflow-y-auto pb-3">
-                    <!-- Search results will be dynamically injected here -->
-                </div>
-                <button id="send-invite" class="bg-blue-500 text-white px-4 py-3 rounded-md hover:bg-blue-700 disabled:opacity-50" disabled>
-                    Send Invite
-                </button>
-            </div>
-        </div>
-    `;
-    element.appendChild(inviteSection);
-
-    // Add invitations to the content
-    invitations.data.forEach(invitationInfo => {
-        const invitationElement = createInvitation(invitationInfo);
+    for (let i = 0; i < invitations.data.length; i++) {
+        let invitationElement = createInvitation(invitations.data[i]);
         element.appendChild(invitationElement);
-    });
+    }
   }
 
     function createRequest(requestInfo) {

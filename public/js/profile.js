@@ -598,6 +598,7 @@ function followUser(userId, csrfToken, followButton) {
       })
   })
   .then(response => {
+    console.log(response)
       if (!response.ok) {
           throw new Error('Something went wrong with the follow request.');
       }
