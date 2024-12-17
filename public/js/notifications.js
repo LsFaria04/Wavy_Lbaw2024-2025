@@ -1,7 +1,6 @@
 function addEventListeners() {
     document.addEventListener('DOMContentLoaded', () => {
         fadeAlert();
-        switchGroupTab();
         initializeNotificationTabs();
         showTab('all-notifications'); //default tab
     });
