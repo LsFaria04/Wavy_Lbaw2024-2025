@@ -3,14 +3,10 @@ function addEventListeners() {
     window.addEventListener("scroll", infiniteScroll);
 }
 
-const button = document.getElementById('create-group-btn');
-
 // Used to change the search category when a user clicks on a search tab option
 function changeGroupCategory(category) {
     currentPage = 1;  // Reset pagination to the first page
     searchGroupCategory = category;
-    if(category==='search-groups') button.classList.add('hidden');
-    else button.classList.remove('hidden');
     document.querySelector('input[name="category"]').value = category;
 
     const buttons = document.querySelectorAll('.category-btn');
