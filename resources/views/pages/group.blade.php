@@ -53,6 +53,9 @@
             {{ session('error') }}
         </div>
     @endif
+    <div id="messageContainer" class="fixed top-6 flex items-center z-40">
+        <!--Used to append messages with JS -->
+    </div>
 
     <!-- Edit Group Menu -->
     <div id="edit-group-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden z-20">
@@ -148,6 +151,7 @@
                 @include('partials.post', ['post' => $post, 'group' => $group])
             @endforeach
             @include('partials.addPostTopics')
+            @include('partials.reportForm')
         @endif
     </div>
 </div>

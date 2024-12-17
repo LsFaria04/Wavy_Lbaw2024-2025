@@ -117,7 +117,7 @@
       row.classList.add("shadow", "font-medium");
       row.innerHTML = `
         <td class="w-1/3 px-4 py-2 text-gray-700">
-          <a href =${reports.data[i].commentid === null ? `/posts/${reports.data[i].postid}` : `/comments/${reports.data[i].commentid}`}>
+          <a href = '/posts/${reports.data[i].postid}'>
             ${reports.data[i].commentid === null ? `Post ID${reports.data[i].postid}` : `Comment ID${reports.data[i].commentid}`}
           </a>
         </td>

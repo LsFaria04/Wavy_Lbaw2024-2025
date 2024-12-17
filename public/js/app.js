@@ -23,6 +23,8 @@ function addEventListeners() {
     handlePagination('posts-container');
     handlePagination('users-container');
   });
+
+  reportFormSubmission();
   
 }
 
@@ -141,6 +143,58 @@ function addEventListeners() {
     else{
       window.location.replace("/login");
        
+    }
+
+  }
+
+
+  function toggleReportForm(contentId, category){
+    const reportModal = document.getElementById('reportFormModal');
+    reportModal.classList.toggle('hidden');
+    reportModal.classList.toggle('flex');
+
+    if(contentId == null){
+      return;
+    }
+
+    if(category === 'post'){
+      document.getElementById('reportPost').value = contentId;
+    }
+    else{
+      category.getElementById('reportComment').value = contentId;
+    }
+  }
+
+  function reportFormSubmission(){
+    document.getElementById('reportFormModal')?.addEventListener('submit', function (form){
+      form.preventDefault();
+      let reason = document.querySelector("#reason").value;
+      let postid = document.querySelector("#reportPost").value;
+      let commentid = document.querySelector("#reportComment").value;
+      let sendButton = document.querySelector("#sendReport");
+      insertLoadingCircle(sendButton);
+      
+      //resize the loading circle
+      document.querySelector('#loading_circle').classList.remove('h-8');
+      document.querySelector('#loading_circle').classList.remove('w-8');
+      document.querySelector('#loading_circle').classList.add('h-6');
+      document.querySelector('#loading_circle').classList.add('w-6');
+
+      sendAjaxRequest('post', '/api/reports/create', {'reason' : reason, "postid" : postid, "commentid" : commentid, "userid": userId}, confirmReport);
+    });
+  }
+
+  function confirmReport(){
+    removeLoadingCircle();
+    toggleReportForm(null, null);
+    const response = JSON.parse(this.responseText);
+    
+    const messageContainer = document.getElementById("messageContainer");
+    if(response.response === '200'){
+      createAlert(messageContainer, response.message,false);
+    }
+    else{
+      createAlert(messageContainer, response.message,true);
     }
 
   }

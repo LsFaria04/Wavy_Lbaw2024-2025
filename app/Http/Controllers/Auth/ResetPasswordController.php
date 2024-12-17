@@ -31,10 +31,6 @@ class ResetPasswordController extends Controller
         if(!Hash::check($request->token, $user->passwordhash)){
             return response()->json(['message' => 'Wrong Token', 'response' => '403']);
         }
-        /*
-        if(strcmp($request->password,$request->passwordConf) !== 0){
-            return response()->json(['message' => 'Passwords do not match', 'response' => '403']);
-        }*/
 
         $user->passwordhash = Hash::make($request->password);
         $user->save();

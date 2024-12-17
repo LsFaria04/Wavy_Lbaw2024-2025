@@ -2,6 +2,10 @@
 
 @section('content')
     <div class="flex flex-col items-center w-full bg-white" id="searchPage">
+        <div id="messageContainer" class="fixed top-6 flex items-center z-40">
+            <!--Used to append messages with JS -->
+        </div>
+
         <header id="search-header" class="w-full max-w-full pt-4 shadow-md items-center sticky top-0 z-10 backdrop-blur">
             <div class="flex items-center">
                 <!-- <a href="{{ url()->previous() }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4 pl-4">
@@ -42,6 +46,7 @@
                 </div>
             @endif
             @include('partials.addPostTopics')
+            @include('partials.reportForm')
         </section>
     </div>
 @endsection 

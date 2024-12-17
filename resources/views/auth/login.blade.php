@@ -5,17 +5,20 @@
     <header>
         <h1 class= "text-3xl font-bold">Login<h1>
     </header>
+    <div id="messageContainer" class="fixed top-6 flex items-center z-40">
+        <!--Used to append messages with JS -->
+    </div>
     @if ($errors->has('email'))
-            <div class = "mt-8 self-center alert rounded max-w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">             
+            <div class = "fixed top-10 self-center alert rounded max-w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">             
                 {{ $errors->first('email') }}         
             </div>
         @elseif($errors->has('password'))
-            <div class = "mt-8 self-center alert max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">             
+            <div class = "fixed top-10 self-center alert max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">             
                 {{ $errors->first('password')}}          
             </div>
         @endif 
         @if (session('success'))
-            <div class = "mt-8 self-center alert max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">
+            <div class = "fixed top-10 self-center alert max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">
                         {{ session('success') }}
             </div>
             @endif

@@ -24,6 +24,10 @@
                 {{ session('error') }}
             </div>
         @endif
+        <div id="messageContainer" class="fixed top-6 flex items-center z-40">
+            <!--Used to append messages with JS -->
+        </div>
+
 
         <!-- Background Section -->
         <div class="w-full max-w-full relative bg-gray-300 h-48 overflow-hidden">
@@ -241,4 +245,5 @@
             </div>
         </div>
         @include('partials.addPostTopics')
+        @include('partials.reportForm')
     @endSection

@@ -3,6 +3,8 @@
 namespace App\Policies;
 
 use App\Models\User;
+use App\Models\Report;
+use Illuminate\Support\Facades\Log;
 
 class ReportPolicy
 {
@@ -15,10 +17,26 @@ class ReportPolicy
     }
 
     
-    public function create (User $user, $reportedUserId){
-        //only normal users can create and the reported user cannot be and admin
-        $reportedUser = User::find($reportedUserId)->firstOrFail();
-        return !$user->isadmin && !$reportedUser->isadmin;
+    public function create (User $user){
+        //admins cannot make reports
+        return !$user->isadmin;    
+    }
+
+    public function alreadyReported(User $user, $contentId, $isPost){
+        //verify if the user already reported that content
+        if($isPost){
+            $report = Report::where('postid', $contentId)
+                    ->where('userid', $user->userid)
+                    ->first();
+            return $report === null;
+        }
+        else{
+            $report = Report::where('commentid', $contentId)
+                ->where('userid', $user->userid)
+                ->first();
+            
+            return $report === null;
+        }
     }
 
     public function delete (User $user){
