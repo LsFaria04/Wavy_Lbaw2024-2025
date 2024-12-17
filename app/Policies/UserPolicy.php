@@ -19,4 +19,8 @@ class UserPolicy {
     public function createAdmin(User $user){
         return $user->isadmin;
     }
+
+    public function getForAdmin(User $user){
+        return $user->isadmin;
+    }
 }
