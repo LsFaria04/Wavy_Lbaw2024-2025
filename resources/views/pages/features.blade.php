@@ -69,7 +69,7 @@
     <!-- Call to Action -->
     <div class="text-center mt-16">
         <a href="{{ route('home') }}" class="inline-block px-8 py-4 bg-blue-600 text-white text-lg font-semibold rounded-full hover:bg-blue-700">
-            Get Started Today
+            Get Started
         </a>
     </div>
 </div>
