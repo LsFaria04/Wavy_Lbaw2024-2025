@@ -113,7 +113,6 @@ Route::post('/like-post/{postId}', [PostController::class, 'likePost'])->name('l
 //Comments
 Route::post('/comments/update/{comment}', [CommentController::class, 'update'])->name('comments.update');
 Route::post('/comments/delete/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
-Route::get('/comments/{id}', [CommentController::class, 'show'])->name('comments.show');
 Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
 Route::post('/comments/storeSubcomment', [CommentController::class, 'storeSubcomment'])->name('comments.storeSubcomment');
 Route::post('/like-comment/{commentId}', [CommentController::class, 'likeComment'])->name('likeComment');
