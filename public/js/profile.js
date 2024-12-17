@@ -552,38 +552,119 @@ function toggleFollow() {
       e.preventDefault();  // Prevents the default behavior of the button (if it's in a form)
 
       let userId = followButton.getAttribute('data-userid');
-
-            console.log('User ID:', userId); // Log userId
-
-
       const csrfToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-      
-      fetch('/profile/' + userId + '/follow', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',  
-              'X-CSRF-TOKEN': csrfToken             
-          },
-          body: JSON.stringify({
-              user_id: userId 
-          })
-      })
-      .then(response => {
-          if (!response.ok) {
-              throw new Error('Something went wrong with the follow/unfollow request.');
-          }
-          return response.json();
-      })
-      .then(data => {
-          if (data.success) {
-              followButton.textContent = data.isFollowing ? 'Unfollow' : 'Follow';
-          }
-      })
-      .catch(error => {
-          console.error('Something went wrong with the follow/unfollow request.', error);
-      });
+
+      const followStatus = followButton.getAttribute('data-follow-status');  // Possible values: "following", "pending", "not-following", "admin"
+
+      // if the user is trying to follow an admin, prevent it
+      if (followStatus === 'admin') {
+          alert('You cannot follow an admin!');
+          return;
+      }
+
+      // Handle private profiles (only allow "Follow" or "Request Follow" based on the state)
+      if (followStatus === 'private' && followButton.textContent === 'Follow') {
+          // Send a request to follow instead of following directly
+          sendFollowRequest(userId, csrfToken, followButton);
+      } else if (followStatus === 'following') {
+          // If the user is already following, allow unfollow
+          unfollowUser(userId, csrfToken, followButton);
+      } else if (followStatus === 'pending') {
+          // If the user has a pending request, show an alert or take appropriate action
+          alert('You have a pending follow request.');
+      } else {
+          // For other cases, just follow the user
+          followUser(userId, csrfToken, followButton);
+      }
   });
 }
+
+function sendFollowRequest(userId, csrfToken, followButton) {
+  // Send the follow request (pending state)
+  fetch('/profile/' + userId + '/follow', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({
+          user_id: userId,
+          state: 'Pending'  
+      })
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Something went wrong with the follow request.');
+      }
+      return response.json();
+  })
+  .then(data => {
+      if (data.success) {
+          followButton.textContent = 'Pending Request';  // Update button text to show it's pending
+      }
+  })
+  .catch(error => {
+      console.error('Something went wrong with the follow request.', error);
+  });
+}
+
+function followUser(userId, csrfToken, followButton) {
+  // Send the follow request (accepted state)
+  fetch('/profile/' + userId + '/follow', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({
+          user_id: userId,
+          state: 'Accepted' 
+      })
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Something went wrong with the follow request.');
+      }
+      return response.json();
+  })
+  .then(data => {
+      if (data.success) {
+          followButton.textContent = 'Unfollow';  
+      }
+  })
+  .catch(error => {
+      console.error('Something went wrong with the follow request.', error);
+  });
+}
+
+function unfollowUser(userId, csrfToken, followButton) {
+  // Send the unfollow request (remove follow relationship)
+  fetch('/profile/' + userId + '/unfollow', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json',
+          'X-CSRF-TOKEN': csrfToken
+      },
+      body: JSON.stringify({
+          user_id: userId
+      })
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Something went wrong with the unfollow request.');
+      }
+      return response.json();
+  })
+  .then(data => {
+      if (data.success) {
+          followButton.textContent = 'Follow'; 
+      }
+  })
+  .catch(error => {
+      console.error('Something went wrong with the unfollow request.', error);
+  });
+}
+
 
 addEventListeners();
   
