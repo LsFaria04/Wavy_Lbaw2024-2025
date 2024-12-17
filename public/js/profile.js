@@ -7,6 +7,12 @@ function addEventListeners() {
 
 }
 
+function toggleHidden(element) {
+  element.classList.toggle('hidden');
+  element.classList.toggle('flex');
+}
+
+
 function handleProfileInfo(){
   const response = JSON.parse(this.responseText);
   isPublic = response.visibilitypublic;
@@ -23,8 +29,7 @@ if(document.querySelector("#profile-tab-content") !== null){
 //toggles the edit menu when user clicks the edit button
 function toggleEditMenu() {
   const menu = document.getElementById('edit-profile-menu');
-  menu.classList.toggle('hidden');
-  menu.classList.toggle('flex');
+  toggleHidden(menu);
   html.classList.toggle('overflow-hidden');
 }
 
@@ -37,8 +42,7 @@ function toggleDropdown() {
 //toggles the confirmation menu so that it can appear on screen
 function toggleConfirmationModal() {
   const confirmationMenu = document.getElementById('confirmationModal');
-  confirmationMenu.classList.toggle('hidden');
-  confirmationMenu.classList.toggle('flex');
+  toggleHidden(confirmationMenu);
   const dropdownMenu = document.getElementById('dropdownMenu');
   dropdownMenu.classList.toggle('hidden');
   if (isadmin) {
@@ -49,8 +53,7 @@ function toggleConfirmationModal() {
 //used to close modal menu
 function closeModal() {
   const confirmationMenu = document.getElementById('confirmationModal');
-  confirmationMenu.classList.toggle('hidden');
-  confirmationMenu.classList.toggle('flex');
+  toggleHidden(confirmationMenu);
 }
 
 //opens the my topics menu in the profile
@@ -69,8 +72,7 @@ function toggleMyTopics(){
     
   }
 
-  myTopicsMenu.classList.toggle('hidden');
-  myTopicsMenu.classList.toggle('flex');
+  toggleHidden(myTopicsMenu);
 }
 
 //opens the submenu add topic in the profile page
@@ -88,13 +90,11 @@ function toggleAddTopics(){
     topics.forEach( function (e) {e.remove()});
   }
 
-  addTopicsMenu.classList.toggle('hidden');
-  addTopicsMenu.classList.toggle('flex');
+  toggleHidden(addTopicsMenu);
 
   //hide or show the my topics menu
   const myTopicsMenu  = document.getElementById('myTopics');
-  myTopicsMenu.classList.toggle('hidden');
-  myTopicsMenu.classList.toggle('flex');
+  toggleHidden(myTopicsMenu);
 }
 
 //handles the profile delete confirmation with requests via ajax
