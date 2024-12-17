@@ -121,8 +121,8 @@ class ReportController extends Controller
 
         try{
             $reports = Report::with('user')
-                    ->Where('reason', 'LIKE', '%?%')
-                    ->setBindings([$sanitizedQuery])
+                    ->whereHas('user', function ($q) use ($sanitizedQuery) { $q->where('users.username', $sanitizedQuery);})
+                    ->orWhereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                     ->paginate(10);
 
             for($i = 0; $i < count($reports); $i++){

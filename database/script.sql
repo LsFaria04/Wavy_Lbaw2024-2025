@@ -192,6 +192,7 @@ CREATE TABLE USER_REPORTS (
     postID INTEGER DEFAULT NULL,
     commentID INTEGER DEFAULT NULL,
     reason TEXT,
+    search TSVECTOR,
     CHECK ((postID IS NOT NULL AND commentID IS NULL) OR (postID IS NULL AND commentID IS NOT NULL)),
     FOREIGN KEY (userID) REFERENCES USERS(userID) ON DELETE CASCADE,
     FOREIGN KEY (postID) REFERENCES POST(postID) ON DELETE CASCADE,
@@ -340,6 +341,29 @@ FOR EACH ROW
 EXECUTE PROCEDURE topic_search_update();
 --Create the index for the ts_vectors
 CREATE INDEX topic_search ON Topic USING GIN (search);
+
+-- Create function to update the ts_vectors
+CREATE OR REPLACE FUNCTION report_search_update() RETURNS TRIGGER AS $$ 
+BEGIN 
+    IF TG_OP = 'INSERT' THEN 
+        NEW.search := to_tsvector('english', NEW.reason); 
+    
+    ELSIF TG_OP = 'UPDATE' THEN 
+        IF NEW.reason <> OLD.reason THEN  
+            NEW.search := to_tsvector('english', NEW.reason);  
+        END IF; 
+    END IF; 
+
+    RETURN NEW; 
+END 
+$$ LANGUAGE 'plpgsql';
+--Create trigger to execute the td_vector function when the table is updated
+CREATE TRIGGER report_search_update
+BEFORE INSERT OR UPDATE ON USER_REPORTS
+FOR EACH ROW
+EXECUTE PROCEDURE report_search_update();
+--Create the index for the ts_vectors
+CREATE INDEX report_search ON USER_REPORTS USING GIN (search);
 
 
 
