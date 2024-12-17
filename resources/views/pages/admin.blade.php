@@ -34,6 +34,9 @@
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Users</h2>
         
         <div class="mb-4 flex justify-between items-center">
+            <form class= "m-0" onsubmit="searchAdmin(event,'users')">
+                <input id="usersAdminSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Users" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
+            </form>
             <button id="createUserBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                 Create User
             </button>
@@ -46,12 +49,13 @@
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Topics</h2>
         
         <div class="mb-4 flex justify-between items-center">
-            <button id="createTopicBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-                Create Topic
-            </button>
             <form class= "m-0" onsubmit="searchAdmin(event,'topics')">
                 <input id="topicsAdminSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Topics" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
             </form>
+            <button id="createTopicBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Create Topic
+            </button>
+            
         </div>
         <table id="topics-table" class = "flex flex-col self-center items-center w-full my-4">
             <!-- filled with JS -->
