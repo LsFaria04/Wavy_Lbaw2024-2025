@@ -208,7 +208,10 @@ function insertMorePosts(element, posts){
     let post = createPost(posts.data[i]);
 
     if(userId == posts.data[i].user.userid || isadmin){
-      post = createPostOptions(post, posts.data[i].postid); 
+      post = createPostOptions(post, posts.data[i].postid, false); 
+    }
+    else{
+      post = createPostOptions(post, posts.data[i].postid, true); 
     }
 
     post = insertPostTopics(post, posts.data[i].topics);

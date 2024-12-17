@@ -26,6 +26,12 @@
                         </button>
                     </form>
                 </div>
+            @else
+            <div id= "commentOptions" class="flex items-center gap-2">
+                <button type="button" onclick="event.stopPropagation(); toggleReportForm('{{ $post->postid }}', 'post');" class="text-gray-500 hover:text-black">
+                    Report
+                </button>
+            </div>
             @endif
         @endauth
     </div>

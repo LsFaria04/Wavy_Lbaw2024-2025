@@ -4,31 +4,41 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Report;
+use App\Models\Comment;
+use Illuminate\Support\Facades\Log;
 
 class ReportController extends Controller
 {
     function create (Request $request){
         $reason = $request->reason;
-        $userid = null;
+        $userid = $request->userid;
         $commentid = null;
         $postid = null;
-
-        if(isset($request->userid)){
-            $userid = $request->userid;
-        }
 
         if(isset($request->commentid)){
             $commentid = $request->commentid;
         }
 
-        if(issset($request->postid)){
+        if(isset($request->postid)){
             $postid = $request->postid;
         }
 
         try{
-            $this->authorize('create', [Report::class,$userid]);
+            $this->authorize('create', [Report::class]);
         } catch(AuthorizationException $e){
             return response()->json(['message' => 'You do not have authorization to create a report', 'response' => '403']);
+        }
+
+        try{
+            if($commentid === null){
+                Log::info("here");
+                $this->authorize('alreadyReported', [Report::class,$postid, true]);
+            }
+            else{
+                $this->authorize('alreadyReported', [Report::class,$commentid, false]);
+            }
+        } catch(\Exception $e){
+            return response()->json(['message' => 'You already reported this post', 'response' => '403']);
         }
 
 
@@ -54,7 +64,7 @@ class ReportController extends Controller
         }
 
         try{
-            Report::find($reportId)->firstOrFail()->delete();
+            $report = Report::find($reportId)->delete();
         } catch(\Exception $e){
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
@@ -73,6 +83,27 @@ class ReportController extends Controller
 
         try{
             $reports = Report::with('user')->paginate(10);
+            for($i = 0; $i < count($reports); $i++){
+                $report = $reports[$i];
+
+                if($report->commentid === null){
+                    continue;
+                }
+
+                //gets the comments parent post when they are subcomments
+                $parentPost = null;
+                $comment = Comment::find($report->commentid);
+                while($parentPost === null){
+                    if($comment->postid !== null){
+                        $parentPost = $comment->postid;
+                        break;
+                    }
+                    $comment = Comment::find($comment->parentcommentid);
+                }
+
+                $report->postid = $parentPost;
+                $reports[$i] = $report;
+            }
         } catch(\Exception $e){
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }

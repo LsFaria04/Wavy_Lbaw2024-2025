@@ -11,6 +11,9 @@
                 {{ session('success')}}          
             </div>
         @endif 
+        <div id="messageContainer" class="fixed top-6 flex items-center">
+            <!--Used to append messages with JS -->
+        </div>
         
         <section id="timeline" class="flex flex-col max-w-full w-full bg-white shadow-lg mx-auto">
             @if(Auth::check() && !Auth()->user()->isadmin)
@@ -23,6 +26,7 @@
             @endif
         </section>
         @include('partials.addPostTopics')
+        @include('partials.reportForm')
     </div>
 
 @endsection

@@ -12,6 +12,9 @@
                 {{ session('success') }}          
             </div>
         @endif 
+        <div id="messageContainer" class="fixed top-6 flex items-center">
+            <!--Used to append messages with JS -->
+        </div>
 
         <!-- Post Content -->
         <section id="postContent" class="flex flex-col px-6 pt-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
@@ -67,5 +70,6 @@
             </div>
         </section>
         @include('partials.addPostTopics')
+        @include('partials.reportForm')
     </div>
 @endsection
