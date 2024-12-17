@@ -10,20 +10,23 @@
         </div>
     
         @auth
-            <div class="flex justify-center mt-2">
+            <div class="flex flex-col items-center justify-center mt-2">
                 @if (!$group->members->contains(Auth::user()) && !Auth::user()->isadmin)
-                    <button id="ask-to-join-btn" class="px-5 py-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-900">
+                    <button id="ask-to-join-btn" class="px-6 py-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-900">
                         Ask to Join
                     </button>
                 @elseif ($group->members->contains(Auth::user()) && auth()->id() !== $group->ownerid && !Auth::user()->isadmin)
-                    <button type="button" onclick="openExitGroupMenu()" class="px-5 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700">
+                    <button type="button" onclick="openExitGroupMenu()" class="px-6 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700">
                         Exit Group
                     </button>
                 @elseif(auth()->id() === $group->ownerid || Auth::user()->isadmin)
                     <button 
-                        class="px-5 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900"
+                        class="px-6 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900"
                         onclick="toggleEditGroupMenu()">
                         Edit Group
+                    </button>
+                    <button id="invite-users-btn" class="px-5 py-2 mt-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-800">
+                        Invite Users
                     </button>
                 @endif
             </div>
@@ -86,6 +89,29 @@
             </form>
         </div>
     </div>
+
+    <!-- Modal for inviting users -->
+    <div id="invite-modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 justify-center items-center z-50">
+        <div class="bg-white rounded-lg shadow-lg p-6 w-3/4 max-w-lg">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="text-xl font-bold">Invite Users</h3>
+                <button id="close-invite-modal" class="text-gray-500 hover:text-gray-700">&times;</button>
+            </div>
+            <input
+                type="text"
+                id="user-search"
+                placeholder="Search for a user..."
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+            />
+            <div id="search-results" class="max-h-64 overflow-y-auto pb-3">
+                <!-- Search results will be dynamically injected here -->
+            </div>
+            <button id="send-invite" class="bg-blue-500 text-white px-4 py-3 rounded-md hover:bg-blue-700 disabled:opacity-50" disabled>
+                Send Invite
+            </button>
+        </div>
+    </div>
+
 
     <!-- Exit Group Confirmation Menu -->
     <div id="exitGroupMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
