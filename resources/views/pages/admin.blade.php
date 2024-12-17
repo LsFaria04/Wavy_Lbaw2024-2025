@@ -26,6 +26,9 @@
                 {{ session('error') }}
             </div>
     @endif
+    <div id="messageContainer" class="fixed top-6 z-50 flex items-center">
+        <!--Used to append messages with JS -->
+    </div>
 
     <section id="users" class="admin-section flex flex-col tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Users</h2>
@@ -115,7 +118,7 @@
             <button type="button" id="cancelCreateUserBtn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                 Cancel
             </button>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button type="submit" id="submitCreateUserBtn"  class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                 Create
             </button>
         </form>
@@ -134,7 +137,7 @@
             <button type="button" id="cancelCreateTopicBtn" class="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600">
                 Cancel
             </button>
-            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button type="submit" id="submitCreateTopicBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                 Create
             </button>
         </form>

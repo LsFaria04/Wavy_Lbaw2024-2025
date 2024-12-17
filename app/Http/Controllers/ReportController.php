@@ -69,9 +69,7 @@ class ReportController extends Controller
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
-        return redirect()->route('admin.index')->with('success', 'Report Deleted successfully!');
-
-        //return response()->json(['response' => '200', 'message' => 'Report removed sucessfully']);
+        return response()->json(['response' => '200', 'message' => 'Report removed sucessfully']);
     }
 
     function getReports(Request $request){

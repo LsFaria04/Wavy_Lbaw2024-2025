@@ -14,10 +14,25 @@
   let confirmButton = document.getElementById('confirmButtonAdmin');
   if(confirmButton !== null){
     confirmButton.addEventListener('click', () => {
-      const deleteForm = document.getElementById(`deleteForm-${window.elementToDelete}`);
-      deleteForm.submit();
+      insertLoadingCircle(confirmButton);
+      
+      //resize the loading circle
+      document.querySelector('#loading_circle').classList.remove('h-8');
+      document.querySelector('#loading_circle').classList.remove('w-8');
+      document.querySelector('#loading_circle').classList.add('h-4');
+      document.querySelector('#loading_circle').classList.add('w-4');
+
+      if(window.categoryDelete == 'topics'){
+        sendAjaxRequest('post', '/api/topics/delete/' + window.elementToDelete, null, handleTopicDelete);
+      }
+      if(window.categoryDelete == 'reports'){
+        sendAjaxRequest('post', '/api/reports/delete/' + window.elementToDelete, null, handleReportDelete);
+      }
+
     });
   }
+  createTopicListener();
+  createUserListener()
 
   document.addEventListener('DOMContentLoaded', function() {
     handlePagination('posts-container');
@@ -26,12 +41,132 @@
 
   document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
 
+
   setupCreateUserMenu();
   setupCreateTopicMenu()
 
   addEventListenerEditUserAdmin();
   eventListernerFormsAdmin();
   
+}
+
+function createTopicListener(){
+  let createTopic = document.getElementById('createTopicForm');
+
+  createTopic?.addEventListener('submit', (form) => {
+    form.preventDefault();
+    let topicname = document.getElementById('create-Topic').value;
+
+    let confirmButton = document.getElementById('submitCreateTopicBtn');
+    insertLoadingCircle(confirmButton);
+        
+    //resize the loading circle
+    document.querySelector('#loading_circle').classList.remove('h-8');
+    document.querySelector('#loading_circle').classList.remove('w-8');
+    document.querySelector('#loading_circle').classList.add('h-4');
+    document.querySelector('#loading_circle').classList.add('w-4');
+
+    sendAjaxRequest('post', '/api/topics/add', {"topicname": topicname}, handleCreateTopic);
+  });
+}
+
+function createUserListener(){
+  let createUser = document.getElementById('createUserForm');
+
+  createUser?.addEventListener('submit', (form) => {
+    form.preventDefault();
+    let username = document.getElementById('create-username').value;
+    let email = document.getElementById('create-email').value;
+    let password = document.getElementById('create-password').value;
+    let passwordConf = document.getElementById('create-password_confirmation').value;
+
+    let confirmButton = document.getElementById('submitCreateUserBtn');
+    insertLoadingCircle(confirmButton);
+        
+    //resize the loading circle
+    document.querySelector('#loading_circle').classList.remove('h-8');
+    document.querySelector('#loading_circle').classList.remove('w-8');
+    document.querySelector('#loading_circle').classList.add('h-4');
+    document.querySelector('#loading_circle').classList.add('w-4');
+
+    sendAjaxRequest('post', '/api/admin/users/create', {"username": username, "email": email, "password" : password, "password_confirmation" : passwordConf}, handleCreateUser);
+  });
+}
+
+function handleCreateTopic(){
+  let createTopicMenu = document.getElementById('createTopicMenu');
+  createTopicMenu.classList.toggle('hidden');
+  createTopicMenu.classList.toggle('flex');
+
+  removeLoadingCircle();
+  const response = JSON.parse(this.responseText);
+
+  const messageContainer = document.getElementById("messageContainer");
+  if(response.response === '200'){
+    const section = document.getElementById('topics');  
+    const sectionContentTable = section.querySelector('table');
+    createAlert(messageContainer, response.message,false);
+    topic = createAdminTopic(response.topicname, response.topicid);
+    sectionContentTable.appendChild(topic);
+  }
+  else{
+    createAlert(messageContainer, response.message,true);
+  }
+
+}
+
+function handleCreateUser(){
+  let createUserMenu = document.getElementById('createUserMenu');
+  createUserMenu.classList.toggle('hidden');
+  createUserMenu.classList.toggle('flex');
+
+  removeLoadingCircle();
+  const response = JSON.parse(this.responseText);
+
+  const messageContainer = document.getElementById("messageContainer");
+  if(response.response === '200'){
+    createAlert(messageContainer, response.message,false);
+  }
+  else{
+    createAlert(messageContainer, response.message,true);
+  }
+}
+
+function handleReportDelete(){
+  let deleteMenu = document.getElementById('deleteMenuAdmin');
+  deleteMenu.classList.toggle('hidden');
+  deleteMenu.classList.toggle('flex');
+  removeLoadingCircle();
+  const response = JSON.parse(this.responseText);
+    
+    const messageContainer = document.getElementById("messageContainer");
+    if(response.response === '200'){
+      createAlert(messageContainer, response.message,false);
+      document.getElementById('Report-' + window.elementToDelete).remove();
+    }
+    else{
+      createAlert(messageContainer, response.message,true);
+    }
+
+}
+
+function handleTopicDelete(){
+  let deleteMenu = document.getElementById('deleteMenuAdmin');
+  deleteMenu.classList.toggle('hidden');
+  deleteMenu.classList.toggle('flex');
+  removeLoadingCircle();
+  const response = JSON.parse(this.responseText);
+    
+  const messageContainer = document.getElementById("messageContainer");
+  if(response.response === '200'){
+    createAlert(messageContainer, response.message,false);
+    document.getElementById('Topic-' + window.elementToDelete).remove()
+  }
+  else{
+    createAlert(messageContainer, response.message,true);
+  }
+
+
 }
  
  
@@ -68,6 +203,7 @@
     deleteMenu.querySelector('p').innerHTML = `Are you sure you want to delete this ${category == 'topics' ? 'topic' : 'report'}? This action cannot be undone.`
     deleteMenu.classList.toggle('hidden');
     deleteMenu.classList.toggle('flex');
+    window.categoryDelete = category;
     window.elementToDelete = elementId;
   }
 
@@ -91,6 +227,8 @@
     document.getElementById('showMore')?.remove();
   }
 
+  
+
   function insertMoreReports(){
     removeLoadingCircle();
     const loadingWrapper = document.getElementById('loadingWrapper');
@@ -101,19 +239,23 @@
     const section = document.getElementById('reports');  
     const sectionContentTable = section.querySelector('table');
 
-    let header = document.createElement('tr');
-    header.classList.add("shadow", "font-medium");
-    header.innerHTML = `
-    <th class = "w-1/4 text-start px-4 py-2" >Content</th>
-    <th class = "w-1/4 text-start px-4 py-2" >Reason</th>
-    <th class = "w-1/4 text-start px-4 py-2" >Reported By</th>
-    <th></th>
-    `;
+    if(document.querySelector('th') === null){
+      let header = document.createElement('tr');
+      header.classList.add("shadow", "font-medium");
+      header.innerHTML = `
+      <th class = "w-1/4 text-start px-4 py-2" >Content</th>
+      <th class = "w-1/4 text-start px-4 py-2" >Reason</th>
+      <th class = "w-1/4 text-start px-4 py-2" >Reported By</th>
+      <th></th>
+      `;
+      sectionContentTable.appendChild(header);
+    }
 
-    sectionContentTable.appendChild(header);
+    
 
     for(let i = 0; i < reports.data.length; i++){
       let row = document.createElement('tr');
+      row.setAttribute('id', 'Report-' + reports.data[i].reportid);
       row.classList.add("shadow", "font-medium");
       row.innerHTML = `
         <td class="w-1/3 px-4 py-2 text-gray-700">
@@ -144,6 +286,28 @@
 
   }
 
+  function createAdminTopic(topicname, topicid){
+    let row = document.createElement('tr');
+      row.setAttribute('id', 'Topic-' + topicid);
+      row.classList.add("flex", "w-full", "shadow", "font-medium");
+      row.innerHTML = `
+      <td class="grow px-4 py-2 text-gray-700">${topicname}</td>
+      <td class="px-4 py-2 self-end">
+        <form action="../topics/delete/${topicid}" method="POST" id="deleteForm-${topicid}">
+          <input type="hidden" name="_token" value= ${getCsrfToken()} />
+          <button type="button" onclick="showDeleteAdminMenu(${topicid}, 'topics')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+              </svg>
+          </button>
+        </form>
+      </td>
+      `
+
+      return row
+
+  }
+
   function insertMoreAdminTopics(){
     removeLoadingCircle();
     const loadingWrapper = document.getElementById('loadingWrapper');
@@ -164,22 +328,7 @@
         continue;
       }
 
-      let row = document.createElement('tr');
-      row.classList.add("flex", "w-full", "shadow", "font-medium");
-      row.innerHTML = `
-      <td class="grow px-4 py-2 text-gray-700">${topics.data[i].topicname}</td>
-      <td class="px-4 py-2 self-end">
-        <form action="../topics/delete/${topics.data[i].topicid}" method="POST" id="deleteForm-${topics.data[i].topicid}">
-          <input type="hidden" name="_token" value= ${getCsrfToken()} />
-          <button type="button" onclick="showDeleteAdminMenu(${topics.data[i].topicid}, 'topics')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-              </svg>
-          </button>
-        </form>
-      </td>
-
-      `
+      let row = createAdminTopic(topics.data[i].topicname, topics.data[i].topicid);
       sectionContentTable.appendChild(row);
     }
 

@@ -76,10 +76,14 @@ Route::controller(TopicController::class)->group(function (){
     Route::get('/api/topics/search/canAdd/{userid}', 'searchTopicsToAdd');
     Route::put('/api/topics/add/{topicid}/{userid}', 'addTopicToUser');
     Route::delete('/api/topics/remove/{topicid}/{userid}', 'removeTopicFromUser');
+    Route::post('/api/topics/add', 'create');
+    Route::post('/api/topics/delete/{topicid}', 'delete');
+    
 });
 Route::get('/api/reports/all', [ReportController::class, 'getReports']);
 Route::post('/api/reports/delete/{reportid}', [ReportController::class, 'delete']);
 Route::post('/api/reports/create', [ReportController::class, 'create']);
+Route::post('/api/admin/users/create', [AdminController::class, 'storeUser']);
 Route::get('/api/notifications', [NotificationController::class, 'getNotifications']);
 
 //Reports
