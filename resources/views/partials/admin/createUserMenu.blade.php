@@ -1,4 +1,4 @@
-<div id="createUserMenu" class="hidden fixed inset-0 items-center justify-center z-50 bg-gray-900 bg-opacity-50">
+<div id="createUserMenu" class="hidden fixed inset-0 self-center w-full h-full items-center justify-center z-50 bg-gray-900 bg-opacity-50">
     <div class="bg-white p-6 rounded-lg shadow-lg w-full max-w-lg">
         <form action = "{{route('admin.users.create')}}"id="createUserForm" class="space-y-4">
             @csrf

@@ -179,8 +179,10 @@ function handleCreateTopic(){
     const section = document.getElementById('topics');  
     const sectionContentTable = section.querySelector('table');
     createAlert(messageContainer, response.message,false);
-    topic = createAdminTopic(response.topicname, response.topicid);
-    sectionContentTable.appendChild(topic);
+    if(sectionContentTable.childElementCount < 9){
+      topic = createAdminTopic(response.topicname, response.topicid);
+      sectionContentTable.appendChild(topic);
+    }
   }
   else{
     createAlert(messageContainer, response.message,true);
