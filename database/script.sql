@@ -949,7 +949,6 @@ INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (7, 2, 'Accepted', NOW()),
     (2, 10, 'Pending', NOW()),
     (4, 5, 'Accepted', NOW()),
-    (5, 3, 'Rejected', NOW()),
     (6, 7, 'Accepted', NOW());
 
 INSERT INTO NOTIFICATION (receiverID, date, seen, followID, commentID, likeID) VALUES

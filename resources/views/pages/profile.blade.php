@@ -50,10 +50,10 @@
                         @if (!Auth::user()->isadmin && auth()->id() !== $user->userid)
                             <button id="follow-btn" 
                                     data-userid="{{ $user->userid }}" 
-                                    class="px-4 py-1.5 font-semibold text-white rounded-2xl hover:bg-sky-900
-                                        @if ($followStatus === 'Accepted') bg-red-500 
-                                        @elseif ($followStatus === 'Pending') bg-yellow-500 
-                                        @else bg-sky-700 @endif">
+                                    class="px-4 py-1.5 font-semibold text-white rounded-2xl
+                                        @if ($followStatus === 'Accepted') bg-red-500 hover:bg-red-700 
+                                        @elseif ($followStatus === 'Pending') bg-yellow-500 hover:bg-yellow-700 
+                                        @else bg-sky-700 hover:bg-sky-900 @endif">
                                 @if ($followStatus === 'Accepted')
                                     Unfollow
                                 @elseif ($followStatus === 'Pending')

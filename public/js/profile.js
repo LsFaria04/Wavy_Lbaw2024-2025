@@ -573,8 +573,8 @@ function sendFollowRequest(userId, csrfToken, followButton) {
   .then(data => {
       if (data.success) {
           followButton.textContent = 'Pending Request';
-          followButton.classList.remove('bg-sky-700', 'hover:bg-sky-800');
-          followButton.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+          followButton.classList.remove('bg-sky-700', 'hover:bg-sky-900');
+          followButton.classList.add('bg-yellow-500', 'hover:bg-yellow-700');
           followButton.setAttribute('data-follow-status', 'pending');
       }
   })
@@ -596,8 +596,8 @@ function cancelPendingRequest(userId, csrfToken, followButton) {
   .then(data => {
       if (data.success) {
           followButton.textContent = 'Follow';  
-          followButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
-          followButton.classList.add('bg-sky-700', 'hover:bg-sky-800');
+          followButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-700');
+          followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
           followButton.setAttribute('data-follow-status', 'not-following');
       }
   })
@@ -627,8 +627,8 @@ function followUser(userId, csrfToken, followButton) {
   .then(data => {
       if (data.success) {
           followButton.textContent = 'Unfollow';  
-          followButton.classList.remove('bg-sky-700', 'hover:bg-sky-800');
-          followButton.classList.add('bg-red-500', 'hover:bg-sky-900');
+          followButton.classList.remove('bg-sky-700', 'hover:bg-sky-900');
+          followButton.classList.add('bg-red-500', 'hover:bg-red-700');
           followButton.setAttribute('data-follow-status', 'following');
       }
   })
@@ -658,8 +658,8 @@ function unfollowUser(userId, csrfToken, followButton) {
   .then(data => {
       if (data.success) {
           followButton.textContent = 'Follow';
-          followButton.classList.remove('bg-red-500', 'hover:bg-sky-900');
-          followButton.classList.add('bg-sky-700', 'hover:bg-sky-800');
+          followButton.classList.remove('bg-red-500', 'hover:bg-red-700');
+          followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
           followButton.setAttribute('data-follow-status', 'not-following'); 
       }
   })
