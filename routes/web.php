@@ -39,6 +39,8 @@ Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('pro
 Route::put('/profile/{userid}', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile/{id}/delete', [ProfileController::class, 'delete'])->name('profile.delete');
 Route::post('profile/{userid}/follow', [ProfileController::class, 'follow'])->name('follow')->middleware('auth');
+Route::post('profile/{userid}/unfollow', [ProfileController::class, 'unfollow'])->name('unfollow')->middleware('auth');
+
 
 // API
 Route::controller(PostController::class)->group(function (){

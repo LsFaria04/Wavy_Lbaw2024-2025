@@ -32,6 +32,7 @@ class Follow extends Model {
 
     protected $primaryKey = ['followerid', 'followeeid'];
 
+
     public function follower() {
         return $this->belongsTo(User::class, 'followerid');
     }
