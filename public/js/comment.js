@@ -1,37 +1,7 @@
 function addEventListeners() {
-    document.addEventListener('DOMContentLoaded', fadeAlert);
-  
-    let cancelButton = document.getElementById('cancelButton');
-  
-    if(cancelButton !== null){
-      cancelButton.addEventListener('click', () => {
-      const deleteMenu = document.getElementById('deleteMenu');
-      html.classList.toggle('overflow-hidden');
-      deleteMenu.classList.add('hidden');
-    });
+    syncCommentFilesWithInputEventListener(); 
   }
-    let confirmButton = document.getElementById('confirmButton');
-    if(confirmButton !== null){
-      confirmButton.addEventListener('click', () => {
-        const deleteForm = document.getElementById(`deleteForm-${window.selectedcommentId}`);
-        deleteForm.submit();
-      });
-    }
   
-    document.addEventListener('DOMContentLoaded', function() {
-      handlePagination('comments-container');
-      handlePagination('users-container');
-    });
-  
-    document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
-
-
-    syncCommentFilesWithInputEventListener();
-    addEventListenerEditUserAdmin();
-    eventListernerFormsAdmin();
-    //likeComment();
-    
-  }
 //creates a new comment container with all the needed info
 function createComment(commentInfo){
     const comment = document.createElement('div');

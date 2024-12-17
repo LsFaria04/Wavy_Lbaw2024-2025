@@ -1,38 +1,7 @@
 function addEventListeners() {
-  document.addEventListener('DOMContentLoaded', fadeAlert);
   document.addEventListener('DOMContentLoaded', switchProfileTab);
   document.addEventListener('DOMContentLoaded', switchGroupTab);
   window.addEventListener("scroll", infiniteScroll);
-
-  let cancelButton = document.getElementById('cancelButton');
-
-  if(cancelButton !== null){
-    cancelButton.addEventListener('click', () => {
-    const deleteMenu = document.getElementById('deleteMenu');
-    html.classList.toggle('overflow-hidden');
-    deleteMenu.classList.add('hidden');
-    });
-  }
-  let confirmButton = document.getElementById('confirmButton');
-  if(confirmButton !== null){
-    confirmButton.addEventListener('click', () => {
-      const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-      deleteForm.submit();
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    handlePagination('posts-container');
-    handlePagination('users-container');
-  });
-
-  document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
-
-  //listeners related to the posts
-
-  addEventListenerEditUserAdmin();
-  eventListernerFormsAdmin();
-  
 }
 
 //Used to change the search category when a user clicks in a search tab option

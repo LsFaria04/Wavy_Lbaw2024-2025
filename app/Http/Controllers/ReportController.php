@@ -108,4 +108,50 @@ class ReportController extends Controller
 
         return response()->json($reports);
     }
+
+    function searchReports(Request $request){
+        $query = $request->input('q');
+        //sanitizes the query to separate the words
+        $sanitizedQuery = str_replace("'", "''", $query);
+        try{
+            $this->authorize('get', [Report::class]);
+        } catch(AuthorizationException $e){
+            return response()->json(['message' => 'You do not have authorization to view reports', 'response' => '403']);
+        }
+
+        try{
+            $reports = Report::with('user')
+                    ->Where('reason', 'LIKE', '%?%')
+                    ->setBindings([$sanitizedQuery])
+                    ->paginate(10);
+
+            for($i = 0; $i < count($reports); $i++){
+                $report = $reports[$i];
+
+                if($report->commentid === null){
+                    continue;
+                }
+
+                //gets the comments parent post when they are subcomments
+                $parentPost = null;
+                $comment = Comment::find($report->commentid);
+                while($parentPost === null){
+                    if($comment->postid !== null){
+                        $parentPost = $comment->postid;
+                        break;
+                    }
+                    $comment = Comment::find($comment->parentcommentid);
+                }
+
+                $report->postid = $parentPost;
+                $reports[$i] = $report;
+            }
+        } catch(\Exception $e){
+            return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
+        }
+
+        return response()->json($reports);
+
+
+    }
 }

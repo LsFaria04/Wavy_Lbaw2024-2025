@@ -81,6 +81,7 @@ Route::controller(TopicController::class)->group(function (){
     
 });
 Route::get('/api/reports/all', [ReportController::class, 'getReports']);
+Route::get('/api/reports/search/all', [ReportController::class, 'searchReports']);
 Route::post('/api/reports/delete/{reportid}', [ReportController::class, 'delete']);
 Route::post('/api/reports/create', [ReportController::class, 'create']);
 Route::post('/api/admin/users/create', [AdminController::class, 'storeUser']);

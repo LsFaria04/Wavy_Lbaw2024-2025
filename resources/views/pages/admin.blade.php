@@ -61,7 +61,7 @@
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Reports</h2>
         
         <div class="mb-4 flex justify-between items-center">
-            <form class= "m-0" onsubmit="alert('not implemented')">
+            <form class= "m-0" onsubmit="searchAdmin(event,'reports')">
                 <input id="reportsAdminSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Reports" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
             </form>
         </div>

@@ -2,34 +2,6 @@ function addEventListeners() {
   document.addEventListener('DOMContentLoaded', fadeAlert);
   document.addEventListener('DOMContentLoaded', switchGroupTab);
   window.addEventListener("scroll", infiniteScroll);
-
-  let cancelButton = document.getElementById('cancelButton');
-
-  if(cancelButton !== null){
-    cancelButton.addEventListener('click', () => {
-    const deleteMenu = document.getElementById('deleteMenu');
-    html.classList.toggle('overflow-hidden');
-    deleteMenu.classList.add('hidden');
-  });
-}
-  let confirmButton = document.getElementById('confirmButton');
-  if(confirmButton !== null){
-    confirmButton.addEventListener('click', () => {
-      const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-      deleteForm.submit();
-    });
-  }
-
-  document.addEventListener('DOMContentLoaded', function() {
-    handlePagination('posts-container');
-    handlePagination('users-container');
-  });
-
-  document.addEventListener('DOMContentLoaded', handleDeleteFormSubmission);
-
-
-  addEventListenerEditUserAdmin();
-  eventListernerFormsAdmin();
   
 }
 //removes the loading circle from the page

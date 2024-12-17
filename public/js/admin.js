@@ -1,7 +1,4 @@
- 
- function addEventListeners() {
-  document.addEventListener('DOMContentLoaded', fadeAlert);
-
+function addEventListeners() {
   cancelButtonListener();
   confirmButtonListener();
 
@@ -318,6 +315,10 @@ function handleTopicDelete(){
     loadingWrapper.remove();
 
     let reports =  JSON.parse(this.responseText);
+
+    if(reports.response){
+      console.log(reports.response);
+    }
     maxAdminPage = reports.last_page;
     const section = document.getElementById('reports');  
     const sectionContentTable = section.querySelector('table');
@@ -451,7 +452,12 @@ function handleTopicDelete(){
           }
           break;
         case 'reports':
-          sendAjaxRequest('get', '/api/reports/all?page=' + currentAdminPage, null, insertMoreReports);
+          if(isQuery){
+            sendAjaxRequest('get', '/api/reports/search/all?page=' + currentAdminPage +"&q=" + searchQuery, null, insertMoreReports);
+          }
+          else{
+            sendAjaxRequest('get', '/api/reports/all?page=' + currentAdminPage, null, insertMoreReports);
+          }
           break;
       }
     }
