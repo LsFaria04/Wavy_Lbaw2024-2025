@@ -28,6 +28,10 @@ class Follow extends Model {
         'followdate',
     ];
 
+    public $incrementing = false;
+
+    protected $primaryKey = ['followerid', 'followeeid'];
+
     public function follower() {
         return $this->belongsTo(User::class, 'followerid');
     }

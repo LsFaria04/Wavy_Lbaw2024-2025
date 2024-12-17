@@ -167,34 +167,44 @@ class ProfileController extends Controller {
     public function follow(Request $request, $userid) {
         // logged-in user (follower)
         $follower = Auth::user();
-
+        \Log::info('1');
         // check if user is authenticated
         if (!$follower) {
+            \Log::info('3');
             return response()->json(['error' => 'You must be logged in to follow someone.'], 401);
         }
-
+        \Log::info('2');
         // user to be followed (followee)
         $followee = User::findOrFail($userid);
-
+        \Log::info('4');
         \Log::info("Attempting to follow: Follower ID = {$follower->userid}, Followee ID = {$followee->userid}");
-
-
+        
+        \Log::info('6');
         try {
-            $this->authorize('follow', [Follow::class, $followee]); 
-        } catch (AuthorizationException $e) {
-            \Log::info("Authorization failed: User cannot follow this user.");
-            return response()->json(['error' => 'You cannot follow this user.'], 403);
+            \Log::info('Before authorization.');
+            $this->authorize('follow', [Follow::class, $followee]);
+            \Log::info('After authorization.');
+        } catch (\Exception $e) {
+            \Log::error('Authorization failed: ' . $e->getMessage());
+            return response()->json([
+                'error' => 'Authorization error.',
+                'details' => $e->getMessage()
+            ], 500);
         }
-
+        
+        \Log::info('7');
         try {
+            \Log::info('8');
             // Check if a follow relationship already exists
             $existingFollow = Follow::where('followerid', $follower->userid)
                 ->where('followeeid', $followee->userid)
                 ->first();
-
+                \Log::info('9');
             // Handle existing relationships
             if ($existingFollow) {
+                \Log::info('10');
                 if ($existingFollow->state === Follow::STATE_ACCEPTED) {
+                    \Log::info('11');
                     // Unfollow the user
                     $existingFollow->delete();
                     return response()->json([
@@ -202,6 +212,7 @@ class ProfileController extends Controller {
                         'status' => 'Unfollowed'
                     ]);
                 } elseif ($existingFollow->state === Follow::STATE_PENDING) {
+                    \Log::info('12');
                     // Follow request already sent
                     return response()->json([
                         'success' => false,
@@ -209,6 +220,7 @@ class ProfileController extends Controller {
                         'status' => 'Pending'
                     ]);
                 } elseif ($existingFollow->state === Follow::STATE_REJECTED) {
+                    \Log::info('13');
                     // Resend the follow request
                     $existingFollow->update([
                         'state' => Follow::STATE_PENDING,
@@ -220,8 +232,10 @@ class ProfileController extends Controller {
                     ]);
                 }
             } else {
+                \Log::info('14');
                 // No existing follow relationship, create a new one
                 $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
+                \Log::info('15');
 
                 Follow::create([
                     'followerid' => $follower->userid,
@@ -229,6 +243,7 @@ class ProfileController extends Controller {
                     'state' => $status,
                     'followdate' => now(),
                 ]);
+                \Log::info('16');
 
                 return response()->json([
                     'success' => true,
@@ -236,6 +251,8 @@ class ProfileController extends Controller {
                 ]);
             }
         } catch (\Exception $e) {
+            \Log::info('17');
+            \Log::error('Error creating follow relationship: ' . $e->getMessage());
             return response()->json([
                 'error' => 'Server problem. Try again.',
                 'message' => $e->getMessage(),
