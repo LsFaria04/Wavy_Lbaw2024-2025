@@ -1,6 +1,7 @@
 function addEventListeners() {
-    syncCommentFilesWithInputEventListener(); 
-  }
+    syncCommentFilesWithInputEventListener();
+    addEventListenerToCommentForms();
+}
   
 //creates a new comment container with all the needed info
 function createComment(commentInfo){
@@ -105,6 +106,7 @@ function toggleEditComment(commentid) {
   const newFilesContainer = document.getElementById(`newFiles-${commentid}`);
   const removeMediaInput = document.getElementById(`removeMedia-${commentid}`);
 
+
   // Toggle visibility
   editForm.classList.toggle('hidden');
   commentContent.classList.toggle('hidden');
@@ -150,18 +152,26 @@ function toggleEditComment(commentid) {
 
 // Open delete confirmation menu
 function openDeleteCommentMenu(commentid) {
-  const deleteMenu = document.getElementById('deleteMenu');
+  console.log("hello");
+  const deleteMenu = document.getElementById('deleteCommentMenu');
   deleteMenu.classList.remove('hidden');
-  document.documentElement.classList.add('overflow-hidden'); // Ensure the whole page is locked
-  window.selectedcommentId = commentid;
+  deleteMenu.classList.add('flex');
+  html.classList.add('overflow-hidden'); // Ensure the whole page is locked
+  window.selectedCommentId = commentid;
 }
+
+function closeDeleteCommentMenu() {
+  console.log("Closing the delete comment");
+  const modal = document.getElementById('deleteCommentMenu');
+  modal.classList.add('hidden');
+}
+
 
 function updateFileNameEditComment(commentId) {
   const fileInput = document.getElementById(`image-${commentId}`);
   const fileDisplay = document.getElementById(`fileDisplay-${commentId}`);
   const newFileDisplay = document.getElementById(`newFiles-${commentId}`)
 
-  // Append new files to the list (preserve existing files)
 
   Array.from(fileInput.files).forEach(file => {
     if (file.size > 2097152){
@@ -171,6 +181,8 @@ function updateFileNameEditComment(commentId) {
       selectedFilesEdit.push(file);
     }
   });
+
+  console.log(selectedFilesEdit);
 
   
   const lenStoreMedia = fileDisplay.querySelectorAll('div').length - 1;
@@ -226,7 +238,7 @@ function addEventListenerToCommentForms(){
   }
 
   document.querySelectorAll('.edit-comment-form form').forEach(function (form) {
-    addEventListenerToForm(form);
+    addEventListenerToCommentForm(form);
   });
 }
 
@@ -270,9 +282,10 @@ function removeSpecificFileEdit(commentId, index) {
 }
 
 //adds a event listener to a comment form
-function addEventListenerToForm(form){
+function addEventListenerToCommentForm(form){
   form.addEventListener('submit', function (e) {
     const commentId = form.dataset.commentId;
+    console.log(commentId);
     const fileInput = document.getElementById(`image-${commentId}`);
     
     // Check if there are more than 4 files, prevent submission
@@ -309,8 +322,8 @@ function createCommentOptions(comment, id){
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.6" d="M10.973 1.506a18.525 18.525 0 00-.497-.006A4.024 4.024 0 006.45 5.524c0 .43.095.865.199 1.205.054.18.116.356.192.527v.002a.75.75 0 01-.15.848l-4.937 4.911a.871.871 0 000 1.229.869.869 0 001.227 0L7.896 9.31a.75.75 0 01.847-.151c.17.079.35.139.529.193.34.103.774.198 1.204.198A4.024 4.024 0 0014.5 5.524c0-.177-.002-.338-.006-.483-.208.25-.438.517-.675.774-.32.345-.677.696-1.048.964-.354.257-.82.512-1.339.512-.396 0-.776-.156-1.059-.433L9.142 5.627a1.513 1.513 0 01-.432-1.06c0-.52.256-.985.514-1.34.27-.37.623-.727.97-1.046.258-.237.529-.466.78-.675zm-2.36 9.209l-4.57 4.59a2.37 2.37 0 01-3.35-3.348l.002-.001 4.591-4.568a6.887 6.887 0 01-.072-.223 5.77 5.77 0 01-.263-1.64A5.524 5.524 0 0110.476 0 12 12 0 0112 .076c.331.044.64.115.873.264a.92.92 0 01.374.45.843.843 0 01-.013.625.922.922 0 01-.241.332c-.26.257-.547.487-.829.72-.315.26-.647.535-.957.82a5.947 5.947 0 00-.771.824c-.197.27-.227.415-.227.457 0 .003 0 .006.003.008l1.211 1.211a.013.013 0 00.008.004c.043 0 .19-.032.46-.227.253-.183.532-.45.826-.767.284-.308.56-.638.82-.95.233-.28.463-.565.72-.823a.925.925 0 01.31-.235.841.841 0 01.628-.033.911.911 0 01.467.376c.15.233.22.543.262.87.047.356.075.847.075 1.522a5.524 5.524 0 01-5.524 5.525c-.631 0-1.221-.136-1.64-.263a6.969 6.969 0 01-.222-.071z"/>
         </svg>
     </button>
-    <form action="../comments/delete/${id}" method="comment" id="deleteForm-${id}">
-      <button type="button" onclick="openDeleteMenu(${id})" class="text-red-500 hover:text-red-700 ml-2">
+    <form action="../comments/delete/${id}" method="POST" id="deleteCommentForm-${id}">
+      <button type="button" onclick="openDeleteCommentMenu(${id})" class="text-red-500 hover:text-red-700 ml-2">
           <input type="hidden" name="_token" value= ${getCsrfToken()} />
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -323,10 +336,10 @@ function createCommentOptions(comment, id){
 }
 
 //inserts the delete menu into a comment container. Returns an updated comment
-function insertDeleteMenu(comment){
+function insertDeleteCommentMenu(comment){
   const commentheader = comment.querySelector('.comment-header');
   let menu = document.createAttribute('div');
-  menu.setAttribute('id', 'deleteMenu');
+  menu.setAttribute('id', 'deleteCommentMenu');
   menu.classList("fixed", "inset-0", "bg-black", "bg-opacity-50", "hidden", "flex", "items-center", "justify-center", "z-20");
   
   menu.innerHTML = `
@@ -334,10 +347,10 @@ function insertDeleteMenu(comment){
         <h2 class="text-xl font-semibold text-gray-900">Delete comment</h2>
         <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this comment? This action cannot be undone.</p>
         <div class="mt-6 flex justify-end gap-3">
-            <button id="cancelButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
+            <button id="cancelCommentButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
                 Cancel
             </button>
-            <button id="confirmButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
+            <button id="confirmCommentButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
                 Delete
             </button>
         </div>
@@ -349,11 +362,16 @@ function insertDeleteMenu(comment){
   return comment;
 }
 
+/* NAO SEI SE ALGUEM TA A USAR !!!
+
+
 function toggleCommentSection(commentId) {
   // Get the comment input section or create it if not present
   const commentElement = document.getElementById(`comment-${commentId}`);
   let subCommentInput = document.getElementById(`sub-comment-input-${commentId}`);
   let subCommentList = document.getElementById(`sub-comments-${commentId}`);
+
+  console.log("WTF");
 
   if (!subCommentInput) {
       // Create the input section dynamically if it doesn't exist
@@ -391,7 +409,7 @@ function toggleCommentSection(commentId) {
   }
 }
 
-
+*/
 //inserts the update comment form into a comment container. Return the updated comment container.
 function insertUpdateForm(comment, id, message, media){
   let formContainer = document.createElement('div');
@@ -515,6 +533,26 @@ function syncCommentFilesWithInputEventListener(){
     // Update the file input's files property
     fileInput.files = dataTransfer.files;
   });
+
+  document.getElementById('subCommentForm')?.addEventListener('submit', function (e) {
+    if (selectedFiles.length > 4) {
+      e.preventDefault(); // Prevent the form from submitting
+      alert('You can only submit up to 4 files.');
+      return; 
+    }
+
+    const fileInput = document.getElementById('image');
+    const dataTransfer = new DataTransfer();
+
+    // Append all files from selectedFiles to the new DataTransfer object
+    selectedFiles.forEach(file => {
+        dataTransfer.items.add(file);
+    });
+
+    // Update the file input's files property
+    fileInput.files = dataTransfer.files;
+  });
+
 }
 
 // Synchronize selectedFilesEdit with the file input before form submission
@@ -526,7 +564,7 @@ function addEventListenerToCommentForms(){
   }
 
   document.querySelectorAll('.edit-comment-form form').forEach(function (form) {
-    addEventListenerToForm(form);
+    addEventListenerToCommentForm(form);
   });
 }
 
@@ -565,6 +603,8 @@ function likeComment(commentId,event) {
   const heartEmpty = document.getElementById(`heart-empty-${commentId}`);
   const heartFilled = document.getElementById(`heart-filled-${commentId}`);
 
+  console.log(commentId);
+  console.log("Liked .");
 
   // Make the AJAX request to like/unlike the comment
   sendAjaxRequest('post', '/like-comment/' + commentId, null,  updateLikeComment);
@@ -574,13 +614,13 @@ function updateLikeComment() {
     if (response.liked) {
         heartEmpty.classList.add('hidden');
         heartFilled.classList.remove('hidden');
-        likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+        likeCountElement.textContent = parseInt(response.likeCount);
         likeCountElement.classList.add('text-red-600');
     } else {
         heartEmpty?.classList.remove('hidden');
         heartFilled?.classList.add('hidden');
         if (likeCountElement !== null) {
-          likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+          likeCountElement.textContent = parseInt(response.likeCount);
           likeCountElement.classList.remove('text-red-600');
         }
     }
@@ -590,11 +630,13 @@ function updateLikeComment() {
 function toggleSubcommentForm(commentId) {
   // Hide all other subcomment forms
   document.querySelectorAll('.addComment').forEach(function(form) {
-      form.classList.add('hidden');
-  });
+    if (form.id !== 'subComment-form-' + commentId) {
+      form.remove(); // Remove the form from the DOM
+    }
+});
 
   // Toggle the specific subcomment form
-  var subcommentForm = document.getElementById('subcomment-form-' + commentId);
+  var subcommentForm = document.getElementById('subComment-form-' + commentId);
   if (subcommentForm) {
       subcommentForm.classList.toggle('hidden');
   }

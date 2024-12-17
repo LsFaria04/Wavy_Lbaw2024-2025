@@ -248,41 +248,52 @@ class PostController extends Controller
 
     public function show($id)
     {
-        // Eager load user, media, and comments (with their users, media, and likes count for each comment)
+        // Eager load user, media, and comments (with their users, media, likes, and subcomments recursively)
         $post = Post::with([
                 'user', 
                 'media', 
                 'comments.user', 
                 'comments.media',
-                'comments.commentLikes', // Eager load commentLikes to get the likes count
-                'comments.subcomments'
+                'comments.commentLikes', // Eager load commentLikes for parent comments
+                'comments.subcomments' => function ($query) {
+                    $query->with(['user', 'commentLikes', 'subcomments']); // Load subcomments recursively
+                }
             ])
-            ->withCount('comments')  // This will add comments_count to the Post model
-            ->withCount('likes')     // This will add likes_count to the Post model
+            ->withCount('comments')  // Add comments_count to the Post model
+            ->withCount('likes')     // Add likes_count to the Post model
             ->findOrFail($id);
     
-        // Check if the user is authenticated
+        // Process likes and recursively handle subcomments
         if (Auth::check()) {
             $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
-            $post->createddate = $post->createddate->diffForHumans();  // Format the created date    
-            
-            // Now, we also need to check each comment for the current user's like status
-            foreach ($post->comments as $comment) {
-                $comment->liked = $comment->commentLikes()->where('userid', Auth::user()->userid)->exists();
-                $comment->comment_likes_count = $comment->commentLikes()->where('userid', Auth::user()->userid)->count();
-            }
+            $post->createddate = $post->createddate->diffForHumans(); // Format the created date    
+    
+            // Recursive function to process comments and their subcomments
+            $this->processComments($post->comments, Auth::user()->userid);
         } else {
-            $post->liked = false;  // If the user is not authenticated, they cannot like a post
-            $post->createddate = $post->createddate->diffForHumans();  // Format the created date
-            
-            // Set liked to false for each comment when the user is not logged in
-            foreach ($post->comments as $comment) {
-                $comment->liked = false;
-            }
+            $post->liked = false;
+            $post->createddate = $post->createddate->diffForHumans(); // Format the created date
+    
+            // Set liked to false for all comments and subcomments
+            $this->processComments($post->comments, null);
         }
     
         // Pass the post data to the view
         return view('pages.post', compact('post'));
+    }
+
+    private function processComments($comments, $userId)
+    {
+        foreach ($comments as $comment) {
+            // Process likes for the current comment
+            $comment->liked = $userId ? $comment->commentLikes()->where('userid', $userId)->exists() : false;
+            $comment->comment_likes_count = $comment->commentLikes()->count();
+
+            // Recursively process subcomments
+            if ($comment->subcomments->isNotEmpty()) {
+                $this->processComments($comment->subcomments, $userId);
+            }
+        }
     }
     
     
