@@ -18,26 +18,32 @@ class ProfileController extends Controller {
     */
     public function show($username) {
         $user = User::where('username', $username)->first();
-
+    
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');
         }
 
+        if ($user->getIsAdmin() && Auth::id() !== $user->userid) {
+            return redirect('/home')->with('error', 'User not found.');
+        }
+    
         $posts = $user->posts()->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);
         $comments = [];
-
-        $followStatus = null;
-
+    
+        $followStatus = 'not-following'; 
+    
         if (Auth::check() && Auth::id() !== $user->userid) {
+            // Check the follow status
             if (Follow::isFollowing(Auth::id(), $user->userid)) {
                 $followStatus = Follow::STATE_ACCEPTED;
             } elseif (Follow::isPending(Auth::id(), $user->userid)) {
                 $followStatus = Follow::STATE_PENDING;
             }
         }
-
+    
         return view('pages.profile', compact('user', 'posts', 'comments', 'followStatus'));
     }
+    
 
     //gets all the data of a user and sends it as json 
     public function getProfileUserData($username) {
@@ -168,18 +174,16 @@ class ProfileController extends Controller {
         // logged-in user (follower)
         $follower = Auth::user();
         \Log::info('1');
-        // check if user is authenticated
+        
         if (!$follower) {
             \Log::info('3');
             return response()->json(['error' => 'You must be logged in to follow someone.'], 401);
         }
-        \Log::info('2');
+    
         // user to be followed (followee)
         $followee = User::findOrFail($userid);
-        \Log::info('4');
         \Log::info("Attempting to follow: Follower ID = {$follower->userid}, Followee ID = {$followee->userid}");
-        
-        \Log::info('6');
+    
         try {
             \Log::info('Before authorization.');
             $this->authorize('follow', [Follow::class, $followee]);
@@ -191,73 +195,74 @@ class ProfileController extends Controller {
                 'details' => $e->getMessage()
             ], 500);
         }
-        
-        \Log::info('7');
-        try {
-            \Log::info('8');
-            // Check if a follow relationship already exists
-            $existingFollow = Follow::where('followerid', $follower->userid)
-                ->where('followeeid', $followee->userid)
-                ->first();
-                \Log::info('9');
-            // Handle existing relationships
-            if ($existingFollow) {
-                \Log::info('10');
-                if ($existingFollow->state === Follow::STATE_ACCEPTED) {
-                    \Log::info('11');
-                    // Unfollow the user
-                    $existingFollow->delete();
-                    return response()->json([
-                        'success' => true,
-                        'status' => 'Unfollowed'
-                    ]);
-                } elseif ($existingFollow->state === Follow::STATE_PENDING) {
-                    \Log::info('12');
-                    // Follow request already sent
-                    return response()->json([
-                        'success' => false,
-                        'message' => 'Follow request already sent.',
-                        'status' => 'Pending'
-                    ]);
-                } elseif ($existingFollow->state === Follow::STATE_REJECTED) {
-                    \Log::info('13');
-                    // Resend the follow request
-                    $existingFollow->update([
-                        'state' => Follow::STATE_PENDING,
-                        'followdate' => now(),
-                    ]);
-                    return response()->json([
-                        'success' => true,
-                        'status' => 'Pending'
-                    ]);
-                }
-            } else {
-                \Log::info('14');
-                // No existing follow relationship, create a new one
-                $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
-                \Log::info('15');
+        \Log::info('5');
 
-                Follow::create([
-                    'followerid' => $follower->userid,
-                    'followeeid' => $followee->userid,
-                    'state' => $status,
-                    'followdate' => now(),
-                ]);
-                \Log::info('16');
+        // check if a follow already exists
+        $existingFollow = Follow::where('followerid', $follower->userid)
+                                ->where('followeeid', $followee->userid)
+                                ->first();
 
-                return response()->json([
-                    'success' => true,
-                    'status' => $status === Follow::STATE_ACCEPTED ? 'Accepted' : 'Pending'
-                ]);
-            }
-        } catch (\Exception $e) {
-            \Log::info('17');
-            \Log::error('Error creating follow relationship: ' . $e->getMessage());
-            return response()->json([
-                'error' => 'Server problem. Try again.',
-                'message' => $e->getMessage(),
-            ], 500);
+        \Log::info($existingFollow);
+
+        if ($existingFollow) {
+            \Log::info('6');
+            return $this->handleExistingFollow($existingFollow);
+        } else {
+            \Log::info('7');
+            return $this->createFollowRequest($follower, $followee);
         }
+    }
+    
+    private function handleExistingFollow(Follow $existingFollow) {
+        \Log::info('8');
+        \Log::info($existingFollow);
+        if ($existingFollow->state === Follow::STATE_ACCEPTED) {
+            \Log::info('9');
+            return $this->unfollow($existingFollow);
+        } elseif ($existingFollow->state === Follow::STATE_PENDING) {
+            \Log::info('10');
+
+            Follow::where('followerid', $existingFollow->followerid)
+            ->where('followeeid', $existingFollow->followeeid)
+            ->delete();
+
+            \Log::info('11');
+            return response()->json([
+                'success' => true,
+                'status' => 'Unfollowed',
+                'message' => 'Follow request canceled.'
+            ]);
+        }
+    }
+    
+    
+    private function createFollowRequest($follower, $followee) {
+        $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
+    
+        Follow::create([
+            'followerid' => $follower->userid,
+            'followeeid' => $followee->userid,
+            'state' => $status,
+            'followdate' => now(),
+        ]);
+    
+        return response()->json([
+            'success' => true,
+            'status' => $status === Follow::STATE_ACCEPTED ? 'Accepted' : 'Pending'
+        ]);
+    }
+    
+    public function unfollow(Follow $existingFollow) {
+        \Log::info('15');
+    
+        Follow::where('followerid', $existingFollow->followerid)
+            ->where('followeeid', $existingFollow->followeeid)
+            ->delete();
+    
+        return response()->json([
+            'success' => true,
+            'status' => 'Unfollowed'
+        ]);
     }
     
 }
