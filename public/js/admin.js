@@ -363,6 +363,8 @@ function toggleReasonDetails(reportid){
 
       maxAdminPage = -1;
       currentAdminPage = 0;
+      searchQuery = "";
+      isQuery = false;
       loadMoreAdminContent(sectionId);
       
     }
@@ -439,7 +441,7 @@ function toggleReasonDetails(reportid){
     const section = document.getElementById('reports');  
     const sectionContentTable = section.querySelector('table');
 
-    if(document.querySelector('th') === null){
+    if(document.querySelector('#reports th') === null){
       let header = document.createElement('tr');
       header.classList.add("shadow", "font-medium");
       header.innerHTML = `
@@ -560,7 +562,7 @@ function toggleReasonDetails(reportid){
     const section = document.getElementById('users');  
     const sectionContentTable = section.querySelector('table');
 
-    if(document.querySelector('th') === null){
+    if(document.querySelector('#users th') === null){
       let header = document.createElement('tr');
       header.classList.add("shadow", "font-medium");
       header.innerHTML = `
