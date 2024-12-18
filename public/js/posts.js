@@ -150,8 +150,6 @@ function updateFileNameEdit(postId) {
   const fileDisplay = document.getElementById(`fileDisplay-${postId}`);
   const newFileDisplay = document.getElementById(`newFiles-${postId}`)
 
-  // Append new files to the list (preserve existing files)
-
   Array.from(fileInput.files).forEach(file => {
     if (file.size > 2097152){
       alert('File too big');
@@ -285,6 +283,7 @@ function removeSpecificFileEdit(postId, index) {
 
 //closes the users posts delete menu
 function closeDeleteMenu() {
+  alert("1");
   const modal = document.getElementById('deleteMenu');
   modal.classList.add('hidden');
 }

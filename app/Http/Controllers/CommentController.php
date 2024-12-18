@@ -45,43 +45,6 @@ class CommentController extends Controller
         return $comments;
     }
 
-    public function show($id)
-    {
-        // Fetch the main comment and its related data
-        $comment = Comment::with(['user', 'post', 'media', 'parentComment.user'])->findOrFail($id);
-
-        if (Auth::check()){
-            $comment->liked = $comment->commentLikes()->where('userid', Auth::user()->userid)->exists();
-            $comment->createddate = $comment->createddate->diffForHumans();  
-            $comment->comment_likes_count = $comment->commentLikes()->where('userid', Auth::user()->userid)->count();
-        }
-        else{
-            $comment->liked = false;  
-            $comment->createddate = $comment->createddate->diffForHumans(); 
-        }
-
-        // Fetch all sub-comments for the given comment ID
-        $subComments = Comment::with(['user', 'media'])
-            ->where('parentcommentid', $id)
-            ->withCount('commentLikes')
-            ->orderBy('createddate', 'asc')
-            ->get();
-        if (Auth::check()){
-            foreach ($subComments as $subComment) {
-                $subComment->liked = $subComment->commentLikes()->where('userid', Auth::user()->userid)->exists();
-                $subComment->createddate = $subComment->createddate->diffForHumans();  // Format the created date
-            }
-        }
-        else{
-            foreach ($subComments as $subComment) {
-                $subComment->liked = false;  // If the user is not authenticated, they cannot like a subCom$subComment
-                $subComment->createddate = $subComment->createddate->diffForHumans();  // Format the created date
-            }
-        }
-        // Pass both the main comment and its sub-comments to the view
-        return view('partials.comment', compact('comment', 'subComments'));
-    }
-
     public function likeComment(Request $request, $commentId)
     {
 
@@ -94,7 +57,6 @@ class CommentController extends Controller
                             ->first();
     
 
-        Log::info($existingLike);
         if ($existingLike) {
             // If the user has already liked the comments, remove the like
             Log::info("Olá");
@@ -112,6 +74,8 @@ class CommentController extends Controller
     
         // Get the updated like count
         $likeCount = $comment->commentLikes()->count();
+
+        Log::info($likeCount);
     
         // Return the updated like status and like count
         return response()->json([
@@ -147,16 +111,8 @@ class CommentController extends Controller
         $comment->save();
 
         if ($request->hasFile('media')) {
-            // Log the array of uploaded files
-            Log::info('Media files uploaded:', $request->file('media'));
-        
             foreach ($request->file('media') as $file) {
                 if ($file->isValid()) {
-                    // Log the individual file details
-                    Log::info('File name:', ['name' => $file->getClientOriginalName()]);
-                    Log::info('File size:', ['size' => $file->getSize()]);
-                    Log::info('File mime type:', ['type' => $file->getMimeType()]);
-        
                     // Process the file as usual
                     $mediaPath = $file->store('images', 'public');
         
@@ -166,7 +122,6 @@ class CommentController extends Controller
                         'path' => $mediaPath,
                     ]);
                 } else {
-                    Log::error('File is invalid:', ['name' => $file->getClientOriginalName()]);
                     return redirect()->route('posts.show', $request->postid)->with('error', 'Could not upload the file!');
                 }
             }
@@ -277,7 +232,6 @@ class CommentController extends Controller
         if ($currentMediaCount + $mediaCount > 4) {
             return redirect()->route('home', $comment->commentid)->with('error', 'You can only upload a maximum of 4 files.');
         }
-        Log::info("the files:", $request->file('media'));
 
         // Handle new file uploads
         if ($request->hasFile('media')) {

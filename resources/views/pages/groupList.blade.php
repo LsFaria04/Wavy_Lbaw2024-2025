@@ -69,18 +69,12 @@
                     @include('partials.searchGroups', ['groups' => $userGroups])
                 @endif
             @elseif($category == 'search-groups')
-                @if(empty($query))
+                @if($searchGroups->isEmpty())
                     <div class="flex justify-center items-center h-32">
-                        <p class="text-gray-600 text-center">Please enter a search term to find groups.</p>
+                        <p class="text-gray-600 text-center">No groups found matching your search.</p>
                     </div>
                 @else
-                    @if($searchGroups->isEmpty())
-                        <div class="flex justify-center items-center h-32">
-                            <p class="text-gray-600 text-center">No groups found matching your search.</p>
-                        </div>
-                    @else
-                        @include('partials.searchGroups', ['groups' => $searchGroups])
-                    @endif
+                    @include('partials.searchGroups', ['groups' => $searchGroups])
                 @endif
             @endif
         </section>

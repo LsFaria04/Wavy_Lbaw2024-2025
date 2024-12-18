@@ -9,7 +9,6 @@ use Illuminate\Support\Facades\Log;
 class FollowPolicy {
 
     public function follow(User $authUser, User $followee) {
-        return true;
         \Log::info("Checking follow permission: AuthUser ID = {$authUser->userid}, Followee ID = {$followee->userid}, Followee Admin Status = {$followee->isadmin}");
     
         // users cannot follow themselves

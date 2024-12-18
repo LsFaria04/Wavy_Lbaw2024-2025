@@ -10,7 +10,7 @@
         </div>
     
         @auth
-            <div class="flex flex-col items-center justify-center mt-2">
+            <div class="flex items-center justify-center mt-2 gap-2">
                 @if (!$group->members->contains(Auth::user()) && !Auth::user()->isadmin)
                     <button id="ask-to-join-btn" class="px-6 py-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-900">
                         Ask to Join
@@ -20,19 +20,20 @@
                         Exit Group
                     </button>
                 @elseif(auth()->id() === $group->ownerid || Auth::user()->isadmin)
-                    <button 
-                        class="px-6 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-gray-900"
-                        onclick="toggleEditGroupMenu()">
+                    <button id="invite-users-btn" class="px-5 py-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-800">
+                        Invite Users
+                    </button>
+                    <button class="px-6 py-2 bg-gray-800 text-white font-medium rounded-lg hover:bg-black" onclick="toggleEditGroupMenu()">
                         Edit Group
                     </button>
-                    <button id="invite-users-btn" class="px-5 py-2 mt-2 bg-sky-700 text-white font-medium rounded-lg hover:bg-sky-800">
-                        Invite Users
+                    <button type="button" onclick="openDeleteGroupMenu()" class="px-4 py-2 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700">
+                        Delete Group
                     </button>
                 @endif
             </div>
         @endauth
     
-        @if(($group->visibilitypublic == true || Auth::user()->isadmin || $group->members->contains(Auth::user())))
+        @if(($group->visibilitypublic || Auth::user()->isadmin || $group->members->contains(Auth::user())))
             <nav class="flex w-full justify-around mt-4">
                 <button id="tab-posts" data-tab="group-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900 border-sky-900 text-sky-900">Posts</button>
                 <button id="tab-members" data-tab="group-members" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Members</button>
@@ -93,15 +94,20 @@
     <!-- Modal for inviting users -->
     <div id="invite-modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 justify-center items-center z-50">
         <div class="bg-white rounded-lg shadow-lg p-6 w-3/4 max-w-lg">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="text-xl font-bold">Invite Users</h3>
-                <button id="close-invite-modal" class="text-gray-500 hover:text-gray-700">&times;</button>
+                       
+            <div class="grid grid-cols-3 justify-center w-full max-w-full mb-4">
+                <button id="close-invite-modal" class="text-gray-500 hover:text-gray-700 col-start-1 col-span-1 justify-self-start">
+                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                    </svg>
+                </button> 
+                <h3 class="col-start-2  text-2xl self-center font-bold text-nowrap">Invite Users</h3>
             </div>
             <input
                 type="text"
                 id="user-search"
                 placeholder="Search for a user..."
-                class="w-full border border-gray-300 rounded-lg px-4 py-2 mb-4"
+                class="w-full border border-gray-300 rounded-lg px-4 py-2 my-2"
             />
             <div id="search-results" class="max-h-64 overflow-y-auto pb-3">
                 <!-- Search results will be dynamically injected here -->
@@ -111,7 +117,6 @@
             </button>
         </div>
     </div>
-
 
     <!-- Exit Group Confirmation Menu -->
     <div id="exitGroupMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
@@ -127,6 +132,28 @@
                     @method('DELETE')
                     <button type="submit" id="confirmExitButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
                         Leave
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Group Confirmation Menu -->
+    <div id="deleteGroupMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
+        <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+            <h2 class="text-xl font-semibold text-gray-900">Delete Group</h2>
+            <p class="mt-4 text-sm text-gray-600">
+                Are you sure you want to delete this group? This action cannot be undone.
+            </p>
+            <div class="mt-6 flex justify-end gap-3">
+                <button id="cancelDeleteButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
+                    Cancel
+                </button>
+                <form action="{{ route('groups.delete', $group->groupid) }}" method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" id="confirmDeleteButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
+                        Delete
                     </button>
                 </form>
             </div>

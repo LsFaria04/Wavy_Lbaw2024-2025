@@ -20,7 +20,7 @@ function addEventListeners() {
       //action to take place in the home page
       const timeline = document.querySelector("#timeline");
       if((timeline !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
-        currentPage += 1;
+        currentPage++;
         insertLoadingCircle(timeline);
         loading = true;
         sendAjaxRequest('get', '/api/posts?page=' + currentPage, null, insertMoreTimeline);
@@ -30,7 +30,7 @@ function addEventListeners() {
       //actions to take place in the search page
       const searchPage = document.querySelector("#search-results");
       if((searchPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ){
-          currentPage +=1;
+          currentPage++;
           loading = true;
           insertLoadingCircle(searchPage);
           const query = document.querySelector('input[name="q"]').value;
@@ -40,10 +40,10 @@ function addEventListeners() {
 
       const groupListPage = document.querySelector("#group-results");
       if((groupListPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ){
-        currentPage +=1;
+        currentPage++;
         loading = true;
         insertLoadingCircle(groupListPage);
-        const query = document.querySelector('input[name="q"]').value;
+        const query = document.querySelector('input[name="q"]').value || '';
         sendAjaxRequest('get', '/groups?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchGroupCategory, null, insertMoreGroupSearchResults);
         loading = false;
     }
@@ -57,7 +57,7 @@ function addEventListeners() {
           return;
         }
   
-        currentPage +=1;
+        currentPage++;
         loading = true;
         insertLoadingCircle(profilePage);
         switch(profileTab){
@@ -87,7 +87,7 @@ function addEventListeners() {
         }
         */
 
-        currentPage += 1;
+        currentPage++;
         insertLoadingCircle(groupPage);
         switch (groupTab) {
             case 'group-posts':
@@ -109,7 +109,7 @@ function addEventListeners() {
       // Handle notifications page
       const notificationsPage = document.querySelector("#notifications-content");
       if (notificationsPage !== null && (maxPage > currentPage || maxPage == -1) && !loading) {
-        currentPage += 1;
+        currentPage++;
         loading = true;
         insertLoadingCircle(notificationsPage);
         sendAjaxRequest('get', `/api/notifications?page=${currentPage}`, null, insertMoreNotifications);

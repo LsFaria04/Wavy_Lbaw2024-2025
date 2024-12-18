@@ -19,6 +19,24 @@ function addEventListeners() {
     });
   }
 
+  let cancelCommentButton = document.getElementById('cancelCommentButton');
+
+  if(cancelCommentButton !== null){
+    cancelCommentButton.addEventListener('click', () => {
+      const deleteMenu = document.getElementById('deleteCommentMenu');
+      html.classList.toggle('overflow-hidden');
+      deleteMenu.classList.add('hidden');
+    });
+  }
+
+  let confirmCommentButton = document.getElementById('confirmCommentButton');
+  if(confirmCommentButton !== null){
+    confirmCommentButton.addEventListener('click', () => {
+      const deleteForm = document.getElementById(`deleteCommentForm-${window.selectedCommentId}`);
+      deleteForm.submit();
+    });
+  }
+
   reportFormSubmission();
   
 }

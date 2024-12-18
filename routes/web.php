@@ -39,6 +39,8 @@ Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('pro
 Route::put('/profile/{userid}', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile/{id}/delete', [ProfileController::class, 'delete'])->name('profile.delete');
 Route::post('profile/{userid}/follow', [ProfileController::class, 'follow'])->name('follow')->middleware('auth');
+Route::post('profile/{userid}/unfollow', [ProfileController::class, 'unfollow'])->name('unfollow')->middleware('auth');
+
 
 // API
 Route::controller(PostController::class)->group(function (){
@@ -113,7 +115,6 @@ Route::post('/like-post/{postId}', [PostController::class, 'likePost'])->name('l
 //Comments
 Route::post('/comments/update/{comment}', [CommentController::class, 'update'])->name('comments.update');
 Route::post('/comments/delete/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
-Route::get('/comments/{id}', [CommentController::class, 'show'])->name('comments.show');
 Route::post('/comments/store', [CommentController::class, 'store'])->name('comments.store');
 Route::post('/comments/storeSubcomment', [CommentController::class, 'storeSubcomment'])->name('comments.storeSubcomment');
 Route::post('/like-comment/{commentId}', [CommentController::class, 'likeComment'])->name('likeComment');
@@ -152,7 +153,8 @@ Route::delete('/groups/{groupid}/leave', [GroupController::class, 'leaveGroup'])
 Route::delete('/groups/{groupid}/remove/{userid}', [GroupController::class, 'removeMember'])->name('group.removeMember');
 Route::put('/groups/{groupid}', [GroupController::class, 'update'])->name('group.update');
 Route::get('/groups', [GroupListController::class, 'index'])->name('groupList');
-Route::post('/groups', [GroupController::class, 'store'])->name('group.store')->middleware('auth');
+Route::post('/groups', [GroupController::class, 'store'])->name('group.store');
+Route::delete('/groups/{groupid}', [GroupController::class, 'deleteGroup'])->name('groups.delete');
 
 //About Us
 Route::view('/about', 'pages.about')->name('about');

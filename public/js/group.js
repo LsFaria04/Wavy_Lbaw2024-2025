@@ -101,59 +101,58 @@ function addEventListeners() {
   });
 
   // Invite modal functionality
-  let selectedUserId = null;
-  document.addEventListener('click', function (e) {
-      const inviteModal = document.getElementById('invite-modal');
-      const searchResults = document.getElementById('search-results');
-      const userSearchInput = document.getElementById('user-search');
-      const sendInviteButton = document.getElementById('send-invite');
+    let selectedUserId = null;
+    document.addEventListener('click', function (e) {
+        const inviteModal = document.getElementById('invite-modal');
+        const searchResults = document.getElementById('search-results');
+        const userSearchInput = document.getElementById('user-search');
+        const sendInviteButton = document.getElementById('send-invite');
 
-      // Open modal
-      if (e.target && e.target.id === 'invite-users-btn') {
-          inviteModal.classList.remove('hidden');
-          inviteModal.classList.add('flex');
-      }
+        // Open modal
+        if (e.target && e.target.id === 'invite-users-btn') {
+            inviteModal.classList.remove('hidden');
+            inviteModal.classList.add('flex');
+        }
 
-      // Close modal
-      if (e.target && e.target.id === 'close-invite-modal') {
-          inviteModal.classList.add('hidden');
-          inviteModal.classList.remove('flex');
-          searchResults.innerHTML = '';
-          userSearchInput.value = '';
-          sendInviteButton.disabled = true;
-          selectedUserId = null;
-      }
+        // Close modal
+        if (e.target.closest('#close-invite-modal')) {
+            inviteModal.classList.add('hidden');
+            inviteModal.classList.remove('flex');
+            searchResults.innerHTML = '';
+            userSearchInput.value = '';
+            sendInviteButton.disabled = true;
+            selectedUserId = null;
+        }
 
-      // Select a user from search results
-      if (e.target && e.target.closest('.search-result')) {
-          const result = e.target.closest('.search-result');
-          selectedUserId = result.dataset.id;
-          console.log('User ID Found:', selectedUserId);
-          sendInviteButton.disabled = false;
-      }
+        // Select a user from search results
+        if (e.target && e.target.closest('.search-result')) {
+            const result = e.target.closest('.search-result');
+            selectedUserId = result.dataset.id;
+            console.log('User ID Found:', selectedUserId);
+            sendInviteButton.disabled = false;
+        }
 
-      // Send invitation
-      if (e.target && e.target.id === 'send-invite') {
-        console.log('Send Invite button clicked');  
-        if (!selectedUserId) return;
+        // Send invitation
+        if (e.target && e.target.id === 'send-invite') {
+            if (!selectedUserId) return;
 
-        console.log('Sending invite to User ID:', selectedUserId);
+            console.log('Sending invite to User ID:', selectedUserId);
 
-        sendAjaxRequest('post', `/api/groups/${groupId}/invitations`, { userid: selectedUserId }, function () {
-            if (this.status === 200) {
-                const response = JSON.parse(this.responseText);
-                alert(response.message || 'Invitation sent successfully!');
-                inviteModal.classList.add('hidden');
-                searchResults.innerHTML = '';
-                userSearchInput.value = '';
-                sendInviteButton.disabled = true;
-                loadGroupContent('group-invitations');
-            } else {
-                console.error('Failed to send invitation:', this.responseText);
-            }
-        });
-      }
-  });
+            sendAjaxRequest('post', `/api/groups/${groupId}/invitations`, { userid: selectedUserId }, function () {
+                if (this.status === 200) {
+                    const response = JSON.parse(this.responseText);
+                    alert(response.message || 'Invitation sent successfully!');
+                    inviteModal.classList.add('hidden');
+                    searchResults.innerHTML = '';
+                    userSearchInput.value = '';
+                    sendInviteButton.disabled = true;
+                    loadGroupContent('group-invitations');
+                } else {
+                    console.error('Failed to send invitation:', this.responseText);
+                }
+            });
+        }
+    });
 
   document.addEventListener('input', function (e) {
       if (e.target && e.target.id === 'user-search') {
@@ -191,22 +190,33 @@ function addEventListeners() {
         exitMenu.classList.remove('flex');
     });
 
-    
+    document.getElementById('cancelDeleteButton')?.addEventListener('click', () => {
+        const deleteMenu = document.getElementById('deleteGroupMenu');
+        deleteMenu.classList.add('hidden');
+        deleteMenu.classList.remove('flex');
+    });
 }
-    function toggleEditGroupMenu() {
-        const editMenu = document.getElementById('edit-group-menu');
-        editMenu.classList.toggle('hidden');
-        editMenu.classList.toggle('flex');
-        html.classList.toggle('overflow-hidden');
-    }
 
-  function openExitGroupMenu() {
+function toggleEditGroupMenu() {
+    const editMenu = document.getElementById('edit-group-menu');
+    editMenu.classList.toggle('hidden');
+    editMenu.classList.toggle('flex');
+    html.classList.toggle('overflow-hidden');
+}
+
+function openDeleteGroupMenu() {
+    const deleteMenu = document.getElementById('deleteGroupMenu');
+    deleteMenu.classList.remove('hidden');
+    deleteMenu.classList.add('flex');
+}
+
+function openExitGroupMenu() {
     const exitMenu = document.getElementById('exitGroupMenu');
     exitMenu.classList.remove('hidden');
     exitMenu.classList.add('flex');
-  }
+}
 
-  function openRemoveMemberMenu(memberId, username) {
+function openRemoveMemberMenu(memberId, username) {
     const removeMenu = document.getElementById('removeMemberMenu');
     const removeMessage = document.getElementById('removeMemberMessage');
     const removeForm = document.getElementById('removeMemberForm');
@@ -224,14 +234,15 @@ function addEventListeners() {
         removeMenu.classList.add('hidden');
         removeMenu.classList.remove('flex')
     });
-  }
+}
 
-  const buttonsG = document.querySelectorAll('.tab-btn');
-  let groupTab = "group-posts"; // Default tab
-  let groupId = document.getElementById('groupPage')?.dataset.groupid;
-  let ownerid = document.getElementById('groupPage')?.dataset.ownerid; 
+const buttonsG = document.querySelectorAll('.tab-btn');
+let groupTab = "group-posts"; // Default tab
+let groupId = document.getElementById('groupPage')?.dataset.groupid;
+let ownerid = document.getElementById('groupPage')?.dataset.ownerid; 
+let addPostSection = document.getElementById('addPostSection');
 
-  function switchGroupTab() {
+function switchGroupTab() {
     buttonsG.forEach(button => {
       button.addEventListener('click', () => {
         currentPage = 1;  // Reset page for new tab content
@@ -253,9 +264,9 @@ function addEventListeners() {
         loadGroupContent(groupTab);
       });
     });
-  }
+}
 
-  function loadGroupContent(tab) {
+function loadGroupContent(tab) {
     const addPost = document.getElementById('post-form');
     const groupContent = document.querySelector("#group-tab-content");
     if (!groupContent) return;
@@ -301,9 +312,9 @@ function addEventListeners() {
           }
           break;
     }
-  }
+}
 
-  function insertMoreGroupContent() {
+function insertMoreGroupContent() {
     removeLoadingCircle(); 
     const groupContent = document.querySelector("#group-tab-content");
 
@@ -342,9 +353,9 @@ function addEventListeners() {
         </div>
         `;       
     }
-  }
+}
 
-  function createInvitation(invitationInfo) {
+function createInvitation(invitationInfo) {
     let invitation = document.createElement('div');
     invitation.classList.add("invitation", "border-b", "border-gray-300", "p-4", "bg-white");
 
@@ -374,60 +385,60 @@ function addEventListeners() {
     `;
 
     return invitation;
-  }
+}
 
-  function insertMoreInvitations(element, invitations) {
+function insertMoreInvitations(element, invitations) {
     for (let i = 0; i < invitations.data.length; i++) {
         let invitationElement = createInvitation(invitations.data[i]);
         element.appendChild(invitationElement);
     }
-  }
+}
 
-    function createRequest(requestInfo) {
-        let request = document.createElement('div');
-        request.classList.add("request", "border-b", "border-gray-300", "p-4", "bg-white");
+function createRequest(requestInfo) {
+    let request = document.createElement('div');
+    request.classList.add("request", "border-b", "border-gray-300", "p-4", "bg-white");
 
-        if (!requestInfo.user) {
-            console.error("User data is missing in requestInfo:", requestInfo);
-            request.innerHTML = `<p>Error: User information is unavailable.</p>`;
-            return request;
-        }
-
-        request.innerHTML = `
-            <div class="flex justify-between items-center">
-                <div>
-                    <h3 class="font-bold">
-                        <a href="../profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
-                            ${requestInfo.user.username}
-                        </a>
-                    </h3>
-                    <p class="text-sm text-gray-600">Request received: ${requestInfo.createddate || 'Date unavailable'}</p>
-                </div>
-                <div class="flex space-x-2">
-                    <button type="button" class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" 
-                            data-id="${requestInfo.requestid}">
-                        Accept
-                    </button>
-                    <button type="button" class="reject-btn bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700" 
-                            data-id="${requestInfo.requestid}">
-                        Reject
-                    </button>
-                </div>
-            </div>
-        `;
-
+    if (!requestInfo.user) {
+        console.error("User data is missing in requestInfo:", requestInfo);
+        request.innerHTML = `<p>Error: User information is unavailable.</p>`;
         return request;
     }
 
-  function insertMoreRequests(element, requests) {
+    request.innerHTML = `
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="font-bold">
+                    <a href="../profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
+                        ${requestInfo.user.username}
+                    </a>
+                </h3>
+                <p class="text-sm text-gray-600">Request received: ${requestInfo.createddate || 'Date unavailable'}</p>
+            </div>
+            <div class="flex space-x-2">
+                <button type="button" class="accept-btn bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" 
+                        data-id="${requestInfo.requestid}">
+                    Accept
+                </button>
+                <button type="button" class="reject-btn bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700" 
+                        data-id="${requestInfo.requestid}">
+                    Reject
+                </button>
+            </div>
+        </div>
+    `;
+
+    return request;
+}
+
+function insertMoreRequests(element, requests) {
     for (let i = 0; i < requests.data.length; i++) {
         let requestElement = createRequest(requests.data[i]);
         element.appendChild(requestElement);
     }
-  }
+}
 
-  //creates a member container with all the necessary info
-  function createMember(memberInfo) {
+//creates a member container with all the necessary info
+function createMember(memberInfo) {
     let member = document.createElement('div');
     member.classList.add("member", "border-b", "border-gray-300", "p-4", "bg-white");
 
@@ -456,14 +467,14 @@ function addEventListeners() {
     `;
 
     return member;
-  }
+}
     
-  //inserts more members into an element
-  function insertMoreMembers(element, members){
+//inserts more members into an element
+function insertMoreMembers(element, members){
     for(let i = 0; i < members.data.length; i++){
       let member = createMember(members.data[i]);
       element.appendChild(member);
     }
-  }
+}
 
-  addEventListeners();
+addEventListeners();
