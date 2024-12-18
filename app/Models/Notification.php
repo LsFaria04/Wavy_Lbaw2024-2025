@@ -41,11 +41,9 @@ class Notification extends Model {
         return $this->belongsTo(Like::class, 'likeid');
     }
 
-    public function follower() {
-        return $this->belongsTo(User::class, 'followerid');
+    public function follow() {
+        return $this->belongsTo(Follow::class, 'followid', 'followerid');
     }
-
-    public function followee() {
-        return $this->belongsTo(User::class, 'followeeid');
-    }
+    
+    
 }
