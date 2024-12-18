@@ -56,9 +56,17 @@
                                                     "{{ Str::limit($notification->like->post->message, 50) }}"
                                                 </a>
                                             </div>
-                                        @elseif(isset($notification->follow) && isset($notification->follow->user))
+                                        @elseif(isset($notification->follow) && isset($notification->follow->follower))
                                             <div class="text-sm font-semibold text-gray-800">
-                                                {{ $notification->follow->user->username }} started following you
+                                            <a href="{{ route('profile', ['username' => $notification->follow->follower->username]) }}" 
+                                                class="text-blue-600 hover:underline">
+                                                {{ $notification->follow->follower->username }}
+                                            </a>
+                                                @if($notification->follow->state === \App\Models\Follow::STATE_PENDING)
+                                                    requested to follow you
+                                                @elseif($notification->follow->state === \App\Models\Follow::STATE_ACCEPTED)
+                                                    started following you
+                                                @endif
                                             </div>
                                         @endif
                                     </div>
@@ -143,18 +151,26 @@
                     @else
                         <div class="space-y-4">
                             @foreach($followNotifications as $notification)
-                                <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
-                                    <div class="flex-1">
-                                        @if(isset($notification->follow) && isset($notification->follow->user))
+                                @if(isset($notification->follow) && isset($notification->follow->follower))
+                                    <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+                                        <div class="flex-1">
                                             <div class="text-sm font-semibold text-gray-800">
-                                                {{ $notification->follow->user->username }} started following you
+                                                <a href="{{ route('profile', ['username' => $notification->follow->follower->username]) }}" 
+                                                    class="text-blue-600 hover:underline">
+                                                    {{ $notification->follow->follower->username }}
+                                                </a>
+                                                @if($notification->follow->state === \App\Models\Follow::STATE_PENDING)
+                                                    requested to follow you
+                                                @elseif($notification->follow->state === \App\Models\Follow::STATE_ACCEPTED)
+                                                    started following you
+                                                @endif
                                             </div>
-                                        @endif
+                                        </div>
+                                        <div class="text-xs text-gray-400">
+                                            {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
+                                        </div>
                                     </div>
-                                    <div class="text-xs text-gray-400">
-                                        {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
-                                    </div>
-                                </div>
+                                @endif
                             @endforeach
                         </div>
                     @endif
