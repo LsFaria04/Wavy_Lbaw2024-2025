@@ -22,18 +22,34 @@ class ProfileController extends Controller {
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');
         }
-
+    
         if ($user->getIsAdmin() && Auth::id() !== $user->userid) {
             return redirect('/home')->with('error', 'User not found.');
         }
     
-        $posts = $user->posts()->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);
+        // Include likes_count and other relevant relationships
+        $posts = $user->posts()
+                      ->whereNull('groupid')
+                      ->orderBy('createddate', 'desc')
+                      ->withCount('likes') // Add likes_count to the query
+                      ->paginate(10);
+    
+        if (Auth::check()) {
+            foreach ($posts as $post) {
+                $post->liked = $post->likes()->where('userid', Auth::id())->exists();
+                $post->createddate = $post->createddate->diffForHumans();
+            }
+        } else {
+            foreach ($posts as $post) {
+                $post->liked = false;
+                $post->createddate = $post->createddate->diffForHumans();
+            }
+        }
+    
         $comments = [];
     
         $followStatus = 'not-following'; 
-    
         if (Auth::check() && Auth::id() !== $user->userid) {
-            // Check the follow status
             if (Follow::isFollowing(Auth::id(), $user->userid)) {
                 $followStatus = Follow::STATE_ACCEPTED;
             } elseif (Follow::isPending(Auth::id(), $user->userid)) {
@@ -42,8 +58,7 @@ class ProfileController extends Controller {
         }
     
         return view('pages.profile', compact('user', 'posts', 'comments', 'followStatus'));
-    }
-    
+    }       
 
     //gets all the data of a user and sends it as json 
     public function getProfileUserData($username) {

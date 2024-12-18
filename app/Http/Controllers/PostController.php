@@ -31,12 +31,12 @@ class PostController extends Controller {
                         ->paginate(10);
 
             foreach ($posts as $post) {
-                $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
-                $post->createddate = $post->createddate->diffForHumans();  // Format the created date
-            }
+                $post->liked = Auth::check() && $post->likes()->where('userid', Auth::user()->userid)->exists();
+                $post->createddate = $post->createddate->diffForHumans();
+            }                        
         } else {
             $posts = Post::with('user', 'media','topics')
-                        ->withCount('comments')  // Add the comment count
+                        ->withCount('comments')  
                         ->withCount('likes')
                         ->whereNull('groupid')
                         ->where('visibilitypublic', true)
@@ -73,7 +73,7 @@ class PostController extends Controller {
 
         if (Auth::check()) {
             $posts = Post::with('user', 'media', 'topics')
-                        ->withCount('comments')  // Add the comment count
+                        ->withCount('comments')  
                         ->withCount('likes')
                         ->whereNull('groupid')
                         ->where('userid', $user->userid)
@@ -85,7 +85,8 @@ class PostController extends Controller {
             }
         } else {
             $posts = Post::with('user', 'media', 'topics')
-                        ->withCount('comments')  // Add the comment count
+                        ->withCount('comments')  
+                        ->withCount('likes')
                         ->whereNull('groupid')
                         ->where('visibilitypublic', true)
                         ->where('userid', $user->userid)
