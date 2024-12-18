@@ -168,3 +168,7 @@ Route::view('/features', 'pages.features')->name('features');
 
 //Notifications
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+
+//Pusher
+Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {return Broadcast::auth($request);});
+

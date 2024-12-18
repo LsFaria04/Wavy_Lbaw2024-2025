@@ -153,6 +153,8 @@ class PostController extends Controller
     
         // Get the updated like count
         $likeCount = $post->likes()->count();
+
+        broadcast(new PostLike($postId, $user, $post->user_id));
     
         // Return the updated like status and like count
         return response()->json([
