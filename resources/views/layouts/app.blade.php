@@ -12,6 +12,7 @@
 
         <!-- Styles -->
         @vite('resources/css/app.css')
+        @vite('resources/js/app.js')
         <script type="text/javascript">
             // Fix for Firefox autofocus CSS bug
             // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
@@ -27,6 +28,7 @@
         <script type="text/javascript" src="{{ url('js/groupList.js') }}" defer></script>
         <script type="text/javascript" src="{{ url('js/notifications.js') }}" defer></script>
         <script src="https://js.pusher.com/7.0/pusher.min.js" defer></script>
+        <script>window.receiverId = @json(auth()->user()->userid);</script>
 
     </head>
     <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">

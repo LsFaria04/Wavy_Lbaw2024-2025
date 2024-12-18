@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\Auth\LoginController;
@@ -169,3 +171,17 @@ Route::view('/features', 'pages.features')->name('features');
 
 //Notifications
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+
+//Pusher
+Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
+    if (auth()->check()) {
+        Log::info('User is authenticated:', ['user' => auth()->user()]);
+    } else {
+        Log::warning('User is not authenticated');
+    }
+
+    return Broadcast::auth($request);
+})->middleware('auth')->name('pusher.auth');
+
+
+
