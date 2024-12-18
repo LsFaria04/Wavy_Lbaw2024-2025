@@ -49,6 +49,7 @@ Route::get('api/search', [SearchController::class, 'search']);
 Route::get('api/comments/{username}', [CommentController::class, 'getUserCommentsByUsername']);
 Route::get('api/likes/{username}', [LikeController::class,'getUserLikesByUsername']);
 Route::get('api/{username}', [ProfileController::class, 'getProfileUserData']);
+Route::post('/api/profile/{id}/delete', [ProfileController::class, 'delete']);
 Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
@@ -85,6 +86,7 @@ Route::get('/api/reports/search/all', [ReportController::class, 'searchReports']
 Route::post('/api/reports/delete/{reportid}', [ReportController::class, 'delete']);
 Route::post('/api/reports/create', [ReportController::class, 'create']);
 Route::post('/api/admin/users/create', [AdminController::class, 'storeUser']);
+Route::post('/api/admin/users/ban/{userid}', [AdminController::class, 'banUser']);
 Route::get('/api/admin/users/all', [AdminController::class, 'getUsersForAdmin']);
 Route::get('/api/admin/users/search/all', [AdminController::class, 'searchUsersForAdmin']);
 Route::get('/api/notifications', [NotificationController::class, 'getNotifications']);

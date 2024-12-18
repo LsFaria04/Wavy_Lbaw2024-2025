@@ -1,6 +1,9 @@
 function addEventListeners() {
   cancelButtonListener();
   confirmButtonListener();
+  cancelBanListener();
+  confirmBanListener();
+  
 
   createTopicListener();
   createUserListener()
@@ -146,6 +149,9 @@ function confirmButtonListener(){
       if(window.categoryDelete == 'reports'){
         sendAjaxRequest('post', '/api/reports/delete/' + window.elementToDelete, null, handleReportDelete);
       }
+      if(window.categoryDelete == 'users'){
+        sendAjaxRequest('post', '/api/profile/' + window.elementToDelete + '/delete', null, handleUserDelete);
+      }
 
     });
   }
@@ -163,8 +169,64 @@ function cancelButtonListener(){
   }
 }
 
+function confirmBanListener(){
+  let confirmButton = document.getElementById('confirmBanButtonAdmin');
+  if(confirmButton !== null){
+    confirmButton.addEventListener('click', () => {
+      insertLoadingCircle(confirmButton);
+      
+      //resize the loading circle
+      document.querySelector('#loading_circle').classList.remove('h-8');
+      document.querySelector('#loading_circle').classList.remove('w-8');
+      document.querySelector('#loading_circle').classList.add('h-4');
+      document.querySelector('#loading_circle').classList.add('w-4');
+
+      sendAjaxRequest('post','/api/admin/users/ban/' + window.userBan, null, handleBan);
+
+    });
+  }
+}
+
+function cancelBanListener(){
+  let cancelButton = document.getElementById('cancelBanButtonAdmin');
+  if(cancelButton !== null){
+    cancelButton.addEventListener('click', () => {
+    const banMenu = document.getElementById('banMenuAdmin');
+    banMenu.classList.toggle('hidden');
+    banMenu.classList.toggle('flex');
+    });
+  }
+}
+
+
+
 //Admin ajax response handlers ---------------------------------------------------------------------------------
 
+function handleBan(){
+  let banMenu = document.getElementById('banMenuAdmin');
+  banMenu.classList.toggle('hidden');
+  banMenu.classList.toggle('flex');
+  removeLoadingCircle();
+  const response = JSON.parse(this.responseText);
+    
+    const messageContainer = document.getElementById("messageContainer");
+    if(response.response === '200'){
+      createAlert(messageContainer, response.message,false);
+      const row = document.querySelector('#User-' + window.userBan + ' .userState');
+      if(row.innerHTML === "suspended"){
+        row.innerHTML = "active";
+        document.querySelector('#User-' + window.userBan + ' .banButton').innerHTML = 'Ban';
+      }
+      else{
+        row.innerHTML = "suspended";
+        document.querySelector('#User-' + window.userBan + ' .banButton').innerHTML = 'Unban';
+      }
+    }
+    else{
+      createAlert(messageContainer, response.message,true);
+    }
+
+}
 //handles the responses from the requests related to the topic creation. Displays a message with the request result
 function handleCreateTopic(){
   let createTopicMenu = document.getElementById('createTopicMenu');
@@ -227,6 +289,23 @@ function handleReportDelete(){
 
 }
 
+function handleUserDelete(){
+  let deleteMenu = document.getElementById('deleteMenuAdmin');
+  deleteMenu.classList.toggle('hidden');
+  deleteMenu.classList.toggle('flex');
+  removeLoadingCircle();
+  const response = JSON.parse(this.responseText);
+  const messageContainer = document.getElementById("messageContainer");
+    if(response.response === '200'){
+      createAlert(messageContainer, response.message,false);
+      document.getElementById('User-' + window.elementToDelete).remove();
+    }
+    else{
+      createAlert(messageContainer, response.message,true);
+    }
+
+}
+
 //handles the responses from the requests related to the topics deletion. Displays a message with the request result
 function handleTopicDelete(){
   let deleteMenu = document.getElementById('deleteMenuAdmin');
@@ -254,7 +333,7 @@ function toggleReasonDetails(reportid){
   const reasonDetails = document.querySelector("#reasonDetails");
   if(reportid !== null){
   const report =  document.getElementById("Report-" + reportid);
-  const reason = report.querySelector("#reportReason").innerHTML;
+  const reason = report.querySelector(".reportReason").innerHTML;
 
   
   reasonDetailsText.innerHTML = reason;
@@ -291,12 +370,32 @@ function toggleReasonDetails(reportid){
   
   function showDeleteAdminMenu(elementId, category){
     let deleteMenu = document.getElementById('deleteMenuAdmin');
-    deleteMenu.querySelector('h2').innerHTML = `Delete ${category == 'topic' ? 'Topic' : 'Report'}`
-    deleteMenu.querySelector('p').innerHTML = `Are you sure you want to delete this ${category == 'topics' ? 'topic' : 'report'}? This action cannot be undone.`
+    deleteMenu.querySelector('h2').innerHTML = `Delete ${category == 'topic' ? 'Topic' : category == 'report' ? 'Report' : 'User'}`;
+    deleteMenu.querySelector('p').innerHTML = `Are you sure you want to delete this ${category == 'topics' ? 'topic' : category == 'report' ? 'report' : 'user'}? This action cannot be undone.`;
     deleteMenu.classList.toggle('hidden');
     deleteMenu.classList.toggle('flex');
     window.categoryDelete = category;
     window.elementToDelete = elementId;
+  }
+
+  function showBanAdminMenu(elementId){
+    let banMenu = document.getElementById('banMenuAdmin');
+
+    const row = document.querySelector('#User-' + elementId + ' .userState');
+      if(row.innerHTML === "suspended"){
+        document.querySelector('#banMenuAdmin h2').innerHTML = "Unban User";
+        document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to unban this user?"
+        document.getElementById('confirmBanButtonAdmin').innerHTML = "Unban";
+      }
+      else{
+        document.querySelector('#banMenuAdmin h2').innerHTML = "Ban User";
+        document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to ban this user?"
+        document.getElementById('confirmBanButtonAdmin').innerHTML = "Ban";
+      }
+
+    banMenu.classList.toggle('hidden');
+    banMenu.classList.toggle('flex');
+    window.userBan = elementId;
   }
 
 //Admin content insertion and creation ----------------------------------------------------------------------------------------
@@ -362,10 +461,10 @@ function toggleReasonDetails(reportid){
             ${reports.data[i].commentid === null ? `Post ID${reports.data[i].postid}` : `Comment ID${reports.data[i].commentid}`}
           </a>
         </td>
-        <td  class="w-1/3 max-w-40 px-4 py-2 text-gray-700 truncate ..."><button id = "reportReason" onclick = "toggleReasonDetails(${reports.data[i].reportid})">${reports.data[i].reason}</button></td>
+        <td  class="w-1/3 max-w-40 px-4 py-2 text-gray-700 truncate ..."><button class = "reportReason" onclick = "toggleReasonDetails(${reports.data[i].reportid})">${reports.data[i].reason}</button></td>
         <td class="w-1/3 px-4 py-2 text-gray-700">${reports.data[i].user.username}</td>
          <td class="px-4 py-2 self-end">
-        <form action="../reports/delete/${reports.data[i].reportid}" method="POST" id="deleteForm-${reports.data[i].reportid}">
+        <form class = "flex items-center" action="../reports/delete/${reports.data[i].reportid}" method="POST" id="deleteForm-${reports.data[i].reportid}">
           <input type="hidden" name="_token" value= ${getCsrfToken()} />
           <button type="button" onclick="showDeleteAdminMenu(${reports.data[i].reportid}, 'reports')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -393,7 +492,7 @@ function toggleReasonDetails(reportid){
       row.innerHTML = `
       <td class="grow px-4 py-2 text-gray-700">${topicname}</td>
       <td class="px-4 py-2 self-end">
-        <form action="../topics/delete/${topicid}" method="POST" id="deleteForm-${topicid}">
+        <form class = "flex items-center" action="../topics/delete/${topicid}" method="POST" id="deleteForm-${topicid}">
           <input type="hidden" name="_token" value= ${getCsrfToken()} />
           <button type="button" onclick="showDeleteAdminMenu(${topicid}, 'topics')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -474,7 +573,7 @@ function toggleReasonDetails(reportid){
 
     for(let i = 0; i < users.data.length; i++){
       let row = document.createElement('tr');
-      row.setAttribute('id', 'Report-' + users.data[i].reportid);
+      row.setAttribute('id', 'User-' + users.data[i].userid);
       row.classList.add("shadow", "font-medium");
       row.innerHTML = `
         <td class="w-1/2 px-4 py-2 text-gray-700">
@@ -482,12 +581,12 @@ function toggleReasonDetails(reportid){
             ${users.data[i].username}
           </a>
         </td>
-        <td  class="w-1/2 max-w-40 px-4 py-2 text-gray-700">${users.data[i].state}</td>
-        <td class="flex flex-row px-4 py-2 self-end">
-        <button>Ban</button>
-        <form action="../profile/${users.data[i].userid}/delete" method="POST" id="deleteForm-${users.data[i].userid}">  
+        <td  class="userState w-1/2 max-w-40 px-4 py-2 text-gray-700">${users.data[i].state}</td>
+        <td class="flex flex-row px-4 py-2 self-end justify-between items-center">
+        <button onclick = "showBanAdminMenu(${users.data[i].userid})" class="banButton text-center w-16 px-1 py-1 bg-slate-100 hover:bg-slate-200 rounded-2xl focus:outline-none">${users.data[i].state === "active" ? "Ban" : "Unban"}</button>
+        <form class = "flex items-center" action="../profile/${users.data[i].userid}/delete" method="POST" id="deleteForm-${users.data[i].userid}">  
           <input type="hidden" name="_token" value= ${getCsrfToken()} />
-          <button type="button" onclick="alert('not implemented')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+          <button type="button" onclick="showDeleteAdminMenu(${users.data[i].userid}, 'users')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
@@ -496,7 +595,6 @@ function toggleReasonDetails(reportid){
       </td>
 
       `
-      console.log("here");
       sectionContentTable.appendChild(row);
     }
 

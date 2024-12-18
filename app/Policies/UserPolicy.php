@@ -23,4 +23,8 @@ class UserPolicy {
     public function getForAdmin(User $user){
         return $user->isadmin;
     }
+
+    public function banUser(User $user){
+        return $user->isadmin;
+    }
 }
