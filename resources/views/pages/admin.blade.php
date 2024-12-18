@@ -50,7 +50,7 @@
             @foreach ($users as $user )
                 <tr id = 'User-{{$user->userid}}' class = "shadow font-medium">
                     <td class="w-1/2 px-4 py-2 text-gray-700">
-                        <a href = '/profile/{{$user->username}}'>
+                        <a class = "max-w-20 sm:max-w-40 truncate ..." href = '/profile/{{$user->username}}'>
                           {{$user->username}}
                         </a>
                     </td>

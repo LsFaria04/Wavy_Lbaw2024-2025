@@ -458,13 +458,13 @@ function toggleReasonDetails(reportid){
       row.setAttribute('id', 'Report-' + reports.data[i].reportid);
       row.classList.add("shadow", "font-medium");
       row.innerHTML = `
-        <td class="w-1/3 px-4 py-2 text-gray-700">
+        <td class="w-1/3 px-4 py-2 text-gray-700 max-w-20 sm:max-w-40 truncate ...">
           <a href = '/posts/${reports.data[i].postid}'>
             ${reports.data[i].commentid === null ? `Post ID${reports.data[i].postid}` : `Comment ID${reports.data[i].commentid}`}
           </a>
         </td>
-        <td  class="w-1/3 max-w-40 px-4 py-2 text-gray-700 truncate ..."><button class = "reportReason" onclick = "toggleReasonDetails(${reports.data[i].reportid})">${reports.data[i].reason}</button></td>
-        <td class="w-1/3 px-4 py-2 text-gray-700">${reports.data[i].user.username}</td>
+        <td  class="w-1/3 px-4 py-2 text-gray-700 "><button class = "reportReason max-w-20 sm:max-w-40 truncate ..." onclick = "toggleReasonDetails(${reports.data[i].reportid})">${reports.data[i].reason}</button></td>
+        <td class="w-1/3 px-4 py-2 text-gray-700 "><a class = "max-w-20 sm:max-w-40 truncate ..." href = '/profile/${reports.data[i].user.username}'>${reports.data[i].user.username}</a></td>
          <td class="px-4 py-2 self-end">
         <form class = "flex items-center" action="../reports/delete/${reports.data[i].reportid}" method="POST" id="deleteForm-${reports.data[i].reportid}">
           <input type="hidden" name="_token" value= ${getCsrfToken()} />
@@ -579,7 +579,7 @@ function toggleReasonDetails(reportid){
       row.classList.add("shadow", "font-medium");
       row.innerHTML = `
         <td class="w-1/2 px-4 py-2 text-gray-700">
-          <a href = '/profile/${users.data[i].username}'>
+          <a class = "max-w-20 sm:max-w-40 truncate ..." href = '/profile/${users.data[i].username}'>
             ${users.data[i].username}
           </a>
         </td>
