@@ -164,11 +164,13 @@ function likePost(postId,event) {
     if (response.liked) {
         heartEmpty.classList.add('hidden');
         heartFilled.classList.remove('hidden');
+        heartFilled.style.fill = 'red-600';
         likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
         likeCountElement.classList.add('text-red-600');
     } else {
         heartEmpty?.classList.remove('hidden');
         heartFilled?.classList.add('hidden');
+        heartEmpty.style.fill = 'gray-500';
         if (likeCountElement !== null) {
           likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
         }
