@@ -5,8 +5,10 @@ namespace App\Events;
 use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class PostLike implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
@@ -36,6 +38,7 @@ class PostLike implements ShouldBroadcast {
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn(): array {
+        Log::info("like notification");
         // Broadcast to the private channel for the specific user (receiver)
         return [new PrivateChannel('user.' . $this->receiverid)];
     }
