@@ -48,18 +48,18 @@
                 <th></th>
             </tr>
             @foreach ($users as $user )
-                <tr class = "shadow font-medium">
+                <tr id = 'User-{{$user->userid}}' class = "shadow font-medium">
                     <td class="w-1/2 px-4 py-2 text-gray-700">
-                        <a href = '/profile/{{$user->username}}'>
+                        <a class = "max-w-20 sm:max-w-40 truncate ..." href = '/profile/{{$user->username}}'>
                           {{$user->username}}
                         </a>
                     </td>
-                    <td  class="w-1/2 max-w-40 px-4 py-2 text-gray-700">{{$user->state}}</td>
-                    <td class="px-4 py-2 self-end flex flex-row">
-                        <button>Ban</button>
-                        <form action="../profile/{{$user->userid}}/delete" method="POST" id="deleteForm-{{$user->userid}}">
+                    <td  class="userState w-1/2 max-w-40 px-4 py-2 text-gray-700">{{$user->state}}</td>
+                    <td class="px-4 py-2 self-end flex flex-row justify-between items-center">
+                        <button onclick = "showBanAdminMenu({{$user->userid}})" class="banButton text-center w-16 px-1 py-1 bg-slate-100 hover:bg-slate-200  rounded-2xl focus:outline-none">{{$user->state === 'active' ? "Ban" : "Unban"}}</button>
+                        <form action="../profile/{{$user->userid}}/delete" method="POST" id="deleteForm-{{$user->userid}}" class = "flex items-center">
                             @csrf
-                            <button type="button" onclick="alert('not implemented')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
+                            <button type="button" onclick="showDeleteAdminMenu({{$user->userid}}, 'users')" class="text-red-500 hover:text-red-700 ml-2 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
@@ -115,5 +115,6 @@
 @include("partials.admin.createUserMenu")
 @include("partials.admin.createTopicMenu")
 @include("partials.admin.reasonDetails")
+@include("partials.admin.banMenu")
 
 @endsection

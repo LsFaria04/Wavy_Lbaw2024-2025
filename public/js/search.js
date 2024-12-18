@@ -19,28 +19,8 @@ function changeCategory(category) {
           button.classList.remove('text-sky-900', 'border-sky-900');
       }
   });
-
-    if(userId == posts.data[i].user.userid || isadmin){
-      post = createPostOptions(post, posts.data[i].postid); 
-    }
-
-    post = insertPostTopics(post, posts.data[i].topics);
-
-    const likeButtonHtml = createLikeButton(posts.data[i].postid, posts.data[i].like_count, posts.data[i].liked_by_user);
-    
-    post.insertAdjacentHTML('beforeend', likeButtonHtml);
-
-    post = insertPostMedia(post, posts.data[i].media);
-
-    if(userId == posts.data[i].user.userid || isadmin){
-      insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
-    }
-
-    let editForm = post.querySelector('.edit-post-form form');
-    if(editForm !== null){
-      addEventListenerToForm(editForm);
-    }
-    element.appendChild(post);
+    query = document.querySelector('input[name="q"]').value;
+    loadSearchContent(category, query);
   }
 
   function createLikeButton(postId, likeCount = 0, likedByUser = false) {

@@ -3,9 +3,13 @@ function addEventListeners() {
     window.addEventListener("scroll", infiniteScroll);
 }
 
-// Used to change the search category when a user clicks on a search tab option
+let searchGroupCategory = null;
+if(document.querySelector('input[name="category"]') !== null){
+    searchGroupCategory = document.querySelector('input[name="category"]').value;
+}
+
 function changeGroupCategory(category) {
-    currentPage = 1;  // Reset pagination to the first page
+    currentPage = 1; 
     searchGroupCategory = category;
     document.querySelector('input[name="category"]').value = category;
 
@@ -18,13 +22,8 @@ function changeGroupCategory(category) {
         }
     });
 
-    query = document.querySelector('input[name="q"]').value;
+    query = document.querySelector('input[name="q"]').value || '';
     loadSearchGroupContent(category, query);
-}
-
-let searchGroupCategory = null;
-if(document.querySelector('input[name="category"]') !== null){
-    searchGroupCategory = document.querySelector('input[name="category"]').value;
 }
 
 // Loads the search content based on the selected category
@@ -40,10 +39,10 @@ function loadSearchGroupContent(category, query) {
 }
 
 function insertMoreGroupSearchResults() {
-    removeLoadingCircle();  // Remove the loading spinner
+    removeLoadingCircle();  
     const groupResults = document.querySelector("#group-results");
 
-    let results = JSON.parse(this.responseText); // Parse the JSON response
+    let results = JSON.parse(this.responseText); 
 
     switch (searchGroupCategory) {
         case 'your-groups':

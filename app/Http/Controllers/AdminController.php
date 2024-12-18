@@ -13,7 +13,10 @@ class AdminController extends Controller
 {
     public function index(Request $request) {
         $usersQuery = User::query();
-        $users = $usersQuery->Where('isadmin', false)->paginate(10);
+        $users = $usersQuery
+            ->Where('isadmin', false)
+            ->Where('state', '!=', 'deleted')
+            ->paginate(10);
 
         return view('pages.admin', compact('users'));
     }
@@ -67,7 +70,9 @@ class AdminController extends Controller
         }
 
         try{
-           $users = User::where('isadmin', false)->paginate(10);
+           $users = User::where('isadmin', false)
+                    ->where('state', '!=', 'deleted')    
+                    ->paginate(10);
         } catch(\Exception $e){
             return response()->json(["message" => 'Server problem', 'response' => '500']);
         }
@@ -87,11 +92,48 @@ class AdminController extends Controller
         }
 
         try{
-           $users = User::Where('username',$sanitizedQuery )->paginate(10);
+           $users = User::Where('username',$sanitizedQuery )
+                    ->where('state', '!=', 'deleted')   
+                    ->paginate(10);
         } catch(\Exception $e){
             return response()->json(["message" => 'Server problem', 'response' => '500']);
         }
 
         return response()->json($users);
+    }
+
+    public function banUser(Request $request, $userid){
+
+        try{
+            $this->authorize('banUser', User::class);
+        }catch(\Exception $e){
+            return response()->json(['message' => 'Your not an admin', 'response' => '403']);
+        }
+
+        $isban = false;
+
+        try{
+            $user = User::find($userid);
+
+            if($user->state === 'suspended'){
+                $user->state = 'active';
+            }
+            else{
+                $user->state = 'suspended';
+                $isban = true;
+            }
+
+            $user->save();
+        } catch(\Exception $e){
+            return response()->json(["message" => 'Server problem', 'response' => '500']);
+        }
+
+        if($isban){
+            return response()->json(["message" => 'User banned successfully', 'response' => '200']);
+        }
+        else{
+            return response()->json(["message" => 'User unbanned successfully', 'response' => '200']);
+        }
+
     }
 }

@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Broadcast;
+use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\Auth\LoginController;
@@ -51,6 +53,7 @@ Route::get('api/search', [SearchController::class, 'search']);
 Route::get('api/comments/{username}', [CommentController::class, 'getUserCommentsByUsername']);
 Route::get('api/likes/{username}', [LikeController::class,'getUserLikesByUsername']);
 Route::get('api/{username}', [ProfileController::class, 'getProfileUserData']);
+Route::post('/api/profile/{id}/delete', [ProfileController::class, 'delete']);
 Route::post('api/auth-check', function () {
     return response()->json(['authenticated' => Auth::check()]);
 });
@@ -87,6 +90,7 @@ Route::get('/api/reports/search/all', [ReportController::class, 'searchReports']
 Route::post('/api/reports/delete/{reportid}', [ReportController::class, 'delete']);
 Route::post('/api/reports/create', [ReportController::class, 'create']);
 Route::post('/api/admin/users/create', [AdminController::class, 'storeUser']);
+Route::post('/api/admin/users/ban/{userid}', [AdminController::class, 'banUser']);
 Route::get('/api/admin/users/all', [AdminController::class, 'getUsersForAdmin']);
 Route::get('/api/admin/users/search/all', [AdminController::class, 'searchUsersForAdmin']);
 Route::get('/api/notifications', [NotificationController::class, 'getNotifications']);
@@ -166,3 +170,17 @@ Route::view('/features', 'pages.features')->name('features');
 
 //Notifications
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
+
+//Pusher
+Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
+    if (auth()->check()) {
+        Log::info('User is authenticated:', ['user' => auth()->user()]);
+    } else {
+        Log::warning('User is not authenticated');
+    }
+
+    return Broadcast::auth($request);
+})->middleware('auth')->name('pusher.auth');
+
+
+

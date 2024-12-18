@@ -124,7 +124,10 @@ class ProfileController extends Controller {
                     'message' => 'User has already been deleted.',
                 ], 400);
             }
-    
+            
+            if($request->ajax()){
+                return response()->json(['message' => 'User was already deleted', 'response' => '403']);
+            }
             return redirect()->route('home')->with('error', 'User has already been deleted.');
         }
         
@@ -148,13 +151,9 @@ class ProfileController extends Controller {
                 $request->session()->regenerateToken();
             }
     
-            if ($request->ajax()) {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'User deleted successfully!',
-                ]);
+            if($request->ajax()){
+                return response()->json(['message' => 'User deleted sucessfully', 'response' => '200']);
             }
-    
             return redirect()->route('home')->with('success', 'User deleted successfully!');
         } catch (\Exception $e) {
             DB::rollBack();
@@ -165,7 +164,9 @@ class ProfileController extends Controller {
                     'message' => 'Failed to delete the user.',
                 ], 500);
             }
-    
+            if($request->ajax()){
+                return response()->json(['message' => 'Server Problem', 'response' => '500']);
+            }
             return redirect()->route('home')->with('error', 'Failed to delete the user.');
         }
     }

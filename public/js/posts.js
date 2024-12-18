@@ -3,7 +3,141 @@ function addEventListeners() {
   addEventListenerToPostForms();
   syncPostFilesWithInputEventListener();
   syncPostTopicsWithInputEventListener();
+  deleteMenuButtons();
+}
+
+function deleteMenuButtons() {
+  document.addEventListener("click", (event) => {
+    const target = event.target;
+
+    // Handle Cancel button
+    if (target.matches(".cancelButton")) {
+      const deleteMenu = target.closest(".fixed");
+      if (deleteMenu) {
+        deleteMenu.classList.add("hidden");
+        deleteMenu.classList.remove("flex");
+        document.documentElement.classList.remove("overflow-hidden");
+      }
+    }
+
+    // Handle Confirm button
+    if (target.matches(".confirmButton")) {
+      const deleteMenu = target.closest(".fixed");
+      const postId = deleteMenu?.id.split("-")[1]; 
+      if (postId) {
+        const deleteForm = document.getElementById(`deleteForm-${postId}`);
+        if (deleteForm) {
+          target.disabled = true;
+          deleteForm.submit(); 
+        }
+      }
+    }
+  });
+}
+
+function closeDeleteMenu(postid) {
+  const modal = document.getElementById(`deleteMenu-${postid}`);
+  if (modal) {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.documentElement.classList.remove('overflow-hidden');
+  }
+}
+
+function openDeleteMenu(postid) {
+  insertDeleteMenu(postid);
+  const deleteMenu = document.getElementById(`deleteMenu-${postid}`);
+  if (!deleteMenu) {
+      console.error(`Delete menu for post ${postid} not found.`);
+      return;
+  }
+  deleteMenu.classList.remove('hidden');
+  deleteMenu.classList.add('flex');
+  document.documentElement.classList.add('overflow-hidden');
+}
+
+function insertDeleteMenu(postid) {
+  if (document.getElementById(`deleteMenu-${postid}`)) {
+      return;
+  }
+
+  let menu = document.createElement('div');
+  menu.setAttribute('id', `deleteMenu-${postid}`);
+  menu.classList.add("fixed", "inset-0", "bg-black", "bg-opacity-50", "hidden", "flex", "items-center", "justify-center", "z-20");
+
+  menu.innerHTML = `
+      <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+          <h2 class="text-xl font-semibold text-gray-900">Delete Post</h2>
+          <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this post? This action cannot be undone.</p>
+          <div class="mt-6 flex justify-end gap-3">
+              <button class="cancelButton px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
+                  Cancel
+              </button>
+              <button class="confirmButton px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
+                  Delete
+              </button>
+          </div>
+      </div>
+  `;
+
+  document.body.appendChild(menu);
+}
+
+function createPost(postInfo){
+  let post = document.createElement('div');
+  post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white");
   
+  post.innerHTML = `
+    <div class="post-header mb-2 flex justify-between items-center">
+        <div>
+            <h3 class="font-bold">
+              <a href="${ postInfo.user.state === 'deleted' ? '#' : '../profile/' + postInfo.user.username }" 
+                  class="text-black hover:text-sky-900">
+                  ${ postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username }
+              </a>
+            </h3>
+            <span class="text-gray-500 text-sm">${ postInfo.createddate }</span>
+        </div>
+    </div>
+    <div class="post-body mb-2" id=post-content-${postInfo.postid}>
+        <p>${ postInfo.message }</p>
+      </div>
+  `;
+  
+  return post
+}
+
+function createPostOptions(post, id, needReport){
+  const postheader = post.querySelector('.post-header');
+  let options = document.createElement('div');
+  options.classList.add("flex", "items-center", "gap-2");
+  options.setAttribute('id', 'postOptions');
+  
+  if(!needReport){
+    options.innerHTML = `
+      <button type="button" onclick="toggleEditPost(${id})" class="text-gray-500 hover:text-black">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="black" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.6" d="M10.973 1.506a18.525 18.525 0 00-.497-.006A4.024 4.024 0 006.45 5.524c0 .43.095.865.199 1.205.054.18.116.356.192.527v.002a.75.75 0 01-.15.848l-4.937 4.911a.871.871 0 000 1.229.869.869 0 001.227 0L7.896 9.31a.75.75 0 01.847-.151c.17.079.35.139.529.193.34.103.774.198 1.204.198A4.024 4.024 0 0014.5 5.524c0-.177-.002-.338-.006-.483-.208.25-.438.517-.675.774-.32.345-.677.696-1.048.964-.354.257-.82.512-1.339.512-.396 0-.776-.156-1.059-.433L9.142 5.627a1.513 1.513 0 01-.432-1.06c0-.52.256-.985.514-1.34.27-.37.623-.727.97-1.046.258-.237.529-.466.78-.675zm-2.36 9.209l-4.57 4.59a2.37 2.37 0 01-3.35-3.348l.002-.001 4.591-4.568a6.887 6.887 0 01-.072-.223 5.77 5.77 0 01-.263-1.64A5.524 5.524 0 0110.476 0 12 12 0 0112 .076c.331.044.64.115.873.264a.92.92 0 01.374.45.843.843 0 01-.013.625.922.922 0 01-.241.332c-.26.257-.547.487-.829.72-.315.26-.647.535-.957.82a5.947 5.947 0 00-.771.824c-.197.27-.227.415-.227.457 0 .003 0 .006.003.008l1.211 1.211a.013.013 0 00.008.004c.043 0 .19-.032.46-.227.253-.183.532-.45.826-.767.284-.308.56-.638.82-.95.233-.28.463-.565.72-.823a.925.925 0 01.31-.235.841.841 0 01.628-.033.911.911 0 01.467.376c.15.233.22.543.262.87.047.356.075.847.075 1.522a5.524 5.524 0 01-5.524 5.525c-.631 0-1.221-.136-1.64-.263a6.969 6.969 0 01-.222-.071z"/>
+          </svg>
+      </button>
+      <form action="../posts/delete/${id}" method="POST" id="deleteForm-${id}">
+        <button type="button" onclick="openDeleteMenu(${id})" class="text-red-500 hover:text-red-700 ml-2">
+            <input type="hidden" name="_token" value= ${getCsrfToken()} />
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+        </button>
+      </form>
+    `
+  }else{
+    options.innerHTML= `
+      <button type="button" onclick="event.stopPropagation(); toggleReportForm('${id}', 'post');" class="text-gray-500 hover:text-black">
+          Report
+      </button>
+    `;
+  }
+  postheader.appendChild(options);
+  return post;
 }
 
 //stores the authentication state
@@ -27,8 +161,6 @@ function authId(){
   currentUsername = response.username;
  
 }
-
-//Create Post Helper
 
 let selectedFiles = [];
 
@@ -131,16 +263,6 @@ function toggleEditPost(postid) {
         selectedFilesEdit = []; // Reset media selection when returning to the post content view
     }
 }
-
-// Open delete confirmation menu
-function openDeleteMenu(postid) {
-    const deleteMenu = document.getElementById('deleteMenu');
-    deleteMenu.classList.remove('hidden');
-    deleteMenu.classList.add('flex');
-    html.classList.add('overflow-hidden');
-    window.selectedPostId = postid;
-}
-
 
 let selectedFilesEdit = [];  // New files selected by user (not yet submitted)
 
@@ -280,15 +402,6 @@ function removeSpecificFileEdit(postId, index) {
   }
 }
 
-
-//closes the users posts delete menu
-function closeDeleteMenu() {
-  alert("1");
-  const modal = document.getElementById('deleteMenu');
-  modal.classList.add('hidden');
-}
-
-
 //adds a event listener to a post form
 function addEventListenerToForm(form){
   form.addEventListener('submit', function (e) {
@@ -330,93 +443,6 @@ function addEventListenerToForm(form){
     }
   });
 }
-//creates the a post container with the message, username and date
-function createPost(postInfo){
-  let post = document.createElement('div');
-  post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white");
-  
-  post.innerHTML = `
-    <div class="post-header mb-2 flex justify-between items-center">
-        <div>
-            <h3 class="font-bold">
-              <a href="${ postInfo.user.state === 'deleted' ? '#' : '../profile/' + postInfo.user.username }" 
-                  class="text-black hover:text-sky-900">
-                  ${ postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username }
-              </a>
-            </h3>
-            <span class="text-gray-500 text-sm">${ postInfo.createddate }</span>
-        </div>
-    </div>
-    <div class="post-body mb-2" id=post-content-${postInfo.postid}>
-        <p>${ postInfo.message }</p>
-      </div>
-  `;
-  
-  return post
-}
-
-//creates buttons for post options and inserts them into a post. Returns the updated post
-function createPostOptions(post, id, needReport){
-  const postheader = post.querySelector('.post-header');
-  let options = document.createElement('div');
-  options.classList.add("flex", "items-center", "gap-2");
-  options.setAttribute('id', 'postOptions');
-  
-  if(!needReport){
-    options.innerHTML = `
-      <button type="button" onclick="toggleEditPost(${id})" class="text-gray-500 hover:text-black">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="black" viewBox="0 0 24 24" stroke="currentColor">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.6" d="M10.973 1.506a18.525 18.525 0 00-.497-.006A4.024 4.024 0 006.45 5.524c0 .43.095.865.199 1.205.054.18.116.356.192.527v.002a.75.75 0 01-.15.848l-4.937 4.911a.871.871 0 000 1.229.869.869 0 001.227 0L7.896 9.31a.75.75 0 01.847-.151c.17.079.35.139.529.193.34.103.774.198 1.204.198A4.024 4.024 0 0014.5 5.524c0-.177-.002-.338-.006-.483-.208.25-.438.517-.675.774-.32.345-.677.696-1.048.964-.354.257-.82.512-1.339.512-.396 0-.776-.156-1.059-.433L9.142 5.627a1.513 1.513 0 01-.432-1.06c0-.52.256-.985.514-1.34.27-.37.623-.727.97-1.046.258-.237.529-.466.78-.675zm-2.36 9.209l-4.57 4.59a2.37 2.37 0 01-3.35-3.348l.002-.001 4.591-4.568a6.887 6.887 0 01-.072-.223 5.77 5.77 0 01-.263-1.64A5.524 5.524 0 0110.476 0 12 12 0 0112 .076c.331.044.64.115.873.264a.92.92 0 01.374.45.843.843 0 01-.013.625.922.922 0 01-.241.332c-.26.257-.547.487-.829.72-.315.26-.647.535-.957.82a5.947 5.947 0 00-.771.824c-.197.27-.227.415-.227.457 0 .003 0 .006.003.008l1.211 1.211a.013.013 0 00.008.004c.043 0 .19-.032.46-.227.253-.183.532-.45.826-.767.284-.308.56-.638.82-.95.233-.28.463-.565.72-.823a.925.925 0 01.31-.235.841.841 0 01.628-.033.911.911 0 01.467.376c.15.233.22.543.262.87.047.356.075.847.075 1.522a5.524 5.524 0 01-5.524 5.525c-.631 0-1.221-.136-1.64-.263a6.969 6.969 0 01-.222-.071z"/>
-          </svg>
-      </button>
-      <form action="../posts/delete/${id}" method="POST" id="deleteForm-${id}">
-        <button type="button" onclick="openDeleteMenu(${id})" class="text-red-500 hover:text-red-700 ml-2">
-            <input type="hidden" name="_token" value= ${getCsrfToken()} />
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
-            </svg>
-        </button>
-      </form>
-    `
-  }else{
-    options.innerHTML= `
-      <button type="button" onclick="event.stopPropagation(); toggleReportForm('${id}', 'post');" class="text-gray-500 hover:text-black">
-          Report
-      </button>
-    `;
-  }
-  postheader.appendChild(options);
-  return post;
-}
-
-
-//inserts the delete menu into a post container. Returns an updated post
-function insertDeleteMenu(post){
-  const postheader = post.querySelector('.post-header');
-  let menu = document.createAttribute('div');
-  menu.setAttribute('id', 'deleteMenu');
-  menu.classList("fixed", "inset-0", "bg-black", "bg-opacity-50", "hidden", "flex", "items-center", "justify-center", "z-20");
-  
-  menu.innerHTML = `
-    <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
-        <h2 class="text-xl font-semibold text-gray-900">Delete Post</h2>
-        <p class="mt-4 text-sm text-gray-600">Are you sure you want to delete this post? This action cannot be undone.</p>
-        <div class="mt-6 flex justify-end gap-3">
-            <button id="cancelButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
-                Cancel
-            </button>
-            <button id="confirmButton" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
-                Delete
-            </button>
-        </div>
-    </div>
-  `
-  
-  postheader.appendChild(menu);
-  
-  return post;
-}
-
 
 //inserts the media (images, audio and video) of a post into a post container. Returns the updated post container
 function insertPostMedia(post, mediaArray){

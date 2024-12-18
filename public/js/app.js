@@ -1,24 +1,6 @@
 function addEventListeners() {
   document.addEventListener('DOMContentLoaded', fadeAlert);
 
-  let cancelButton = document.getElementById('cancelButton');
-
-  if(cancelButton !== null){
-    cancelButton.addEventListener('click', () => {
-      const deleteMenu = document.getElementById('deleteMenu');
-      html.classList.toggle('overflow-hidden');
-      deleteMenu.classList.add('hidden');
-    });
-  }
-
-  let confirmButton = document.getElementById('confirmButton');
-  if(confirmButton !== null){
-    confirmButton.addEventListener('click', () => {
-      const deleteForm = document.getElementById(`deleteForm-${window.selectedPostId}`);
-      deleteForm.submit();
-    });
-  }
-
   let cancelCommentButton = document.getElementById('cancelCommentButton');
 
   if(cancelCommentButton !== null){

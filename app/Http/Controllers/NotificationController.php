@@ -7,10 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
-class NotificationController extends Controller
-{
+class NotificationController extends Controller {
     public function index() {       
-        $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user'])
+        $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'follow.follower'])
             ->where('receiverid', Auth::id())
             ->orderBy('date', 'desc')
             ->paginate(10);
@@ -24,7 +23,7 @@ class NotificationController extends Controller
         });
 
         $followNotifications = $notifications->filter(function ($notification) {
-            return isset($notification->follower) && isset($notification->followee);
+            return isset($notification->follow);
         });
 
         return view('pages.notifications', compact('notifications', 'commentNotifications', 'likeNotifications', 'followNotifications'));

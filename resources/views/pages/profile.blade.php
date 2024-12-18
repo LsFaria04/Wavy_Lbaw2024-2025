@@ -97,6 +97,15 @@
                             class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
                             My Topics
                         <button>
+                            @if (Auth::user()->isadmin)
+                            <button
+                                id = "profileBan"
+                                onclick = "showBanAdminMenu({{$user->userid}}, '{{$user->state}}')"
+                                class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
+                                {{$user->state === 'suspended' ? 'Unban account' : 'Ban account'}}
+                            <button>   
+                            @endif
+                        
                         <button 
                             onclick="toggleConfirmationModal()" 
                             class="w-full px-4 py-2 text-left text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
@@ -249,4 +258,5 @@
         </div>
         @include('partials.addPostTopics')
         @include('partials.reportForm')
+        @include('partials.admin.banMenu')
     @endSection

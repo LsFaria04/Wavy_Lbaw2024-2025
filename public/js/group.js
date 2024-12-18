@@ -3,7 +3,6 @@ function addEventListeners() {
   document.addEventListener('DOMContentLoaded', switchGroupTab);
 
   document.addEventListener('click', function (e) {
-        // Find the closest element with the 'cancel-btn' class
         const cancelButton = e.target.closest('.cancel-btn');
 
         if (cancelButton) {
@@ -240,6 +239,7 @@ const buttonsG = document.querySelectorAll('.tab-btn');
 let groupTab = "group-posts"; // Default tab
 let groupId = document.getElementById('groupPage')?.dataset.groupid;
 let ownerid = document.getElementById('groupPage')?.dataset.ownerid; 
+let addPostSection = document.getElementById('addPostSection');
 
 function switchGroupTab() {
     buttonsG.forEach(button => {
