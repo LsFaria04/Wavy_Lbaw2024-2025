@@ -33,7 +33,7 @@
             </div>
         @endauth
     
-        @if(($group->visibilitypublic == true || Auth::user()->isadmin || $group->members->contains(Auth::user())))
+        @if(($group->visibilitypublic || Auth::user()->isadmin || $group->members->contains(Auth::user())))
             <nav class="flex w-full justify-around mt-4">
                 <button id="tab-posts" data-tab="group-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900 border-sky-900 text-sky-900">Posts</button>
                 <button id="tab-members" data-tab="group-members" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">Members</button>
