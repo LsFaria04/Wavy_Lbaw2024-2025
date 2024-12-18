@@ -150,8 +150,6 @@ function createLikeButton(postId, likeCount, likedByUser) {
 
 function likePost(postId,event) {
 
-  event?.stopPropagation();
-
   if(isadmin) return;
   if (userId == -1) return; 
   if (postId == null) return;
@@ -309,6 +307,7 @@ const originalFormData = {};
 
 // Toggle the edit form visibility
 function toggleEditPost(postid) {
+    event.stopPropagation();
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
     const editFormFields = editForm.querySelectorAll('input, textarea, select'); // Editable fields
@@ -601,12 +600,13 @@ function insertPostMedia(post, mediaArray){
 
 //inserts the update post form into a post container. Return the updated post container.
 function insertUpdateForm(post, id, message, media){
+  event.stopPropagation();
   let formContainer = document.createElement('div');
   formContainer.classList.add("edit-post-form", "hidden", "mt-4", "bg-white", "rounded-xl", "shadow-md", "p-4");
   formContainer.setAttribute('id',"edit-post-" + id);
   
   formContainer.innerHTML = `
-    <form action="/posts/update/${id}" method="POST" enctype="multipart/form-data"  class="flex flex-col gap-4" data-post-id = "${id}">
+    <form action="/posts/update/${id}" method="POST" enctype="multipart/form-data"  class="flex flex-col gap-4" data-post-id = "${id}" onclick="event.stopPropagation();">
         <input type="hidden" name="_token" value= ${getCsrfToken()} />
         <div class="mb-4">
             <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>

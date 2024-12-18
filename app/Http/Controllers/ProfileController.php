@@ -219,7 +219,7 @@ class ProfileController extends Controller {
         \Log::info($existingFollow);
         if ($existingFollow->state === Follow::STATE_ACCEPTED) {
             \Log::info('9');
-            return $this->unfollow($existingFollow);
+            return $this->unfollow($existingFollow->followerid, $existingFollow->followeeid);
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
             \Log::info('10');
 
@@ -241,6 +241,7 @@ class ProfileController extends Controller {
     }
     
     
+    
     private function createFollowRequest($follower, $followee) {
         $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
         \Log::info('27');
@@ -260,21 +261,35 @@ class ProfileController extends Controller {
         ]);
     }
     
-    public function unfollow(Follow $existingFollow) {
+    public function unfollow(Request $request, $userid) {
         \Log::info('15');
-    
-        Follow::where('followerid', $existingFollow->followerid)
-            ->where('followeeid', $existingFollow->followeeid)
-            ->delete();
 
-            \Log::info('16');
+        $followerId = auth()->user()->userid;
+    
+        $existingFollow = Follow::where('followerid', $followerId)
+            ->where('followeeid', $userid)
+            ->first();
+
+            \Log::info('150');
+
+        if (!$existingFollow) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Follow relationship not found.',
+            ], 404);
+        }
+        \Log::info('215');
+
+        $existingFollow->delete();
+
+        \Log::info('16');
 
         $follower = User::findOrFail($existingFollow->followerid);
 
         \Log::info($follower);
 
 
-        event(new Follow($follower->toArray(), $existingFollow->followeeid, 'unfollowed'));
+        event(new Follow($follower->toArray(), $userid, 'unfollowed'));
 
         \Log::info('31');
     
@@ -283,5 +298,4 @@ class ProfileController extends Controller {
             'status' => 'Unfollowed'
         ]);
     }
-    
 }
