@@ -83,28 +83,33 @@ function insertDeleteMenu(postid) {
   document.body.appendChild(menu);
 }
 
-function createPost(postInfo){
+function createPost(postInfo) {
   let post = document.createElement('div');
-  post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white");
+  post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
   
+  post.setAttribute(
+    "onclick",
+    `window.location.href='/posts/${postInfo.postid}'`
+  );
+
   post.innerHTML = `
     <div class="post-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">
-              <a href="${ postInfo.user.state === 'deleted' ? '#' : '../profile/' + postInfo.user.username }" 
+              <a href="${postInfo.user.state === 'deleted' ? '#' : '/profile/' + postInfo.user.username}" 
                   class="text-black hover:text-sky-900">
-                  ${ postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username }
+                  ${postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username}
               </a>
             </h3>
-            <span class="text-gray-500 text-sm">${ postInfo.createddate }</span>
+            <span class="text-gray-500 text-sm">${postInfo.createddate}</span>
         </div>
     </div>
-    <div class="post-body mb-2" id=post-content-${postInfo.postid}>
-        <p>${ postInfo.message }</p>
-      </div>
+    <div class="post-body mb-2" >
+        <p>${postInfo.message}</p>
+    </div>
   `;
-  
-  return post
+
+  return post;
 }
 
 function createLikeButton(postId, likeCount = 0, likedByUser = false) {
@@ -170,7 +175,6 @@ function likePost(postId,event) {
     } else {
         heartEmpty?.classList.remove('hidden');
         heartFilled?.classList.add('hidden');
-        heartEmpty.style.fill = 'gray-500';
         if (likeCountElement !== null) {
           likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
         }
