@@ -27,6 +27,7 @@ function deleteMenuButtons() {
       if (postId) {
         const deleteForm = document.getElementById(`deleteForm-${postId}`);
         if (deleteForm) {
+          target.disabled = true;
           deleteForm.submit(); 
         }
       }

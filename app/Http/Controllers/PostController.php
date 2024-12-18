@@ -406,7 +406,7 @@ class PostController extends Controller {
      */
     public function destroy(Post $post) {
         if (!$post) {
-            return response()->json(['success' => false, 'message' => 'Post not found.'], 404);
+            return redirect()->route('home')->with('success', 'Post already deleted!');
         }
 
         // Check if the authenticated user is authorized to delete the post
