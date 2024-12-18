@@ -40,9 +40,8 @@ function loadSearchContent(category, query){
   sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, null, insertMoreSearchResults);
 }
   
-//inserts more results in the search body
 function insertMoreSearchResults(){
-    removeLoadingCircle();//remove the circle because we already have the data
+    removeLoadingCircle();
     const searchResults = document.querySelector("#search-results");
   
     let results = JSON.parse(this.responseText);
@@ -80,7 +79,6 @@ function insertMoreSearchResults(){
   }
 }
 
-// Creates a new group container with all the needed info
 function createGroup(groupInfo) {
   let group = document.createElement('div');
   group.classList.add("group", "border-b", "border-gray-300", "p-4", "bg-white");
@@ -101,7 +99,6 @@ function createGroup(groupInfo) {
   return group;
 }
 
-//inserts more groups into and element
 function insertMoreGroups(element, groups){
   for(let i = 0; i < groups.data.length; i++){
     let group = createGroup(groups.data[i]);
@@ -126,25 +123,11 @@ function insertMorePosts(element, posts) {
 
     post = insertPostTopics(post, posts.data[i].topics);
 
-    const likeButtonHtml = createLikeButton(
-      posts.data[i].postid,
-      posts.data[i].like_count,
-      posts.data[i].liked_by_user
-    );
-    const commentButtonHtml = createCommentButton(
-      posts.data[i].postid,
-      posts.data[i].comment_count
-    );
+    const likeButtonHtml = createLikeButton(posts.data[i].postid, posts.data[i].like_count, posts.data[i].liked_by_user);
+    const commentButtonHtml = createCommentButton(posts.data[i].postid, posts.data[i].comment_count);
 
-    // Wrap buttons in a shared container
     const interactionContainer = document.createElement('div');
-    interactionContainer.classList.add(
-      'post-interactions',
-      'flex',
-      'items-center',
-      'gap-4',
-      'mt-4'
-    );
+    interactionContainer.classList.add('post-interactions', 'flex', 'items-center', 'gap-4', 'mt-4');
     interactionContainer.innerHTML = likeButtonHtml + commentButtonHtml;
 
     post.appendChild(interactionContainer);
@@ -163,7 +146,6 @@ function insertMorePosts(element, posts) {
   }
 }
 
-//creates a user container with all the necessary info
 function createUser(userInfo){
   let user = document.createElement('div');
   user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
@@ -184,7 +166,6 @@ function createUser(userInfo){
   return user;
 }
     
-//inserts more users into an element
 function insertMoreUsers(element, users){
   for(let i = 0; i < users.data.length; i++){
     let user = createUser(users.data[i]);
