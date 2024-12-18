@@ -97,7 +97,7 @@
                 
                 <span id="like-count-{{ $post->postid }}" 
                     class="ml-1 group-hover:text-red-600">
-                    {{  $post->likes_count ?? 0  ?? 0 }}
+                    {{  $post->likes_count ?? 0 }}
                 </span>            
             </button>
         </div>

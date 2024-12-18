@@ -7,6 +7,8 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use App\Events\PostComment;
+
 use App\Models\Post;
 use App\Models\User;
 use App\Models\Comment;
@@ -84,8 +86,7 @@ class CommentController extends Controller
         ]);
     }
 
-    public function store(Request $request)
-    {
+    public function store(Request $request) {
         $request->validate([
             'message' => 'required|string|max:255',
             'media.*' => 'nullable|mimes:jpeg,png,jpg,gif,mp4,avi,mov,mp3,wav,ogg|max:8192', 
@@ -128,6 +129,12 @@ class CommentController extends Controller
         } else {
             Log::warning('No media files uploaded.');
         }
+
+        $post = Post::findOrFail($postId);
+        $user = Auth::user();
+        $receiver = $post->user;
+
+        event(new PostComment($comment->message, $user, $receiver->userid));
     
         return redirect()->route('posts.show',$request->postid)->with('success', 'Comment created successfully!');
     }

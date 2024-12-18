@@ -8,8 +8,7 @@ use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
 
-class Follow implements ShouldBroadcast
-{
+class Follow implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $message;
@@ -20,7 +19,7 @@ class Follow implements ShouldBroadcast
     /**
      * Create a new event instance.
      *
-     * @param  mixed  $user
+     * @param  \App\Models\User|array  $user
      * @param  int  $receiverid
      * @param  string  $type
      */
@@ -28,11 +27,30 @@ class Follow implements ShouldBroadcast
         $this->user = $user;
         $this->receiverid = $receiverid;
         $this->type = $type;
-        
-        if ($type === 'follow') {
-            $this->message = $user->name . ' started following you.';
-        } elseif ($type === 'follow-request') {
-            $this->message = $user->name . ' sent you a follow request.';
+
+        // Generate the message based on the user and type
+        $this->message = $this->generateMessage($user, $type);
+    }
+
+    /**
+     * Generate the notification message.
+     *
+     * @param  \App\Models\User|array  $user
+     * @param  string  $type
+     * @return string
+     */
+    private function generateMessage($user, $type): string {
+        $name = is_array($user) ? $user['name'] : $user->name;
+
+        switch ($type) {
+            case 'follow':
+                return "$name started following you.";
+            case 'follow-request':
+                return "$name sent you a follow request.";
+            case 'unfollowed':
+                return "$name unfollowed you.";
+            default:
+                return "$name performed an action.";
         }
     }
 
@@ -51,8 +69,7 @@ class Follow implements ShouldBroadcast
      *
      * @return string
      */
-    public function broadcastAs() {
+    public function broadcastAs(): string {
         return 'notification-follow';  // The name of the event to bind to on the frontend
     }
-
 }

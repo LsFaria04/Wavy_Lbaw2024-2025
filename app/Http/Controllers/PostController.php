@@ -33,12 +33,12 @@ class PostController extends Controller {
                         ->paginate(10);
 
             foreach ($posts as $post) {
-                $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
-                $post->createddate = $post->createddate->diffForHumans();  // Format the created date
-            }
+                $post->liked = Auth::check() && $post->likes()->where('userid', Auth::user()->userid)->exists();
+                $post->createddate = $post->createddate->diffForHumans();
+            }                        
         } else {
             $posts = Post::with('user', 'media','topics')
-                        ->withCount('comments')  // Add the comment count
+                        ->withCount('comments')  
                         ->withCount('likes')
                         ->whereNull('groupid')
                         ->where('visibilitypublic', true)
@@ -75,7 +75,7 @@ class PostController extends Controller {
 
         if (Auth::check()) {
             $posts = Post::with('user', 'media', 'topics')
-                        ->withCount('comments')  // Add the comment count
+                        ->withCount('comments')  
                         ->withCount('likes')
                         ->whereNull('groupid')
                         ->where('userid', $user->userid)
@@ -87,7 +87,8 @@ class PostController extends Controller {
             }
         } else {
             $posts = Post::with('user', 'media', 'topics')
-                        ->withCount('comments')  // Add the comment count
+                        ->withCount('comments')  
+                        ->withCount('likes')
                         ->whereNull('groupid')
                         ->where('visibilitypublic', true)
                         ->where('userid', $user->userid)
@@ -142,7 +143,7 @@ class PostController extends Controller {
         // Get the updated like count
         $likeCount = $post->likes()->count();
 
-        event(new PostLike($postId, $user, $post->user_id));
+        event(new PostLike($postId, $user, $post->user->userid));
     
         // Return the updated like status and like count
         return response()->json([
@@ -307,8 +308,7 @@ class PostController extends Controller {
     /**
      * Updates the content of a post.
      */
-    public function update(Request $request, Post $post)
-    {
+    public function update(Request $request, Post $post) {
         // Check if the authenticated user is the owner of the post
         try { $this->authorize('edit', $post); 
         }catch (AuthorizationException $e) {

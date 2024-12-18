@@ -123,15 +123,6 @@ function insertMorePosts(element, posts) {
 
     post = insertPostTopics(post, posts.data[i].topics);
 
-    const likeButtonHtml = createLikeButton(posts.data[i].postid, posts.data[i].like_count, posts.data[i].liked_by_user);
-    const commentButtonHtml = createCommentButton(posts.data[i].postid, posts.data[i].comment_count);
-
-    const interactionContainer = document.createElement('div');
-    interactionContainer.classList.add('post-interactions', 'flex', 'items-center', 'gap-4', 'mt-4');
-    interactionContainer.innerHTML = likeButtonHtml + commentButtonHtml;
-
-    post.appendChild(interactionContainer);
-
     post = insertPostMedia(post, posts.data[i].media);
 
     if (userId == posts.data[i].user.userid || isadmin) {

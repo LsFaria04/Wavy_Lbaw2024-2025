@@ -22,18 +22,34 @@ class ProfileController extends Controller {
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');
         }
-
+    
         if ($user->getIsAdmin() && Auth::id() !== $user->userid) {
             return redirect('/home')->with('error', 'User not found.');
         }
     
-        $posts = $user->posts()->whereNull('groupid')->orderBy('createddate', 'desc')->paginate(10);
+        // Include likes_count and other relevant relationships
+        $posts = $user->posts()
+                      ->whereNull('groupid')
+                      ->orderBy('createddate', 'desc')
+                      ->withCount('likes') // Add likes_count to the query
+                      ->paginate(10);
+    
+        if (Auth::check()) {
+            foreach ($posts as $post) {
+                $post->liked = $post->likes()->where('userid', Auth::id())->exists();
+                $post->createddate = $post->createddate->diffForHumans();
+            }
+        } else {
+            foreach ($posts as $post) {
+                $post->liked = false;
+                $post->createddate = $post->createddate->diffForHumans();
+            }
+        }
+    
         $comments = [];
     
         $followStatus = 'not-following'; 
-    
         if (Auth::check() && Auth::id() !== $user->userid) {
-            // Check the follow status
             if (Follow::isFollowing(Auth::id(), $user->userid)) {
                 $followStatus = Follow::STATE_ACCEPTED;
             } elseif (Follow::isPending(Auth::id(), $user->userid)) {
@@ -42,8 +58,7 @@ class ProfileController extends Controller {
         }
     
         return view('pages.profile', compact('user', 'posts', 'comments', 'followStatus'));
-    }
-    
+    }       
 
     //gets all the data of a user and sends it as json 
     public function getProfileUserData($username) {
@@ -219,13 +234,17 @@ class ProfileController extends Controller {
         \Log::info($existingFollow);
         if ($existingFollow->state === Follow::STATE_ACCEPTED) {
             \Log::info('9');
-            return $this->unfollow($existingFollow);
+            return $this->unfollow($existingFollow->followerid, $existingFollow->followeeid);
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
             \Log::info('10');
 
             Follow::where('followerid', $existingFollow->followerid)
             ->where('followeeid', $existingFollow->followeeid)
             ->delete();
+
+            $follower = User::findOrFail($existingFollow->followerid);
+
+            event(new Follow($follower->toArray(), $existingFollow->followeeid, 'follow-request-canceled'));
 
             \Log::info('11');
             return response()->json([
@@ -237,15 +256,19 @@ class ProfileController extends Controller {
     }
     
     
+    
     private function createFollowRequest($follower, $followee) {
         $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
-    
+        \Log::info('27');
+
         Follow::create([
             'followerid' => $follower->userid,
             'followeeid' => $followee->userid,
             'state' => $status,
             'followdate' => now(),
         ]);
+
+        event(new Follow($follower->toArray(), $followee->followeeid, $status));
     
         return response()->json([
             'success' => true,
@@ -253,17 +276,41 @@ class ProfileController extends Controller {
         ]);
     }
     
-    public function unfollow(Follow $existingFollow) {
+    public function unfollow(Request $request, $userid) {
         \Log::info('15');
+
+        $followerId = auth()->user()->userid;
     
-        Follow::where('followerid', $existingFollow->followerid)
-            ->where('followeeid', $existingFollow->followeeid)
-            ->delete();
+        $existingFollow = Follow::where('followerid', $followerId)
+            ->where('followeeid', $userid)
+            ->first();
+
+            \Log::info('150');
+
+        if (!$existingFollow) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Follow relationship not found.',
+            ], 404);
+        }
+        \Log::info('215');
+
+        $existingFollow->delete();
+
+        \Log::info('16');
+
+        $follower = User::findOrFail($existingFollow->followerid);
+
+        \Log::info($follower);
+
+
+        event(new Follow($follower->toArray(), $userid, 'unfollowed'));
+
+        \Log::info('31');
     
         return response()->json([
             'success' => true,
             'status' => 'Unfollowed'
         ]);
     }
-    
 }
