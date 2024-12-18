@@ -3,7 +3,6 @@ function addEventListeners() {
   document.addEventListener('DOMContentLoaded', switchGroupTab);
 
   document.addEventListener('click', function (e) {
-        // Find the closest element with the 'cancel-btn' class
         const cancelButton = e.target.closest('.cancel-btn');
 
         if (cancelButton) {

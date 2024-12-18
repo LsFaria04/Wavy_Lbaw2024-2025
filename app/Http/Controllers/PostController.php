@@ -17,20 +17,6 @@ use App\Models\Like;
 
 class PostController extends Controller {
     /**
-     * Creates a new post.
-     */
-    public function create(Request $request) {
-    
-        Post::create([
-            'userid' => $request->userid,
-            'message' => $request->message,
-            'visibilitypublic' => $request->visibilitypublic,
-            'createddate' => $request->createddate,
-            'groupid' => $request->groupid,
-        ]);
-    }
-
-    /**
      * Gets the posts for the timeline
      */
     public function getPostsTimeline(Request $request)
@@ -415,36 +401,53 @@ class PostController extends Controller {
     /**
      * Deletes a post.
      */
+    /**
+     * Deletes a post.
+     */
     public function destroy(Post $post) {
         if (!$post) {
             return response()->json(['success' => false, 'message' => 'Post not found.'], 404);
         }
 
-        // Check if the authenticated user is the owner of the post
-        try { $this->authorize('delete', $post); 
-        }catch (AuthorizationException $e) {
+        // Check if the authenticated user is authorized to delete the post
+        try { 
+            $this->authorize('delete', $post); 
+        } catch (AuthorizationException $e) {
             if (request()->ajax()) {
                 return response()->json(['success' => false, 'message' => 'You are not authorized to delete this post.']);
             }
             return redirect()->route('home')->with('error', 'You are not authorized to delete this post.');
         }
 
+        // Delete associated media files from storage
         $mediaArray = Media::where('postid', $post->postid)->get();
-        foreach($mediaArray as $media){
-            if (Storage::exists('public/'. $media->path)){
-                Storage::delete('public/'. $media->path);
+        foreach ($mediaArray as $media) {
+            if (Storage::exists('public/' . $media->path)) {
+                Storage::delete('public/' . $media->path);
             }
         }
 
+        // Delete media entries from the database
         $post->media()->delete();
         
-        // Delete the post
+        // Delete the post itself
         $post->delete();
 
+        // Handle AJAX response
         if (request()->ajax()) {
             return response()->json(['success' => true, 'message' => 'Post deleted successfully!']);
         }
 
+        // Redirect to the group page if the post has a groupid
+        if ($post->groupid) {
+            $group = Group::where('groupid', $post->groupid)->first();
+            if ($group) {
+                return redirect()->route('group', ['groupname' => $group->groupname])->with('success', 'Post deleted successfully!');
+            }
+        }
+
+        // Redirect to home page if no group is associated
         return redirect()->route('home')->with('success', 'Post deleted successfully!');
     }
+
 }
