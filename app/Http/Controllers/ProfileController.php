@@ -227,7 +227,9 @@ class ProfileController extends Controller {
             ->where('followeeid', $existingFollow->followeeid)
             ->delete();
 
-            event(new Follow($existingFollow->follower, $existingFollow->followeeid, 'follow-request-canceled'));
+            $follower = User::findOrFail($existingFollow->followerid);
+
+            event(new Follow($follower->toArray(), $existingFollow->followeeid, 'follow-request-canceled'));
 
             \Log::info('11');
             return response()->json([
@@ -241,7 +243,8 @@ class ProfileController extends Controller {
     
     private function createFollowRequest($follower, $followee) {
         $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
-    
+        \Log::info('27');
+
         Follow::create([
             'followerid' => $follower->userid,
             'followeeid' => $followee->userid,
@@ -249,7 +252,7 @@ class ProfileController extends Controller {
             'followdate' => now(),
         ]);
 
-        event(new Follow($follower, $followee->userid, $status));
+        event(new Follow($follower->toArray(), $followee->followeeid, $status));
     
         return response()->json([
             'success' => true,
@@ -264,7 +267,16 @@ class ProfileController extends Controller {
             ->where('followeeid', $existingFollow->followeeid)
             ->delete();
 
-        event(new Follow($existingFollow->follower, $existingFollow->followeeid, 'unfollowed'));
+            \Log::info('16');
+
+        $follower = User::findOrFail($existingFollow->followerid);
+
+        \Log::info($follower);
+
+
+        event(new Follow($follower->toArray(), $existingFollow->followeeid, 'unfollowed'));
+
+        \Log::info('31');
     
         return response()->json([
             'success' => true,

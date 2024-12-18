@@ -4,19 +4,19 @@ function addEventListeners() {
         initializeNotificationTabs();
         showTab('all-notifications'); //default tab
 
-        initializePusher(receiverId);
+        initializePusher(userId);
     });
 
     window.addEventListener("scroll", infiniteScroll);
 }
 
-function initializePusher(receiverId) {
+function initializePusher(userId) {
     const pusher = new Pusher('0b3c646b9e8aeb6f4458', {
         cluster: 'eu',
         encrypted: true
     });
     
-    const channel = pusher.subscribe('private-user.' + receiverId);
+    const channel = pusher.subscribe('private-user.' + userId);
 
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {
