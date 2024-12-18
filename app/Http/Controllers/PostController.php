@@ -7,14 +7,15 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 
+use App\Events\PostLike;
+
 use App\Models\Post;
 use App\Models\Media;
 use App\Models\User;
 use App\Models\Group;
 use App\Models\Like;
 
-class PostController extends Controller
-{
+class PostController extends Controller {
     /**
      * Gets the posts for the timeline
      */
@@ -138,6 +139,8 @@ class PostController extends Controller
     
         // Get the updated like count
         $likeCount = $post->likes()->count();
+
+        event(new PostLike($postId, $user, $post->user_id));
     
         // Return the updated like status and like count
         return response()->json([

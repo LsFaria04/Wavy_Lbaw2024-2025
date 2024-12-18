@@ -3,9 +3,67 @@ function addEventListeners() {
         fadeAlert();
         initializeNotificationTabs();
         showTab('all-notifications'); //default tab
+
+        initializePusher(receiverId);
     });
 
     window.addEventListener("scroll", infiniteScroll);
+}
+
+function initializePusher(receiverId) {
+    const pusher = new Pusher('0b3c646b9e8aeb6f4458', {
+        cluster: 'eu',
+        encrypted: true
+    });
+    
+    const channel = pusher.subscribe('private-user.' + receiverId);
+
+    // Handle "like" notifications
+    channel.bind('notification-postlike', function(data) {
+        console.log(`New like notification: ${data.message}`);
+        handleNotification('likes', data.message);
+    });
+
+    // Handle "comment" notifications
+    channel.bind('notification-postcomment', function(data) {
+        console.log(`New comment notification: ${data.message}`);
+        handleNotification('comments', data.message);
+    });
+
+    // Handle "follow" notifications
+    channel.bind('notification-follow', function (data) {
+        console.log(`New follow notification: ${data.message}`);
+        const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
+        handleNotification(type, data.message);
+    });
+    
+}
+
+function handleNotification(type, message) {
+    // Update the "all-notifications" tab
+    const allNotificationsContainer = document.getElementById('all-notifications-content');
+    if (allNotificationsContainer) {
+        const notificationElement = createNotificationElement(message);
+        allNotificationsContainer.prepend(notificationElement);
+    }
+
+    // Update the specific tab for the notification type
+    const specificNotificationsContainer = document.getElementById(`${type}-content`);
+    if (specificNotificationsContainer) {
+        const notificationElement = createNotificationElement(message);
+        specificNotificationsContainer.prepend(notificationElement);
+    }
+}
+
+function createNotificationElement(message) {
+    const notificationElement = document.createElement('div');
+    notificationElement.classList.add('notification-item');
+    notificationElement.innerHTML = `
+        <div class="notification-content">
+            <p>${message}</p>
+            <span class="notification-time">${new Date().toLocaleString()}</span>
+        </div>`;
+    return notificationElement;
 }
 
 function initializeNotificationTabs() {
