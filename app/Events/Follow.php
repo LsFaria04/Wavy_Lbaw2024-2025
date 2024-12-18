@@ -12,45 +12,44 @@ class Follow implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $message;
-    public $user;
+    public $userData;
     public $receiverid;
     public $type;
 
     /**
      * Create a new event instance.
      *
-     * @param  \App\Models\User|array  $user
+     * @param  \App\Models\User  $user
      * @param  int  $receiverid
      * @param  string  $type
      */
-    public function __construct($user, $receiverid, $type = 'follow') {
-        $this->user = $user;
+    public function __construct(User $user, int $receiverid, string $type = 'follow') {
+        $this->userData = $user->toArray();
         $this->receiverid = $receiverid;
         $this->type = $type;
 
         // Generate the message based on the user and type
-        $this->message = $this->generateMessage($user, $type);
+        $this->message = $this->generateMessage($user->username, $type);
     }
 
     /**
      * Generate the notification message.
      *
-     * @param  \App\Models\User|array  $user
+     * @param  string  $username
      * @param  string  $type
      * @return string
      */
-    private function generateMessage($user, $type): string {
-        $name = is_array($user) ? $user['name'] : $user->name;
+    private function generateMessage(string $username, string $type): string {
 
         switch ($type) {
             case 'follow':
-                return "$name started following you.";
+                return "$username started following you.";
             case 'follow-request':
-                return "$name sent you a follow request.";
+                return "$username sent you a follow request.";
             case 'unfollowed':
-                return "$name unfollowed you.";
+                return "$username unfollowed you.";
             default:
-                return "$name performed an action.";
+                return "$username performed an action.";
         }
     }
 

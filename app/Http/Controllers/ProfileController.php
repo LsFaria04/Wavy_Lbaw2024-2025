@@ -280,7 +280,9 @@ class ProfileController extends Controller {
         }
         \Log::info('215');
 
-        $existingFollow->delete();
+        Follow::where('followerid', $followerId)
+            ->where('followeeid', $userid)
+            ->delete();
 
         \Log::info('16');
 
@@ -288,6 +290,7 @@ class ProfileController extends Controller {
 
         \Log::info($follower);
 
+        \Log::info('Follower type: ' . (is_object($follower) ? get_class($follower) : gettype($follower)));
 
         event(new Follow($follower->toArray(), $userid, 'unfollowed'));
 

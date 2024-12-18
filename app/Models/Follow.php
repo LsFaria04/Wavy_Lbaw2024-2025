@@ -32,6 +32,12 @@ class Follow extends Model {
 
     protected $primaryKey = ['followerid', 'followeeid'];
 
+    public function delete() {
+        return static::where('followerid', $this->followerid)
+                     ->where('followeeid', $this->followeeid)
+                     ->delete();
+    }
+
 
     public function follower() {
         return $this->belongsTo(User::class, 'followerid');
