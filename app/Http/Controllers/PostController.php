@@ -9,6 +9,8 @@ use Illuminate\Support\Facades\Log;
 
 use App\Events\PostLike;
 
+
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Media;
 use App\Models\User;
@@ -236,39 +238,56 @@ class PostController extends Controller {
 
     public function show($id)
     {
-        // Eager load user, media, and comments (with their users, media, likes, and subcomments recursively)
+        // Eager load user, media, and likes, but not comments here
         $post = Post::with([
-                'user', 
-                'media', 
-                'comments.user', 
-                'comments.media',
-                'comments.commentLikes', // Eager load commentLikes for parent comments
-                'comments.subcomments' => function ($query) {
-                    $query->with(['user', 'commentLikes', 'subcomments']); // Load subcomments recursively
+            'user',
+            'media',
+            'likes',  // Just in case you want to use likes data in the view
+        ])
+        ->withCount('comments')  // Add comments_count to the Post model
+        ->withCount('likes')     // Add likes_count to the Post model
+        ->findOrFail($id);
+    
+        // Paginate the comments for the post, this is where you retrieve paginated comments
+        $comments = Comment::where('postid', $post->postid) // Make sure to filter by the post ID
+            ->orderBy('createddate', 'desc') // Order parent comments by createddate
+            ->with([
+                'user',
+                'media',
+                'commentLikes',
+                'subcomments' => function ($subQuery) {
+                    $subQuery->orderBy('createddate', 'desc') // Order subcomments by createddate
+                        ->with(['user', 'commentLikes', 'subcomments']);
                 }
             ])
-            ->withCount('comments')  // Add comments_count to the Post model
-            ->withCount('likes')     // Add likes_count to the Post model
-            ->findOrFail($id);
+            ->paginate(10);  // This returns a LengthAwarePaginator
+    
+        $post->comments = $comments;
+    
+        // Check if the request is an AJAX request
+        if (request()->ajax()) {
+            return response()->json([
+                'data' => $comments->items(),  // Access the 'items' method of LengthAwarePaginator
+                'has_more_comments' => $comments->hasMorePages(),  // Check for more pages
+                'next_page_url' => $comments->nextPageUrl()  // Get next page URL
+            ]);
+        }
     
         // Process likes and recursively handle subcomments
         if (Auth::check()) {
             $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
-            $post->createddate = $post->createddate->diffForHumans(); // Format the created date    
-    
-            // Recursive function to process comments and their subcomments
+            $post->createddate = $post->createddate->diffForHumans();
             $this->processComments($post->comments, Auth::user()->userid);
         } else {
             $post->liked = false;
-            $post->createddate = $post->createddate->diffForHumans(); // Format the created date
-    
-            // Set liked to false for all comments and subcomments
+            $post->createddate = $post->createddate->diffForHumans();
             $this->processComments($post->comments, null);
         }
     
-        // Pass the post data to the view
         return view('pages.post', compact('post'));
     }
+    
+    
 
     private function processComments($comments, $userId)
     {

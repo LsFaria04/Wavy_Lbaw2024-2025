@@ -26,6 +26,16 @@ function addEventListeners() {
         sendAjaxRequest('get', '/api/posts?page=' + currentPage, null, insertMoreTimeline);
         loading = false;
       }
+
+      const comments = document.querySelector("#comments");
+      if((comments !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
+        currentPage++;
+        insertLoadingCircle(comments);
+        loading = true;
+        var postId = document.querySelector('input[name="postid"]').value;
+        sendAjaxRequest('get', '/api/comments/' + postId + '?page=' + currentPage, null, insertMoreCommentsPost);
+        loading = false;
+      }
   
       //actions to take place in the search page
       const searchPage = document.querySelector("#search-results");
@@ -150,6 +160,22 @@ function insertMoreTimeline(){
   insertMorePosts(timeline,posts);
 
 }
+
+//inserts more comments into the post
+function insertMoreCommentsPost(){
+  removeLoadingCircle(); //remove the circle because we already have the data
+  const comments = document.querySelector("#comments");
+  let newComments = JSON.parse(this.responseText);
+
+  console.log("olaaaaa");
+
+
+  maxPage = newComments.last_page; //used to stop send requests when maximum page is reached
+
+  insertMoreCommentsToPost(comments,newComments);
+
+}
+
 
 
 

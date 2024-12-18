@@ -146,6 +146,43 @@ function insertMorePosts(element, posts) {
   }
 }
 
+function insertMoreCommentsToPost(element, comments) {
+  for (let i = 0; i < comments.data.length; i++) {
+    if (comments.data[i].user.state === 'deleted') {
+      comments.data[i].user.username = 'Deleted User';
+    }
+
+    let comment = createComment(comments.data[i]);
+
+    if (userId == comments.data[i].user.userid || isadmin) {
+      comment = createCommentOptions(comment, comments.data[i].commentid, false);
+    } else {
+      comment = createCommentOptions(comment, comments.data[i].commentid, true);
+    }
+
+    const likeButtonHtml = createLikeButton(comments.data[i].commentid, comments.data[i].like_count, comments.data[i].liked_by_user);
+    const commentButtonHtml = createCommentButton(comments.data[i].commentid, comments.data[i].comment_count);
+
+    const interactionContainer = document.createElement('div');
+    interactionContainer.classList.add('comment-interactions', 'flex', 'items-center', 'gap-4', 'mt-4');
+    interactionContainer.innerHTML = likeButtonHtml + commentButtonHtml;
+
+    comment.appendChild(interactionContainer);
+
+    comment = insertCommentMedia(comment, comments.data[i].media);
+
+    if (userId == comments.data[i].user.userid || isadmin) {
+      insertUpdateCommentForm(comment, comments.data[i].commentid, comments.data[i].message, comments.data[i].media);
+    }
+
+    let editForm = comment.querySelector('.edit-comment-form form');
+    if (editForm !== null) {
+      addEventListenerToCommentForm(editForm);
+    }
+    element.appendChild(comment);
+  }
+}
+
 function createUser(userInfo){
   let user = document.createElement('div');
   user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
