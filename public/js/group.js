@@ -240,6 +240,7 @@ const buttonsG = document.querySelectorAll('.tab-btn');
 let groupTab = "group-posts"; // Default tab
 let groupId = document.getElementById('groupPage')?.dataset.groupid;
 let ownerid = document.getElementById('groupPage')?.dataset.ownerid; 
+let addPostSection = document.getElementById('addPostSection');
 
 function switchGroupTab() {
     buttonsG.forEach(button => {
