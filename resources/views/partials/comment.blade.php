@@ -147,7 +147,6 @@
     <div id="subComment-form-{{ $comment->commentid }}" class="addComment mt-4 p-4 bg-gray-50 rounded-xl shadow-md border hidden">
         <form id="subCommentForm" action="{{ route('comments.storeSubcomment') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
             @csrf
-            <input type="hidden" name="postid" value="{{ $post->postid }}">
             <input type="hidden" name="parent_comment_id" value="{{ $comment->commentid }}">
 
             <!-- Text Area -->
