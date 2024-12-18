@@ -34,7 +34,8 @@ function addEventListeners() {
           loading = true;
           insertLoadingCircle(searchPage);
           const query = document.querySelector('input[name="q"]').value;
-          sendAjaxRequest('get', '/search?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchCategory, null, insertMoreSearchResults);
+          console.log(filters)
+          sendAjaxRequest('post', '/api/search/filtered?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchCategory, filters, insertMoreSearchResults);
           loading = false;
       }
 

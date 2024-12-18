@@ -48,6 +48,7 @@ Route::controller(PostController::class)->group(function (){
     Route::get('api/posts/{username}', 'getUserPosts');
 });
 Route::get('api/search', [SearchController::class, 'search']);
+Route::post('api/search/filtered', [SearchController::class, 'search']);
 Route::get('api/comments/{username}', [CommentController::class, 'getUserCommentsByUsername']);
 Route::get('api/likes/{username}', [LikeController::class,'getUserLikesByUsername']);
 Route::get('api/{username}', [ProfileController::class, 'getProfileUserData']);
