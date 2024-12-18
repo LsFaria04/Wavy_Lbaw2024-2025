@@ -165,7 +165,7 @@ function likePost(postId,event) {
     if (response.liked) {
         heartEmpty.classList.add('hidden');
         heartFilled.classList.remove('hidden');
-        heartFilled.style.fill = 'red-600';
+        heartFilled.classList.add('fill-red-600', 'group-hover:fill-red-600');
         likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
         likeCountElement.classList.add('text-red-600');
     } else {
