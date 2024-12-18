@@ -288,8 +288,7 @@ class PostController extends Controller {
     /**
      * Updates the content of a post.
      */
-    public function update(Request $request, Post $post)
-    {
+    public function update(Request $request, Post $post) {
         // Check if the authenticated user is the owner of the post
         try { $this->authorize('edit', $post); 
         }catch (AuthorizationException $e) {

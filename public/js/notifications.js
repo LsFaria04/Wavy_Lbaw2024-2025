@@ -22,12 +22,14 @@ function initializePusher(receiverId) {
     channel.bind('notification-postlike', function(data) {
         console.log(`New like notification: ${data.message}`);
         handleNotification('likes', data.message);
+        showPopupNotification(data.message);
     });
 
     // Handle "comment" notifications
     channel.bind('notification-postcomment', function(data) {
         console.log(`New comment notification: ${data.message}`);
         handleNotification('comments', data.message);
+        showPopupNotification(data.message);
     });
 
     // Handle "follow" notifications
@@ -35,6 +37,7 @@ function initializePusher(receiverId) {
         console.log(`New follow notification: ${data.message}`);
         const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
         handleNotification(type, data.message);
+        showPopupNotification(data.message);
     });
     
 }
@@ -137,5 +140,39 @@ function insertMoreNotifications() {
         console.error("Failed to load notifications:", error);
     }
 }
+
+function showPopupNotification(message) {
+    const popup = document.createElement('div');
+    popup.classList.add('popup-notification');
+    popup.innerHTML = `
+        <div class="popup-content">
+            <p>${message}</p>
+        </div>
+    `;
+
+    popup.style.position = 'fixed';
+    popup.style.bottom = '20px';
+    popup.style.left = '50%';
+    popup.style.transform = 'translateX(-50%)';
+    popup.style.backgroundColor = '#333';
+    popup.style.color = '#fff';
+    popup.style.padding = '10px 20px';
+    popup.style.borderRadius = '5px';
+    popup.style.zIndex = '9999';
+    popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
+    popup.style.opacity = '1';
+    popup.style.transition = 'opacity 0.5s ease-in-out';
+
+    document.body.appendChild(popup);
+
+    // Fade out and remove the popup after 5 seconds
+    setTimeout(() => {
+        popup.style.opacity = '0';
+        setTimeout(() => {
+            popup.remove();
+        }, 500); // Wait for the fade-out transition to finish
+    }, 5000); // Remove after 5 seconds
+}
+
 
 addEventListeners();

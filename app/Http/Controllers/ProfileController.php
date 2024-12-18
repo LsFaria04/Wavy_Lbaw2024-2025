@@ -227,6 +227,8 @@ class ProfileController extends Controller {
             ->where('followeeid', $existingFollow->followeeid)
             ->delete();
 
+            event(new Follow($existingFollow->follower, $existingFollow->followeeid, 'follow-request-canceled'));
+
             \Log::info('11');
             return response()->json([
                 'success' => true,
@@ -246,6 +248,8 @@ class ProfileController extends Controller {
             'state' => $status,
             'followdate' => now(),
         ]);
+
+        event(new Follow($follower, $followee->userid, $status));
     
         return response()->json([
             'success' => true,
@@ -259,6 +263,8 @@ class ProfileController extends Controller {
         Follow::where('followerid', $existingFollow->followerid)
             ->where('followeeid', $existingFollow->followeeid)
             ->delete();
+
+        event(new Follow($existingFollow->follower, $existingFollow->followeeid, 'unfollowed'));
     
         return response()->json([
             'success' => true,

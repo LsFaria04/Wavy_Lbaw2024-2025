@@ -2,6 +2,7 @@
 
 namespace App\Events;
 
+
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\InteractsWithSockets;
@@ -20,7 +21,7 @@ class Follow implements ShouldBroadcast
     /**
      * Create a new event instance.
      *
-     * @param  mixed  $user
+     * @param  \App\Models\User  $user
      * @param  int  $receiverid
      * @param  string  $type
      */
@@ -33,6 +34,8 @@ class Follow implements ShouldBroadcast
             $this->message = $user->name . ' started following you.';
         } elseif ($type === 'follow-request') {
             $this->message = $user->name . ' sent you a follow request.';
+        } elseif ($type === 'unfollowed') {
+            $this->message = $user->name . ' unfollowed you.';
         }
     }
 
