@@ -213,7 +213,17 @@ function handleBan(){
     if(response.response === '200'){
       createAlert(messageContainer, response.message,false);
       const row = document.querySelector('#User-' + window.userBan + ' .userState');
-      if(row.innerHTML === "suspended"){
+      if(userState !== null){
+        //ban was made from the profile page
+        document.getElementById('profileBan').innerHTML=`${userState === "suspended" ? "Ban account" : "Unban account"}`
+        if(userState === "suspended"){
+          userState = "active";
+        }
+        else{
+          userState = "suspended";
+        }
+      }
+      else if(row.innerHTML === "suspended"){
         row.innerHTML = "active";
         document.querySelector('#User-' + window.userBan + ' .banButton').innerHTML = 'Ban';
       }
@@ -380,11 +390,29 @@ function toggleReasonDetails(reportid){
     window.elementToDelete = elementId;
   }
 
-  function showBanAdminMenu(elementId){
+  let userState = null;
+  function showBanAdminMenu(elementId, state){
     let banMenu = document.getElementById('banMenuAdmin');
 
     const row = document.querySelector('#User-' + elementId + ' .userState');
-      if(row.innerHTML === "suspended"){
+      if(row === null){
+        //row is null when the admin is banning from the user profile
+        if(userState === null){
+          userState = state;
+        }
+        if(userState === "suspended"){
+          
+          document.querySelector('#banMenuAdmin h2').innerHTML = "Unban User";
+          document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to unban this user?"
+          document.getElementById('confirmBanButtonAdmin').innerHTML = "Unban";
+        }
+        else{
+          document.querySelector('#banMenuAdmin h2').innerHTML = "Ban User";
+          document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to ban this user?"
+          document.getElementById('confirmBanButtonAdmin').innerHTML = "Ban";
+        }
+      }
+      else if(row.innerHTML === "suspended"){
         document.querySelector('#banMenuAdmin h2').innerHTML = "Unban User";
         document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to unban this user?"
         document.getElementById('confirmBanButtonAdmin').innerHTML = "Unban";
@@ -399,6 +427,7 @@ function toggleReasonDetails(reportid){
     banMenu.classList.toggle('flex');
     window.userBan = elementId;
   }
+
 
 //Admin content insertion and creation ----------------------------------------------------------------------------------------
 
