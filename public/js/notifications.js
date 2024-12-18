@@ -10,6 +10,8 @@ function addEventListeners() {
     window.addEventListener("scroll", infiniteScroll);
 }
 
+
+
 function initializePusher(receiverId) {
     const pusher = new Pusher('0b3c646b9e8aeb6f4458', {
         cluster: 'eu',

@@ -382,8 +382,8 @@ function toggleReasonDetails(reportid){
   
   function showDeleteAdminMenu(elementId, category){
     let deleteMenu = document.getElementById('deleteMenuAdmin');
-    deleteMenu.querySelector('h2').innerHTML = `Delete ${category == 'topic' ? 'Topic' : category == 'report' ? 'Report' : 'User'}`;
-    deleteMenu.querySelector('p').innerHTML = `Are you sure you want to delete this ${category == 'topics' ? 'topic' : category == 'report' ? 'report' : 'user'}? This action cannot be undone.`;
+    deleteMenu.querySelector('h2').innerHTML = `Delete ${category === 'topics' ? 'Topic' : category === 'reports' ? 'Reports' : 'User'}`;
+    deleteMenu.querySelector('p').innerHTML = `Are you sure you want to delete this ${category == 'topics' ? 'topic' : category == 'reports' ? 'report' : 'user'}? This action cannot be undone.`;
     deleteMenu.classList.toggle('hidden');
     deleteMenu.classList.toggle('flex');
     window.categoryDelete = category;
