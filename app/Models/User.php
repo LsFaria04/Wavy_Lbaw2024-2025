@@ -9,6 +9,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class User extends Authenticatable {
     use HasApiTokens, HasFactory, Notifiable;
@@ -111,6 +112,14 @@ class User extends Authenticatable {
     
     public function isPrivate() {
         return !$this->visibilitypublic;
+    }
+
+    /**
+     * Get the profile picture for the user.
+     */
+    public function profilePicture(): HasOne
+    {
+        return $this->hasOne(Media::class, 'userid');
     }
 
 }
