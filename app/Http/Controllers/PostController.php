@@ -38,7 +38,7 @@ class PostController extends Controller
         if (Auth::check()) {
             // Include the comment count
             $posts = Post::with('user', 'media','topics')
-                        ->withCount('comments')  // This will add comments_count to the Post model~
+                        ->withCount('comments')  // This will add comments_count to the Post model
                         ->withCount('likes')
                         ->whereNull('groupid')
                         ->orderBy('createddate', 'desc')
