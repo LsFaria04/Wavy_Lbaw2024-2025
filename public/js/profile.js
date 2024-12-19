@@ -716,7 +716,7 @@ function cancelPendingRequest(userId, csrfToken, followButton) {
 
 //Funtion that displays a preview of the images that are going to be uploaded
 function imageCropper(){
-  document.getElementById('profilePic').addEventListener('change', function(event) {
+  document.getElementById('profilePic')?.addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
         const reader = new FileReader();
@@ -732,7 +732,7 @@ function imageCropper(){
         
     }
   });
-  document.getElementById('bannerPic').addEventListener('change', function(event) {
+  document.getElementById('bannerPic')?.addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
         const croppModal = document.getElementById("croppModal");
