@@ -1059,6 +1059,6 @@ VALUES
     ('images/8QYuyrGxDqEHQmrrOeosTuHhgz5wKpX23kXqP0ZY.jpg', NULL, 25, NULL),
     ('images/profile11.jpg', NULL, NULL, 11),
     ('images/banner11.jpg', NULL, NULL, 11),
-    ('images/profile7.jpg', NULL, NULL, 11),
+    ('images/profile7.jpg', NULL, NULL, 7),
     ('images/W0Iq8td3d876eBLr9oYc5qlJy2SrJ6aJDPuqeWYN.jpg', 27, NULL, NULL),
     ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL);
