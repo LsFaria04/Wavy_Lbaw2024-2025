@@ -62,8 +62,49 @@ function addEventListeners() {
     const alert = document.createElement('div');
     alert.classList.add("self-center", "alert", "rounded","w-full", "max-w-full", "p-4", isError ? "bg-red-100" : "bg-green-100" , isError ?  "text-red-800" : "text-green-800" , "border", "shadow-md", "text-center", isError ? "border-red-300" : "border-green-300", "z-10");
     alert.innerHTML = message;
+
+    while(element.firstChild !== null){
+      element.firstChild.remove();
+    }
+    
     element.appendChild(alert);
     setTimeout(() => { alert.remove()}, 3000);
+  }
+
+
+
+  //Emails related functions -----------------------------------------------------------------------------
+
+
+  function contactEmail(){
+    const email = document.getElementById('email');
+    const name = document.getElementById('name');
+    const message = document.getElementById('message');
+    const sendButton = document.getElementById('submit');
+    insertLoadingCircle(sendButton);
+    //resize the loading circle
+    document.querySelector('#loading_circle').classList.remove('h-8');
+    document.querySelector('#loading_circle').classList.remove('w-8');
+    document.querySelector('#loading_circle').classList.add('h-6');
+    document.querySelector('#loading_circle').classList.add('w-6');
+
+    sendAjaxRequest('post', '/api/contact/submit', {'email': email.value, 'name' : name.value, 'message' : message.value}, contactEmailSentConfirmation);
+
+  }
+
+  function contactEmailSentConfirmation(){
+    removeLoadingCircle();
+    const response = JSON.parse(this.responseText);
+    const messageDiv = document.getElementById('messageContainer');
+
+    if(response.response !== '200'){
+      createAlert(messageDiv, response.message, true);
+    }
+    else{
+      createAlert(messageDiv, response.message, false);
+
+    }
+
   }
 
   //Sends the email from the account that wants to recover the password
@@ -137,6 +178,10 @@ function addEventListeners() {
 
   }
 
+
+//Reports ----------------------------------------------------------------------------------------
+
+
 //hides/shoes the report form when the user clicks in the report butto
   function toggleReportForm(contentId, category){
     const reportModal = document.getElementById('reportFormModal');
@@ -190,6 +235,11 @@ function addEventListeners() {
     }
 
   }
+
+
+
+  //Images -------------------------------------------------------------------------------
+
 
   //toggles the images details when a user clicks on an image
   function toggleImageDetails(src){
