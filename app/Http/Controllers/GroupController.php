@@ -16,7 +16,7 @@ class GroupController extends Controller
 {
     public function store(Request $request) {
         $request->validate([
-            'groupname' => 'required|string|max:255',
+            'groupname' => 'required|string|max:255|unique:groups,groupname',
             'description' => 'nullable|string',
             'visibilitypublic' => 'required|boolean',
         ]);
@@ -191,14 +191,22 @@ class GroupController extends Controller
     
         $userid = $request->input('userid');
     
+        // Check if the user is already a member
         if ($group->members()->where('group_membership.userid', $userid)->exists()) {
             return response()->json(['status' => 'error', 'message' => 'User is already a member.'], 400);
         }
     
+        // Check if the user has a pending join request
+        if (JoinGroupRequest::where('groupid', $groupid)->where('userid', $userid)->exists()) {
+            return response()->json(['status' => 'error', 'message' => 'User has already requested to join this group.'], 400);
+        }
+    
+        // Check if the user is already invited
         if (GroupInvitation::where('groupid', $groupid)->where('group_invitation.userid', $userid)->exists()) {
             return response()->json(['status' => 'error', 'message' => 'User is already invited.'], 400);
         }
     
+        // Create the invitation
         GroupInvitation::create([
             'groupid' => $groupid,
             'userid' => $userid,
@@ -268,6 +276,11 @@ class GroupController extends Controller
 
         if ($existingRequest) {
             return response()->json(['message' => 'You already have a pending join request.'], 400);
+        }
+
+        // Check if the user has a pending join request
+        if (GroupInvitation::where('groupid', $groupid)->where('userid', $user->userid)->exists()) {
+            return response()->json(['status' => 'error', 'message' => 'User has already been invited to join this group.'], 400);
         }
 
         // Create the join request
