@@ -34,7 +34,7 @@ class CommentController extends Controller
      */
     function getUserCommentsByUsername(Request $request, $username){
         $user = User::where('username', $username)->firstOrFail();
-        $comments = Comment::with('post', 'post.user','parentComment', 'parentComment.user', 'user')->withCount('likes')->where('userid', $user->userid)->orderBy('createddate', 'desc')->paginate(10);
+        $comments = Comment::with('post', 'post.user','parentComment', 'parentComment.user', 'user', 'user.profilePicture')->withCount('likes')->where('userid', $user->userid)->orderBy('createddate', 'desc')->paginate(10);
 
         for($i = 0;$i < sizeof($comments); $i++){
             $comments[$i]->createddate = $comments[$i]->createddate->diffForHumans();
