@@ -205,6 +205,7 @@
             @endforeach
             @include('partials.addPostTopics')
             @include('partials.reportForm')
+            @include('partials.imageDetail')
         @endif
     </div>
 </div>

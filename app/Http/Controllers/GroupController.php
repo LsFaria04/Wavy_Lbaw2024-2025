@@ -43,15 +43,32 @@ class GroupController extends Controller
      */
     public function show($name) {
         $group = Group::where('groupname', $name)->first();
-
+    
         if (!$group) {
             return redirect('/home')->withErrors(['Group not found.']);
         }
-
-        $posts = $group->posts()->orderBy('createddate', 'desc')->paginate(10);
-
+    
+        $posts = $group->posts()
+                       ->with('user', 'media', 'topics') // Load necessary relationships
+                       ->withCount('likes') 
+                       ->withCount('comments')
+                       ->orderBy('createddate', 'desc')
+                       ->paginate(10);
+    
+        if (Auth::check()) {
+            foreach ($posts as $post) {
+                $post->liked = $post->likes()->where('userid', Auth::id())->exists();
+                $post->createddate = $post->createddate->diffForHumans();
+            }
+        } else {
+            foreach ($posts as $post) {
+                $post->liked = false; // User is not logged in, can't like posts
+                $post->createddate = $post->createddate->diffForHumans();
+            }
+        }
+    
         return view('pages.group', compact('group', 'posts'));
-    }
+    }    
 
     /**
      * Get all the data of a group and send it as JSON.
@@ -73,21 +90,34 @@ class GroupController extends Controller
      */
     public function getGroupPosts($id) {
         $group = Group::findOrFail($id);
-
+    
         if (!$group->visibilitypublic &&
             !$group->members->contains(Auth::id()) &&
             $group->ownerid !== Auth::id() && !Auth::user()->isadmin) {
             return response()->json(['error' => 'Unauthorized'], 403);
         }
-
-        $posts = $group->posts()->with('user', 'media','topics')->orderBy('createddate', 'desc')->paginate(10);
-
-        for($i = 0;$i < sizeof($posts); $i++){
-            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+    
+        $posts = $group->posts()
+                       ->with('user', 'media', 'topics') 
+                       ->withCount('likes') 
+                       ->withCount('comments')
+                       ->orderBy('createddate', 'desc')
+                       ->paginate(10);
+    
+        if (Auth::check()) {
+            foreach ($posts as $post) {
+                $post->liked = $post->likes()->where('userid', Auth::id())->exists();
+                $post->createddate = $post->createddate->diffForHumans();
+            }
+        } else {
+            foreach ($posts as $post) {
+                $post->liked = false; // User is not logged in, can't like posts
+                $post->createddate = $post->createddate->diffForHumans();
+            }
         }
-
+    
         return response()->json($posts);
-    }
+    }    
 
     /**
      * Get paginated members for a specific group.

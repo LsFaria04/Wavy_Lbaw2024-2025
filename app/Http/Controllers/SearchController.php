@@ -7,6 +7,7 @@ use App\Models\Post;
 use App\Models\User;
 use App\Models\Group;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SearchController extends Controller
 {   
@@ -38,65 +39,124 @@ class SearchController extends Controller
             //Performs the DB query according to the search category
             switch ($category) {
                 case 'posts':
-                    if(Auth::check()){
-                        if(Auth::user()->isadmin){
-                            $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                            ->orderBy('createddate', 'desc')
-                            ->paginate(10);
-                            for($i = 0;$i < sizeof($posts); $i++) {
-                                $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-                            }
-                            
+                    $topics = [];
+                    if (isset($request->topics)) {
+                        $topics = explode(',', $request->topics);
+                        $topics = array_map('intval', $topics);
+                    }
+                    Log::info($request);
+                
+                    // Build the query for posts
+                    $postsQuery = Post::with('user', 'media', 'topics')
+                        ->withCount('likes')
+                        ->withCount('comments')
+                        ->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery]);
+                
+                    if (Auth::check()) {
+                        if (!Auth::user()->isadmin) {
+                            $postsQuery->where('visibilitypublic', true); // Normal user constraint
                         }
-                        else {
-                            $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                            ->where('visibilitypublic', true)
-                            ->orderBy('createddate', 'desc')
-                            ->paginate(10);
-                            for($i = 0;$i < sizeof($posts); $i++) {
-                                $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-                            }
+                
+                        if (!empty($topics)) {
+                            $postsQuery->whereHas('topics', function ($dbquery) use ($topics) {
+                                $dbquery->whereIn('topics.topicid', $topics);
+                            });
+                        }
+                    } else {
+                        $postsQuery->where('visibilitypublic', true); // Constraint for unauthenticated users
+                
+                        if (!empty($topics)) {
+                            $postsQuery->whereHas('topics', function ($dbquery) use ($topics) {
+                                $dbquery->whereIn('topics.topicid', $topics);
+                            });
                         }
                     }
-
-                    else {
-                        $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                        ->where('visibilitypublic', true)
-                        ->orderBy('createddate', 'desc')
-                        ->paginate(10);
-                        for($i = 0;$i < sizeof($posts); $i++) {
-                            $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
+                
+                    $posts = $postsQuery->orderBy('createddate', 'desc')->paginate(10);
+                
+                    foreach ($posts as $post) {
+                        if (Auth::check()) {
+                            $post->liked = $post->likes()->where('userid', Auth::id())->exists();
+                        } else {
+                            $post->liked = false; // User is not authenticated
                         }
+                        $post->createddate = $post->createddate->diffForHumans();
                     }
-                    break;
+                    break;                
 
                 case 'users':
-
+                    $visibility = null;
+                    if(isset($request->visibilityPublic)){
+                        $visibility = $request->visibilityPublic;
+                    }
+                   
                     if(Auth::check()) {
-                        $users = User::where(function($query) use ($sanitizedQuery) {
-                            $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                                  ->orWhere('username', $sanitizedQuery);
-                        })
-                        ->where('state', '<>', 'deleted')
-                        ->where('isadmin', false)
-                        ->paginate(10);
+                        if($visibility === null){
+                            //no filter
+                            
+                            $users = User::where(function($query) use ($sanitizedQuery) {
+                                $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                                    ->orWhere('username', $sanitizedQuery);
+                            })
+                            ->where('state', '<>', 'deleted')
+                            ->where('isadmin', false)
+                            ->paginate(10);
+                        }
+                        else{
+                            //with filter
+                            $users = User::where(function($query) use ($sanitizedQuery) {
+                                $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                                    ->orWhere('username', $sanitizedQuery);
+                            })
+                            ->where('state', '<>', 'deleted')
+                            ->where('visibilitypublic', $visibility)
+                            ->where('isadmin', false)
+                            ->paginate(10);
+                        }
                     }
 
                     else {
-                        $users = User::where(function($query) use ($sanitizedQuery) {
-                            $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                                  ->orWhere('username', $sanitizedQuery);
-                        })
-                        ->where('visibilitypublic', true)
-                        ->where('state', '<>', 'deleted')
-                        ->where('isadmin', false)
-                        ->paginate(10);
+                        if($visibility === null){
+                            //no filter
+                            $users = User::where(function($query) use ($sanitizedQuery) {
+                                $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                                    ->orWhere('username', $sanitizedQuery);
+                            })
+                            ->where('visibilitypublic', true)
+                            ->where('state', '<>', 'deleted')
+                            ->where('isadmin', false)
+                            ->paginate(10);
+                        }
+                        else{
+                            //with filter
+                            $users = User::where(function($query) use ($sanitizedQuery) {
+                                $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                                    ->orWhere('username', $sanitizedQuery);
+                            })
+                            ->where('visibilitypublic', true)
+                            ->where('state', '<>', 'deleted')
+                            ->where('visibilitypublic', $visibility)
+                            ->where('isadmin', false)
+                            ->paginate(10);
+                        }
+
                     }
                     break;
 
                 case 'groups':
-                    $groups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                        ->paginate(10);
+                    $visibility = null;
+                    if(isset($request->visibilityPublic)){
+                        $visibility = $request->visibilityPublic;
+                    }
+                    if($visibility === null){
+                        $groups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            ->paginate(10);
+                    }
+                    else{
+                        $groups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
+                            ->where('visibilitypublic', $visibility)
+                            ->paginate(10);
+                    }
                     break;
                 default:
                     $posts = Post::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])

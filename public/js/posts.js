@@ -84,6 +84,8 @@ function insertDeleteMenu(postid) {
 }
 
 function createPost(postInfo) {
+  let likeCount = postInfo.likes_count ?? 0; 
+  let commentCount = postInfo.comments_count ?? 0;
   let post = document.createElement('div');
   post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
   
@@ -104,12 +106,12 @@ function createPost(postInfo) {
               <span class="text-gray-500 text-sm">${postInfo.createddate}</span>
           </div>
       </div>
-      <div class="post-body mb-2" >
+      <div class="post-body mb-2" id="post-content-${postInfo.postid}">
           <p>${postInfo.message}</p>
       </div>
       <div class="post-interactions flex items-center gap-4 mt-4">
-          ${createLikeButton(postInfo.postid, postInfo.likes_count, postInfo.liked)}
-          ${createCommentButton(postInfo.postid, postInfo.comments_count)}
+          ${createLikeButton(postInfo.postid, likeCount, postInfo.liked)}
+          ${createCommentButton(postInfo.postid, commentCount)}
       </div>
   `;
 
@@ -548,6 +550,7 @@ function addEventListenerToForm(form){
 function insertPostMedia(post, mediaArray){
   const postbody = post.querySelector('.post-body');
   let mediaContainer = document.createElement('div');
+  mediaContainer.setAttribute('onclick','event.stopPropagation();');
   mediaContainer.classList.add("post-media", "mt-4", "grid", "grid-cols-2", "gap-4");
   
   for(let i = 0; i < mediaArray.length; i++){
@@ -558,9 +561,13 @@ function insertPostMedia(post, mediaArray){
   
       
       if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)){
-        newMedia.setAttribute('alt', 'Image');
-        newMedia.setAttribute('src', "/storage/" + media.path);
-        newMedia.classList.add("max-w-full", "max-h-96", "object-cover", "rounded-md", "mb-2", "mx-auto");
+        const imageDetailButton = document.createElement('button');
+        imageDetailButton.setAttribute('onclick', `toggleImageDetails('${'/storage/' + media.path}')`);
+        imageDetailButton.innerHTML = `
+          <img src="${'/storage/' + media.path}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto ">
+        `;
+        mediaContainer.appendChild(imageDetailButton);
+        continue;
       }
   
       else if(['mp4', 'avi', 'mov'].includes(fileExtension)){
@@ -600,66 +607,81 @@ function insertPostMedia(post, mediaArray){
   return post;
 }
 
-
 //inserts the update post form into a post container. Return the updated post container.
-function insertUpdateForm(post, id, message, media){
+function insertUpdateForm(post, id, message, media, topics) {
   event.stopPropagation();
   let formContainer = document.createElement('div');
   formContainer.classList.add("edit-post-form", "hidden", "mt-4", "bg-white", "rounded-xl", "shadow-md", "p-4");
-  formContainer.setAttribute('id',"edit-post-" + id);
-  
+  formContainer.setAttribute('id', "edit-post-" + id);
+
   formContainer.innerHTML = `
-    <form action="/posts/update/${id}" method="POST" enctype="multipart/form-data"  class="flex flex-col gap-4" data-post-id = "${id}" onclick="event.stopPropagation();">
-        <input type="hidden" name="_token" value= ${getCsrfToken()} />
+    <form action="/posts/update/${id}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4" data-post-id="${id}" onclick="event.stopPropagation();">
+        <input type="hidden" name="_token" value=${getCsrfToken()} />
         <div class="mb-4">
             <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
-            <textarea name="message" rows="2" class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" placeholder="Edit your message">${ message}</textarea>
+            <textarea name="message" rows="2" class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" placeholder="Edit your message">${message}</textarea>
         </div>
-  
+
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700">Edit Media</label>
-  
-              <label for="image-${id }" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2">
-                  <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
-                      <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                  </svg>
-                  <span>Attach new file</span>
-              </label>
-          
-              <div id="fileDisplay-${id}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 ${ media.length == 0 ? 'hidden' : '' }">
-              </div>
-              <input type="file" name="media[]" id="image-${ id }" class="hidden" onchange="updateFileNameEdit('${id }')" multiple>
-              <input type="hidden" name="remove_media" id="removeMedia-${id }" value="[]">
+            <label for="image-${id}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                    <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span>Attach new file</span>
+            </label>
+            <div id="fileDisplay-${id}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 ${media.length === 0 ? 'hidden' : ''}"></div>
+            <input type="file" name="media[]" id="image-${id}" class="hidden" onchange="updateFileNameEdit('${id}')" multiple>
+            <input type="hidden" name="remove_media" id="removeMedia-${id}" value="[]">
         </div>
-  
+
+        <div class="mb-4">
+            <label class="block text-sm font-medium text-gray-700">Edit Topics</label>
+            <label for="topic-${id}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                    <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                </svg>
+                <span>Add new topic</span>
+            </label>
+            <div id="topicDisplay-${id}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 ${topics.length === 0 ? 'hidden' : ''}">
+            </div>
+            <button type="button" class="hidden" id="topic-${id}" onclick="toggleAddPostTopics(${id}, true)"></button>
+            <input type="hidden" id="topicInput-${id}" class="topicInput" name="topics[]" value="[]" multiple>
+            <input type="hidden" name="remove_topics[]" id="removeTopics-${id}" class="topicRemove" value="[]">
+        </div>
+
         <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Update</button>
     </form>
   `;
-  
-  
-  const fileDisplay = formContainer.querySelector('#fileDisplay-' + id);
-  for(let i = 0; i < media.length; i++){
+
+  // Add existing media items
+  const fileDisplay = formContainer.querySelector(`#fileDisplay-${id}`);
+  media.forEach(mediaItem => {
     let mediaRemove = document.createElement('div');
     mediaRemove.classList.add("flex", "items-center", "gap-2");
-    mediaRemove.setAttribute('id', 'file-' + media[i].mediaid);
-  
+    mediaRemove.setAttribute('id', `file-${mediaItem.mediaid}`);
     mediaRemove.innerHTML = `
-      <span class="text-sm text-gray-500">${media[i].path.split('/')[1]}</span>
-      <button type="button" onclick="removeFileEdit('${id}', '${ media[i].mediaid }')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+      <span class="text-sm text-gray-500">${mediaItem.path.split('/')[1]}</span>
+      <button type="button" onclick="removeFileEdit('${id}', '${mediaItem.mediaid}')" class="text-sm text-red-500 hover:text-red-700">Remove</button>
     `;
-  
-  
     fileDisplay.appendChild(mediaRemove);
-  }
-  
-  const newFilesSection = document.createElement('div');
-  newFilesSection.classList.add("flex-col", "gap-2");
-  newFilesSection.setAttribute('id', 'newFiles-' + id);
-  fileDisplay.appendChild(newFilesSection);
-  
+  });
+
+  // Add existing topics
+  const topicDisplay = formContainer.querySelector(`#topicDisplay-${id}`);
+  topics.forEach(topic => {
+    let topicDiv = document.createElement('div');
+    topicDiv.classList.add("flex", "items-center", "gap-2");
+    topicDiv.setAttribute('id', `post-${id}Topic-${topic.topicid}`);
+    topicDiv.innerHTML = `
+      <span class="text-sm text-gray-500">${topic.topicname}</span>
+      <button type="button" onclick="addToDeleteTopic(${topic.topicid}, ${id})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+    `;
+    topicDisplay.appendChild(topicDiv);
+  });
+
   post.appendChild(formContainer);
-  
-  return post
+  return post;
 }
 
 //inserts the topics into the posts

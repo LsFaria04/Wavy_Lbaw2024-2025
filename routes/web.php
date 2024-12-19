@@ -51,6 +51,7 @@ Route::controller(PostController::class)->group(function (){
     Route::get('api/comments/post/{id}', 'show');
 });
 Route::get('api/search', [SearchController::class, 'search']);
+Route::post('api/search/filtered', [SearchController::class, 'search']);
 Route::get('api/comments/{username}', [CommentController::class, 'getUserCommentsByUsername']);
 Route::get('api/likes/{username}', [LikeController::class,'getUserLikesByUsername']);
 Route::get('api/{username}', [ProfileController::class, 'getProfileUserData']);
@@ -173,15 +174,22 @@ Route::view('/features', 'pages.features')->name('features');
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
 
 //Pusher
+// Pusher Authentication Route for Public Channels
+Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
+    return response()->json(['auth' => '']);
+})->name('pusher.auth');
+
+//Pusher Authentication Route for Public Channels Private Channels
+/*
 Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
     if (auth()->check()) {
-        Log::info('User is authenticated:', ['user' => auth()->user()]);
+        return Broadcast::auth($request);
     } else {
-        Log::warning('User is not authenticated');
+        return response()->json(['error' => 'Unauthorized'], 403);
     }
-
-    return Broadcast::auth($request);
 })->middleware('auth')->name('pusher.auth');
+
+*/
 
 
 

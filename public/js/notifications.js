@@ -5,9 +5,22 @@ function addEventListeners() {
         showTab('all-notifications'); //default tab
 
         initializePusher(userId);
+
+        hideNotificationDotIfOnPage();
     });
 
-    window.addEventListener("scroll", infiniteScroll);
+    window.addEventListener('load', hideNotificationDotIfOnPage);
+}
+
+function triggerRedDotBlinking() {
+    const redDot = document.getElementById('notification-dot');
+    
+    if (redDot) {
+        console.log("Red dot is toggling visibility");
+        redDot.classList.toggle('hidden');
+    } else {
+        console.log("Red dot element not found!");
+    }
 }
 
 function initializePusher(userId) {
@@ -15,14 +28,16 @@ function initializePusher(userId) {
         cluster: 'eu',
         encrypted: true
     });
-    
-    const channel = pusher.subscribe('private-user.' + userId);
+
+    const channel = pusher.subscribe('public-user.');
+
+    //const channel = pusher.subscribe('private-user.' + userId);
 
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {
-        console.log(`New like notification: ${data.message}`);
+        console.log('Received like notification:', data);
         handleNotification('likes', data.message);
-        showPopupNotification(data.message);
+        triggerRedDotBlinking();
     });
 
     // Handle "comment" notifications
@@ -30,6 +45,7 @@ function initializePusher(userId) {
         console.log(`New comment notification: ${data.message}`);
         handleNotification('comments', data.message);
         showPopupNotification(data.message);
+        triggerRedDotBlinking();
     });
 
     // Handle "follow" notifications
@@ -38,6 +54,7 @@ function initializePusher(userId) {
         const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
         handleNotification(type, data.message);
         showPopupNotification(data.message);
+        triggerRedDotBlinking();
     });
     
 }
@@ -141,38 +158,15 @@ function insertMoreNotifications() {
     }
 }
 
-function showPopupNotification(message) {
-    const popup = document.createElement('div');
-    popup.classList.add('popup-notification');
-    popup.innerHTML = `
-        <div class="popup-content">
-            <p>${message}</p>
-        </div>
-    `;
-
-    popup.style.position = 'fixed';
-    popup.style.bottom = '20px';
-    popup.style.left = '50%';
-    popup.style.transform = 'translateX(-50%)';
-    popup.style.backgroundColor = '#333';
-    popup.style.color = '#fff';
-    popup.style.padding = '10px 20px';
-    popup.style.borderRadius = '5px';
-    popup.style.zIndex = '9999';
-    popup.style.boxShadow = '0 4px 8px rgba(0, 0, 0, 0.1)';
-    popup.style.opacity = '1';
-    popup.style.transition = 'opacity 0.5s ease-in-out';
-
-    document.body.appendChild(popup);
-
-    // Fade out and remove the popup after 5 seconds
-    setTimeout(() => {
-        popup.style.opacity = '0';
-        setTimeout(() => {
-            popup.remove();
-        }, 500); // Wait for the fade-out transition to finish
-    }, 5000); // Remove after 5 seconds
+function hideNotificationDotIfOnPage() {
+    const notificationsLink = document.getElementById('notifications-link');
+    const notificationDot = document.getElementById('notification-dot');
+    
+    if (window.location.pathname === notificationsLink.getAttribute('href')) {
+        notificationDot.style.display = 'none';
+    } else {
+        notificationDot.style.display = '';
+    }
 }
-
 
 addEventListeners();

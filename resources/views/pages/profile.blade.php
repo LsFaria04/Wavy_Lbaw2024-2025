@@ -4,11 +4,6 @@
         <div class="flex flex-col items-center w-full max-w-full bg-white">
             <!-- Profile Top Section -->
             <header id="profile-header" class="w-full max-w-full p-4 flex items-center sticky top-0 z-10 backdrop-blur shadow">
-                <!-- <a href="{{ url()->previous() }}" class="flex items-center text-gray-500 hover:text-gray-700 mr-4">
-                    <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                    </svg>
-                </a> -->
                 <h1 id = "profile-username" class="text-xl font-bold text-gray-800">{{ $user->username }}</h1>
             </header>
 
@@ -32,7 +27,17 @@
         <!-- Background Section -->
         <div class="w-full max-w-full relative bg-gray-300 h-48 overflow-hidden">
             <div class="absolute inset-0 bg-cover bg-center">
-                <!-- Background Image To Add -->
+                @php
+                    $filePath = null;
+                    foreach($user->profilepicture as $pic)
+                    if(Str::contains($pic, 'banner')){
+                        $filePath = asset('storage/' . $pic->path);
+                    }
+                    
+                @endphp
+                @if($filePath !== null)
+                    <img  src="{{ $filePath }}" alt="Image" class=" h-full w-full object-cover rounded-md mb-2 mx-auto" >
+                @endif
             </div>
         </div>
 
@@ -40,6 +45,15 @@
         <div class="w-full max-w-full relative bg-white shadow">
             <div class="absolute -top-16 left-4 w-32 h-32 bg-gray-200 rounded-full border-4 border-white overflow-hidden">
                 <!-- Profile Image To Add -->
+                @php
+                foreach($user->profilepicture as $pic)
+                    if(Str::contains($pic, 'profile')){
+                        $filePath = asset('storage/' . $pic->path);
+                    }
+                @endphp
+                @if($filePath)
+                    <img  src="{{ $filePath }}" alt="Image" class=" h-full w-full object-cover rounded-md mb-2 mx-auto" >
+                @endif
             </div>
 
             <!-- Edit Profile only visible if Account owner -->
@@ -127,7 +141,7 @@
             <div id="edit-profile-menu" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden">
                 <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
                     <h2 class="text-2xl font-bold mb-4">Edit Profile</h2>
-                    <form action="{{ route('profile.update', $user->userid) }}" method="POST">
+                    <form action="{{ route('profile.update', $user->userid) }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
                         <div class="mb-4">
@@ -144,6 +158,30 @@
                                 <option value="1" {{ $user->visibilitypublic ? 'selected' : '' }}>Public</option>
                                 <option value="0" {{ !$user->visibilitypublic ? 'selected' : '' }}>Private</option>
                             </select>
+                        </div>
+                        <div class="mb-4">
+                            <label for="profilePic" class="cursor-pointer flex flex-row text-sm font-medium text-gray-700">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                                    <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                                <span>Profile Picture<span>
+                            </label>
+                            <div id="profilePicDisplay" class="flex-col gap-2">
+                                <!-- New files to add appended via JS -->
+                            </div>
+                            <input class = "hidden" type="file" id="profilePic" name = "profilePic" onchange = "updateFileProfile(false)"/>
+                        </div>
+                        <div class="mb-4">
+                            <label for="bannerPic" class="cursor-pointer flex flex-row text-sm font-medium text-gray-700">
+                                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                                    <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                </svg>
+                                <span>Banner Picture<span>
+                            </label>
+                            <div id="bannerPicDisplay" class="flex-col gap-2">
+                                <!-- New files to add appended via JS -->
+                            </div>
+                            <input class = "hidden" type="file" id="bannerPic" name = "bannerPic" onchange = "updateFileProfile(true)" />
                         </div>
                         <div class="flex justify-end space-x-2">
                             <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-2xl hover:bg-gray-600" onclick="toggleEditMenu()">Cancel</button>
@@ -256,7 +294,18 @@
                     </div>
             </div>
         </div>
+
+   <div id="croppModal" class = "hidden w-full fixed inset-0 bg-black bg-opacity-50  items-center justify-center">
+        <div class="bg-white w-96 p-6 rounded-lg shadow-lg">
+            <h3 class = "font-semibold text-xl my-2">Image Preview</h3>
+            <div  id = "croppPreview">
+                <img id = "image" src = "" class = "w-full h-full">
+            </div>
+            <button onclick = "closeImagePreview()" class = "my-2 px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800" >Done</button>
+        </div>
+   </div> 
         @include('partials.addPostTopics')
         @include('partials.reportForm')
         @include('partials.admin.banMenu')
+        @include('partials.imageDetail')
     @endSection
