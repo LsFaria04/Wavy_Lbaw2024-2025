@@ -49,7 +49,7 @@ class GroupController extends Controller
         }
     
         $posts = $group->posts()
-                       ->with('user', 'media', 'topics') // Load necessary relationships
+                       ->with('user', 'media', 'topics', 'user.profilePicture') // Load necessary relationships
                        ->withCount('likes') 
                        ->withCount('comments')
                        ->orderBy('createddate', 'desc')
@@ -98,7 +98,7 @@ class GroupController extends Controller
         }
     
         $posts = $group->posts()
-                       ->with('user', 'media', 'topics') 
+                       ->with('user', 'media', 'topics', 'user.profilePicture') 
                        ->withCount('likes') 
                        ->withCount('comments')
                        ->orderBy('createddate', 'desc')

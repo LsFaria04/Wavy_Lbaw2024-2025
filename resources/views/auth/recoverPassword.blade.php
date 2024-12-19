@@ -1,7 +1,7 @@
 @extends('layouts.app')
 @section('content')
 <section class = "grow flex flex-col justify-center items-center" id = "recoverPassword" >
-    <header>
+    <header class = "py-12">
         <h1 class= "text-3xl font-bold">Password recovery<h1>
     </header>
     <div id="messageContainer" class="flex items-center mt-6">

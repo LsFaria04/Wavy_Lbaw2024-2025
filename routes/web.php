@@ -102,6 +102,7 @@ Route::post('/api/profile/followrequest/{userid}', [ProfileController::class, 'g
 Route::post('/api/profile/followrequest/accept/{userid}', [ProfileController::class, 'acceptFollowRequest']);
 Route::post('/api/profile/followrequest/reject/{userid}', [ProfileController::class, 'rejectFollowRequest']);
 Route::post('/api/profile/follows/{userid}', [ProfileController::class, 'getFollows']);
+Route::post('/api/contact/submit', [MailController::class, 'sendContactMessage']);
 
 //Reports
 Route::post('/reports/delete/{reportid}', [ReportController::class, 'delete']);
@@ -171,7 +172,7 @@ Route::view('/about', 'pages.about')->name('about');
 
 //Contacts
 Route::view('/contacts', 'pages.contacts')->name('contacts');
-Route::post('/contact/submit', [ContactController::class, 'submit'])->name('contact.submit');
+
 
 //Main Features
 Route::view('/features', 'pages.features')->name('features');

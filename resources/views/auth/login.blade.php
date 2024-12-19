@@ -2,7 +2,7 @@
 
 @section('content')
 <section class = "grow flex flex-col justify-center items-center" id = "login" >
-    <header>
+    <header class = "py-12">
         <h1 class= "text-3xl font-bold">Login<h1>
     </header>
     <div id="messageContainer" class="fixed top-6 flex items-center z-40">
