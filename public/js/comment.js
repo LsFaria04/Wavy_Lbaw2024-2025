@@ -579,8 +579,9 @@ function toggleSubcommentForm(commentId) {
 }
 
 function createComment(commentInfo){
+  console.log(commentInfo);
   let comment = document.createElement('div');
-  comment.classList.add("comment", "mb-4", "p-4","bg-white","rounded-md" , "shadow", "cursor-pointer");
+  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
 
   let subcommentsHtml = '';
 
@@ -606,7 +607,7 @@ function createComment(commentInfo){
         <p>${ commentInfo.message }</p>
     </div>
     <div class="comment-interactions flex items-center gap-4 mt-4">
-          ${createCommentLikeButton(commentInfo.commentid, commentInfo.comment_likes_count, commentInfo.liked)}
+          ${createCommentLikeButton(commentInfo.commentid, commentInfo.likes_count, commentInfo.liked)}
           ${createCommentCommentButton(commentInfo.commentid, commentInfo.subcomments_count)}
     </div>
     <div class="subcomments mt-4 pl-4 border-l border-gray-200">
@@ -657,6 +658,7 @@ function createCommentHiddenForm(commentId){
 }
 
 function createCommentLikeButton(commentId, likeCount, likedByUser) {
+  console.log(likeCount);
   return `
       <div class="comment-likes flex items-center gap-2">
           <button 

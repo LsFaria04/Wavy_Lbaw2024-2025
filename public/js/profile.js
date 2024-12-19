@@ -985,7 +985,7 @@ function insertMoreFollows(){
 
   if(followsList.firstChild === null){
     let warning = document.createElement('p');
-    warning.innerHTML='No requests found';
+    warning.innerHTML='No follows found';
     followsList.appendChild(warning);
   }
 
