@@ -94,6 +94,9 @@ class CommentController extends Controller
 
         // Check if the user is authorized to create a comment
         if ($request->user()->cannot('create', Comment::class)) {
+            if($request->user()->state === 'suspended'){
+                return redirect()->route('posts.show',$request->postid)->with('error', 'You account is suspended!');
+            }
             return redirect()->route('posts.show',$request->postid)->with('error', 'You cannot create a comment!');
         }
 
