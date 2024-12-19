@@ -307,4 +307,5 @@
         @include('partials.addPostTopics')
         @include('partials.reportForm')
         @include('partials.admin.banMenu')
+        @include('partials.imageDetail')
     @endSection

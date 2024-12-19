@@ -548,6 +548,7 @@ function addEventListenerToForm(form){
 function insertPostMedia(post, mediaArray){
   const postbody = post.querySelector('.post-body');
   let mediaContainer = document.createElement('div');
+  mediaContainer.setAttribute('onclick','event.stopPropagation();');
   mediaContainer.classList.add("post-media", "mt-4", "grid", "grid-cols-2", "gap-4");
   
   for(let i = 0; i < mediaArray.length; i++){
@@ -558,9 +559,13 @@ function insertPostMedia(post, mediaArray){
   
       
       if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)){
-        newMedia.setAttribute('alt', 'Image');
-        newMedia.setAttribute('src', "/storage/" + media.path);
-        newMedia.classList.add("max-w-full", "max-h-96", "object-cover", "rounded-md", "mb-2", "mx-auto");
+        const imageDetailButton = document.createElement('button');
+        imageDetailButton.setAttribute('onclick', `toggleImageDetails('${'/storage/' + media.path}')`);
+        imageDetailButton.innerHTML = `
+          <img src="${'/storage/' + media.path}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto ">
+        `;
+        mediaContainer.appendChild(imageDetailButton);
+        continue;
       }
   
       else if(['mp4', 'avi', 'mov'].includes(fileExtension)){

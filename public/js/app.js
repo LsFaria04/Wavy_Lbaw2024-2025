@@ -57,6 +57,7 @@ function addEventListeners() {
       });// Time before fade-out
   }
 
+  //creates an alert message and inserts it into the page
   function createAlert(element,message, isError){
     const alert = document.createElement('div');
     alert.classList.add("self-center", "alert", "rounded","w-full", "max-w-full", "p-4", isError ? "bg-red-100" : "bg-green-100" , isError ?  "text-red-800" : "text-green-800" , "border", "shadow-md", "text-center", isError ? "border-red-300" : "border-green-300", "z-10");
@@ -65,6 +66,7 @@ function addEventListeners() {
     setTimeout(() => { alert.remove()}, 3000);
   }
 
+  //Sends the email from the account that wants to recover the password
   function passwordRecovery(){
     //hide the email form and show the token form 
     const recoveryEmail = document.getElementById('recoveryEmail');
@@ -79,6 +81,7 @@ function addEventListeners() {
     sendAjaxRequest('post', '/forgot-password', {'email': email.value}, emailSentConfirmation);
   }
 
+  //handles the email sent confirmation from the server 
   function emailSentConfirmation(){
     removeLoadingCircle();
     const response = JSON.parse(this.responseText);
@@ -98,6 +101,7 @@ function addEventListeners() {
     
   }
 
+  //Send to the server the token and the new credentials
   function tokenCheck(){
     const recoverPasswordDiv = document.getElementById('recoveryContainer');
     insertLoadingCircle(recoverPasswordDiv);
@@ -114,6 +118,7 @@ function addEventListeners() {
     sendAjaxRequest('post', '/reset-password', {'email': email.value, 'password':password.value, 'password_confirmation': passwordConf.value, 'token':token.value}, tokenCheckConfirmation);
   }
 
+  //handles the token verification verification from the server
   function tokenCheckConfirmation(){
     removeLoadingCircle();
     const response = JSON.parse(this.responseText);
@@ -132,7 +137,7 @@ function addEventListeners() {
 
   }
 
-
+//hides/shoes the report form when the user clicks in the report butto
   function toggleReportForm(contentId, category){
     const reportModal = document.getElementById('reportFormModal');
     reportModal.classList.toggle('hidden');
@@ -150,6 +155,7 @@ function addEventListeners() {
     }
   }
 
+  //submits the report to the server
   function reportFormSubmission(){
     document.getElementById('reportFormModal')?.addEventListener('submit', function (form){
       form.preventDefault();
@@ -169,6 +175,7 @@ function addEventListeners() {
     });
   }
 
+  //handles the report confirmation from the server
   function confirmReport(){
     removeLoadingCircle();
     toggleReportForm(null, null);
@@ -181,6 +188,18 @@ function addEventListeners() {
     else{
       createAlert(messageContainer, response.message,true);
     }
+
+  }
+
+  //toggles the images details when a user clicks on an image
+  function toggleImageDetails(src){
+    if(src !== null){
+      document.getElementById('detailImg').src = src;
+    }
+
+    const imageDetailMenu = document.getElementById('imageDetail');
+    imageDetailMenu.classList.toggle('hidden');
+    imageDetailMenu.classList.toggle('flex');
 
   }
 

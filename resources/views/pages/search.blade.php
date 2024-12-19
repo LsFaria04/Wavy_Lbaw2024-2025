@@ -68,5 +68,6 @@
         @include('partials.addPostTopics')
         @include('partials.reportForm')
         @include('partials.filterMenu')
+        @include('partials.imageDetail')
     </div>
 @endsection 

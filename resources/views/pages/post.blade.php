@@ -71,5 +71,6 @@
         </section>
         @include('partials.addPostTopics')
         @include('partials.reportForm')
+        @include('partials.imageDetail')
     </div>
 @endsection
