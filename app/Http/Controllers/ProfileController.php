@@ -207,19 +207,20 @@ class ProfileController extends Controller {
 
         if ($existingFollow) {
             \Log::info('6');
-            return $this->handleExistingFollow($existingFollow);
+            return $this->handleExistingFollow($existingFollow, $request);
         } else {
             \Log::info('7');
             return $this->createFollowRequest($follower, $followee);
         }
     }
     
-    private function handleExistingFollow(Follow $existingFollow) {
+    private function handleExistingFollow(Follow $existingFollow, $request) {
         \Log::info('8');
         \Log::info($existingFollow);
         if ($existingFollow->state === Follow::STATE_ACCEPTED) {
             \Log::info('9');
-            return $this->unfollow($existingFollow->followerid, $existingFollow->followeeid);
+            \Log::info('Existing follow: ' . $existingFollow);
+            return $this->unfollow($request, $existingFollow->followeeid);
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
             \Log::info('10');
 
@@ -265,14 +266,19 @@ class ProfileController extends Controller {
         \Log::info('15');
 
         $followerId = auth()->user()->userid;
+
+        \Log::info('Follower ID: ' . $followerId);
+        \Log::info('Followee ID: ' . $userid);
     
         $existingFollow = Follow::where('followerid', $followerId)
             ->where('followeeid', $userid)
             ->first();
 
-            \Log::info('150');
+        \Log::info('150');
+        
 
         if (!$existingFollow) {
+            \Log::info('550');
             return response()->json([
                 'success' => false,
                 'message' => 'Follow relationship not found.',
