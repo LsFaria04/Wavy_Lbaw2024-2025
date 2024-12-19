@@ -19,7 +19,13 @@ class ProfileController extends Controller {
     * Show the profile of the user with the same username as the one provided
     */
     public function show($username) {
-        $user = User::with('profilePicture')->where('username', $username)->first();
+        $user = User::with('profilePicture')
+            ->withCount(['followers' => function ($query) { $query->where('follow.state', 'Accepted');}])
+            ->withCount(['follows' => function ($query) { $query->where('follow.state', 'Accepted');}])
+            ->where('username', $username)
+            ->first();
+
+            Log::info($user);
     
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');

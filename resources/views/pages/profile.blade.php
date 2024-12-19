@@ -145,6 +145,17 @@
                 @endauth
             </div>
 
+            <div class = "px-6 pb-4 flex flex-row gap-4">
+                <div class = "flex flex-row gap-2">
+                    <p class = "font-semibold">{{$user->followers_count}}</p>
+                    <p class = " text-gray-500">Followers</p>  
+                </div>
+                <div class = "flex flex-row gap-2 ">
+                    <p class = "font-semibold">{{$user->follows_count}}</p>
+                    <p class = " text-gray-500">Following</p>   
+                </div>
+            </div>
+
             <nav class="flex justify-around">
                 <button id="tab-posts" data-tab="user-posts" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900  border-sky-900 text-sky-900">Posts</button>
                 <button id="tab-comments" data-tab="user-comments" class="tab-btn flex-1 text-center py-3 text-sm font-semibold  border-b-2 hover:text-sky-900">Comments</button>
