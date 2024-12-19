@@ -1,5 +1,3 @@
-const { comment } = require("postcss");
-
 function addEventListeners() {
   document.addEventListener('DOMContentLoaded', switchProfileTab);
   document.addEventListener('DOMContentLoaded', switchGroupTab);
@@ -225,7 +223,7 @@ function loadSearchContent(category, query, filters){
 function insertMoreSearchResults(){
     removeLoadingCircle();
     const searchResults = document.querySelector("#search-results");
-  
+
     if(document.getElementById('filter') === null){
       const filterButton = document.createElement('button');
       filterButton.innerHTML = `
@@ -269,18 +267,18 @@ function insertMoreSearchResults(){
   }
   
   if(searchResults.childElementCount == 1){
-    searchResults.innerHTML = `
-       <button id="filter" class = "flex flex-row gap-2 self-start p-4" onclick = "toggleFilters()" >
-                  Filter
-                  <svg id="Layer_1" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
-                      <path d="m14.5 24a1.488 1.488 0 0 1 -.771-.214l-5-3a1.5 1.5 0 0 1 -.729-1.286v-5.165l-5.966-7.3a4.2 4.2 0 0 1 -1.034-2.782 4.258 4.258 0 0 1 4.253-4.253h13.494a4.254 4.254 0 0 1 3.179 7.079l-5.926 7.303v8.118a1.5 1.5 0 0 1 -1.5 1.5zm-3.5-5.35 2 1.2v-6a1.5 1.5 0 0 1 .335-.946l6.305-7.767a1.309 1.309 0 0 0 .36-.884 1.255 1.255 0 0 0 -1.253-1.253h-13.494a1.254 1.254 0 0 0 -.937 2.086l6.346 7.765a1.5 1.5 0 0 1 .338.949z"/>
-                  </svg> 
-        </button>
-      <div class="flex justify-center items-center h-32">
-          <p class="text-gray-600 text-center">No results matched your search.</p>
-      </div>
-    `;       
-}
+      searchResults.innerHTML = `
+         <button id="filter" class = "flex flex-row gap-2 self-start p-4" onclick = "toggleFilters()" >
+                    Filter
+                    <svg id="Layer_1" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg" data-name="Layer 1">
+                        <path d="m14.5 24a1.488 1.488 0 0 1 -.771-.214l-5-3a1.5 1.5 0 0 1 -.729-1.286v-5.165l-5.966-7.3a4.2 4.2 0 0 1 -1.034-2.782 4.258 4.258 0 0 1 4.253-4.253h13.494a4.254 4.254 0 0 1 3.179 7.079l-5.926 7.303v8.118a1.5 1.5 0 0 1 -1.5 1.5zm-3.5-5.35 2 1.2v-6a1.5 1.5 0 0 1 .335-.946l6.305-7.767a1.309 1.309 0 0 0 .36-.884 1.255 1.255 0 0 0 -1.253-1.253h-13.494a1.254 1.254 0 0 0 -.937 2.086l6.346 7.765a1.5 1.5 0 0 1 .338.949z"/>
+                    </svg> 
+          </button>
+        <div class="flex justify-center items-center h-32">
+            <p class="text-gray-600 text-center">No results matched your search.</p>
+        </div>
+      `;       
+  }
 }
 
 //Inserts a show more button for the filters menu
@@ -337,26 +335,6 @@ function insertMoreTopicsFilters(){
 
 
 
-function createGroup(groupInfo) {
-  let group = document.createElement('div');
-  group.classList.add("group", "border-b", "border-gray-300", "p-4", "bg-white");
-
-  group.innerHTML = `
-    <div class="group-header mb-2">
-      <h3 class="font-bold">
-        <a href="/groups/${groupInfo.groupname}" class="text-black hover:text-sky-900">
-          ${groupInfo.groupname}
-        </a>
-      </h3>
-    </div>
-    <div class="group-body mb-2">
-      <p>${groupInfo.description}</p>
-    </div>
-  `;
-
-  return group;
-}
-
 function insertMoreGroups(element, groups){
   for(let i = 0; i < groups.data.length; i++){
     let group = createGroup(groups.data[i]);
@@ -364,6 +342,7 @@ function insertMoreGroups(element, groups){
   
   }
 }
+
 //inserts more users into an element
 function insertMoreUsers(element, users){
   for(let i = 0; i < users.data.length; i++){
@@ -372,6 +351,13 @@ function insertMoreUsers(element, users){
   }
 }
 
+//inserts more users into an element
+function insertMoreUsers(element, users){
+  for(let i = 0; i < users.data.length; i++){
+    let user = createUser(users.data[i]);
+    element.appendChild(user);
+  }
+}
 
 function insertMorePosts(element, posts) {
   for (let i = 0; i < posts.data.length; i++) {
@@ -433,70 +419,6 @@ function insertMoreCommentsToPost(element, comments) {
     }
   }
 }
-  
-  //creates a user container with all the necessary info
-  function insertMoreCommentsToPost(element, comments) {
-    for (let i = 0; i < comments.data.length; i++) {
-      if (comments.data[i].user.state === 'deleted') {
-        comments.data[i].user.username = 'Deleted User';
-      }
-  
-      let comment = createComment(comments.data[i]);
-  
-      if (userId == comments.data[i].user.userid || isadmin) {
-        comment = createCommentOptions(comment, comments.data[i].commentid, false);
-      } else {
-        comment = createCommentOptions(comment, comments.data[i].commentid, true);
-      }
-  
-      const likeButtonHtml = createLikeButton(comments.data[i].commentid, comments.data[i].like_count, comments.data[i].liked_by_user);
-      const commentButtonHtml = createCommentButton(comments.data[i].commentid, comments.data[i].comment_count);
-  
-      const interactionContainer = document.createElement('div');
-      interactionContainer.classList.add('comment-interactions', 'flex', 'items-center', 'gap-4', 'mt-4');
-      interactionContainer.innerHTML = likeButtonHtml + commentButtonHtml;
-  
-      comment.appendChild(interactionContainer);
-  
-      comment = insertCommentMedia(comment, comments.data[i].media);
-  
-      if (userId == comments.data[i].user.userid || isadmin) {
-        insertUpdateCommentForm(comment, comments.data[i].commentid, comments.data[i].message, comments.data[i].media);
-      }
-  
-      let editForm = comment.querySelector('.edit-comment-form form');
-      if (editForm !== null) {
-        addEventListenerToCommentForm(editForm);
-      }
-      element.appendChild(comment);
-    }
-  }
-  
-  
-  //Search content creation functions ---------------------------------------------------------------------------
-  
-  
-  
-  // Creates a new group container with all the needed info
-  function createGroup(groupInfo) {
-    let group = document.createElement('div');
-    group.classList.add("group", "border-b", "border-gray-300", "p-4", "bg-white");
-  
-    group.innerHTML = `
-      <div class="group-header mb-2">
-        <h3 class="font-bold">
-          <a href="/groups/${groupInfo.groupname}" class="text-black hover:text-sky-900">
-            ${groupInfo.groupname}
-          </a>
-        </h3>
-      </div>
-      <div class="group-body mb-2">
-        <p>${groupInfo.description}</p>
-      </div>
-    `;
-  
-    return group;
-  }
 
 function insertMoreSubCommentsToComment(subcomments) {
   let html = '';
@@ -540,6 +462,30 @@ function insertMoreSubCommentsToComment(subcomments) {
   return html; // Return the HTML string of all the subcomments
 }
 
+//Search content creation functions ---------------------------------------------------------------------------
+
+
+
+// Creates a new group container with all the needed info
+function createGroup(groupInfo) {
+  let group = document.createElement('div');
+  group.classList.add("group", "border-b", "border-gray-300", "p-4", "bg-white");
+
+  group.innerHTML = `
+    <div class="group-header mb-2">
+      <h3 class="font-bold">
+        <a href="/groups/${groupInfo.groupname}" class="text-black hover:text-sky-900">
+          ${groupInfo.groupname}
+        </a>
+      </h3>
+    </div>
+    <div class="group-body mb-2">
+      <p>${groupInfo.description}</p>
+    </div>
+  `;
+
+  return group;
+}
 
 function createUser(userInfo){
   let user = document.createElement('div');
@@ -560,5 +506,5 @@ function createUser(userInfo){
   
   return user;
 }
-  
+     
 addEventListeners();
