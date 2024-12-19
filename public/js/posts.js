@@ -740,6 +740,7 @@ function removeSpecificFile(index) {
 }
 
 function toggleAddPostTopics(postid, isedit){
+  console.log(document.getElementById("addPostTopics"));
   if(document.getElementById("addPostTopics").classList.contains('hidden')){
     postTopicPage = 0;
     topicPostId = postid;
