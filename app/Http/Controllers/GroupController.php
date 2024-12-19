@@ -15,27 +15,39 @@ use Illuminate\Support\Facades\Auth;
 class GroupController extends Controller
 {
     public function store(Request $request) {
-        $request->validate([
+        $validated = $request->validate([
             'groupname' => 'required|string|max:255|unique:groups,groupname',
-            'description' => 'nullable|string',
+            'description' => 'required|string',
             'visibilitypublic' => 'required|boolean',
         ]);
-
-        // Create the group
-        $group = Group::create([
-            'groupname' => $request->input('groupname'),
-            'description' => $request->input('description'),
-            'visibilitypublic' => $request->input('visibilitypublic'),
-            'ownerid' => Auth::id(),
-        ]);
-
-        // Add the owner as a member
-        GroupMembership::create([
-            'groupid' => $group->groupid, // Use the ID from the created group
-            'userid' => Auth::id(),
-        ]);
-
-        return redirect()->back()->with('success', 'Group created successfully!');
+    
+        try {
+            // Create the group
+            $group = Group::create([
+                'groupname' => 'groupname',
+                'description' => 'description',
+                'visibilitypublic' => 'visibilitypublic',
+                'ownerid' => Auth::id(),
+            ]);
+    
+            if (!$group) {
+                return redirect()->back()->withErrors(['error' => 'Failed to create the group. Please try again.']);
+            }
+    
+            // Add the owner as a member
+            $membership = GroupMembership::create([
+                'groupid' => $group->groupid, // Use the ID from the created group
+                'userid' => Auth::id(),
+            ]);
+    
+            if (!$membership) {
+                return redirect()->back()->withErrors(['error' => 'Failed to add the group owner as a member.']);
+            }
+    
+            return redirect()->back()->with('success', 'Group created successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'An unexpected error occurred. Please try again later.']);
+        }
     }
 
     /**
@@ -424,5 +436,4 @@ class GroupController extends Controller
                              ->with('error', 'Failed to delete the group. Please try again later.');
         }
     }    
-
 }
