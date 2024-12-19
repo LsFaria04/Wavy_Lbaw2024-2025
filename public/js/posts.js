@@ -559,7 +559,7 @@ function insertPostMedia(post, mediaArray){
   const postbody = post.querySelector('.post-body');
   let mediaContainer = document.createElement('div');
   mediaContainer.setAttribute('onclick','event.stopPropagation();');
-  mediaContainer.classList.add("post-media", "mt-4", "grid", "grid-cols-2", "gap-4");
+  mediaContainer.setAttribute("class", "post-media mt-4 flex flex-row flex-wrap gap-2 sm:justify-start items-center justify-center");
   
   for(let i = 0; i < mediaArray.length; i++){
     let media = mediaArray[i];
@@ -571,6 +571,7 @@ function insertPostMedia(post, mediaArray){
       if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)){
         const imageDetailButton = document.createElement('button');
         imageDetailButton.setAttribute('onclick', `toggleImageDetails('${'/storage/' + media.path}')`);
+        imageDetailButton.setAttribute("class", "h-60 w-60 sm:w-80 sm:h-80 overflow-hidden  rounded-md mb-2");
         imageDetailButton.innerHTML = `
           <img src="${'/storage/' + media.path}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto ">
         `;
