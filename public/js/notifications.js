@@ -12,19 +12,32 @@ function addEventListeners() {
     window.addEventListener('load', hideNotificationDotIfOnPage);
 }
 
+function triggerRedDotBlinking() {
+    const redDot = document.getElementById('notification-dot');
+    
+    if (redDot) {
+        console.log("Red dot is toggling visibility");
+        redDot.classList.toggle('hidden');
+    } else {
+        console.log("Red dot element not found!");
+    }
+}
+
 function initializePusher(userId) {
     const pusher = new Pusher('0b3c646b9e8aeb6f4458', {
         cluster: 'eu',
         encrypted: true
     });
-    
-    const channel = pusher.subscribe('private-user.' + userId);
+
+    const channel = pusher.subscribe('public-user.');
+
+    //const channel = pusher.subscribe('private-user.' + userId);
 
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {
-        console.log(`New like notification: ${data.message}`);
+        console.log('Received like notification:', data);
         handleNotification('likes', data.message);
-        showPopupNotification(data.message);
+        triggerRedDotBlinking();
     });
 
     // Handle "comment" notifications
@@ -32,6 +45,7 @@ function initializePusher(userId) {
         console.log(`New comment notification: ${data.message}`);
         handleNotification('comments', data.message);
         showPopupNotification(data.message);
+        triggerRedDotBlinking();
     });
 
     // Handle "follow" notifications
@@ -40,6 +54,7 @@ function initializePusher(userId) {
         const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
         handleNotification(type, data.message);
         showPopupNotification(data.message);
+        triggerRedDotBlinking();
     });
     
 }

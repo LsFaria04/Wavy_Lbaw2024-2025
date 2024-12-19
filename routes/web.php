@@ -174,24 +174,21 @@ Route::view('/features', 'pages.features')->name('features');
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
 
 //Pusher
-//Public Channel
 // Pusher Authentication Route for Public Channels
 Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
-    // Public channels do not require authentication
-    return Broadcast::auth($request);
+    return response()->json(['auth' => '']);
 })->name('pusher.auth');
 
-//Private Channel
+//Pusher Authentication Route for Public Channels Private Channels
 /*
 Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
     if (auth()->check()) {
-        Log::info('User is authenticated:', ['user' => auth()->user()]);
+        return Broadcast::auth($request);
     } else {
-        Log::warning('User is not authenticated');
+        return response()->json(['error' => 'Unauthorized'], 403);
     }
-
-    return Broadcast::auth($request);
 })->middleware('auth')->name('pusher.auth');
+
 */
 
 
