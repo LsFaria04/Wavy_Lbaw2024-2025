@@ -258,9 +258,11 @@ class PostController extends Controller {
                 'commentLikes',
                 'subcomments' => function ($subQuery) {
                     $subQuery->orderBy('createddate', 'desc') // Order subcomments by createddate
-                        ->with(['user', 'commentLikes', 'subcomments']);
+                        ->with(['user','media','commentLikes','subcomments'])
+                        ->withCount('subcomments');
                 }
             ])
+            ->withCount('subcomments')
             ->paginate(10);  // This returns a LengthAwarePaginator
         
         $post->comments = $comments;
@@ -297,10 +299,16 @@ class PostController extends Controller {
             $comment->liked = $userId ? $comment->commentLikes()->where('userid', $userId)->exists() : false;
             $comment->comment_likes_count = $comment->commentLikes()->count();
 
-            // Recursively process subcomments
+            if (!$comment->relationLoaded('user')) {
+                $comment->load('user');
+            }
+
+            if (!$comment->relationLoaded('media')) {
+                $comment->load('media');
+            }
+
             if ($comment->subcomments->isNotEmpty()) {
-                $this->processComments($comment->subcomments, $userId);
-                
+                $this->processComments($comment->subcomments, $userId);   
             }
         }
     }
@@ -401,7 +409,6 @@ class PostController extends Controller {
 
         // Handle new file uploads
         if ($request->hasFile('media')) {
-            Log::info("files have arrived");
             foreach ($request->file('media') as $file) {
                 $mediaPath = $file->store('images', 'public');
 
