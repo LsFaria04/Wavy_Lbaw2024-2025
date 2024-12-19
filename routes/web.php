@@ -179,21 +179,21 @@ Route::get('/notifications', [NotificationController::class, 'index'])->name('no
 
 //Pusher
 // Pusher Authentication Route for Public Channels
-Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
+/*Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
     return response()->json(['auth' => '']);
-})->name('pusher.auth');
+})->name('pusher.auth');*/
 
 //Pusher Authentication Route for Public Channels Private Channels
-/*
-Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
+
+Route::get('/pusher/auth', function (Illuminate\Http\Request $request) {
     if (auth()->check()) {
+        Log::info("Aqui");
         return Broadcast::auth($request);
     } else {
         return response()->json(['error' => 'Unauthorized'], 403);
     }
 })->middleware('auth')->name('pusher.auth');
 
-*/
 
 
 

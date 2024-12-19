@@ -38,7 +38,7 @@
     </div>
 
     <!-- Post Topics -->
-    <div id = "postTopics" class = "flex flex-row ">
+    <div id = "postTopics" class = "flex flex-row gap-2">
             @foreach ($post->topics as $topic)
                 <p class = "text-xs">{{$topic->topicname}}</p>
             @endforeach
