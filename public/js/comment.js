@@ -2,7 +2,7 @@ function addEventListeners() {
     syncCommentFilesWithInputEventListener();
     addEventListenerToCommentForms();
 }
-  
+
 //inserts the media (images, audio and video) of a comment into a comment container. Returns the updated comment container
 function insertCommentMedia(comment, mediaArray){
   const commentbody = comment.querySelector('.comment-body');
@@ -300,54 +300,6 @@ function insertDeleteCommentMenu(comment){
   return comment;
 }
 
-/* NAO SEI SE ALGUEM TA A USAR !!!
-
-
-function toggleCommentSection(commentId) {
-  // Get the comment input section or create it if not present
-  const commentElement = document.getElementById(`comment-${commentId}`);
-  let subCommentInput = document.getElementById(`sub-comment-input-${commentId}`);
-  let subCommentList = document.getElementById(`sub-comments-${commentId}`);
-
-  console.log("WTF");
-
-  if (!subCommentInput) {
-      // Create the input section dynamically if it doesn't exist
-      subCommentInput = document.createElement('div');
-      subCommentInput.id = `sub-comment-input-${commentId}`;
-      subCommentInput.className = 'sub-comment-input mt-2 bg-gray-50 rounded-md shadow-md p-4';
-      subCommentInput.innerHTML = `
-          <textarea rows="2" 
-                    class="w-full p-2 rounded-md border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none text-sm placeholder-gray-400 text-gray-700" 
-                    placeholder="Write a reply..."></textarea>
-          <div class="flex justify-end mt-2">
-              <button type="button" class="px-4 py-2 bg-sky-600 text-white text-sm font-semibold rounded-md hover:bg-sky-700">
-                  Reply
-              </button>
-          </div>
-      `;
-      commentElement.appendChild(subCommentInput);
-  } else {
-      // Toggle visibility of the input field
-      subCommentInput.classList.toggle('hidden');
-  }
-
-  // Show the list of subcomments if it's not present
-  if (!subCommentList) {
-      subCommentList = document.createElement('div');
-      subCommentList.id = `sub-comments-${commentId}`;
-      subCommentList.className = 'sub-comments mt-4 pl-4 border-l-2 border-gray-300';
-      subCommentList.innerHTML = `<p class="text-sm text-gray-500">No replies yet.</p>`; // Placeholder content
-      commentElement.appendChild(subCommentList);
-  }
-
-  // Focus on the input field when opened
-  if (!subCommentInput.classList.contains('hidden')) {
-      subCommentInput.querySelector('textarea').focus();
-  }
-}
-
-*/
 //inserts the update comment form into a comment container. Return the updated comment container.
 function insertUpdateCommentForm(comment, id, message, media){
   let formContainer = document.createElement('div');
@@ -355,7 +307,7 @@ function insertUpdateCommentForm(comment, id, message, media){
   formContainer.setAttribute('id',"edit-comment-" + id);
   
   formContainer.innerHTML = `
-    <form action="/comments/update/${id}" method="comment" enctype="multipart/form-data"  class="flex flex-col gap-4" data-comment-id = "${id}">
+    <form action="/comments/update/${id}" method="POST" enctype="multipart/form-data"  class="flex flex-col gap-4" data-comment-id = "${id}">
         <input type="hidden" name="_token" value= ${getCsrfToken()} />
         <div class="mb-4">
             <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
@@ -628,7 +580,15 @@ function toggleSubcommentForm(commentId) {
 
 function createComment(commentInfo){
   let comment = document.createElement('div');
-  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white");
+  comment.classList.add("comment", "mb-4", "p-4","bg-white","rounded-md" , "shadow", "cursor-pointer");
+
+  let subcommentsHtml = '';
+
+  const subcomments = Array.isArray(commentInfo.subcomments) ? commentInfo.subcomments : [];
+  
+  if (subcomments.length > 0) {
+    subcommentsHtml = insertMoreSubCommentsToComment(subcomments); 
+  }
   
   comment.innerHTML = `
     <div class="comment-header mb-2 flex justify-between items-center">
@@ -644,10 +604,115 @@ function createComment(commentInfo){
     </div>
     <div class="comment-body mb-2" id=comment-content-${commentInfo.commentid}>
         <p>${ commentInfo.message }</p>
+    </div>
+    <div class="comment-interactions flex items-center gap-4 mt-4">
+          ${createCommentLikeButton(commentInfo.commentid, commentInfo.comment_likes_count, commentInfo.liked)}
+          ${createCommentCommentButton(commentInfo.commentid, commentInfo.subcomments_count)}
+    </div>
+    <div class="subcomments mt-4 pl-4 border-l border-gray-200">
+          ${subcommentsHtml}   <!-- Recursive call -->
+    </div>
+    <div id="subComment-form-${commentInfo.commentid}" class="addComment mt-4 p-4 bg-gray-50 rounded-xl shadow-md border hidden">
+      ${createCommentHiddenForm(commentInfo.commentid)}
+    </div>
+  `;
+  console.log(commentInfo.subcomments);
+  return comment
+}
+
+
+function createCommentHiddenForm(commentId){
+  return `
+        <form id="subCommentForm" action="/comments/storeSubcomment" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+            <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+            <input type="hidden" name="parent_comment_id" value="${commentId}">
+
+            <!-- Text Area -->
+            <textarea id="message" name="message" rows="3"
+                    class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none resize-none placeholder-gray-400 text-gray-700 text-sm"
+                    placeholder="Write your comment here..."></textarea>
+
+            <!-- Action Buttons -->
+            <div class="flex justify-between items-center">
+                <div class="flex items-center gap-2">
+                    <label for="image" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
+                            <path d="M19.828 11.244L12.707 18.364C10.755 20.317 7.589 20.317 5.636 18.364C3.684 16.411 3.684 13.246 5.636 11.293L12.472 4.458C13.774 3.156 15.884 3.156 17.186 4.458C18.488 5.759 18.488 7.87 17.186 9.172L10.361 15.996C9.71 16.647 8.655 16.647 8.004 15.996C7.353 15.345 7.353 14.29 8.004 13.639L14.226 7.418" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
+                        <span class="text-sm">Attach Media</span>
+                    </label>
+                    <input type="file" name="media[]" id="image" class="hidden" multiple onchange="updateFileList()">
+                </div>
+
+                <button type="submit" class="px-6 py-2 bg-sky-700 text-white font-semibold rounded-xl hover:bg-sky-800 text-sm">
+                    Comment
+                </button>
+            </div>
+
+            <ul id="fileDisplay" class="text-sm text-gray-500 mt-2 hidden">
+                <!-- File names appended dynamically -->
+            </ul>
+        </form>
+  `
+}
+
+function createCommentLikeButton(commentId, likeCount, likedByUser) {
+  return `
+      <div class="comment-likes flex items-center gap-2">
+          <button 
+              type="button" 
+              class="flex items-center text-gray-500 hover:text-red-600 group" 
+              onclick="likeComment(${commentId}, event); event.stopPropagation();">
+              
+              <!-- No like -->
+              <svg 
+                  id="heart-empty-${commentId}" viewBox="0 0 24 24" aria-hidden="true"
+                  class="h-5 w-5 ${likedByUser ? 'hidden' : 'fill-gray-500 hover:fill-red-600 group-hover:fill-red-600'}">
+                  <g>
+                      <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                  </g>
+              </svg>
+              
+              <!-- Yes like -->
+              <svg 
+                  id="heart-filled-${commentId}" viewBox="0 0 24 24" aria-hidden="true"
+                  class="h-5 w-5 ${likedByUser ? 'fill-red-600 group-hover:fill-red-600' : 'hidden'}">
+                  <g>
+                      <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                  </g>
+              </svg>
+              
+              <span id="like-count-${commentId}" class="ml-1 group-hover:text-red-600">${likeCount}</span>
+          </button>
       </div>
   `;
-  
-  return comment
+}
+function createCommentCommentButton(commentId, commentCount = 0) {
+  return `
+      <div class="comment-comments flex items-center gap-2">
+            <button 
+                type="button" 
+                class="flex items-center text-gray-500 hover:text-sky-600 group" 
+                onclick="toggleSubcommentForm(${commentId})">
+                
+                <!-- Comment Icon -->
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    id="comment-icon-${commentId}" 
+                    class="h-5 w-5 fill-gray-500 group-hover:fill-sky-600 transition duration-200 ease-in-out" 
+                    viewBox="0 0 24 24" 
+                    fill="currentColor">
+                    <path d="M12 2C6.477 2 2 6.067 2 10.5c0 1.875.656 3.625 1.844 5.094l-1.308 3.922c-.19.57.474 1.065.997.736l3.875-2.325A9.435 9.435 0 0012 19c5.523 0 10-4.067 10-8.5S17.523 2 12 2zm0 2c4.418 0 8 3.067 8 6.5S16.418 17 12 17c-1.173 0-2.292-.232-3.318-.656a1 1 0 00-.97.035l-2.898 1.739.835-2.501a1 1 0 00-.176-.964A7.36 7.36 0 014 10.5C4 7.067 7.582 4 12 4z" />
+                </svg>
+                
+                <!-- Comment Count -->
+                <span id="comment-count-${commentId}" 
+                    class="ml-1 group-hover:text-sky-600 transition duration-200 ease-in-out">
+                    ${commentCount}
+                </span>
+            </button>
+        </div>
+  `;
 }
 
 function createCommentOptions(comment, id, needReport){

@@ -262,17 +262,8 @@ class PostController extends Controller {
                 }
             ])
             ->paginate(10);  // This returns a LengthAwarePaginator
-    
+        
         $post->comments = $comments;
-    
-        // Check if the request is an AJAX request
-        if (request()->ajax()) {
-            return response()->json([
-                'data' => $comments->items(),  // Access the 'items' method of LengthAwarePaginator
-                'has_more_comments' => $comments->hasMorePages(),  // Check for more pages
-                'next_page_url' => $comments->nextPageUrl()  // Get next page URL
-            ]);
-        }
     
         // Process likes and recursively handle subcomments
         if (Auth::check()) {
@@ -283,6 +274,15 @@ class PostController extends Controller {
             $post->liked = false;
             $post->createddate = $post->createddate->diffForHumans();
             $this->processComments($post->comments, null);
+        }
+
+        // Check if the request is an AJAX request
+        if (request()->ajax()) {
+            return response()->json([
+                'data' => $comments->items(),  // Access the 'items' method of LengthAwarePaginator
+                'has_more_comments' => $comments->hasMorePages(),  // Check for more pages
+                'next_page_url' => $comments->nextPageUrl()  // Get next page URL
+            ]);
         }
     
         return view('pages.post', compact('post'));
@@ -300,6 +300,7 @@ class PostController extends Controller {
             // Recursively process subcomments
             if ($comment->subcomments->isNotEmpty()) {
                 $this->processComments($comment->subcomments, $userId);
+                
             }
         }
     }

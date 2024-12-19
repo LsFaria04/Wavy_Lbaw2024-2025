@@ -378,7 +378,7 @@ function insertMorePosts(element, posts) {
     post = insertPostMedia(post, posts.data[i].media);
 
     if (userId == posts.data[i].user.userid || isadmin) {
-      insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
+      insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media, posts.data[i].topics);
     }
 
     let editForm = post.querySelector('.edit-post-form form');
@@ -390,80 +390,77 @@ function insertMorePosts(element, posts) {
 }
 
 function insertMoreCommentsToPost(element, comments) {
-  for (let i = 0; i < comments.data.length; i++) {
-    if (comments.data[i].user.state === 'deleted') {
-      comments.data[i].user.username = 'Deleted User';
+  if (comments.data && comments.data.length > 0){
+    for (let i = 0; i < comments.data.length; i++) {
+      if (comments.data[i].user.state === 'deleted') {
+        comments.data[i].user.username = 'Deleted User';
+      }
+
+
+      let comment = createComment(comments.data[i]);
+
+      if (userId == comments.data[i].user.userid || isadmin) {
+        comment = createCommentOptions(comment, comments.data[i].commentid, false);
+      } else {
+        comment = createCommentOptions(comment, comments.data[i].commentid, true);
+      }
+
+      comment = insertCommentMedia(comment, comments.data[i].media);
+
+      if (userId == comments.data[i].user.userid || isadmin) {
+        insertUpdateCommentForm(comment, comments.data[i].commentid, comments.data[i].message, comments.data[i].media);
+      }
+
+      let editForm = comment.querySelector('.edit-comment-form form');
+      if (editForm !== null) {
+        addEventListenerToCommentForm(editForm);
+      }
+      element.appendChild(comment);
     }
-
-    let comment = createComment(comments.data[i]);
-
-    if (userId == comments.data[i].user.userid || isadmin) {
-      comment = createCommentOptions(comment, comments.data[i].commentid, false);
-    } else {
-      comment = createCommentOptions(comment, comments.data[i].commentid, true);
-    }
-
-    const likeButtonHtml = createLikeButton(comments.data[i].commentid, comments.data[i].like_count, comments.data[i].liked_by_user);
-    const commentButtonHtml = createCommentButton(comments.data[i].commentid, comments.data[i].comment_count);
-
-    const interactionContainer = document.createElement('div');
-    interactionContainer.classList.add('comment-interactions', 'flex', 'items-center', 'gap-4', 'mt-4');
-    interactionContainer.innerHTML = likeButtonHtml + commentButtonHtml;
-
-    comment.appendChild(interactionContainer);
-
-    comment = insertCommentMedia(comment, comments.data[i].media);
-
-    if (userId == comments.data[i].user.userid || isadmin) {
-      insertUpdateCommentForm(comment, comments.data[i].commentid, comments.data[i].message, comments.data[i].media);
-    }
-
-    let editForm = comment.querySelector('.edit-comment-form form');
-    if (editForm !== null) {
-      addEventListenerToCommentForm(editForm);
-    }
-    element.appendChild(comment);
   }
 }
 
-//creates a user container with all the necessary info
-function insertMoreCommentsToPost(element, comments) {
-  for (let i = 0; i < comments.data.length; i++) {
-    if (comments.data[i].user.state === 'deleted') {
-      comments.data[i].user.username = 'Deleted User';
+function insertMoreSubCommentsToComment(subcomments) {
+  let html = '';
+  
+  if (subcomments && subcomments.length > 0) {
+    for (let i = 0; i < subcomments.length; i++) {
+      // Check if the user is deleted and modify accordingly
+      if (subcomments[i].user.state === 'deleted') {
+        subcomments[i].user.username = 'Deleted User';
+      }
+      console.log(subcomments[i]);
+
+      let comment = createComment(subcomments[i]);
+
+      // Add options to the comment (admin/user options)
+      if (userId == subcomments[i].user.userid || isadmin) {
+        comment = createCommentOptions(comment, subcomments[i].commentid, false);
+      } else {
+        comment = createCommentOptions(comment, subcomments[i].commentid, true);
+      }
+
+      // Check if media exists before passing it to insertCommentMedia
+      if (subcomments[i].media && subcomments[i].media.length > 0) {
+        comment = insertCommentMedia(comment, subcomments[i].media);
+      }
+
+      // If the user is authorized, insert the update comment form
+      if (userId == subcomments[i].user.userid || isadmin) {
+        insertUpdateCommentForm(comment, subcomments[i].commentid, subcomments[i].message, subcomments[i].media);
+      }
+
+      // Add event listeners for the edit form
+      let editForm = comment.querySelector('.edit-comment-form form');
+      if (editForm !== null) {
+        addEventListenerToCommentForm(editForm);
+      }
+
+      html += comment.outerHTML; // Append the generated comment HTML
     }
-
-    let comment = createComment(comments.data[i]);
-
-    if (userId == comments.data[i].user.userid || isadmin) {
-      comment = createCommentOptions(comment, comments.data[i].commentid, false);
-    } else {
-      comment = createCommentOptions(comment, comments.data[i].commentid, true);
-    }
-
-    const likeButtonHtml = createLikeButton(comments.data[i].commentid, comments.data[i].like_count, comments.data[i].liked_by_user);
-    const commentButtonHtml = createCommentButton(comments.data[i].commentid, comments.data[i].comment_count);
-
-    const interactionContainer = document.createElement('div');
-    interactionContainer.classList.add('comment-interactions', 'flex', 'items-center', 'gap-4', 'mt-4');
-    interactionContainer.innerHTML = likeButtonHtml + commentButtonHtml;
-
-    comment.appendChild(interactionContainer);
-
-    comment = insertCommentMedia(comment, comments.data[i].media);
-
-    if (userId == comments.data[i].user.userid || isadmin) {
-      insertUpdateCommentForm(comment, comments.data[i].commentid, comments.data[i].message, comments.data[i].media);
-    }
-
-    let editForm = comment.querySelector('.edit-comment-form form');
-    if (editForm !== null) {
-      addEventListenerToCommentForm(editForm);
-    }
-    element.appendChild(comment);
   }
+  return html; // Return the HTML string of all the subcomments
 }
-
 
 //Search content creation functions ---------------------------------------------------------------------------
 
