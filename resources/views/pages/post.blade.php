@@ -60,7 +60,7 @@
             @endif
 
             <!-- Existing Comments Section -->
-            <div class="comments mt-6">
+            <section id="comments" class="mt-6">
                 <h3 class="text-lg font-bold mb-4">Comments</h3>
                 @forelse ($post->comments as $comment)
                     @include('partials.comment', ['comment' => $comment])

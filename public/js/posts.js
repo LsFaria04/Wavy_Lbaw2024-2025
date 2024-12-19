@@ -150,6 +150,8 @@ function createLikeButton(postId, likeCount, likedByUser) {
 
 function likePost(postId,event) {
 
+  event?.stopPropagation();
+
   if(isadmin) return;
   if (userId == -1) return; 
   if (postId == null) return;
@@ -173,6 +175,7 @@ function likePost(postId,event) {
     } else {
         heartEmpty?.classList.remove('hidden');
         heartFilled?.classList.add('hidden');
+        heartEmpty.classList.add('fill-gray-500', 'group-hover:fill-red-600');
         if (likeCountElement !== null) {
           likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
         }
