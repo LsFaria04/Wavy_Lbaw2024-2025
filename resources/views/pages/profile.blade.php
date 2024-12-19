@@ -199,8 +199,8 @@
                             <input class = "hidden" type="file" id="bannerPic" name = "bannerPic" onchange = "updateFileProfile(true)" />
                         </div>
                         <div class="flex justify-end space-x-2">
-                            <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-2xl hover:bg-gray-600" onclick="toggleEditMenu()">Cancel</button>
-                            <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-2xl hover:bg-sky-900">Save</button>
+                            <button type="button" class="px-4 py-2 w-20 bg-gray-700 text-white font-semibold rounded-3xl hover:bg-gray-800" onclick="toggleEditMenu()">Cancel</button>
+                            <button type="submit" class="px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Save</button>
                         </div>
                     </form>
                 </div>
@@ -311,12 +311,12 @@
         </div>
 
    <div id="croppModal" class = "hidden w-full fixed inset-0 bg-black bg-opacity-50  items-center justify-center">
-        <div class="bg-white w-96 p-6 rounded-lg shadow-lg">
-            <h3 class = "font-semibold text-xl my-2">Image Preview</h3>
-            <div  id = "croppPreview">
-                <img id = "image" src = "" class = "w-full h-full">
+        <div class="flex flex-col content-evenly flex-wrap place-content-evenly bg-white w-full lg:w-[500px] lg:h-[550px] max-w-screen max-h-screen rounded-xl shadow-lg">
+            <h3 class = "font-semibold text-xl ml-4 my-2">Image Preview</h3>
+            <div  id = "croppPreview" class = "p-4 w-[500px] h-[400px] overflow-hidden rounded-lg">
+                <img id = "image" src = "" class = "rounded-xl">
             </div>
-            <button onclick = "closeImagePreview()" class = "my-2 px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800" >Done</button>
+            <button onclick = "closeImagePreview()" class = "ml-4 my-2 px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800" >Done</button>
         </div>
    </div> 
         @include('partials.addPostTopics')
