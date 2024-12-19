@@ -1,4 +1,4 @@
-<div class="comment mb-4 p-4 bg-white rounded-md shadow cursor-pointer">
+<div class="comment p-4 bg-white cursor-pointer border-b border-gray-300 w-full max-w-full">
     <div class="comment-header mb-2 flex justify-between items-center">
         <div>
             <h3 class="font-bold">
@@ -52,7 +52,7 @@
         </div>
     </div>
 
-    <div class="comment-body mb-2 cursor-pointer" id="comment-content-{{ $comment->commentid }}">
+    <div class="comment-body mb-2 cursor-pointer max-w-screen-lg" id="comment-content-{{ $comment->commentid }}">
         <p>{{ $comment->message }}</p>
 
         <!-- Loop through media files associated with the comment -->

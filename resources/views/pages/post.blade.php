@@ -17,12 +17,13 @@
         </div>
 
         <!-- Post Content -->
-        <section id="postContent" class="flex flex-col px-6 pt-6 max-w-full w-full bg-white rounded-xl shadow-lg mx-auto">
+        <section id="postContent" class="flex flex-col max-w-full w-full bg-white mx-auto">
             @include('partials.post', ['post' => $post])
 
             <!-- Add Comment Section -->
             @if(Auth::check() && !Auth()->user()->isadmin)
-                <div class="addComment mt-8 mb-6 p-4 bg-gray-50 rounded-xl shadow-md border">
+                <div class="addComment p-4 bg-gray-50 border-b">
+                    <h3 class="text-lg font-bold mb-4">Comments</h3>
                     <form id="commentForm" action="{{ route('comments.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                         @csrf
                         <input type="hidden" name="postid" value="{{ $post->postid }}">
@@ -60,8 +61,7 @@
             @endif
 
             <!-- Existing Comments Section -->
-            <section id="comments" class="mt-6">
-                <h3 class="text-lg font-bold mb-4">Comments</h3>
+            <section id="comments">
                 @forelse ($post->comments as $comment)
                     @include('partials.comment', ['comment' => $comment])
                 @empty
