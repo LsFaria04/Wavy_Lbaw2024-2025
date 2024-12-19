@@ -220,9 +220,8 @@ function loadSearchContent(category, query, filters){
   sendAjaxRequest('post', '/api/search/filtered?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, filters, insertMoreSearchResults);
 }
   
-//inserts more results in the search body
 function insertMoreSearchResults(){
-    removeLoadingCircle();//remove the circle because we already have the data
+    removeLoadingCircle();
     const searchResults = document.querySelector("#search-results");
 
     if(document.getElementById('filter') === null){
@@ -336,7 +335,6 @@ function insertMoreTopicsFilters(){
 
 
 
-//inserts more groups into and element
 function insertMoreGroups(element, groups){
   for(let i = 0; i < groups.data.length; i++){
     let group = createGroup(groups.data[i]);
@@ -353,37 +351,38 @@ function insertMoreUsers(element, users){
   }
 }
 
-//inserts more posts into an element
-function insertMorePosts(element, posts){
-  for(let i = 0; i < posts.data.length; i++){
-    
+//inserts more users into an element
+function insertMoreUsers(element, users){
+  for(let i = 0; i < users.data.length; i++){
+    let user = createUser(users.data[i]);
+    element.appendChild(user);
+  }
+}
+
+function insertMorePosts(element, posts) {
+  for (let i = 0; i < posts.data.length; i++) {
     if (posts.data[i].user.state === 'deleted') {
       posts.data[i].user.username = 'Deleted User';
     }
-    
+
     let post = createPost(posts.data[i]);
 
-    if(userId == posts.data[i].user.userid || isadmin){
-      post = createPostOptions(post, posts.data[i].postid, false); 
-    }
-    else{
-      post = createPostOptions(post, posts.data[i].postid, true); 
+    if (userId == posts.data[i].user.userid || isadmin) {
+      post = createPostOptions(post, posts.data[i].postid, false);
+    } else {
+      post = createPostOptions(post, posts.data[i].postid, true);
     }
 
     post = insertPostTopics(post, posts.data[i].topics);
 
-    const likeButtonHtml = createLikeButton(posts.data[i].postid, posts.data[i].like_count, posts.data[i].liked_by_user);
-    
-    post.insertAdjacentHTML('beforeend', likeButtonHtml);
-
     post = insertPostMedia(post, posts.data[i].media);
 
-    if(userId == posts.data[i].user.userid || isadmin){
+    if (userId == posts.data[i].user.userid || isadmin) {
       insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
     }
 
     let editForm = post.querySelector('.edit-post-form form');
-    if(editForm !== null){
+    if (editForm !== null) {
       addEventListenerToForm(editForm);
     }
     element.appendChild(post);
@@ -455,6 +454,43 @@ function createLikeButton(postId, likeCount = 0, likedByUser = false) {
 }
 
 //creates a user container with all the necessary info
+function insertMoreCommentsToPost(element, comments) {
+  for (let i = 0; i < comments.data.length; i++) {
+    if (comments.data[i].user.state === 'deleted') {
+      comments.data[i].user.username = 'Deleted User';
+    }
+
+    let comment = createComment(comments.data[i]);
+
+    if (userId == comments.data[i].user.userid || isadmin) {
+      comment = createCommentOptions(comment, comments.data[i].commentid, false);
+    } else {
+      comment = createCommentOptions(comment, comments.data[i].commentid, true);
+    }
+
+    const likeButtonHtml = createLikeButton(comments.data[i].commentid, comments.data[i].like_count, comments.data[i].liked_by_user);
+    const commentButtonHtml = createCommentButton(comments.data[i].commentid, comments.data[i].comment_count);
+
+    const interactionContainer = document.createElement('div');
+    interactionContainer.classList.add('comment-interactions', 'flex', 'items-center', 'gap-4', 'mt-4');
+    interactionContainer.innerHTML = likeButtonHtml + commentButtonHtml;
+
+    comment.appendChild(interactionContainer);
+
+    comment = insertCommentMedia(comment, comments.data[i].media);
+
+    if (userId == comments.data[i].user.userid || isadmin) {
+      insertUpdateCommentForm(comment, comments.data[i].commentid, comments.data[i].message, comments.data[i].media);
+    }
+
+    let editForm = comment.querySelector('.edit-comment-form form');
+    if (editForm !== null) {
+      addEventListenerToCommentForm(editForm);
+    }
+    element.appendChild(comment);
+  }
+}
+
 function createUser(userInfo){
   let user = document.createElement('div');
   user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");

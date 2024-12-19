@@ -48,6 +48,7 @@ Route::post('profile/{userid}/unfollow', [ProfileController::class, 'unfollow'])
 Route::controller(PostController::class)->group(function (){
     Route::get('api/posts','getPostsTimeline' );
     Route::get('api/posts/{username}', 'getUserPosts');
+    Route::get('api/comments/post/{id}', 'show');
 });
 Route::get('api/search', [SearchController::class, 'search']);
 Route::post('api/search/filtered', [SearchController::class, 'search']);

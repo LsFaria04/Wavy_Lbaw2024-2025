@@ -83,54 +83,153 @@ function insertDeleteMenu(postid) {
   document.body.appendChild(menu);
 }
 
-function createPost(postInfo){
+function createPost(postInfo) {
   let post = document.createElement('div');
-  post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white");
+  post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
   
+  post.setAttribute(
+      "onclick",
+      `window.location.href='/posts/${postInfo.postid}'`
+  );
+
   post.innerHTML = `
-    <div class="post-header mb-2 flex justify-between items-center">
-        <div>
-            <h3 class="font-bold">
-              <a href="${ postInfo.user.state === 'deleted' ? '#' : '../profile/' + postInfo.user.username }" 
-                  class="text-black hover:text-sky-900">
-                  ${ postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username }
-              </a>
-            </h3>
-            <span class="text-gray-500 text-sm">${ postInfo.createddate }</span>
-        </div>
-    </div>
-    <div class="post-body mb-2" id=post-content-${postInfo.postid}>
-        <p>${ postInfo.message }</p>
+      <div class="post-header mb-2 flex justify-between items-center">
+          <div>
+              <h3 class="font-bold">
+                <a href="${postInfo.user.state === 'deleted' ? '#' : '/profile/' + postInfo.user.username}" 
+                    class="text-black hover:text-sky-900">
+                    ${postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username}
+                </a>
+              </h3>
+              <span class="text-gray-500 text-sm">${postInfo.createddate}</span>
+          </div>
+      </div>
+      <div class="post-body mb-2" >
+          <p>${postInfo.message}</p>
+      </div>
+      <div class="post-interactions flex items-center gap-4 mt-4">
+          ${createLikeButton(postInfo.postid, postInfo.likes_count, postInfo.liked)}
+          ${createCommentButton(postInfo.postid, postInfo.comments_count)}
       </div>
   `;
-  
-  return post
+
+  return post;
 }
 
-function createPostOptions(post, id, needReport){
+function createLikeButton(postId, likeCount, likedByUser) {
+  return `
+      <div class="post-likes flex items-center gap-2">
+          <button 
+              type="button" 
+              class="flex items-center text-gray-500 hover:text-red-600 group" 
+              onclick="likePost(${postId}, event); event.stopPropagation();">
+              
+              <!-- No like -->
+              <svg 
+                  id="heart-empty-${postId}" viewBox="0 0 24 24" aria-hidden="true"
+                  class="h-5 w-5 ${likedByUser ? 'hidden' : 'fill-gray-500 hover:fill-red-600 group-hover:fill-red-600'}">
+                  <g>
+                      <path d="M16.697 5.5c-1.222-.06-2.679.51-3.89 2.16l-.805 1.09-.806-1.09C9.984 6.01 8.526 5.44 7.304 5.5c-1.243.07-2.349.78-2.91 1.91-.552 1.12-.633 2.78.479 4.82 1.074 1.97 3.257 4.27 7.129 6.61 3.87-2.34 6.052-4.64 7.126-6.61 1.111-2.04 1.03-3.7.477-4.82-.561-1.13-1.666-1.84-2.908-1.91zm4.187 7.69c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                  </g>
+              </svg>
+              
+              <!-- Yes like -->
+              <svg 
+                  id="heart-filled-${postId}" viewBox="0 0 24 24" aria-hidden="true"
+                  class="h-5 w-5 ${likedByUser ? 'fill-red-600 group-hover:fill-red-600' : 'hidden'}">
+                  <g>
+                      <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
+                  </g>
+              </svg>
+              
+              <span id="like-count-${postId}" class="ml-1 group-hover:text-red-600">${likeCount}</span>
+          </button>
+      </div>
+  `;
+}
+
+function likePost(postId,event) {
+
+  event?.stopPropagation();
+
+  if(isadmin) return;
+  if (userId == -1) return; 
+  if (postId == null) return;
+
+  const likeCountElement = document.getElementById(`like-count-${postId}`);
+  const heartEmpty = document.getElementById(`heart-empty-${postId}`);
+  const heartFilled = document.getElementById(`heart-filled-${postId}`);
+
+
+  // Make the AJAX request to like/unlike the post
+  sendAjaxRequest('post', '/like-post/' + postId, null,  updateLikePost);
+
+  function updateLikePost() {
+    const response = JSON.parse(this.responseText);
+    if (response.liked) {
+        heartEmpty.classList.add('hidden');
+        heartFilled.classList.remove('hidden');
+        heartFilled.classList.add('fill-red-600', 'group-hover:fill-red-600');
+        likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
+        likeCountElement.classList.add('text-red-600');
+    } else {
+        heartEmpty?.classList.remove('hidden');
+        heartFilled?.classList.add('hidden');
+        heartEmpty.classList.add('fill-gray-500', 'group-hover:fill-red-600');
+        if (likeCountElement !== null) {
+          likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+        }
+        likeCountElement.classList.remove('text-red-600');
+    }
+  }
+}
+
+function createCommentButton(postId, commentCount = 0) {
+  return `
+      <div class="post-comments flex items-center gap-2">
+            <button 
+                type="button" 
+                class="flex items-center text-gray-500 hover:text-sky-600 group" 
+                onclick="commentPost(${postId}, event); event.stopPropagation();">
+                <svg 
+                    xmlns="http://www.w3.org/2000/svg" 
+                    id="comment-icon-${postId}" 
+                    class="h-5 w-5 fill-gray-500 group-hover:fill-sky-600" 
+                    viewBox="0 0 24 24" 
+                    fill="currentColor">
+                    <path d="M12 2C6.477 2 2 6.067 2 10.5c0 1.875.656 3.625 1.844 5.094l-1.308 3.922c-.19.57.474 1.065.997.736l3.875-2.325A9.435 9.435 0 0012 19c5.523 0 10-4.067 10-8.5S17.523 2 12 2zm0 2c4.418 0 8 3.067 8 6.5S16.418 17 12 17c-1.173 0-2.292-.232-3.318-.656a1 1 0 00-.97.035l-2.898 1.739.835-2.501a1 1 0 00-.176-.964A7.36 7.36 0 014 10.5C4 7.067 7.582 4 12 4z" />
+                </svg>
+                <!-- Comment Count -->  
+                <span id="comment-count-${postId}" class="ml-1 text-gray-500 group-hover:text-sky-600">${commentCount}</span>
+            </button>
+      </div>
+  `;
+}
+
+function createPostOptions(post, id, needReport) {
   const postheader = post.querySelector('.post-header');
   let options = document.createElement('div');
   options.classList.add("flex", "items-center", "gap-2");
   options.setAttribute('id', 'postOptions');
-  
-  if(!needReport){
+
+  if (!needReport) {
     options.innerHTML = `
-      <button type="button" onclick="toggleEditPost(${id})" class="text-gray-500 hover:text-black">
+      <button type="button" onclick="toggleEditPost(${id}); event.stopPropagation();" class="text-gray-500 hover:text-black">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="black" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="0.6" d="M10.973 1.506a18.525 18.525 0 00-.497-.006A4.024 4.024 0 006.45 5.524c0 .43.095.865.199 1.205.054.18.116.356.192.527v.002a.75.75 0 01-.15.848l-4.937 4.911a.871.871 0 000 1.229.869.869 0 001.227 0L7.896 9.31a.75.75 0 01.847-.151c.17.079.35.139.529.193.34.103.774.198 1.204.198A4.024 4.024 0 0014.5 5.524c0-.177-.002-.338-.006-.483-.208.25-.438.517-.675.774-.32.345-.677.696-1.048.964-.354.257-.82.512-1.339.512-.396 0-.776-.156-1.059-.433L9.142 5.627a1.513 1.513 0 01-.432-1.06c0-.52.256-.985.514-1.34.27-.37.623-.727.97-1.046.258-.237.529-.466.78-.675zm-2.36 9.209l-4.57 4.59a2.37 2.37 0 01-3.35-3.348l.002-.001 4.591-4.568a6.887 6.887 0 01-.072-.223 5.77 5.77 0 01-.263-1.64A5.524 5.524 0 0110.476 0 12 12 0 0112 .076c.331.044.64.115.873.264a.92.92 0 01.374.45.843.843 0 01-.013.625.922.922 0 01-.241.332c-.26.257-.547.487-.829.72-.315.26-.647.535-.957.82a5.947 5.947 0 00-.771.824c-.197.27-.227.415-.227.457 0 .003 0 .006.003.008l1.211 1.211a.013.013 0 00.008.004c.043 0 .19-.032.46-.227.253-.183.532-.45.826-.767.284-.308.56-.638.82-.95.233-.28.463-.565.72-.823a.925.925 0 01.31-.235.841.841 0 01.628-.033.911.911 0 01.467.376c.15.233.22.543.262.87.047.356.075.847.075 1.522a5.524 5.524 0 01-5.524 5.525c-.631 0-1.221-.136-1.64-.263a6.969 6.969 0 01-.222-.071z"/>
           </svg>
       </button>
       <form action="../posts/delete/${id}" method="POST" id="deleteForm-${id}">
-        <button type="button" onclick="openDeleteMenu(${id})" class="text-red-500 hover:text-red-700 ml-2">
-            <input type="hidden" name="_token" value= ${getCsrfToken()} />
+        <button type="button" onclick="openDeleteMenu(${id}); event.stopPropagation();" class="text-red-500 hover:text-red-700 ml-2">
+            <input type="hidden" name="_token" value=${getCsrfToken()} />
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
             </svg>
         </button>
       </form>
-    `
-  }else{
-    options.innerHTML= `
+    `;
+  } else {
+    options.innerHTML = `
       <button type="button" onclick="event.stopPropagation(); toggleReportForm('${id}', 'post');" class="text-gray-500 hover:text-black">
           Report
       </button>
@@ -211,6 +310,7 @@ const originalFormData = {};
 
 // Toggle the edit form visibility
 function toggleEditPost(postid) {
+    event.stopPropagation();
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
     const editFormFields = editForm.querySelectorAll('input, textarea, select'); // Editable fields
@@ -503,12 +603,13 @@ function insertPostMedia(post, mediaArray){
 
 //inserts the update post form into a post container. Return the updated post container.
 function insertUpdateForm(post, id, message, media){
+  event.stopPropagation();
   let formContainer = document.createElement('div');
   formContainer.classList.add("edit-post-form", "hidden", "mt-4", "bg-white", "rounded-xl", "shadow-md", "p-4");
   formContainer.setAttribute('id',"edit-post-" + id);
   
   formContainer.innerHTML = `
-    <form action="/posts/update/${id}" method="POST" enctype="multipart/form-data"  class="flex flex-col gap-4" data-post-id = "${id}">
+    <form action="/posts/update/${id}" method="POST" enctype="multipart/form-data"  class="flex flex-col gap-4" data-post-id = "${id}" onclick="event.stopPropagation();">
         <input type="hidden" name="_token" value= ${getCsrfToken()} />
         <div class="mb-4">
             <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
@@ -604,41 +705,6 @@ function removeSpecificFile(index) {
   // Hide the display if no files remain
   if (selectedFiles.length === 0) {
       fileDisplay.classList.add('hidden');
-  }
-}
-
-
-function likePost(postId,event) {
-
-  event?.stopPropagation();
-
-  if(isadmin) return;
-  if (userId == -1) return; 
-  if (postId == null) return;
-
-  const likeCountElement = document.getElementById(`like-count-${postId}`);
-  const heartEmpty = document.getElementById(`heart-empty-${postId}`);
-  const heartFilled = document.getElementById(`heart-filled-${postId}`);
-
-
-  // Make the AJAX request to like/unlike the post
-  sendAjaxRequest('post', '/like-post/' + postId, null,  updateLikePost);
-
-  function updateLikePost() {
-    const response = JSON.parse(this.responseText);
-    if (response.liked) {
-        heartEmpty.classList.add('hidden');
-        heartFilled.classList.remove('hidden');
-        likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
-        likeCountElement.classList.add('text-red-600');
-    } else {
-        heartEmpty?.classList.remove('hidden');
-        heartFilled?.classList.add('hidden');
-        if (likeCountElement !== null) {
-          likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
-        }
-        likeCountElement.classList.remove('text-red-600');
-    }
   }
 }
 
