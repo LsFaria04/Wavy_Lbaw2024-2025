@@ -260,6 +260,43 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Invitation canceled successfully.'], 200);
     }
     
+    public function acceptInvitation($groupid, $invitationid) {
+        $invitation = GroupInvitation::where('groupid', $groupid)
+            ->where('invitationid', $invitationid)
+            ->firstOrFail();
+    
+        // Ensure the current user matches the invited user
+        if ($invitation->userid !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    
+        // Add the user to the group
+        GroupMembership::create([
+            'groupid' => $groupid,
+            'userid' => Auth::id(),
+        ]);
+    
+        // Delete the invitation
+        $invitation->delete();
+    
+        return response()->json(['status' => 'success', 'message' => 'You have joined the group.']);
+    }    
+    
+    public function rejectInvitation($groupid, $invitationid) {
+        $invitation = GroupInvitation::where('groupid', $groupid)
+            ->where('invitationid', $invitationid)
+            ->firstOrFail();
+    
+        // Ensure the current user matches the invited user
+        if ($invitation->userid !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    
+        // Delete the invitation
+        $invitation->delete();
+    
+        return response()->json(['status' => 'success', 'message' => 'You have rejected the invitation.']);
+    }    
 
     public function sendJoinRequest(Request $request, $groupid) {
         $user = Auth::user();
