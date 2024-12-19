@@ -580,7 +580,7 @@ function toggleSubcommentForm(commentId) {
 
 function createComment(commentInfo){
   let comment = document.createElement('div');
-  comment.classList.add("comment", "mb-4", "p-4","bg-white","rounded-md" , "shadow", "cursor-pointer");
+  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
 
   let subcommentsHtml = '';
 
