@@ -33,7 +33,8 @@ class ProfileController extends Controller {
         $posts = $user->posts()
                       ->whereNull('groupid')
                       ->orderBy('createddate', 'desc')
-                      ->withCount('likes') // Add likes_count to the query
+                      ->withCount('likes') 
+                      ->withCount('comments') 
                       ->paginate(10);
     
         if (Auth::check()) {
