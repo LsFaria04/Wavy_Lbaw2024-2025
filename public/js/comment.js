@@ -611,7 +611,7 @@ function createComment(commentInfo){
         <p>${ commentInfo.message }</p>
     </div>
     <div class="comment-interactions flex items-center gap-4 mt-4">
-          ${createCommentLikeButton(commentInfo.commentid, commentInfo.comment_likes_count, commentInfo.liked)}
+          ${createCommentLikeButton(commentInfo.commentid, commentInfo.likes_count, commentInfo.liked)}
           ${createCommentCommentButton(commentInfo.commentid, commentInfo.subcomments_count)}
     </div>
     <div class="subcomments mt-4 pl-4 border-l border-gray-200">

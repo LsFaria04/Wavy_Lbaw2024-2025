@@ -255,14 +255,14 @@ class PostController extends Controller {
             ->with([
                 'user',
                 'media',
-                'commentLikes',
                 'subcomments' => function ($subQuery) {
                     $subQuery->orderBy('createddate', 'desc') // Order subcomments by createddate
-                        ->with(['user','media','commentLikes','subcomments'])
+                        ->with(['user','media','subcomments'])
                         ->withCount('subcomments');
                 }
             ])
             ->withCount('subcomments')
+            ->withCount('likes')
             ->paginate(10);  // This returns a LengthAwarePaginator
         
         $post->comments = $comments;
@@ -297,7 +297,7 @@ class PostController extends Controller {
         foreach ($comments as $comment) {
             // Process likes for the current comment
             $comment->liked = $userId ? $comment->commentLikes()->where('userid', $userId)->exists() : false;
-            $comment->comment_likes_count = $comment->commentLikes()->count();
+            $comment->likes_count = $comment->commentLikes()->count();
 
             if (!$comment->relationLoaded('user')) {
                 $comment->load('user');
