@@ -44,7 +44,7 @@
             @endforeach
     </div>
 
-    <div class="post-body mb-2 cursor-pointer" id="post-content-{{ $post->postid }}" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
+    <div class="post-body mb-2 cursor-pointer max-w-screen-lg" id="post-content-{{ $post->postid }}" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
         <p>{{ $post->message }}</p>
 
         <!-- Loop through media files associated with the post -->
@@ -56,7 +56,7 @@
                 @endphp
 
                 @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                    <button onclick = "toggleImageDetails('{{$filePath}}')"><img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto "><button>
+                    <button onclick = "toggleImageDetails('{{$filePath}}')"><img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto "><button>
                 @elseif (in_array($fileExtension, ['mp4', 'avi', 'mov']))
                     <video controls class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto">
                         <source src="{{ $filePath }}" type="video/{{ $fileExtension }}">

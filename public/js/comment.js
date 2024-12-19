@@ -581,7 +581,7 @@ function toggleSubcommentForm(commentId) {
 function createComment(commentInfo){
   console.log(commentInfo);
   let comment = document.createElement('div');
-  comment.classList.add("comment", "mb-4", "p-4","bg-white","rounded-md" , "shadow", "cursor-pointer");
+  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
 
   let subcommentsHtml = '';
 
@@ -603,7 +603,7 @@ function createComment(commentInfo){
             <span class="text-gray-500 text-sm">${ commentInfo.createddate }</span>
         </div>
     </div>
-    <div class="comment-body mb-2" id=comment-content-${commentInfo.commentid}>
+    <div class="comment-body mb-2 max-w-screen-lg" id=comment-content-${commentInfo.commentid}>
         <p>${ commentInfo.message }</p>
     </div>
     <div class="comment-interactions flex items-center gap-4 mt-4">
