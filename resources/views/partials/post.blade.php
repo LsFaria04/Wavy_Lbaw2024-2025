@@ -60,11 +60,11 @@
             @endforeach
     </div>
 
-    <div class="post-body mb-2 cursor-pointer max-w-screen-lg" id="post-content-{{ $post->postid }}" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
+    <div class="post-body mb-2 cursor-pointer w-full" id="post-content-{{ $post->postid }}" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
         <p>{{ $post->message }}</p>
 
         <!-- Loop through media files associated with the post -->
-        <div class="post-media mt-4 grid grid-cols-2 gap-4" onclick="event.stopPropagation();">
+        <div class="post-media mt-4 flex flex-row flex-wrap gap-2 sm:justify-start items-center justify-center" onclick="event.stopPropagation();">
             @foreach ($post->media as $media)
                 @php
                     $filePath = asset('storage/' . $media->path);
@@ -72,7 +72,7 @@
                 @endphp
 
                 @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                    <button onclick = "toggleImageDetails('{{$filePath}}')"><img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto "><button>
+                    <button class = "h-60 w-60 sm:w-80 sm:h-80 overflow-hidden  rounded-md mb-2" onclick = "toggleImageDetails('{{$filePath}}')"><img src="{{ $filePath }}" alt="Image" class="min-w-full min-h-full object-cover rounded-md mb-2 mx-auto "></button>
                 @elseif (in_array($fileExtension, ['mp4', 'avi', 'mov']))
                     <video controls class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto">
                         <source src="{{ $filePath }}" type="video/{{ $fileExtension }}">
