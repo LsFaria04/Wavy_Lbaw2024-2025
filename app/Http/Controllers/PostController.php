@@ -24,7 +24,7 @@ class PostController extends Controller {
         if (Auth::check()) {
             // Include the comment count
             $posts = Post::with('user', 'media','topics')
-                        ->withCount('comments')  // This will add comments_count to the Post model~
+                        ->withCount('comments')  // This will add comments_count to the Post model
                         ->withCount('likes')
                         ->whereNull('groupid')
                         ->orderBy('createddate', 'desc')
@@ -158,6 +158,7 @@ class PostController extends Controller {
         if($request->topics !== null){
             $request->topics = explode(',', $request->topics[0]);
         }
+        Log::info($request);
 
         // Validate input
         $request->validate([
@@ -376,6 +377,8 @@ class PostController extends Controller {
             }
             return redirect()->route('home', $post->postid)->with('error', 'You can only upload a maximum of 4 files.');
         }
+
+        
 
         // Handle new file uploads
         if ($request->hasFile('media')) {

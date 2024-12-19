@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Media;
+use Illuminate\Support\Facades\Storage;
 
 
 class ProfileController extends Controller {   
@@ -17,7 +19,7 @@ class ProfileController extends Controller {
     * Show the profile of the user with the same username as the one provided
     */
     public function show($username) {
-        $user = User::where('username', $username)->first();
+        $user = User::with('profilePicture')->where('username', $username)->first();
     
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');
@@ -40,6 +42,7 @@ class ProfileController extends Controller {
                 $followStatus = Follow::STATE_PENDING;
             }
         }
+        Log::info($user);
     
         return view('pages.profile', compact('user', 'posts', 'comments', 'followStatus'));
     }
@@ -55,7 +58,8 @@ class ProfileController extends Controller {
     public function update(Request $request, $userid) {
         $user = User::findOrFail($userid);
         $this->authorize('update', $user);
-        
+    
+        Log::info($request);
         //try the data input validation
         try {
             $validatedData = $request->validate([
@@ -68,7 +72,47 @@ class ProfileController extends Controller {
                 ],
                 'bio' => 'nullable|string|max:130',
                 'visibilitypublic' => 'required|boolean',
+                'profilePic' => 'nullable|mimes:jpeg,png,jpg|max:10000'
             ]);
+
+            // Handle new file uploads
+            if ($request->hasFile('profilePic')) {
+
+                $previousFile = Media::where('path', 'Like', 'images/profile%')->where('userid', $userid)->first();
+                if($previousFile && Storage::exists('public/' . $previousFile->path)){
+                    Storage::delete('public/' . $previousFile->path);
+                    $previousFile->delete();
+                }
+
+                $fileName = 'profile' . $userid . '.' . $request->profilePic->extension();
+                $mediaPath = $request->file('profilePic')->storeAs('images', $fileName, 'public');
+
+                    // Create new media record for the post
+                Media::create([
+                    'postid' => null,
+                    'userid' => $userid, // Assuming the media belongs to the authenticated user
+                    'path' => $mediaPath,
+                ]);
+            }
+            if ($request->hasFile('bannerPic')) {
+
+                $previousFile = Media::where('path', 'Like', 'images/banner%')->where('userid', $userid)->first();
+                if($previousFile && Storage::exists('public/' . $previousFile->path)){
+                    Storage::delete('public/' . $previousFile->path);
+                    $previousFile->delete();
+                }
+
+                $fileName = 'banner' . $userid . '.' . $request->profilePic->extension();
+                $mediaPath = $request->file('bannerPic')->storeAs('images', $fileName, 'public');
+
+                    // Create new media record for the post
+                Media::create([
+                    'postid' => null,
+                    'userid' => $userid, // Assuming the media belongs to the authenticated user
+                    'path' => $mediaPath,
+                ]);
+            }
+            
         
             $user->update($validatedData);
 

@@ -117,9 +117,9 @@ class User extends Authenticatable {
     /**
      * Get the profile picture for the user.
      */
-    public function profilePicture(): HasOne
+    public function profilePicture()
     {
-        return $this->hasOne(Media::class, 'userid');
+        return $this->hasMany(Media::class, 'userid', 'userid');
     }
 
 }

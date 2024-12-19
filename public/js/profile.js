@@ -2,6 +2,7 @@ function addEventListeners() {
   document.addEventListener('DOMContentLoaded', switchProfileTab);
   document.addEventListener('DOMContentLoaded', switchGroupTab);
   window.addEventListener("scroll", infiniteScroll);
+  imageCropper();
 
   document.addEventListener('DOMContentLoaded', toggleFollow);
 
@@ -709,6 +710,105 @@ function cancelPendingRequest(userId, csrfToken, followButton) {
 }
 
 
+
+//Functions related to the profile pictures (profile picture and banner) -----------------------------------------------------------------------
+
+
+//Funtion that displays a preview of the images that are going to be uploaded
+function imageCropper(){
+  document.getElementById('profilePic').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            const imageUrl = e.target.result;
+            const img = document.getElementById('image');
+            img.src = imageUrl;
+            const croppModal = document.getElementById("croppModal");
+            croppModal.classList.toggle('hidden');
+            croppModal.classList.toggle('flex');
+        };
+        reader.readAsDataURL(file);
+        
+    }
+  });
+  document.getElementById('bannerPic').addEventListener('change', function(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const croppModal = document.getElementById("croppModal");
+        croppModal.classList.toggle('hidden');
+        croppModal.classList.toggle('flex');
+        insertLoadingCircle(croppModal);
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          removeLoadingCircle();
+            const imageUrl = e.target.result;
+            const img = document.getElementById('image');
+            img.src = imageUrl;
+            
+        };
+        reader.readAsDataURL(file);
+        
+    }
+  });
+}
+
+//Closes the preview menu
+function closeImagePreview(){
+  const croppModal = document.getElementById("croppModal");
+  croppModal.classList.toggle('hidden');
+  croppModal.classList.toggle('flex');
+}
+
+
+//update the file that appears in the edit profile when the user uploads a file
+function updateFileProfile(isbanner) {
+  let fileInput = null;
+  let fileDisplay = null
+  if(isbanner){
+    fileInput = document.getElementById('bannerPic');
+    fileDisplay = document.getElementById('bannerPicDisplay');
+  }
+  else{
+    fileInput = document.getElementById('profilePic');
+    fileDisplay = document.getElementById('profilePicDisplay');
+  }
+
+
+  // Clear previous file list
+  fileDisplay.innerHTML = '';
+
+  let file = fileInput.files[0];
+  const li = document.createElement('li');
+  li.classList.add('flex', 'items-center', 'gap-2');
+
+  li.innerHTML = `
+      <span class="text-sm text-gray-500">${file.name}</span>
+      <button type="button" onclick="removeFileProfile(${isbanner})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+  `;
+  fileDisplay.appendChild(li);
+
+
+  fileDisplay.classList.remove('hidden');
+}
+
+//removes the file that is being displayed
+function removeFileProfile(isbanner){
+  let fileInput = null;
+  let fileDisplay = null
+  if(isbanner){
+    fileInput = document.getElementById('bannerPic');
+    fileDisplay = document.getElementById('bannerPicDisplay');
+  }
+  else{
+    fileInput = document.getElementById('profilePic');
+    fileDisplay = document.getElementById('profilePicDisplay');
+  }
+
+  fileDisplay.innerHTML = '';
+  fileInput.value = '';
+
+}
 
 addEventListeners();
   
