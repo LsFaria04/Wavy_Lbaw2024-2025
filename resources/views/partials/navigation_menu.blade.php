@@ -35,6 +35,7 @@
                     <span id="notification-dot" class="notification-indicator absolute top-70 right-3 w-6 h-6 bg-red-500 rounded-full animate-pulse hidden"></span>
                 </a>
             </li>
+            <!--
             <li class = "test-white font-medium text-lg">
                 <a class = "flex flex-row items-center gap-3">
                 <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" id="Bold" viewBox="0 0 24 24" width="20" height="20">
@@ -44,6 +45,7 @@
                     <span class="hidden md:block">Messages</span>
                 </a>
             </li>
+            -->
             @endauth
             <li class = "test-white font-medium text-lg">
 
