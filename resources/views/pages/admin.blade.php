@@ -1,16 +1,16 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="flex flex-col items-center w-full py-8 bg-gray-100">
+<div class="flex flex-col items-center w-full bg-white">
 
-    <header class="w-full max-w-5xl mb-8 px-4">
+    <header class="w-full max-w-5xl mb-2 mt-8 shadow">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Administration</h1>
-        <nav class="flex justify-around bg-blue-600 text-white py-3 rounded-lg shadow-lg">
-            <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
+        <nav class="flex w-full justify-around mt-4">
+            <button class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900 border-sky-900 text-sky-900"
                 onclick="showSectionAdmin('users')">Users</button>
-            <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
+            <button class=" tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900"
                 onclick="showSectionAdmin('topics')">Topics</button>
-            <button class="px-6 py-2 font-semibold rounded-lg hover:bg-blue-500 transition"
+            <button class=" tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900"
                 onclick="showSectionAdmin('reports')">Reports</button>
         </nav>
     </header>
@@ -30,14 +30,14 @@
         <!--Used to append messages with JS -->
     </div>
 
-    <section id="users" class="admin-section flex flex-col tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
+    <section id="users" class="admin-section flex flex-col tab-section max-w-5xl w-full bg-white p-6">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Users</h2>
         
         <div class="mb-4 flex justify-between items-center">
             <form class= "m-0" onsubmit="searchAdmin(event,'users')">
                 <input id="usersAdminSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Users" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
             </form>
-            <button id="createUserBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button id="createUserBtn" class="px-4 py-2 w-30 bg-sky-700 text-white font-semibold rounded-2xl hover:bg-sky-800">
                 Create User
             </button>
         </div>
@@ -81,14 +81,14 @@
                 </button>
         @endif
     </section> 
-    <section id="topics" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
+    <section id="topics" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Topics</h2>
         
         <div class="mb-4 flex justify-between items-center">
             <form class= "m-0" onsubmit="searchAdmin(event,'topics')">
                 <input id="topicsAdminSearch" type="search" autocomplete="off"  name="q" value="{{ old('q', $query ?? '') }}" placeholder="Search Topics" class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300">
             </form>
-            <button id="createTopicBtn" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+            <button id="createTopicBtn" class="px-4 py-2 w-30 bg-sky-700 text-white font-semibold rounded-2xl hover:bg-sky-800">
                 Create Topic
             </button>
             
@@ -97,7 +97,7 @@
             <!-- filled with JS -->
         </table>
     </section>
-    <section id="reports" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6 rounded-lg shadow-lg">
+    <section id="reports" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Reports</h2>
         
         <div class="mb-4 flex justify-between items-center">
