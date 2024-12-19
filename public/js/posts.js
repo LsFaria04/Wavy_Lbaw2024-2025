@@ -106,7 +106,7 @@ function createPost(postInfo) {
               <span class="text-gray-500 text-sm">${postInfo.createddate}</span>
           </div>
       </div>
-      <div class="post-body mb-2" id="post-content-${postInfo.postid}">
+      <div class="post-body mb-2 max-w-screen-lg" id="post-content-${postInfo.postid}">
           <p>${postInfo.message}</p>
       </div>
       <div class="post-interactions flex items-center gap-4 mt-4">
