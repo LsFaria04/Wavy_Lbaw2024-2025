@@ -349,8 +349,8 @@ function createTopic(topicInfo, isMyTopics, isFromPosts, postid){
 
     switch(category){
       case 'user-posts':
-          sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
-          break;
+        sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
+        break;
       
       case 'user-comments':
         sendAjaxRequest('get', '/api/comments/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
