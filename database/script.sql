@@ -836,7 +836,7 @@ VALUES
     ('Wellness and Yoga', 'A space for yoga practitioners to connect and share their journeys.', TRUE, 7),
     ('Garden Lovers', 'For gardening enthusiasts to share tips and grow together.', TRUE, 8),
     ('Book Club', 'A cozy club for book lovers to discuss and recommend their favorite reads.', TRUE, 9),
-    ('Music Jam', 'A group for musicians to come together, jam, and share their music.', TRUE, 10),
+    ('Taylor Swift', 'A group for musicians to come together, jam, and share their music.', TRUE, 10),
     ('Manchester United Fans', 'A group for manchester united fans to cry and celebrate together.', TRUE, 11);
 
 INSERT INTO GROUP_MEMBERSHIP (groupID, userID) 
@@ -853,7 +853,13 @@ VALUES
     (9, 10),
     (1, 3), 
     (2, 6),
-    (10, 11); 
+    (10, 11),
+    (9, 2),
+    (9, 4),
+    (9, 5),
+    (9, 6),
+    (9, 7);
+
 
 INSERT INTO JOIN_GROUP_REQUEST (groupID, userID, createdDate) 
 VALUES 
@@ -899,7 +905,10 @@ VALUES
     (11, '🚨 - Rúben Amorim’s latest press conference had ZERO questions about the game against Spurs tomorrow. Instead, there were 11 questions about Marcus Rashford.', TRUE, '2024-12-19 00:00:00', NULL),
     (11, '🚨🗣️ - Rúben Amorim: "My goal is to set STANDARDS, see if the players are able to meet them, and then prepare for the matches. I am focused on that."', TRUE, '2024-12-19 00:05:00', NULL),
     (11, '“Really good. Trained really well. He seems a little bit upset with me and that is perfect. I was really, really happy because I would do the same and he is ready for this game.”', TRUE, '2024-12-19 00:10:00', NULL),
-    (7, 'I don’t understand the concept of people turning to facebook for medical advice especially for their children wtf', TRUE, '2024-12-14 10:05:00', NULL);
+    (7, 'I don’t understand the concept of people turning to facebook for medical advice especially for their children wtf', TRUE, '2024-12-14 10:05:00', NULL),
+    (2, 'would you guys still love taylor if she was a worm #taylorpede', TRUE, NOW(), 9), 
+    (10, 'I drew Taylor to a T! :D #terrific', TRUE, NOW(), 9), 
+    (10, 'Taylor Swift''s Wins Grammy!', TRUE, NOW(), 9);
 
 INSERT INTO TOPIC (topicName) 
 VALUES 
@@ -932,7 +941,7 @@ VALUES
     (3, 'I’d love to join you for a hike sometime!', NOW(), 1, NULL),
     (10, 'You should share more of your music! I’m sure it’s great!', NOW(), 10, NULL),
     (9, 'I’m working on a similar project! We should compare notes.', NOW(), 9, NULL),
-    (10, 'Your dedication is inspiring! Keep it up!', NOW(), 6, NULL),
+    (10, 'Girl Math', NOW(), 6, NULL),
     (4, 'Your yoga practice is inspiring! What’s your favorite pose?', NOW(), 5, NULL),
     (5, 'Great to see you volunteering! Those animals need love!', NOW(), 14, NULL),
     (6, 'I’m also looking for solo travel tips! Let’s exchange ideas.', NOW(), 3, NULL),
@@ -946,7 +955,8 @@ VALUES
     (5, 'Considering his wages only Chelsea, PSG and Saudi seems appropriate. Maybe Newcastle too', '2024-12-18 15:02:00', 20, NULL),  
     (6, 'Hola, soy Marcos Rashford', '2024-12-18 15:03:00', 20, NULL),  
     (7, 'We shouldn’t be selling him to premier league rivals who are challenging for the title.', '2024-12-18 15:04:00', 20, NULL),
-    (6, 'Atletico maybe?', '2024-12-18 17:26:00', NULL, 22);  
+    (6, 'Atletico maybe?', '2024-12-18 17:26:00', NULL, 22),
+    (7, 'how sweet! 🥰🥰😍', '2024-12-18 17:26:00', NULL, 25); 
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -1048,5 +1058,7 @@ VALUES
     ('images/kNmEQPAAOLWmeP2S8IgcpRmUpWzjKLqk4Sq71R0r.jpg', 20, NULL, NULL),
     ('images/8QYuyrGxDqEHQmrrOeosTuHhgz5wKpX23kXqP0ZY.jpg', NULL, 25, NULL),
     ('images/profile11.jpg', NULL, NULL, 11),
-    ('images/banner11.jpg', NULL, NULL, 11);
-
+    ('images/banner11.jpg', NULL, NULL, 11),
+    ('images/profile7.jpg', NULL, NULL, 11),
+    ('images/W0Iq8td3d876eBLr9oYc5qlJy2SrJ6aJDPuqeWYN.jpg', 27, NULL, NULL),
+    ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL);

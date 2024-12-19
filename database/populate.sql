@@ -92,7 +92,10 @@ VALUES
     (11, '🚨 - Rúben Amorim’s latest press conference had ZERO questions about the game against Spurs tomorrow. Instead, there were 11 questions about Marcus Rashford.', TRUE, '2024-12-19 00:00:00', NULL),
     (11, '🚨🗣️ - Rúben Amorim: "My goal is to set STANDARDS, see if the players are able to meet them, and then prepare for the matches. I am focused on that."', TRUE, '2024-12-19 00:05:00', NULL),
     (11, '“Really good. Trained really well. He seems a little bit upset with me and that is perfect. I was really, really happy because I would do the same and he is ready for this game.”', TRUE, '2024-12-19 00:10:00', NULL),
-    (7, 'I don’t understand the concept of people turning to facebook for medical advice especially for their children wtf', TRUE, '2024-12-14 10:05:00', NULL);
+    (7, 'I don’t understand the concept of people turning to facebook for medical advice especially for their children wtf', TRUE, '2024-12-14 10:05:00', NULL),
+    (2, 'would you guys still love taylor if she was a worm #taylorpede', TRUE, NOW(), 9), 
+    (10, 'I drew Taylor to a T! :D #terrific', TRUE, NOW(), 9), 
+    (10, 'Taylor Swift''s Wins Grammy!', TRUE, NOW(), 9);
 
 INSERT INTO TOPIC (topicName) 
 VALUES 
@@ -139,7 +142,8 @@ VALUES
     (5, 'Considering his wages only Chelsea, PSG and Saudi seems appropriate. Maybe Newcastle too', '2024-12-18 15:02:00', 20, NULL),  
     (6, 'Hola, soy Marcos Rashford', '2024-12-18 15:03:00', 20, NULL),  
     (7, 'We shouldn’t be selling him to premier league rivals who are challenging for the title.', '2024-12-18 15:04:00', 20, NULL),
-    (6, 'Atletico maybe?', '2024-12-18 17:26:00', NULL, 22);  
+    (6, 'Atletico maybe?', '2024-12-18 17:26:00', NULL, 22),
+    (7, 'how sweet! 🥰🥰😍', '2024-12-18 17:26:00', NULL, 25); 
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -242,6 +246,8 @@ VALUES
     ('images/8QYuyrGxDqEHQmrrOeosTuHhgz5wKpX23kXqP0ZY.jpg', NULL, 25, NULL),
     ('images/profile11.jpg', NULL, NULL, 11),
     ('images/banner11.jpg', NULL, NULL, 11),
-    ('images/profile7.jpg', NULL, NULL, 11);
+    ('images/profile7.jpg', NULL, NULL, 11),
+    ('images/W0Iq8td3d876eBLr9oYc5qlJy2SrJ6aJDPuqeWYN.jpg', 27, NULL, NULL),
+    ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL);
 
 
