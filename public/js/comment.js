@@ -579,9 +579,8 @@ function toggleSubcommentForm(commentId) {
 }
 
 function createComment(commentInfo){
-  console.log(commentInfo);
   let comment = document.createElement('div');
-  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
+  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer", "w-full", "max-w-full");
 
   let subcommentsHtml = '';
 
@@ -603,11 +602,11 @@ function createComment(commentInfo){
             <span class="text-gray-500 text-sm">${ commentInfo.createddate }</span>
         </div>
     </div>
-    <div class="comment-body mb-2 max-w-screen-lg" id=comment-content-${commentInfo.commentid}>
+    <div class="comment-body mb-2 cursor-pointer max-w-screen-lg" id="comment-content-${commentInfo.commentid}">
         <p>${ commentInfo.message }</p>
     </div>
     <div class="comment-interactions flex items-center gap-4 mt-4">
-          ${createCommentLikeButton(commentInfo.commentid, commentInfo.likes_count, commentInfo.liked)}
+          ${createCommentLikeButton(commentInfo.commentid, commentInfo.comment_likes_count, commentInfo.liked)}
           ${createCommentCommentButton(commentInfo.commentid, commentInfo.subcomments_count)}
     </div>
     <div class="subcomments mt-4 pl-4 border-l border-gray-200">
@@ -617,12 +616,13 @@ function createComment(commentInfo){
       ${createCommentHiddenForm(commentInfo.commentid)}
     </div>
   `;
-  console.log(commentInfo.subcomments);
+
   return comment
 }
 
 
 function createCommentHiddenForm(commentId){
+  
   return `
         <form id="subCommentForm" action="/comments/storeSubcomment" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
             <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
@@ -658,7 +658,6 @@ function createCommentHiddenForm(commentId){
 }
 
 function createCommentLikeButton(commentId, likeCount, likedByUser) {
-  console.log(likeCount);
   return `
       <div class="comment-likes flex items-center gap-2">
           <button 

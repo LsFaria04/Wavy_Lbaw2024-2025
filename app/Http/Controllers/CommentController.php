@@ -61,7 +61,6 @@ class CommentController extends Controller
 
         if ($existingLike) {
             // If the user has already liked the comments, remove the like
-            Log::info("Olá");
             $existingLike->delete();
             $liked = false;
         } else {
@@ -76,8 +75,6 @@ class CommentController extends Controller
     
         // Get the updated like count
         $likeCount = $comment->commentLikes()->count();
-
-        Log::info($likeCount);
     
         // Return the updated like status and like count
         return response()->json([
@@ -173,6 +170,7 @@ class CommentController extends Controller
         while ($topcomment->parentcommentid != NULL){
             $topcomment = $topcomment->parentComment;
         }
+        
         if ($request->hasFile('media')) {
             // Check if there are more than 4 files
             if (count($request->file('media')) > 4) {
@@ -245,7 +243,6 @@ class CommentController extends Controller
 
         // Handle new file uploads
         if ($request->hasFile('media')) {
-            Log::info("files have arrived");
             foreach ($request->file('media') as $file) {
                 $mediaPath = $file->store('images', 'public');
 
