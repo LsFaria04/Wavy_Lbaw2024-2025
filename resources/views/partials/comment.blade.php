@@ -67,7 +67,7 @@
                 @endphp
 
                 @if (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif']))
-                    <img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto ">
+                    <button onclick = "toggleImageDetails('{{$filePath}}')"><img src="{{ $filePath }}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto "></button>
                 @elseif (in_array($fileExtension, ['mp4', 'avi', 'mov']))
                     <video controls class="max-w-full max-h-96 object-cover rounded-md mb-2 mx-auto">
                         <source src="{{ $filePath }}" type="video/{{ $fileExtension }}">
