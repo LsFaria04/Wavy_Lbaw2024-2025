@@ -906,7 +906,7 @@ VALUES
     (11, '🚨🗣️ - Rúben Amorim: "My goal is to set STANDARDS, see if the players are able to meet them, and then prepare for the matches. I am focused on that."', TRUE, '2024-12-19 00:05:00', NULL),
     (11, '“Really good. Trained really well. He seems a little bit upset with me and that is perfect. I was really, really happy because I would do the same and he is ready for this game.”', TRUE, '2024-12-19 00:10:00', NULL),
     (7, 'I don’t understand the concept of people turning to facebook for medical advice especially for their children wtf', TRUE, '2024-12-14 10:05:00', NULL),
-    (2, 'would you guys still love taylor if she was a worm #taylorpede', TRUE, NOW(), 9), 
+    (2, 'would you guys still love taylor if she was a worm #taylorpede', TRUE, '2024-12-17 10:05:00', 9), 
     (10, 'I drew Taylor to a T! :D #terrific', TRUE, NOW(), 9), 
     (10, 'Taylor Swift''s Wins Grammy!', TRUE, NOW(), 9);
 
