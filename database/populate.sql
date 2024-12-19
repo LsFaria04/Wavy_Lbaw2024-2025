@@ -143,7 +143,7 @@ VALUES
     (6, 'Hola, soy Marcos Rashford', '2024-12-18 15:03:00', 20, NULL),  
     (7, 'We shouldn’t be selling him to premier league rivals who are challenging for the title.', '2024-12-18 15:04:00', 20, NULL),
     (6, 'Atletico maybe?', '2024-12-18 17:26:00', NULL, 22),
-    (7, 'how sweet! 🥰🥰😍', '2024-12-18 17:26:00', NULL, 25); 
+    (7, 'how sweet! 🥰🥰😍', '2024-12-18 17:26:00', 25, NULL); 
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
