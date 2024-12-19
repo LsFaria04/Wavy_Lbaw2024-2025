@@ -20,8 +20,8 @@ Broadcast::channel('private-user.{id}', function ($user, $id) {
 */
 
 //Public Channel - everybody receives every notification
-Broadcast::channel('public-user.{id}', function ($user, $id) {
-    return true; // Everyone can listen to this channel
+Broadcast::channel('public-user', function ($user, $id) {
+    return true; 
 });
 
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Like;
+use Illuminate\Support\Facades\Auth;
 
 class LikeController extends Controller
 {
@@ -13,25 +14,46 @@ class LikeController extends Controller
      * Gets the likes created by user (By username)
      */
     function getUserLikesByUsername(Request $request, $username){
-        
         $user = User::where('username', $username)->firstOrFail();
-        $likes = Like::with('post', 'post.user', 'comment', 'comment.user', 'comment.post','comment.post.user', 'comment.parentComment', 'comment.parentComment.user', 'user')->where('userid', $user->userid)->orderBy('createddate', 'desc')->paginate(10);
-        
-        for($i = 0;$i < sizeof($likes); $i++){
-            if($likes[$i]->comment !== null){
-                $likes[$i]->comment->createddate = $likes[$i]->comment->createddate->diffForHumans();
+    
+        $likes = Like::with([
+            'post' => function ($query) {
+                $query->with('user')->withCount('likes')->withCount('comments');
+            },
+            'comment', 'comment.user', 'comment.post', 'comment.post.user',
+            'comment.parentComment', 'comment.parentComment.user', 'user'
+        ])
+        ->where('userid', $user->userid)
+        ->orderBy('createddate', 'desc')
+        ->paginate(10);
+    
+        foreach ($likes as $like) {
+            if ($like->post) {
+                $like->post->createddate = $like->post->createddate->diffForHumans();
+    
+                if (Auth::check()) {
+                    $like->post->liked = $like->post->likes()->where('userid', Auth::id())->exists();
+                } else {
+                    $like->post->liked = false;
+                }
             }
-            else{
-                $likes[$i]->post->createddate = $likes[$i]->post->createddate->diffForHumans();
+    
+            if ($like->comment) {
+                $like->comment->createddate = $like->comment->createddate->diffForHumans();
+    
+                if (Auth::check() && $like->comment->post) {
+                    $like->comment->post->liked = $like->comment->post->likes()->where('userid', Auth::id())->exists();
+                }
             }
         }
-
-        if($request->ajax()){
+    
+        if ($request->ajax()) {
             return response()->json($likes);
         }
-
+    
         return $likes;
     }
+    
     public function create(Request $request){~
 
         Like::create([
