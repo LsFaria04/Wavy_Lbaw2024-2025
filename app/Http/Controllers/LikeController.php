@@ -20,7 +20,9 @@ class LikeController extends Controller
             'post' => function ($query) {
                 $query->with('user')->withCount('likes')->withCount('comments');
             },
-            'comment', 'comment.user', 'comment.post', 'comment.post.user',
+            'comment' => function ($query) {
+                $query->withCount('likes');
+            }, 'comment.user', 'comment.post', 'comment.post.user',
             'comment.parentComment', 'comment.parentComment.user', 'user'
         ])
         ->where('userid', $user->userid)
