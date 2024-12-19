@@ -25,7 +25,7 @@ class PostController extends Controller {
     {
         if (Auth::check()) {
             // Include the comment count
-            $posts = Post::with('user', 'media','topics')
+            $posts = Post::with('user', 'media','topics', 'user.profilePicture')
                         ->withCount('comments')  // This will add comments_count to the Post model
                         ->withCount('likes')
                         ->whereNull('groupid')
@@ -37,7 +37,7 @@ class PostController extends Controller {
                 $post->createddate = $post->createddate->diffForHumans();
             }                        
         } else {
-            $posts = Post::with('user', 'media','topics')
+            $posts = Post::with('user', 'media','topics', 'user.profilePicture')
                         ->withCount('comments')  
                         ->withCount('likes')
                         ->whereNull('groupid')
@@ -74,7 +74,7 @@ class PostController extends Controller {
         $user = User::where('username', $username)->firstOrFail();
 
         if (Auth::check()) {
-            $posts = Post::with('user', 'media', 'topics')
+            $posts = Post::with('user', 'media', 'topics', 'user.profilePicture')
                         ->withCount('comments')  
                         ->withCount('likes')
                         ->whereNull('groupid')
@@ -86,7 +86,7 @@ class PostController extends Controller {
                 $post->createddate = $post->createddate->diffForHumans();  // Format the created date
             }
         } else {
-            $posts = Post::with('user', 'media', 'topics')
+            $posts = Post::with('user', 'media', 'topics', 'user.profilePicture')
                         ->withCount('comments')  
                         ->withCount('likes')
                         ->whereNull('groupid')

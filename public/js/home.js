@@ -34,7 +34,7 @@ function addEventListeners() {
         currentPage++;
         insertLoadingCircle(comments);
         loading = true;
-        var postId = document.querySelector('input[name="postid"]').value;
+        var postId = document.querySelector('input[name="postidForJs"]').value;
         sendAjaxRequest('get', '/api/comments/post/' + postId + '?page=' + currentPage, null, insertMoreCommentsPost);
         loading = false;
       }

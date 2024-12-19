@@ -29,9 +29,9 @@ function initializePusher(userId) {
         encrypted: true
     });
 
-    const channel = pusher.subscribe('public-user.');
+    //const channel = pusher.subscribe('public-user.');
 
-    //const channel = pusher.subscribe('private-user.' + userId);
+    const channel = pusher.subscribe('private-user.' + userId);
 
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {

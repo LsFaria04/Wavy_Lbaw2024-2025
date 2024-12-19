@@ -13,15 +13,15 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-/* Private channel
+ //Private channel
 Broadcast::channel('private-user.{id}', function ($user, $id) {
     return (int) $user->id === (int) $id;
 });
-*/
+
 
 //Public Channel - everybody receives every notification
-Broadcast::channel('public-user', function ($user, $id) {
+/*Broadcast::channel('public-user', function ($user, $id) {
     return true; 
-});
+});*/
 
 

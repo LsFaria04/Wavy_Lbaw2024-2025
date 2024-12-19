@@ -171,9 +171,12 @@ function addEventListeners() {
                   if (users.data.length === 0) {
                       searchResults.innerHTML = '<p class="text-gray-500">No users found.</p>';
                   } else {
+                    console.log(users);
                       searchResults.innerHTML = users.data.map(user => `
                           <div class="search-result p-2 hover:bg-gray-100 flex items-center cursor-pointer" data-id="${user.userid}">
-                              <img src="" alt="mock" class="h-8 w-8 rounded-full mr-2">
+                            <div class="h-8 w-8 rounded-full mr-2 overflow-hidden bg-gray-300">
+                                ${user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}   
+                            </div>
                               <span>${user.username}</span>
                           </div>
                       `).join('');

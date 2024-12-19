@@ -20,6 +20,8 @@
         <section id="postContent" class="flex flex-col max-w-full w-full bg-white mx-auto">
             @include('partials.post', ['post' => $post])
 
+            <input type="hidden" name="postidForJs" value="{{ $post->postid }}">
+
             <!-- Add Comment Section -->
             @if(Auth::check() && !Auth()->user()->isadmin)
                 <div class="addComment p-4 bg-gray-50 border-b">

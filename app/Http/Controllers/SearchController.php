@@ -47,7 +47,7 @@ class SearchController extends Controller
                     Log::info($request);
                 
                     // Build the query for posts
-                    $postsQuery = Post::with('user', 'media', 'topics')
+                    $postsQuery = Post::with('user', 'media', 'topics', 'user.profilePicture')
                         ->withCount('likes')
                         ->withCount('comments')
                         ->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery]);
@@ -59,7 +59,7 @@ class SearchController extends Controller
                 
                         if (!empty($topics)) {
                             $postsQuery->whereHas('topics', function ($dbquery) use ($topics) {
-                                $dbquery->whereIn('topics.topicid', $topics);
+                                $dbquery->whereIn('topic.topicid', $topics);
                             });
                         }
                     } else {
@@ -67,7 +67,7 @@ class SearchController extends Controller
                 
                         if (!empty($topics)) {
                             $postsQuery->whereHas('topics', function ($dbquery) use ($topics) {
-                                $dbquery->whereIn('topics.topicid', $topics);
+                                $dbquery->whereIn('topic.topicid', $topics);
                             });
                         }
                     }
@@ -94,7 +94,7 @@ class SearchController extends Controller
                         if($visibility === null){
                             //no filter
                             
-                            $users = User::where(function($query) use ($sanitizedQuery) {
+                            $users = User::with('profilePicture')->where(function($query) use ($sanitizedQuery) {
                                 $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                                     ->orWhere('username', $sanitizedQuery);
                             })
@@ -104,7 +104,7 @@ class SearchController extends Controller
                         }
                         else{
                             //with filter
-                            $users = User::where(function($query) use ($sanitizedQuery) {
+                            $users = User::with('profilePicture')->where(function($query) use ($sanitizedQuery) {
                                 $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                                     ->orWhere('username', $sanitizedQuery);
                             })
@@ -118,7 +118,7 @@ class SearchController extends Controller
                     else {
                         if($visibility === null){
                             //no filter
-                            $users = User::where(function($query) use ($sanitizedQuery) {
+                            $users = User::with('profilePicture')->where(function($query) use ($sanitizedQuery) {
                                 $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                                     ->orWhere('username', $sanitizedQuery);
                             })
@@ -129,7 +129,7 @@ class SearchController extends Controller
                         }
                         else{
                             //with filter
-                            $users = User::where(function($query) use ($sanitizedQuery) {
+                            $users = User::with('profilePicture')->where(function($query) use ($sanitizedQuery) {
                                 $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                                     ->orWhere('username', $sanitizedQuery);
                             })

@@ -18,7 +18,7 @@ class LikeController extends Controller
     
         $likes = Like::with([
             'post' => function ($query) {
-                $query->with('user')->withCount('likes')->withCount('comments');
+                $query->with('user', 'user.profilePicture')->withCount('likes')->withCount('comments');
             },
             'comment' => function ($query) {
                 $query->withCount('likes');
