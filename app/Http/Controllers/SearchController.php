@@ -39,93 +39,50 @@ class SearchController extends Controller
             //Performs the DB query according to the search category
             switch ($category) {
                 case 'posts':
-
-                    //topics filter
                     $topics = [];
-                    if(isset($request->topics)){
+                    if (isset($request->topics)) {
                         $topics = explode(',', $request->topics);
                         $topics = array_map('intval', $topics);
-                        
                     }
                     Log::info($request);
-
-                    if(Auth::check()){
-                        if(Auth::user()->isadmin){
-                            //admin search
-                            if(empty($topics)){
-                                //no filters
-                                $posts = Post::with('user','media', 'topics')
-                                ->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                                ->orderBy('createddate', 'desc')
-                                ->paginate(10);
-                                for($i = 0;$i < sizeof($posts); $i++) {
-                                    $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-                                }
-                            }
-                            else{
-                                //with filters
-                                $posts = Post::with('user','media', 'topics')
-                                ->whereHas('topics', function ($dbquery) use ($topics) { $dbquery->whereIn('topics.topicid', $topics);})
-                                ->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                                ->orderBy('createddate', 'desc')
-                                ->paginate(10);
-                                for($i = 0;$i < sizeof($posts); $i++) {
-                                    $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-                                }
-                            }
-                            
+                
+                    // Build the query for posts
+                    $postsQuery = Post::with('user', 'media', 'topics')
+                        ->withCount('likes')
+                        ->withCount('comments')
+                        ->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery]);
+                
+                    if (Auth::check()) {
+                        if (!Auth::user()->isadmin) {
+                            $postsQuery->where('visibilitypublic', true); // Normal user constraint
                         }
-                        else {
-                            //normal user search
-                            if(empty($topics)){
-                                //no filters
-                                $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                                ->where('visibilitypublic', true)
-                                ->orderBy('createddate', 'desc')
-                                ->paginate(10);
-                                for($i = 0;$i < sizeof($posts); $i++) {
-                                    $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-                                }
-                            }
-                            else{
-                                //with filters
-                                $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                                ->whereHas('topics', function ($dbquery) use ($topics) { $dbquery->whereIn('topic.topicid', $topics);})
-                                ->where('visibilitypublic', true)
-                                ->orderBy('createddate', 'desc')
-                                ->paginate(10);
-                                for($i = 0;$i < sizeof($posts); $i++) {
-                                    $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-                                }
-                            }
+                
+                        if (!empty($topics)) {
+                            $postsQuery->whereHas('topics', function ($dbquery) use ($topics) {
+                                $dbquery->whereIn('topics.topicid', $topics);
+                            });
+                        }
+                    } else {
+                        $postsQuery->where('visibilitypublic', true); // Constraint for unauthenticated users
+                
+                        if (!empty($topics)) {
+                            $postsQuery->whereHas('topics', function ($dbquery) use ($topics) {
+                                $dbquery->whereIn('topics.topicid', $topics);
+                            });
                         }
                     }
-
-                    else {
-                        //not authenticated search
-                        if(empty($topics)){
-                            //no filters
-                            $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                            ->where('visibilitypublic', true)
-                            ->orderBy('createddate', 'desc')
-                            ->paginate(10);
-                            for($i = 0;$i < sizeof($posts); $i++) {
-                                $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-                            }
+                
+                    $posts = $postsQuery->orderBy('createddate', 'desc')->paginate(10);
+                
+                    foreach ($posts as $post) {
+                        if (Auth::check()) {
+                            $post->liked = $post->likes()->where('userid', Auth::id())->exists();
+                        } else {
+                            $post->liked = false; // User is not authenticated
                         }
-                        else{
-                            //with filters
-                            $posts = Post::with('user','media', 'topics')->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
-                            ->whereHas('topics', function ($dbquery) use ($topics) { $dbquery->whereIn('topic.topicid', $topics);})
-                            ->where('visibilitypublic', true)
-                            ->orderBy('createddate', 'desc')
-                            ->paginate(10);
-                            for($i = 0;$i < sizeof($posts); $i++) {
-                                $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
-                            }
-                        }
+                        $post->createddate = $post->createddate->diffForHumans();
                     }
-                    break;
+                    break;                
 
                 case 'users':
                     $visibility = null;
