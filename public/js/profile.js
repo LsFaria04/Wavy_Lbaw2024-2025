@@ -534,9 +534,6 @@ function toggleFollow() {
       const followStatus = followButton.getAttribute('data-follow-status');  // Possible values: "following", "Pending", "not-following", "admin"
       const isPrivate = followButton.getAttribute('data-is-private') === 'true';  
 
-      console.log("Follow Status:", followStatus);  // Debugging output
-      console.log("Is Private:", isPrivate);        // Debugging output
-
       // if the user is trying to follow an admin, prevent it
       if (followStatus === 'admin') {
           alert('You cannot follow an admin!');
@@ -625,7 +622,6 @@ function followUser(userId, csrfToken, followButton) {
 }
 
 function unfollowUser(userId, csrfToken, followButton) {
-  console.log("teste")
   // Send the unfollow request (remove follow relationship)
   fetch('/profile/' + userId + '/unfollow', {
       method: 'POST',
@@ -641,11 +637,9 @@ function unfollowUser(userId, csrfToken, followButton) {
       if (!response.ok) {
           throw new Error('Something went wrong with the unfollow request.');
       }
-      console.log("here2");
       return response.json();
   })
   .then(data => {
-    console.log("here");
     if (data.success) {
       const isPrivate = followButton.getAttribute('data-is-private') === 'true';
 
@@ -685,13 +679,11 @@ function cancelPendingRequest(userId, csrfToken, followButton) {
           const isPrivate = followButton.getAttribute('data-is-private') === 'true';
           
           if (isPrivate) {
-              console.log("11");
               followButton.textContent = 'Request to Follow';  
               followButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-700');
               followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
               followButton.setAttribute('data-follow-status', 'not-following');
           } else {
-              console.log("10");
               followButton.textContent = 'Follow';  
               followButton.classList.remove('bg-yellow-500', 'hover:bg-yellow-700');
               followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
@@ -832,17 +824,16 @@ function insertMoreFollowRequests(){
   removeShowMoreFollow();
   let follows = JSON.parse(this.responseText);
 
+  if(follows.response !== undefined){
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, follows.message, true);
+  }
+
   let followsList = document.querySelector("#requestsList > ul");
 
   maxFollowPage = follows.last_page;
 
-  if(follows.response !== undefined){
-    alert(follows.message);
-    return;
-  }
-
   for(let i = 0 ; i < follows.data.length; i++){
-    console.log("here2");
     let li = document.createElement('li');
     li.setAttribute('id', 'request-' + follows.data[i].follower.userid);
     li.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow")
@@ -943,5 +934,62 @@ function handleAcceptFollow(){
   }
 
 }
+
+function toggleFollowList(){
+  const follows = document.getElementById('follows');
+  follows.classList.toggle('hidden');
+  follows.classList.toggle('flex');
+  let followList = document.querySelector("#followsList> ul");
+
+  if(follows.classList.contains('flex')){
+    if(followList.firstChild === null){
+      currentFollowPage = 0;
+      loadMoreFollows();
+    }
+  }
+}
+
+function loadMoreFollows(){
+  let followList = document.querySelector("#followsList > ul");
+  insertLoadingCircle(followList);
+  currentFollowPage++;
+  sendAjaxRequest('post', '/api/profile/follows/'+ userId + '?page=' + currentFollowPage ,null,insertMoreFollows);
+}
+
+function insertMoreFollows(){
+  removeLoadingCircle();
+  removeShowMoreFollow();
+  let follows = JSON.parse(this.responseText);
+  if(follows.message !== undefined){
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, follows.message, true);
+  }
+
+  let followsList = document.querySelector("#followsList > ul");
+
+  maxFollowPage = follows.last_page;
+
+  for(let i = 0 ; i < follows.data.length; i++){
+    let li = document.createElement('li');
+    li.setAttribute('id', 'request-' + follows.data[i].followee.userid);
+    li.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow")
+    li.innerHTML=`
+      <a href = "../profile/${follows.data[i].followee.username}">${follows.data[i].followee.username}</a>
+    `
+    followsList.appendChild(li);
+  }
+
+  if(currentFollowPage < maxFollowPage){
+    insertShowMoreRequests()
+  }
+
+  if(followsList.firstChild === null){
+    let warning = document.createElement('p');
+    warning.innerHTML='No requests found';
+    followsList.appendChild(warning);
+  }
+
+}
+
 addEventListeners();
   

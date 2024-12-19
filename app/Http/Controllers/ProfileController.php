@@ -306,22 +306,47 @@ class ProfileController extends Controller {
 
     public function getFollowRequests(Request $request, $userid){
 
-        $followers = Follow::with('follower')
+        try{
+            $followers = Follow::with('follower')
             ->where('followeeid', $userid )
             ->where('state', Follow::STATE_PENDING)->paginate(10);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Server Problem', 'response' => '500']);
+        }
+
+        return response()->json($followers);
+    }
+
+    public function getFollows(Request $request, $userid){
+        try{
+            $followers = Follow::with('followee')
+            ->where('followerid', $userid )
+            ->where('state', Follow::STATE_ACCEPTED)->paginate(10);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Server Problem', 'response' => '500']);
+        }
 
         return response()->json($followers);
     }
 
     public function acceptFollowRequest(Request $request, $userid){
-        DB::update('update follow set state = ? where followeeid = ? and followerid = ?', [Follow::STATE_ACCEPTED, Auth::user()->userid, $userid]);
+        try{
+            DB::update('update follow set state = ? where followeeid = ? and followerid = ?', [Follow::STATE_ACCEPTED, Auth::user()->userid, $userid]);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Server Problem', 'response' => '500']);
+        }
 
         return response()->json(["message" => "Follow request accepted successfully", "response" => "200", "acceptedId" => $userid]);
     }
 
     public function rejectFollowRequest(Request $request, $userid){
-        $follow = Follow::where('followeeid',Auth::user()->userid )->where('followerid', $userid);
-        $follow->delete();
+        try{
+            $follow = Follow::where('followeeid',Auth::user()->userid )->where('followerid', $userid);
+            $follow->delete();
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Server Problem', 'response' => '500']);
+        }
+
 
         return response()->json(["message" => "Follow request rejected successfully", "response" => "200", "rejectedId" => $userid]);
     }

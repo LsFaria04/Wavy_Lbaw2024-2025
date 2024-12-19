@@ -99,6 +99,7 @@ Route::get('/api/notifications', [NotificationController::class, 'getNotificatio
 Route::post('/api/profile/followrequest/{userid}', [ProfileController::class, 'getFollowRequests']);
 Route::post('/api/profile/followrequest/accept/{userid}', [ProfileController::class, 'acceptFollowRequest']);
 Route::post('/api/profile/followrequest/reject/{userid}', [ProfileController::class, 'rejectFollowRequest']);
+Route::post('/api/profile/follows/{userid}', [ProfileController::class, 'getFollows']);
 
 //Reports
 Route::post('/reports/delete/{reportid}', [ReportController::class, 'delete']);

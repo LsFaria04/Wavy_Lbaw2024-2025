@@ -123,6 +123,13 @@
                         @endif
                         @if (!Auth::user()->isadmin)
                             <button
+                                onclick = "toggleFollowList()"
+                                class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
+                                My Follows
+                            </button>
+                        @endif
+                        @if (!Auth::user()->isadmin)
+                            <button
                                 onclick = "toggleFollowRequests()"
                                 class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
                                 Follow Requests
@@ -317,4 +324,5 @@
         @include('partials.admin.banMenu')
         @include('partials.imageDetail')
         @include('partials.followRequests')
+        @include('partials.followersList')
     @endSection
