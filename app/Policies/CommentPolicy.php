@@ -11,7 +11,7 @@ class CommentPolicy {
 
     public function create(User $user) {
         //Only allows the user to post if they are not an admin
-        return !$user->isadmin;
+        return !$user->isadmin && ($user->state !== 'suspended');
     }
 
     public function delete(User $user, Comment $comment) {
@@ -21,6 +21,6 @@ class CommentPolicy {
 
     public function edit(User $user, Comment $comment) {
         // Allow the edit action only if the user owns the post or is an admin
-        return $user->userid === $comment->userid || $user->isadmin;
+        return ($user->userid === $comment->userid && ($user->state !== 'suspended')) || $user->isadmin;
     }
 }

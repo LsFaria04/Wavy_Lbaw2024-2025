@@ -84,6 +84,8 @@ function insertDeleteMenu(postid) {
 }
 
 function createPost(postInfo) {
+  let likeCount = postInfo.likes_count ?? 0; 
+  let commentCount = postInfo.comments_count ?? 0;
   let post = document.createElement('div');
   post.classList.add("post", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
   
@@ -104,12 +106,12 @@ function createPost(postInfo) {
               <span class="text-gray-500 text-sm">${postInfo.createddate}</span>
           </div>
       </div>
-      <div class="post-body mb-2" >
+      <div class="post-body mb-2">
           <p>${postInfo.message}</p>
       </div>
       <div class="post-interactions flex items-center gap-4 mt-4">
-          ${createLikeButton(postInfo.postid, postInfo.likes_count, postInfo.liked)}
-          ${createCommentButton(postInfo.postid, postInfo.comments_count)}
+          ${createLikeButton(postInfo.postid, likeCount, postInfo.liked)}
+          ${createCommentButton(postInfo.postid, commentCount)}
       </div>
   `;
 

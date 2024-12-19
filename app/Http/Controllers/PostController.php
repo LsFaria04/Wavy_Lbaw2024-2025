@@ -123,11 +123,8 @@ class PostController extends Controller {
                             ->where('userid', $user->userid)
                             ->first();
     
-
-        Log::info($existingLike);
         if ($existingLike) {
             // If the user has already liked the post, remove the like
-            Log::info("Olá");
             $existingLike->delete();
             $liked = false;
         } else {
@@ -161,7 +158,6 @@ class PostController extends Controller {
         if($request->topics !== null){
             $request->topics = explode(',', $request->topics[0]);
         }
-        Log::info($request);
 
         // Validate input
         $request->validate([
@@ -181,6 +177,9 @@ class PostController extends Controller {
     
         // Check if the user is authorized to create a post
         if ($request->user()->cannot('create', Post::class)) {
+            if($request->user()->state == "suspended"){
+                return redirect()->route('home')->with('error', 'Your account is suspended!');
+            }
             return redirect()->route('home')->with('error', 'You cannot create a post!');
         }
     
