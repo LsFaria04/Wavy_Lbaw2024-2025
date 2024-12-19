@@ -378,7 +378,7 @@ function insertMorePosts(element, posts) {
     post = insertPostMedia(post, posts.data[i].media);
 
     if (userId == posts.data[i].user.userid || isadmin) {
-      insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media);
+      insertUpdateForm(post, posts.data[i].postid, posts.data[i].message, posts.data[i].media, posts.data[i].topics);
     }
 
     let editForm = post.querySelector('.edit-post-form form');
