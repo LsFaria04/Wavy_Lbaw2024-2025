@@ -106,20 +106,28 @@
 
                     <!-- Dropdown Menu -->
                     <div id="dropdownMenu" class="hidden absolute top-16 right-4 w-40 bg-white border border-gray-200 rounded-md shadow-lg transition duration-300 ease-in-out">
-                        <button
-                            onclick = "toggleMyTopics()"
-                            class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
-                            My Topics
-                        <button>
-                            @if (Auth::user()->isadmin)
+                        @if (!Auth::user()->isadmin)
+                            <button
+                                onclick = "toggleMyTopics()"
+                                class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
+                                My Topics
+                            <button>
+                        @endif
+                        @if (Auth::user()->isadmin)
                             <button
                                 id = "profileBan"
                                 onclick = "showBanAdminMenu({{$user->userid}}, '{{$user->state}}')"
                                 class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
                                 {{$user->state === 'suspended' ? 'Unban account' : 'Ban account'}}
                             <button>   
-                            @endif
-                        
+                        @endif
+                        @if (!Auth::user()->isadmin)
+                            <button
+                                onclick = "toggleFollowRequests()"
+                                class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
+                                Follow Requests
+                            </button>
+                        @endif
                         <button 
                             onclick="toggleConfirmationModal()" 
                             class="w-full px-4 py-2 text-left text-sm text-red-600 hover:text-red-700 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
@@ -193,7 +201,7 @@
             <!-- Content Tabs -->
             <div class="flex flex-col w-full max-w-full bg-white" id = "profile-tab-content">
                 <!-- Content Section (starts with the posts) -->
-                    @if((($user->visibilitypublic === false && !Auth::check())  || ($user->visibilitypublic === false && !Auth::user()->isadmin)) && ($user->userid != auth()->id()))
+                    @if((($user->visibilitypublic === false && !Auth::check())  || ($user->visibilitypublic === false && ($followStatus === "not-following" || $followStatus === "Pending"))) && ($user->userid != auth()->id()))
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">Account is private.</p>
                         </div>
@@ -308,4 +316,5 @@
         @include('partials.reportForm')
         @include('partials.admin.banMenu')
         @include('partials.imageDetail')
+        @include('partials.followRequests')
     @endSection

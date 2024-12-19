@@ -545,27 +545,21 @@ function toggleFollow() {
 
       // Handle private profiles (only allow "Follow" or "Request Follow" based on the state)
       if (isPrivate && followStatus === 'not-following') {
-        console.log("1")
         sendFollowRequest(userId, csrfToken, followButton);
 
-      } else if (followStatus === 'following') {
-        console.log("2")
+      } else if (followStatus === 'Accepted') {
           unfollowUser(userId, csrfToken, followButton);
 
       } else if (followStatus === 'Pending') {
-        console.log("3")
           cancelPendingRequest(userId, csrfToken, followButton);
 
       } else {
-        console.log("4")
           followUser(userId, csrfToken, followButton);
       }
   });
 }
 
 function sendFollowRequest(userId, csrfToken, followButton) {
-  console.log("5")
-
   // Send the follow request (pending state)
   fetch('/profile/' + userId + '/follow', {
       method: 'POST',
@@ -598,7 +592,6 @@ function sendFollowRequest(userId, csrfToken, followButton) {
 }
 
 function followUser(userId, csrfToken, followButton) {
-  console.log("6")
 
   // Send the follow request (accepted state)
   fetch('/profile/' + userId + '/follow', {
@@ -632,8 +625,7 @@ function followUser(userId, csrfToken, followButton) {
 }
 
 function unfollowUser(userId, csrfToken, followButton) {
-  console.log("7");
-
+  console.log("teste")
   // Send the unfollow request (remove follow relationship)
   fetch('/profile/' + userId + '/unfollow', {
       method: 'POST',
@@ -649,9 +641,11 @@ function unfollowUser(userId, csrfToken, followButton) {
       if (!response.ok) {
           throw new Error('Something went wrong with the unfollow request.');
       }
+      console.log("here2");
       return response.json();
   })
   .then(data => {
+    console.log("here");
     if (data.success) {
       const isPrivate = followButton.getAttribute('data-is-private') === 'true';
 
@@ -676,7 +670,6 @@ function unfollowUser(userId, csrfToken, followButton) {
 }
 
 function cancelPendingRequest(userId, csrfToken, followButton) {
-  console.log("cancelPendingRequest");
 
   fetch('/profile/' + userId + '/unfollow', {
       method: 'POST',
@@ -810,5 +803,145 @@ function removeFileProfile(isbanner){
 
 }
 
+
+function toggleFollowRequests(){
+  const followRequest = document.getElementById('followRequests');
+  followRequest.classList.toggle('hidden');
+  followRequest.classList.toggle('flex');
+  let followList = document.querySelector("#requestsList> ul");
+
+  if(followRequest.classList.contains('flex')){
+    if(followList.firstChild === null){
+      currentFollowPage = 0;
+      loadFollowMoreRequests();
+    }
+  }
+}
+
+let currentFollowPage = 0;
+let maxFollowPage = -1;
+function loadFollowMoreRequests(){
+  let followList = document.querySelector("#requestsList > ul");
+  insertLoadingCircle(followList);
+  currentFollowPage++;
+  sendAjaxRequest('post', '/api/profile/followrequest/'+ userId + '?page=' + currentFollowPage ,null,insertMoreFollowRequests);
+}
+
+function insertMoreFollowRequests(){
+  removeLoadingCircle();
+  removeShowMoreFollow();
+  let follows = JSON.parse(this.responseText);
+
+  let followsList = document.querySelector("#requestsList > ul");
+
+  maxFollowPage = follows.last_page;
+
+  if(follows.response !== undefined){
+    alert(follows.message);
+    return;
+  }
+
+  for(let i = 0 ; i < follows.data.length; i++){
+    console.log("here2");
+    let li = document.createElement('li');
+    li.setAttribute('id', 'request-' + follows.data[i].follower.userid);
+    li.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow")
+    li.innerHTML=`
+      <p>${follows.data[i].follower.username}</p>
+      <div class = "flex flex-row justify-between gap-2">
+        <button id = "accept-${follows.data[i].follower.userid}" onclick = acceptFollow(${follows.data[i].follower.userid}) class = "bg-green-600 text-white p-1 rounded-xl">
+          Accept
+        </button>
+        <button id = "reject-${follows.data[i].follower.userid}" onclick = rejectFollow(${follows.data[i].follower.userid}) class = "bg-red-600 text-white p-1 rounded-xl">
+          Reject
+        </button>
+      </div>
+    `
+    followsList.appendChild(li);
+  }
+
+  if(currentFollowPage < maxFollowPage){
+    insertShowMoreRequests()
+  }
+
+  if(followsList.firstChild === null){
+    let warning = document.createElement('p');
+    warning.innerHTML='No requests found';
+    followsList.appendChild(warning);
+  }
+
+}
+
+function insertShowMoreRequests(){
+  const section = document.querySelector("#requestsList > ul");  
+  let showMore = document.createElement('button');
+  showMore.classList.add("flex", "w-full", "justify-center", "items-center");
+  showMore.setAttribute('onclick', `loadMoreMoreRequests()`);
+  showMore.setAttribute('id', 'showMore');
+  showMore.innerHTML = `
+              <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+              <p>Show More</p>
+  `;
+  section.appendChild(showMore);
+}
+
+//remove the shoe more button
+function removeShowMoreFollow(){
+  document.getElementById('showMore')?.remove();
+}
+
+function rejectFollow(userid){
+  const rejectButton = document.getElementById('reject-' + userid);
+  insertLoadingCircle(rejectButton);
+  //resize the loading circle
+  document.querySelector('#loading_circle').classList.remove('h-8');
+  document.querySelector('#loading_circle').classList.remove('w-8');
+  document.querySelector('#loading_circle').classList.add('h-4');
+  document.querySelector('#loading_circle').classList.add('w-4');
+  sendAjaxRequest('post', '/api/profile/followrequest/reject/' + userid, null, handleRejectFollow);
+}
+
+function handleRejectFollow(){
+  removeLoadingCircle();
+  let response = JSON.parse(this.responseText);
+
+  const messageContainer = document.getElementById('messageContainer');
+  if(response.response === '200'){
+    document.getElementById("request-" + response.rejectedId).remove();
+    createAlert(messageContainer,response.message, false);
+  }
+  else{
+    createAlert(messageContainer,response.message, true);
+  }
+
+}
+
+function acceptFollow(userid){
+  const acceptButton = document.getElementById('accept-' + userid);
+  insertLoadingCircle(acceptButton);
+  //resize the loading circle
+  document.querySelector('#loading_circle').classList.remove('h-8');
+  document.querySelector('#loading_circle').classList.remove('w-8');
+  document.querySelector('#loading_circle').classList.add('h-4');
+  document.querySelector('#loading_circle').classList.add('w-4');
+  sendAjaxRequest('post', '/api/profile/followrequest/accept/' + userid, null, handleAcceptFollow);
+}
+
+function handleAcceptFollow(){
+  removeLoadingCircle();
+  let response = JSON.parse(this.responseText);
+
+  const messageContainer = document.getElementById('messageContainer');
+  if(response.response === '200'){
+    document.getElementById("request-" + response.acceptedId).remove();
+    createAlert(messageContainer,response.message, false);
+  }
+  else{
+    createAlert(messageContainer,response.message, true);
+  }
+
+}
 addEventListeners();
   

@@ -40,8 +40,8 @@ Route::view('/home', 'pages.home')->name('home');
 Route::get('/profile/{username}', [ProfileController::class, 'show'])->name('profile');
 Route::put('/profile/{userid}', [ProfileController::class, 'update'])->name('profile.update');
 Route::delete('/profile/{id}/delete', [ProfileController::class, 'delete'])->name('profile.delete');
-Route::post('profile/{userid}/follow', [ProfileController::class, 'follow'])->name('follow')->middleware('auth');
-Route::post('profile/{userid}/unfollow', [ProfileController::class, 'unfollow'])->name('unfollow')->middleware('auth');
+Route::post('/profile/{userid}/follow', [ProfileController::class, 'follow'])->name('follow')->middleware('auth');
+Route::post('/profile/{userid}/unfollow', [ProfileController::class, 'unfollow'])->name('unfollow')->middleware('auth');
 
 
 // API
@@ -96,6 +96,9 @@ Route::post('/api/admin/users/ban/{userid}', [AdminController::class, 'banUser']
 Route::get('/api/admin/users/all', [AdminController::class, 'getUsersForAdmin']);
 Route::get('/api/admin/users/search/all', [AdminController::class, 'searchUsersForAdmin']);
 Route::get('/api/notifications', [NotificationController::class, 'getNotifications']);
+Route::post('/api/profile/followrequest/{userid}', [ProfileController::class, 'getFollowRequests']);
+Route::post('/api/profile/followrequest/accept/{userid}', [ProfileController::class, 'acceptFollowRequest']);
+Route::post('/api/profile/followrequest/reject/{userid}', [ProfileController::class, 'rejectFollowRequest']);
 
 //Reports
 Route::post('/reports/delete/{reportid}', [ReportController::class, 'delete']);
