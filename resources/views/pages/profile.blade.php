@@ -297,7 +297,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
                         <p>Show More</p>
-                    <button>
+                    </button>
                 </section>
             </div>
         </div>
@@ -323,7 +323,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
                         <p>Show More</p>
-                    <button>
+                    </button>
                     </div>
             </div>
         </div>

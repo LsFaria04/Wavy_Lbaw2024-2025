@@ -393,6 +393,8 @@ function toggleReasonDetails(reportid){
   let userState = null;
   function showBanAdminMenu(elementId, state){
     let banMenu = document.getElementById('banMenuAdmin');
+    
+    console.log("here");
 
     const row = document.querySelector('#User-' + elementId + ' .userState');
       if(row === null){
@@ -422,9 +424,11 @@ function toggleReasonDetails(reportid){
         document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to ban this user?"
         document.getElementById('confirmBanButtonAdmin').innerHTML = "Ban";
       }
-
+    
+    
     banMenu.classList.toggle('hidden');
     banMenu.classList.toggle('flex');
+    console.log(banMenu);
     window.userBan = elementId;
   }
 
@@ -493,7 +497,7 @@ function toggleReasonDetails(reportid){
           </a>
         </td>
         <td  class="w-1/3 px-4 py-2 text-gray-700 "><button class = "reportReason max-w-20 sm:max-w-40 truncate ..." onclick = "toggleReasonDetails(${reports.data[i].reportid})">${reports.data[i].reason}</button></td>
-        <td class="w-1/3 px-4 py-2 text-gray-700 "><a class = "max-w-20 sm:max-w-40 truncate ..." href = '/profile/${reports.data[i].user.username}'>${reports.data[i].user.username}</a></td>
+        <td class="w-1/3 px-4 py-2 text-gray-700 "><a class = "max-w-20 sm:max-w-40 truncate ..." href = '/profile/${reports.data[i].user.username}'>${reports.data[i].user.username === null ? "Deleted User" : reports.data[i].user.username}</a></td>
          <td class="px-4 py-2 self-end">
         <form class = "flex items-center" action="../reports/delete/${reports.data[i].reportid}" method="POST" id="deleteForm-${reports.data[i].reportid}">
           <input type="hidden" name="_token" value= ${getCsrfToken()} />

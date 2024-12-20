@@ -8,7 +8,7 @@
             </button>
             <h2 class=" col-start-2  text-2xl self-center font-bold text-nowrap">Follow Requests</h2>  
         </header>
-        <div id="requestsList" class="border-[1px] rounded border-gray-300 h-60 overflow-y-scroll mb-4">
+        <div id="requestsList" class="border-[1px] rounded border-gray-300 h-80 overflow-y-scroll mb-4">
             <ul class = "requestList flex flex-col justify-center items-center"></ul>
         </div>
     </div>

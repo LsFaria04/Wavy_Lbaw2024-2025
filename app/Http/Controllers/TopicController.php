@@ -188,7 +188,7 @@ class TopicController extends Controller
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
         
-        return response()->json(['response' => '200']);  
+        return response()->json(['response' => '200' ,'message' => 'Topic added successfully']);  
     }
 
     /*
@@ -211,7 +211,7 @@ class TopicController extends Controller
         }catch(\Exception $e){
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
-        return response()->json(['response' => '200']); 
+        return response()->json(['response' => '200', 'message' => 'Topic removed successfully']); 
     }
 
     /*
