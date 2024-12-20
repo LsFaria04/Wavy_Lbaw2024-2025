@@ -37,7 +37,6 @@ class PostComment implements ShouldBroadcast {
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn(): array {
-        Log::info("comment notification event");
         return ['public-user.' . $this->receiverid];
     }
 

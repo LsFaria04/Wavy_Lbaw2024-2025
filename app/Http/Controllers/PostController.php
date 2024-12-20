@@ -258,15 +258,24 @@ class PostController extends Controller {
                 'user',
                 'media',
                 'commentLikes',
+                'user.profilePicture',
                 'subcomments' => function ($subQuery) {
                     $subQuery->orderBy('createddate', 'desc') // Order subcomments by createddate
-                        ->with(['user','media','commentLikes','subcomments'])
+                        ->with(['user','media','commentLikes','subcomments', 'user.profilePicture'])
                         ->withCount('subcomments');
                 }
             ])
             ->withCount('subcomments')
             ->paginate(10);  // This returns a LengthAwarePaginator
         
+            foreach($comments as $comment){
+                $comment->createddate = $comment->createddate->diffForHumans();
+
+                foreach($comment->subcomments as $subcomment){
+                    $subcomment->createddate = $subcomment->createddate->diffForHumans();
+                    
+                }
+            }
         $post->comments = $comments;
     
         // Process likes and recursively handle subcomments

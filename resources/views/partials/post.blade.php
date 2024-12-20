@@ -14,7 +14,6 @@
                         @if($filePath !== null)
                             <img  src="{{ $filePath }}" alt="Image" class=" h-full w-full object-cover rounded-md mb-2 mx-auto" >
                         @endif
-                    <img  h-full w-full object-cover rounded-md mb-2 mx-auto src="">
                 </div>
                 <h3 class="font-bold">
                     <a href="{{ $post->user->state === 'deleted' ? '#' : route('profile', $post->user->username) }}" class="text-black hover:text-sky-900">

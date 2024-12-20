@@ -17,9 +17,14 @@ function insertCommentMedia(comment, mediaArray){
   
       
       if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)){
-        newMedia.setAttribute('alt', 'Image');
-        newMedia.setAttribute('src', "/storage/" + media.path);
-        newMedia.classList.add("max-w-full", "max-h-96", "object-cover", "rounded-md", "mb-2", "mx-auto");
+        const imageDetailButton = document.createElement('button');
+        imageDetailButton.setAttribute('onclick', `toggleImageDetails('${'/storage/' + media.path}')`);
+        imageDetailButton.setAttribute("class", "h-60 w-60 sm:w-80 sm:h-80 overflow-hidden  rounded-md mb-2");
+        imageDetailButton.innerHTML = `
+          <img src="${'/storage/' + media.path}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto ">
+        `;
+        mediaContainer.appendChild(imageDetailButton);
+        continue;
       }
   
       else if(['mp4', 'avi', 'mov'].includes(fileExtension)){
@@ -116,7 +121,6 @@ function toggleEditComment(commentid) {
 
 // Open delete confirmation menu
 function openDeleteCommentMenu(commentid) {
-  console.log("hello");
   const deleteMenu = document.getElementById('deleteCommentMenu');
   deleteMenu.classList.remove('hidden');
   deleteMenu.classList.add('flex');
@@ -598,12 +602,17 @@ function createComment(commentInfo){
   comment.innerHTML = `
     <div class="comment-header mb-2 flex justify-between items-center">
         <div>
+          <div class = "flex flex-row gap-2">
+                <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                  ${commentInfo.user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${commentInfo.user.profile_picture[0].path.includes('profile') ? '/storage/' + commentInfo.user.profile_picture[0].path : commentInfo.user.profile_picture.length > 1 ? '/storage/' + commentInfo.user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                </div>
             <h3 class="font-bold">
               <a href="${ commentInfo.user.state === 'deleted' ? '#' : '../profile/' + commentInfo.user.username }" 
                   class="text-black hover:text-sky-900">
                   ${ commentInfo.user.state === 'deleted' ? 'Deleted User' : commentInfo.user.username }
               </a>
             </h3>
+          </div>
             <span class="text-gray-500 text-sm">${ commentInfo.createddate }</span>
         </div>
     </div>

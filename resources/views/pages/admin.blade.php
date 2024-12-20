@@ -3,7 +3,7 @@
 @section('content')
 <div class="flex flex-col items-center w-full bg-white">
 
-    <header class="w-full max-w-5xl mb-2 mt-8 shadow">
+    <header class="w-full  mb-2 mt-8 shadow">
         <h1 class="text-4xl font-bold text-center text-gray-800 mb-6">Administration</h1>
         <nav class="flex w-full justify-around mt-4">
             <button class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900 border-sky-900 text-sky-900"
@@ -30,7 +30,7 @@
         <!--Used to append messages with JS -->
     </div>
 
-    <section id="users" class="admin-section flex flex-col tab-section max-w-5xl w-full bg-white p-6">
+    <section id="users" class="admin-section flex flex-col tab-section w-full bg-white p-6">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Users</h2>
         
         <div class="mb-4 flex justify-between items-center">
@@ -81,7 +81,7 @@
                 </button>
         @endif
     </section> 
-    <section id="topics" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6">
+    <section id="topics" class="hidden flex-col admin-section tab-section w-full bg-white p-6">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Topics</h2>
         
         <div class="mb-4 flex justify-between items-center">
@@ -97,7 +97,7 @@
             <!-- filled with JS -->
         </table>
     </section>
-    <section id="reports" class="hidden flex-col admin-section tab-section max-w-5xl w-full bg-white p-6">
+    <section id="reports" class="hidden flex-col admin-section tab-section w-full bg-white p-6">
         <h2 class="text-2xl font-semibold mb-4 text-gray-800">Manage Reports</h2>
         
         <div class="mb-4 flex justify-between items-center">
