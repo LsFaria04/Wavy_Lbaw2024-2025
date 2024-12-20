@@ -178,7 +178,14 @@ class ProfileController extends Controller {
                 return redirect()->route('profile', $user->username)->with('error', 'Incorrect password. Deletion aborted.');
             }
         }
-        
+
+        $files = Media::where('userid', $id)->get();
+        foreach($files as $file){
+            if(Storage::exists('public/' . $file->path)){
+                Storage::delete('public/' . $file->path);
+                $file->delete();
+            }
+        }
         //user already deleted
         if ($user->state === 'deleted') {
 
@@ -348,7 +355,7 @@ class ProfileController extends Controller {
 
     public function getFollows(Request $request, $userid){
         try{
-            $followers = Follow::with('followee')
+            $followers = Follow::with('followee', 'followee.profilePicture')
             ->where('followerid', $userid )
             ->where('state', Follow::STATE_ACCEPTED)->paginate(10);
         } catch (\Exception $e) {

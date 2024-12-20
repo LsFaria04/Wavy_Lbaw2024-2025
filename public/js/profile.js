@@ -1061,6 +1061,7 @@ function insertMoreFollows(){
     else{
       user = follows.data[i].followee;
     }
+    console.log(user);
     let li = document.createElement('li');
     li.setAttribute('id', 'follow-' + user.userid);
     li.classList.add("w-full","flex", "flex-col","p-2", "my-2", "shadow")
