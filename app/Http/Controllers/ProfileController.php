@@ -348,11 +348,6 @@ class ProfileController extends Controller {
 
     public function getFollows(Request $request, $userid){
         try{
-<<<<<<< HEAD
-            Log::info("17");
-
-            $followers = Follow::with('followee')
-=======
             $followers = Follow::with('followee', 'followee.profilePicture')
         }
 
