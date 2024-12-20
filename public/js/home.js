@@ -60,7 +60,7 @@ function addEventListeners() {
         const query = document.querySelector('input[name="q"]').value || '';
         sendAjaxRequest('get', '/groups?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchGroupCategory, null, insertMoreGroupSearchResults);
         loading = false;
-    }
+      }
   
       //actions to take place in the profile page
       const profilePage = document.querySelector("#profile-tab-content");

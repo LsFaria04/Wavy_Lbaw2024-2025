@@ -4,24 +4,45 @@ function addEventListeners() {
         initializeNotificationTabs();
         showTab('all-notifications'); //default tab
 
-        initializePusher(userId);
-
-        hideNotificationDotIfOnPage();
+        // initialize Pusher when userId is valid
+        const interval = setInterval(() => {
+            if (userId !== -1) {
+                initializePusher(userId);
+                clearInterval(interval);
+            }
+        }, 100); // Check every 100ms
     });
 
-    window.addEventListener('load', hideNotificationDotIfOnPage);
 }
 
-function triggerRedDotBlinking() {
-    const redDot = document.getElementById('notification-dot');
+function triggerPopupNotification(message) {
+    const notificationPopup = document.createElement('div');
+    notificationPopup.classList.add('p-4', 'mb-4', 'text-sm', 'text-green-800', 'rounded-lg', 'bg-green-50', 'dark:bg-gray-800', 'dark:text-green-400');
+    notificationPopup.setAttribute('role', 'alert');
+
+
+    notificationPopup.innerHTML = `
+        <span class="font-medium"></span> ${message}
+    `;
     
-    if (redDot) {
-        console.log("Red dot is toggling visibility");
-        redDot.classList.toggle('hidden');
-    } else {
-        console.log("Red dot element not found!");
-    }
+    document.body.appendChild(notificationPopup);
+
+    // Apply position and animation styles
+    notificationPopup.style.position = 'fixed';
+    notificationPopup.style.top = '20px';
+    notificationPopup.style.right = '20px';
+    notificationPopup.style.zIndex = '9999';
+    notificationPopup.style.opacity = '1';
+    notificationPopup.style.transition = 'opacity 0.5s ease, transform 0.3s ease';
+
+    setTimeout(() => {
+        notificationPopup.style.opacity = '0';  // fade out
+        setTimeout(() => {
+            notificationPopup.remove();  // remove from DOM after fade out
+        }, 500); // wait for fade out to finish
+    }, 5000); // popup stays for 5 seconds
 }
+
 
 function initializePusher(userId) {
     const pusher = new Pusher('0b3c646b9e8aeb6f4458', {
@@ -29,23 +50,20 @@ function initializePusher(userId) {
         encrypted: true
     });
 
-    //const channel = pusher.subscribe('public-user.');
-
-    const channel = pusher.subscribe('private-user.' + userId);
+    const channel = pusher.subscribe('public-user.' + userId);
 
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {
         console.log('Received like notification:', data);
         handleNotification('likes', data.message);
-        triggerRedDotBlinking();
+        triggerPopupNotification(data.message);
     });
 
     // Handle "comment" notifications
     channel.bind('notification-postcomment', function(data) {
         console.log(`New comment notification: ${data.message}`);
         handleNotification('comments', data.message);
-        showPopupNotification(data.message);
-        triggerRedDotBlinking();
+        triggerPopupNotification(data.message);
     });
 
     // Handle "follow" notifications
@@ -53,10 +71,10 @@ function initializePusher(userId) {
         console.log(`New follow notification: ${data.message}`);
         const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
         handleNotification(type, data.message);
-        showPopupNotification(data.message);
-        triggerRedDotBlinking();
+        triggerPopupNotification(data.message);
     });
-    
+ 
+    console.log(`Subscribed to channel: public-user.${userId}`);
 }
 
 function handleNotification(type, message) {
@@ -77,14 +95,23 @@ function handleNotification(type, message) {
 
 function createNotificationElement(message) {
     const notificationElement = document.createElement('div');
-    notificationElement.classList.add('notification-item');
+    notificationElement.classList.add('flex', 'items-center', 'p-4', 'mb-4', 'bg-gray-50', 'rounded-lg', 'shadow-sm', 'space-y-4');
+
     notificationElement.innerHTML = `
-        <div class="notification-content">
-            <p>${message}</p>
-            <span class="notification-time">${new Date().toLocaleString()}</span>
-        </div>`;
+        <div class="flex-1">
+            <div class="text-sm font-semibold text-gray-800">
+                ${message}
+            </div>
+        </div>
+        <div class="text-xs text-gray-400">
+            ${new Date().toLocaleString()}
+        </div>
+    `;
+
     return notificationElement;
 }
+
+
 
 function initializeNotificationTabs() {
     const tabs = ['all-notifications', 'comments', 'likes', 'follows'];
@@ -158,15 +185,5 @@ function insertMoreNotifications() {
     }
 }
 
-function hideNotificationDotIfOnPage() {
-    const notificationsLink = document.getElementById('notifications-link');
-    const notificationDot = document.getElementById('notification-dot');
-    
-    if (window.location.pathname === notificationsLink.getAttribute('href')) {
-        notificationDot.style.display = 'none';
-    } else {
-        notificationDot.style.display = '';
-    }
-}
 
 addEventListeners();

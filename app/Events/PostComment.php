@@ -28,7 +28,7 @@ class PostComment implements ShouldBroadcast {
         $this->comment = $comment;
         $this->user = $user;
         $this->receiverid = $receiverid;
-        $this->message = $user->username . ' commented on your post: ' . $comment;  // Custom message
+        $this->message = $user->username . ' commented on your post';  // Custom message
     }
 
     /**
@@ -37,12 +37,8 @@ class PostComment implements ShouldBroadcast {
      * @return \Illuminate\Broadcasting\Channel|array
      */
     public function broadcastOn(): array {
-
-        //public channel
-        //return ['public-user.'];
-
-        // Broadcast to the private channel for the specific user (receiver)
-        return [new PrivateChannel('user.' . $this->receiverid)];
+        Log::info("comment notification event");
+        return ['public-user.' . $this->receiverid];
     }
 
     /**

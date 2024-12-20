@@ -21,6 +21,7 @@
             <nav class="category-buttons flex justify-around mt-2">
                 @if(Auth::check()) 
                     <button type="button" data-category="your-groups" class="category-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 {{ $category === 'your-groups' ? 'border-sky-900 text-sky-900' : 'hover:text-sky-900' }}" onclick="changeGroupCategory('your-groups')">Your Groups</button>
+                    <button type="button" data-category="manage-invitations" class="category-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 {{ $category === 'manage-invitations' ? 'border-sky-900 text-sky-900' : 'hover:text-sky-900' }}" onclick="changeGroupCategory('manage-invitations')">Manage Invitations</button>
                 @endif
                 <button type="button" data-category="search-groups" class="category-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 {{ $category === 'search-groups' ? 'border-sky-900 text-sky-900' : 'hover:text-sky-900' }}" onclick="changeGroupCategory('search-groups')">Search Groups</button>
             </nav>
