@@ -11,7 +11,7 @@
                 {{ session('success')}}          
             </div>
         @endif 
-        <div id="messageContainer" class="fixed top-6 flex items-center">
+        <div id="messageContainer" class="fixed top-6 flex items-center z-50">
             <!--Used to append messages with JS -->
         </div>
         

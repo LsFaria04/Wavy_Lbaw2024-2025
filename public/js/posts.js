@@ -634,10 +634,10 @@ function insertUpdateForm(post, id, message, media, topics) {
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700">Edit Media</label>
             <label for="image-${id}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-7 sm:h-7">
                     <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
-                <span>Attach new file</span>
+                <span class = "w-20 sm:w-full text-sm sm:text-base" >Attach new file</span>
             </label>
             <div id="fileDisplay-${id}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 ${media.length === 0 ? 'hidden' : ''}"></div>
             <input type="file" name="media[]" id="image-${id}" class="hidden" onchange="updateFileNameEdit('${id}')" multiple>
@@ -647,10 +647,10 @@ function insertUpdateForm(post, id, message, media, topics) {
         <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700">Edit Topics</label>
             <label for="topic-${id}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black mt-2">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 sm:w-7 sm:h-7">
                     <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                 </svg>
-                <span>Add new topic</span>
+                <span class = "w-20 sm:w-full text-sm sm:text-base" >Add new topic</span>
             </label>
             <div id="topicDisplay-${id}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 ${topics.length === 0 ? 'hidden' : ''}">
             </div>
@@ -727,7 +727,7 @@ function removeSpecificFile(index) {
       li.classList.add('flex', 'items-center', 'gap-2');
 
       li.innerHTML = `
-          <span class="text-sm text-gray-500">${file.name}</span>
+          <span class="text-sm text-gray-500 sm:w-12 text-ellipsis overflow-hidden ...">${file.name}</span>
           <button type="button" onclick="removeSpecificFile(${i})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
       `;
       fileDisplay.appendChild(li);
@@ -865,10 +865,11 @@ function insertMorePostTopics(){
 }
 
 function addTopicToPost(topicid, topicname, postid){
+  const messageContainer = document.getElementById('messageContainer');
 
   //maximum number of topics per post reached
   if(selectedTopics.length == 5){
-    alert("Can only select up to 5 topics per post!");
+    createAlert(messageContainer, "Can only select up to 5 topics per post!", true);
     return;
   }
   if(!selectedTopics.includes(topicid)){
@@ -879,6 +880,9 @@ function addTopicToPost(topicid, topicname, postid){
   const topic = document.getElementById(`topic-${topicid}`);
   topic.remove();
 
+  //Alert user that the topic was selected
+  createAlert(messageContainer, `Topic ${topicname} was added`, false);
+
   //add the topic to the topic display
   let topicDisplay = document.getElementById(`topicDisplay-${postid}`);
 
@@ -887,7 +891,8 @@ function addTopicToPost(topicid, topicname, postid){
   li.setAttribute('id', `post-${postid}Topic-${topicid}`);
 
   li.innerHTML = `
-      <span class="text-sm text-gray-500">${topicname}</span>
+      <span class="text-sm text-gray-500 w-12 sm:w-full text-ellipsis overflow-hidden ...">${topicname}</span>
+  
       <button type="button" onclick="removeSpecificTopic(${topicid},${postid})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
   `;
 
