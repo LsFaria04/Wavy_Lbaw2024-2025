@@ -23,9 +23,9 @@
             <input type="hidden" name="postidForJs" value="{{ $post->postid }}">
 
             <!-- Add Comment Section -->
-            @if(Auth::check() && !Auth()->user()->isadmin)
                 <div class="addComment p-4 bg-gray-50 border-b">
                     <h3 class="text-lg font-bold mb-4">Comments</h3>
+                    @if(Auth::check() && !Auth()->user()->isadmin)
                     <form id="commentForm" action="{{ route('comments.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
                         @csrf
                         <input type="hidden" name="postid" value="{{ $post->postid }}">
@@ -59,9 +59,8 @@
                             <!-- File names appended dynamically -->
                         </ul>
                     </form>
+                    @endif
                 </div>
-            @endif
-
             <!-- Existing Comments Section -->
             <section id="comments">
                 @forelse ($post->comments as $comment)
