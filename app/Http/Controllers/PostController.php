@@ -24,11 +24,27 @@ class PostController extends Controller {
     public function getPostsTimeline(Request $request)
     {
         if (Auth::check()) {
+
+            $currentUser = Auth::user();
+
+            $followingIds = $currentUser->follows()->pluck('followeeid')->toArray();
+
+            $favoriteUserTopics = $currentUser->topics()->pluck('user_topics.topicid')->toArray();
+
             // Include the comment count
             $posts = Post::with('user', 'media','topics', 'user.profilePicture')
                         ->withCount('comments')  // This will add comments_count to the Post model
                         ->withCount('likes')
+                        ->where(function ($query) use ($followingIds, $favoriteUserTopics, $currentUser) {
+                            $query->whereIn('userid',$followingIds)
+                                  ->orWhere('visibilitypublic','true')
+                                  ->orWhereHas('topics', function ($subQuery) use ($favoriteUserTopics) {
+                                        $subQuery->whereIn('postid',$favoriteUserTopics);
+                                  })
+                                  ->orWhere('userid',$currentUser->userid);
+                        })
                         ->whereNull('groupid')
+                        ->orderByRaw("CASE WHEN visibilitypublic = 'true' then 1 ELSE 0 END")
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
 
@@ -266,7 +282,6 @@ class PostController extends Controller {
                 }
             ])
             ->withCount('subcomments')
-            ->withCount('likes')
             ->paginate(10);  // This returns a LengthAwarePaginator
         
             foreach($comments as $comment){
@@ -310,7 +325,7 @@ class PostController extends Controller {
         foreach ($comments as $comment) {
             // Process likes for the current comment
             $comment->liked = $userId ? $comment->commentLikes()->where('userid', $userId)->exists() : false;
-            $comment->likes_count = $comment->commentLikes()->count();
+            $comment->comment_likes_count = $comment->commentLikes()->count();
 
             if (!$comment->relationLoaded('user')) {
                 $comment->load('user');
