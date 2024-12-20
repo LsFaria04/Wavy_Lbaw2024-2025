@@ -102,6 +102,7 @@ Route::post('/api/profile/followrequest/{userid}', [ProfileController::class, 'g
 Route::post('/api/profile/followrequest/accept/{userid}', [ProfileController::class, 'acceptFollowRequest']);
 Route::post('/api/profile/followrequest/reject/{userid}', [ProfileController::class, 'rejectFollowRequest']);
 Route::post('/api/profile/follows/{userid}', [ProfileController::class, 'getFollows']);
+Route::post('/api/profile/followers/{userid}', [ProfileController::class, 'getFollowers']);
 Route::post('/api/contact/submit', [MailController::class, 'sendContactMessage']);
 
 //Reports

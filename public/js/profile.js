@@ -613,7 +613,11 @@ function followUser(userId, csrfToken, followButton) {
           followButton.textContent = 'Unfollow';  
           followButton.classList.remove('bg-sky-700', 'hover:bg-sky-900');
           followButton.classList.add('bg-red-500', 'hover:bg-red-700');
-          followButton.setAttribute('data-follow-status', 'following');
+          followButton.setAttribute('data-follow-status', 'Accepted');
+
+          const followCount = document.getElementById('followers_count');
+          const count = parseInt(document.getElementById('followers_count').innerHTML);
+          followCount.innerHTML = (count + 1).toString();
       }
   })
   .catch(error => {
@@ -656,6 +660,10 @@ function unfollowUser(userId, csrfToken, followButton) {
           followButton.classList.add('bg-sky-700', 'hover:bg-sky-900');
           followButton.setAttribute('data-follow-status', 'not-following');
       }
+
+      const followCount = document.getElementById('followers_count');
+      const count = parseInt(document.getElementById('followers_count').innerHTML);
+      followCount.innerHTML = (count - 1).toString();
   }
   })
   .catch(error => {
@@ -795,6 +803,21 @@ function removeFileProfile(isbanner){
 
 }
 
+function insertShowMoreRequests(){
+  const section = document.querySelector("#requestsList > ul");  
+  let showMore = document.createElement('button');
+  showMore.classList.add("flex", "w-full", "justify-center", "items-center");
+  showMore.setAttribute('onclick', `loadFollowMoreRequests()`);
+  showMore.setAttribute('id', 'showMore');
+  showMore.innerHTML = `
+              <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+              </svg>
+              <p>Show More</p>
+  `;
+  section.appendChild(showMore);
+}
+
 
 function toggleFollowRequests(){
   const followRequest = document.getElementById('followRequests');
@@ -834,16 +857,25 @@ function insertMoreFollowRequests(){
   maxFollowPage = follows.last_page;
 
   for(let i = 0 ; i < follows.data.length; i++){
+    let user = follows.data[i].follower;
     let li = document.createElement('li');
     li.setAttribute('id', 'request-' + follows.data[i].follower.userid);
-    li.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow")
+    li.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow", "items-center", "gap-2");
     li.innerHTML=`
-      <p>${follows.data[i].follower.username}</p>
+      <div class = "flex flex-col gap-2 overflow-hidden ">
+        <a href = "../profile/${user.username}" class = "flex flex-row gap-2 w-full">
+          <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+              ${user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+          </div>
+          <p>${user.username}</p>
+        </a>
+        <p class="text-gray-500 text-sm truncate ...">${user.bio}</p>
+      </div>
       <div class = "flex flex-row justify-between gap-2">
-        <button id = "accept-${follows.data[i].follower.userid}" onclick = acceptFollow(${follows.data[i].follower.userid}) class = "bg-green-600 text-white p-1 rounded-xl">
+        <button id = "accept-${follows.data[i].follower.userid}" onclick = acceptFollow(${follows.data[i].follower.userid}) class = "bg-green-600 text-white p-1 rounded-xl w-16 h-8">
           Accept
         </button>
-        <button id = "reject-${follows.data[i].follower.userid}" onclick = rejectFollow(${follows.data[i].follower.userid}) class = "bg-red-600 text-white p-1 rounded-xl">
+        <button id = "reject-${follows.data[i].follower.userid}" onclick = rejectFollow(${follows.data[i].follower.userid}) class = "bg-red-600 text-white p-1 rounded-xl w-16 h-8">
           Reject
         </button>
       </div>
@@ -852,7 +884,7 @@ function insertMoreFollowRequests(){
   }
 
   if(currentFollowPage < maxFollowPage){
-    insertShowMoreRequests()
+    insertShowMoreRequests();
   }
 
   if(followsList.firstChild === null){
@@ -863,11 +895,24 @@ function insertMoreFollowRequests(){
 
 }
 
-function insertShowMoreRequests(){
-  const section = document.querySelector("#requestsList > ul");  
+function insertShowMoreFollow(){
+  let section = null
+  if(isFollower){
+    section = document.querySelector("#followersList > ul");  
+    console.log("here");
+    console.log(section);
+  }
+  else{
+    section = document.querySelector("#followsList > ul");  
+  }
   let showMore = document.createElement('button');
   showMore.classList.add("flex", "w-full", "justify-center", "items-center");
-  showMore.setAttribute('onclick', `loadMoreMoreRequests()`);
+  if(isFollower){
+    showMore.setAttribute('onclick', `loadMoreFollowers()`);
+  } 
+  else{
+    showMore.setAttribute('onclick', `loadMoreFollows()`);
+  }
   showMore.setAttribute('id', 'showMore');
   showMore.innerHTML = `
               <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -935,6 +980,28 @@ function handleAcceptFollow(){
 
 }
 
+function toggleFollowerList(){
+  const followers = document.getElementById('followers');
+  followers.classList.toggle('hidden');
+  followers.classList.toggle('flex');
+  let followList = document.querySelector("#followersList > ul");
+
+  if(followers.classList.contains('flex')){
+    if(followList.firstChild === null){
+      currentFollowPage = 0;
+      loadMoreFollowers();
+    }
+  }
+}
+
+function loadMoreFollowers(){
+  let followList = document.querySelector("#followsList > ul");
+  insertLoadingCircle(followList);
+  currentFollowPage++;
+  isFollower = true;
+  sendAjaxRequest('post', '/api/profile/followers/'+ userId + '?page=' + currentFollowPage ,null,insertMoreFollows);
+}
+
 function toggleFollowList(){
   const follows = document.getElementById('follows');
   follows.classList.toggle('hidden');
@@ -953,9 +1020,11 @@ function loadMoreFollows(){
   let followList = document.querySelector("#followsList > ul");
   insertLoadingCircle(followList);
   currentFollowPage++;
+  isFollower = false;
   sendAjaxRequest('post', '/api/profile/follows/'+ userId + '?page=' + currentFollowPage ,null,insertMoreFollows);
 }
 
+let isFollower = false;
 function insertMoreFollows(){
   removeLoadingCircle();
   removeShowMoreFollow();
@@ -965,27 +1034,53 @@ function insertMoreFollows(){
     createAlert(messageContainer, follows.message, true);
   }
 
-  let followsList = document.querySelector("#followsList > ul");
+  let followsList = null;
+  if(isFollower){
+    followsList = document.querySelector("#followersList > ul");
+  } else{
+    followsList = document.querySelector("#followsList > ul");
+  }
 
   maxFollowPage = follows.last_page;
-
+  
   for(let i = 0 ; i < follows.data.length; i++){
+    let user = null;
+    if(isFollower){
+      user = follows.data[i].follower;
+    }
+    else{
+      user = follows.data[i].followee;
+    }
     let li = document.createElement('li');
-    li.setAttribute('id', 'request-' + follows.data[i].followee.userid);
-    li.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow")
+    li.setAttribute('id', 'follow-' + user.userid);
+    li.classList.add("w-full","flex", "flex-col","p-2", "my-2", "shadow")
     li.innerHTML=`
-      <a href = "../profile/${follows.data[i].followee.username}">${follows.data[i].followee.username}</a>
+    <a href = "../profile/${user.username}" class = "flex flex-row gap-2 w-full">
+      <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+          ${user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+      </div>
+      <p>${user.username}</p>
+    </div>
+    <div class = "h-4 overflow-hidden">
+      <p class="text-gray-500 text-sm truncate ...">${user.bio}</p>
+    </a>
     `
     followsList.appendChild(li);
   }
 
   if(currentFollowPage < maxFollowPage){
-    insertShowMoreRequests()
+    console.log("here");
+    insertShowMoreFollow();
   }
 
   if(followsList.firstChild === null){
     let warning = document.createElement('p');
-    warning.innerHTML='No follows found';
+    if(isFollower){
+      warning.innerHTML='No follows found';
+    }
+    else{
+      warning.innerHTML='No followers found';
+    }
     followsList.appendChild(warning);
   }
 

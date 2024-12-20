@@ -311,7 +311,7 @@ class ProfileController extends Controller {
     public function getFollowRequests(Request $request, $userid){
 
         try{
-            $followers = Follow::with('follower')
+            $followers = Follow::with('follower', 'follower.profilePicture')
             ->where('followeeid', $userid )
             ->where('state', Follow::STATE_PENDING)->paginate(10);
         } catch (\Exception $e) {
@@ -323,8 +323,20 @@ class ProfileController extends Controller {
 
     public function getFollows(Request $request, $userid){
         try{
-            $followers = Follow::with('followee')
+            $followers = Follow::with('followee', 'followee.profilePicture')
             ->where('followerid', $userid )
+            ->where('state', Follow::STATE_ACCEPTED)->paginate(10);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Server Problem', 'response' => '500']);
+        }
+
+        return response()->json($followers);
+    }
+
+    public function getFollowers(Request $request, $userid){
+        try{
+            $followers = Follow::with('follower', 'follower.profilePicture')
+            ->where('followeeid', $userid )
             ->where('state', Follow::STATE_ACCEPTED)->paginate(10);
         } catch (\Exception $e) {
             return response()->json(['message' => 'Server Problem', 'response' => '500']);

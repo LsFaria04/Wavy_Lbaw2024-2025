@@ -130,6 +130,13 @@
                         @endif
                         @if (!Auth::user()->isadmin)
                             <button
+                                onclick = "toggleFollowerList()"
+                                class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
+                                My Followers
+                            </button>
+                        @endif
+                        @if (!Auth::user()->isadmin)
+                            <button
                                 onclick = "toggleFollowRequests()"
                                 class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
                                 Follow Requests
@@ -147,11 +154,11 @@
 
             <div class = "px-6 pb-4 flex flex-row gap-4">
                 <div class = "flex flex-row gap-2">
-                    <p class = "font-semibold">{{$user->followers_count}}</p>
+                    <p id = "followers_count" class = "font-semibold">{{$user->followers_count}}</p>
                     <p class = " text-gray-500">Followers</p>  
                 </div>
                 <div class = "flex flex-row gap-2 ">
-                    <p class = "font-semibold">{{$user->follows_count}}</p>
+                    <p id = "following_count" class = "font-semibold">{{$user->follows_count}}</p>
                     <p class = " text-gray-500">Following</p>   
                 </div>
             </div>
@@ -335,5 +342,6 @@
         @include('partials.admin.banMenu')
         @include('partials.imageDetail')
         @include('partials.followRequests')
+        @include('partials.followsList')
         @include('partials.followersList')
     @endSection
