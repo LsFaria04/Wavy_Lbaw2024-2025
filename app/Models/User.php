@@ -109,6 +109,11 @@ class User extends Authenticatable {
         return $this->belongsToMany(User::class, 'follow', 'followerid', 'followeeid')
                     ->withPivot('state', 'followdate');
     }
+
+    public function followers() {
+        return $this->belongsToMany(User::class, 'follow', 'followeeid', 'followerid')
+                    ->withPivot('state', 'followdate');
+    }
     
     public function isPrivate() {
         return !$this->visibilitypublic;

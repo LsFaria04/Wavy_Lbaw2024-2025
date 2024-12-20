@@ -8,6 +8,7 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class PostComment implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
@@ -28,21 +29,17 @@ class PostComment implements ShouldBroadcast {
         $this->comment = $comment;
         $this->user = $user;
         $this->receiverid = $receiverid;
-        $this->message = $user->username . ' commented on your post: ' . $comment;  // Custom message
+        $this->message = $user->username . ' commented on your post';  // Custom message
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return \Illuminate\Broadcasting\Channel
      */
-    public function broadcastOn(): array {
-
-        //public channel
-        //return ['public-user.'];
-
-        // Broadcast to the private channel for the specific user (receiver)
-        return [new PrivateChannel('user.' . $this->receiverid)];
+    public function broadcastOn() {
+        Log::info("comment notification event");
+        return new Channel('public-user.' . $this->receiverid);
     }
 
     /**

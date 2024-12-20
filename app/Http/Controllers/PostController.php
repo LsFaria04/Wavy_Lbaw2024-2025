@@ -135,17 +135,19 @@ class PostController extends Controller {
                 'createddate' => now(),
             ]);
             $liked = true;
+
+            event(new PostLike($postId, $user, $post->user->userid));
         }
     
         // Get the updated like count
         $likeCount = $post->likes()->count();
-
-        event(new PostLike($postId, $user, $post->user->userid));
+        info($post->user->userid);
     
         // Return the updated like status and like count
         return response()->json([
             'liked' => $liked,
-            'likeCount' => $likeCount
+            'likeCount' => $likeCount,
+            'receiverId' => $post->user->userid,
         ]);
     }
     
@@ -255,9 +257,11 @@ class PostController extends Controller {
             ->with([
                 'user',
                 'media',
+                'commentLikes',
+                'user.profilePicture',
                 'subcomments' => function ($subQuery) {
                     $subQuery->orderBy('createddate', 'desc') // Order subcomments by createddate
-                        ->with(['user','media','subcomments'])
+                        ->with(['user','media','commentLikes','subcomments', 'user.profilePicture'])
                         ->withCount('subcomments');
                 }
             ])
@@ -265,11 +269,20 @@ class PostController extends Controller {
             ->withCount('likes')
             ->paginate(10);  // This returns a LengthAwarePaginator
         
+            foreach($comments as $comment){
+                $comment->createddate = $comment->createddate->diffForHumans();
+
+                foreach($comment->subcomments as $subcomment){
+                    $subcomment->createddate = $subcomment->createddate->diffForHumans();
+
+                }
+            }
         $post->comments = $comments;
     
         // Process likes and recursively handle subcomments
         if (Auth::check()) {
             $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
+            Log::info($post->liked);
             $post->createddate = $post->createddate->diffForHumans();
             $this->processComments($post->comments, Auth::user()->userid);
         } else {

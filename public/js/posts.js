@@ -182,6 +182,7 @@ function likePost(postId,event) {
         heartFilled.classList.add('fill-red-600', 'group-hover:fill-red-600');
         likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
         likeCountElement.classList.add('text-red-600');
+
     } else {
         heartEmpty?.classList.remove('hidden');
         heartFilled?.classList.add('hidden');
@@ -268,7 +269,6 @@ function authId(){
   userId = response.id;
   isadmin = response.isadmin;
   currentUsername = response.username;
- 
 }
 
 let selectedFiles = [];
@@ -740,6 +740,7 @@ function removeSpecificFile(index) {
 }
 
 function toggleAddPostTopics(postid, isedit){
+  console.log(document.getElementById("addPostTopics"));
   if(document.getElementById("addPostTopics").classList.contains('hidden')){
     postTopicPage = 0;
     topicPostId = postid;

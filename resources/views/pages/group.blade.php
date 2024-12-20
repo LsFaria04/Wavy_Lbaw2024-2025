@@ -203,10 +203,11 @@
             @foreach ($posts as $post )
                 @include('partials.post', ['post' => $post, 'group' => $group])
             @endforeach
-            @include('partials.addPostTopics')
+            
             @include('partials.reportForm')
             @include('partials.imageDetail')
         @endif
+        @include('partials.addPostTopics')
     </div>
 </div>
 @endsection

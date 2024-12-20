@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Like;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class LikeController extends Controller
 {
@@ -20,14 +21,13 @@ class LikeController extends Controller
             'post' => function ($query) {
                 $query->with('user', 'user.profilePicture')->withCount('likes')->withCount('comments');
             },
-            'comment' => function ($query) {
-                $query->withCount('likes');
-            }, 'comment.user', 'comment.post', 'comment.post.user',
-            'comment.parentComment', 'comment.parentComment.user', 'user'
+            'comment', 'comment.user', 'comment.post', 'comment.post.user',
+            'comment.parentComment', 'comment.parentComment.user', 'user','comment.user.profilePicture'
         ])
         ->where('userid', $user->userid)
         ->orderBy('createddate', 'desc')
         ->paginate(10);
+
     
         foreach ($likes as $like) {
             if ($like->post) {
@@ -42,9 +42,13 @@ class LikeController extends Controller
     
             if ($like->comment) {
                 $like->comment->createddate = $like->comment->createddate->diffForHumans();
-    
-                if (Auth::check() && $like->comment->post) {
-                    $like->comment->post->liked = $like->comment->post->likes()->where('userid', Auth::id())->exists();
+                $like->comment->comment_likes_count = $like->comment->commentLikes()->count();
+                
+                if(Auth::check()){
+                    if ($like->comment->post) {
+                        $like->comment->post->liked = $like->comment->post->likes()->where('userid', Auth::id())->exists();
+                    }
+                    $like->comment->liked = $like->comment->commentlikes()->where('userid', Auth::user()->userid)->exists();
                 }
             }
         }
@@ -56,7 +60,7 @@ class LikeController extends Controller
         return $likes;
     }
     
-    public function create(Request $request){~
+    public function create(Request $request){
 
         Like::create([
             'userid' => $request->userid,

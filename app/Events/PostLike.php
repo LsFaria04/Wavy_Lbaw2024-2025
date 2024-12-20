@@ -29,22 +29,17 @@ class PostLike implements ShouldBroadcast {
         $this->post_id = $post_id;
         $this->user = $user;
         $this->receiverid = $receiverid;
-        $this->message = $user->name . ' liked your post ' . $post_id;  // Custom message
+        $this->message = $user->username . ' liked your post';  // Custom message
     }
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return \Illuminate\Broadcasting\Channel
      */
-    public function broadcastOn(): array {
-        Log::info("like notification");
-
-        //public channel
-        //return ['public-user.'];
-
-        // Broadcast to the private channel for the specific user (receiver)
-        return [new PrivateChannel('user.' . $this->receiverid)];
+    public function broadcastOn(){
+        Log::info("like notification event");
+        return new Channel('public-user.' . $this->receiverid);
     }
 
     /**

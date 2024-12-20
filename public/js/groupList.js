@@ -1,6 +1,57 @@
 function addEventListeners() {
     document.addEventListener('DOMContentLoaded', fadeAlert);
     window.addEventListener("scroll", infiniteScroll);
+    document.addEventListener('click', function (e) {
+        if (e.target && e.target.classList.contains('accept-invite')) {
+            const invitationId = e.target.dataset.id;
+            const groupId = e.target.closest('.invitation').getAttribute('data-group-id');
+    
+            if (!groupId || !invitationId) {
+                console.error('Group ID or Invitation ID is missing.');
+                return;
+            }
+    
+            sendAjaxRequest('post', `/groups/${groupId}/invitations/${invitationId}/accept`, {}, function () {
+                if (this.status === 200) {
+                    const response = JSON.parse(this.responseText);
+                    console.log(response.message);
+    
+                    const invitationElement = e.target.closest('.invitation');
+                    if (invitationElement) invitationElement.remove();
+                    
+                    loadSearchGroupContent('manage-invitations','');
+                    alert(response.message);
+                } else {
+                    console.error('Failed to accept invitation:', this.responseText);
+                }
+            });
+        }
+    
+        if (e.target && e.target.classList.contains('reject-invite')) {
+            const invitationId = e.target.dataset.id;
+            const groupId = e.target.closest('.invitation').getAttribute('data-group-id');
+    
+            if (!groupId || !invitationId) {
+                console.error('Group ID or Invitation ID is missing.');
+                return;
+            }
+    
+            sendAjaxRequest('post', `/groups/${groupId}/invitations/${invitationId}/reject`, {}, function () {
+                if (this.status === 200) {
+                    const response = JSON.parse(this.responseText);
+                    console.log(response.message);
+    
+                    const invitationElement = e.target.closest('.invitation');
+                    if (invitationElement) invitationElement.remove();
+                    
+                    loadSearchGroupContent('manage-invitations','');
+                    alert(response.message);
+                } else {
+                    console.error('Failed to reject invitation:', this.responseText);
+                }
+            });
+        }
+    });    
 }
 
 let searchGroupCategory = null;
@@ -53,6 +104,14 @@ function insertMoreGroupSearchResults() {
             insertMoreGroups(groupResults, results[0]);
             break;
 
+        case 'manage-invitations':
+            if(results[2] === undefined) {
+                break;
+            }
+            maxPage = results[2].lastPage;
+            insertMoreInvitationsGroupList(groupResults, results[2]);
+            break;
+
         case 'search-groups':
             if (results[1] === undefined) {
                 break;
@@ -71,6 +130,52 @@ function insertMoreGroupSearchResults() {
               <p class="text-gray-600 text-center">No groups found matching your search.</p>
           </div>
         `;       
+    }
+}
+
+function createInvitationGroupList(invitationInfo) {
+    let invitation = document.createElement('div');
+    invitation.classList.add("invitation", "border-b", "border-gray-300", "p-4", "bg-white");
+
+    // Ensure `groupId` is available
+    invitation.setAttribute('data-group-id', invitationInfo.group.groupid);
+
+    if (!invitationInfo.user) {
+        console.error("User data is missing in invitationInfo:", invitationInfo);
+        invitation.innerHTML = `<p>Error: User information is unavailable.</p>`;
+        return invitation;
+    }
+
+    invitation.innerHTML = `
+        <div class="flex justify-between items-center">
+            <div>
+                <h3 class="font-bold">
+                    <a href="../profile/${invitationInfo.group.groupname}" class="text-black hover:text-sky-900">
+                        ${invitationInfo.group.groupname}
+                    </a>
+                </h3>
+                <p class="text-sm text-gray-600">Sent ${invitationInfo.createddate || 'Date unavailable'}</p>
+            </div>
+            <div class="flex space-x-2">
+                <button type="button" class="accept-invite bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-700" 
+                        data-id="${invitationInfo.invitationid}">
+                    Accept
+                </button>
+                <button type="button" class="reject-invite bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-700" 
+                        data-id="${invitationInfo.invitationid}">
+                    Reject
+                </button>
+            </div>
+        </div>
+    `;
+
+    return invitation;
+}
+
+function insertMoreInvitationsGroupList(element, invitations) {
+    for (let i = 0; i < invitations.data.length; i++) {
+        let invitationElement = createInvitationGroupList(invitations.data[i]);
+        element.appendChild(invitationElement);
     }
 }
 
