@@ -25,42 +25,49 @@ class PostController extends Controller {
     {
         if (Auth::check()) {
 
-            $currentUser = Auth::user();
+                $currentUser = Auth::user();
 
-            $followingIds = $currentUser->follows()->pluck('followeeid')->toArray();
+                $followingIds = $currentUser->follows()->pluck('followeeid')->toArray();
 
-            $favoriteUserTopics = $currentUser->topics()->pluck('user_topics.topicid')->toArray();
+                $favoriteUserTopics = $currentUser->topics()->pluck('user_topics.topicid')->toArray();
 
-            // Include the comment count
-            $posts = Post::with('user', 'media','topics', 'user.profilePicture')
-                        ->withCount('comments')  // This will add comments_count to the Post model
-                        ->withCount('likes')
-                        ->where(function ($query) use ($followingIds, $favoriteUserTopics, $currentUser) {
-                            $query->whereIn('userid',$followingIds)
-                                  ->orWhere('visibilitypublic','true')
-                                  ->orWhereHas('topics', function ($subQuery) use ($favoriteUserTopics) {
-                                        $subQuery->whereIn('postid',$favoriteUserTopics);
-                                  })
-                                  ->orWhere('userid',$currentUser->userid);
-                        })
-                        ->whereNull('groupid')
-                        ->orderByRaw("
-                            CASE 
-                                WHEN userid IN (" . implode(',', $followingIds) . ") THEN 1 
-                                WHEN EXISTS (
-                                    SELECT 1 FROM post_topics WHERE post_topics.postid = post.postid 
-                                    AND post_topics.topicid IN (" . implode(',', $favoriteUserTopics) . ")
-                                ) THEN 2
-                                ELSE 3
-                            END
-                        ")
-                        ->orderBy('createddate', 'desc')
-                        ->paginate(10);
-
+                // Include the comment count
+                $posts = Post::with('user', 'media', 'topics', 'user.profilePicture')
+                ->withCount('comments')  // Adds comments_count to the Post model
+                ->withCount('likes')     // Adds likes_count to the Post model
+                ->where(function ($query) use ($followingIds, $favoriteUserTopics, $currentUser) {
+                    if (!empty($followingIds)) {
+                        $query->whereIn('userid', $followingIds); // Posts by followed users
+                    }
+            
+                    $query->orWhere('visibilitypublic', 'true'); // Public posts
+            
+                    if (!empty($favoriteUserTopics)) {
+                        $query->orWhereHas('topics', function ($subQuery) use ($favoriteUserTopics) {
+                            $subQuery->whereIn('postid', $favoriteUserTopics); // Posts with favorite topics
+                        });
+                    }
+            
+                    $query->orWhere('userid', $currentUser->userid); // User's own posts
+                })
+                ->whereNull('groupid')
+                ->orderByRaw("
+                    CASE 
+                        WHEN " . (!empty($followingIds) ? "userid IN (" . implode(',', $followingIds) . ")" : "false") . " THEN 1 
+                        WHEN " . (!empty($favoriteUserTopics) ? "EXISTS (
+                            SELECT 1 FROM post_topics WHERE post_topics.postid = post.postid 
+                            AND post_topics.topicid IN (" . implode(',', $favoriteUserTopics) . ")
+                        )" : "false") . " THEN 2
+                        ELSE 3
+                    END
+                ")
+                ->orderBy('createddate', 'desc') // Secondary ordering by creation date
+                ->paginate(10);
+            
             foreach ($posts as $post) {
                 $post->liked = Auth::check() && $post->likes()->where('userid', Auth::user()->userid)->exists();
                 $post->createddate = $post->createddate->diffForHumans();
-            }                        
+            }
         } else {
             $posts = Post::with('user', 'media','topics', 'user.profilePicture')
                         ->withCount('comments')  
