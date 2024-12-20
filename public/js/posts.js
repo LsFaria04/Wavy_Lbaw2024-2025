@@ -182,6 +182,7 @@ function likePost(postId,event) {
         heartFilled.classList.add('fill-red-600', 'group-hover:fill-red-600');
         likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
         likeCountElement.classList.add('text-red-600');
+
     } else {
         heartEmpty?.classList.remove('hidden');
         heartFilled?.classList.add('hidden');

@@ -135,12 +135,13 @@ class PostController extends Controller {
                 'createddate' => now(),
             ]);
             $liked = true;
+
+            event(new PostLike($postId, $user, $post->user->userid));
         }
     
         // Get the updated like count
         $likeCount = $post->likes()->count();
         info($post->user->userid);
-        event(new PostLike($postId, $user, $post->user->userid));
     
         // Return the updated like status and like count
         return response()->json([

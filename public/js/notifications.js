@@ -95,14 +95,23 @@ function handleNotification(type, message) {
 
 function createNotificationElement(message) {
     const notificationElement = document.createElement('div');
-    notificationElement.classList.add('notification-item', 'p-4', 'bg-white', 'rounded-lg', 'shadow-sm');
+    notificationElement.classList.add('flex', 'items-center', 'p-4', 'mb-4', 'bg-gray-50', 'rounded-lg', 'shadow-sm', 'space-y-4');
+
     notificationElement.innerHTML = `
-        <div class="notification-content">
-            <p>${message}</p>
-            <span class="notification-time">${new Date().toLocaleString()}</span>
-        </div>`;
+        <div class="flex-1">
+            <div class="text-sm font-semibold text-gray-800">
+                ${message}
+            </div>
+        </div>
+        <div class="text-xs text-gray-400">
+            ${new Date().toLocaleString()}
+        </div>
+    `;
+
     return notificationElement;
 }
+
+
 
 function initializeNotificationTabs() {
     const tabs = ['all-notifications', 'comments', 'likes', 'follows'];
@@ -175,5 +184,6 @@ function insertMoreNotifications() {
         console.error("Failed to load notifications:", error);
     }
 }
+
 
 addEventListeners();
