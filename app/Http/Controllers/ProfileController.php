@@ -348,11 +348,16 @@ class ProfileController extends Controller {
 
     public function getFollows(Request $request, $userid){
         try{
-            $followers = Follow::with('followee', 'followee.profilePicture')
+            $followers = Follow::with('followee')
+            ->where('followerid', $userid )
+            ->where('state', Follow::STATE_ACCEPTED)->paginate(10);
+        } catch (\Exception $e) {
+            return response()->json(['message' => 'Server Problem', 'response' => '500']);
         }
 
         return response()->json($followers);
     }
+
 
     public function getFollowers(Request $request, $userid){
         try{
