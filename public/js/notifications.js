@@ -20,7 +20,6 @@ function triggerPopupNotification(message) {
     notificationPopup.classList.add('p-4', 'mb-4', 'text-sm', 'text-green-800', 'rounded-lg', 'bg-green-50', 'dark:bg-gray-800', 'dark:text-green-400');
     notificationPopup.setAttribute('role', 'alert');
 
-
     notificationPopup.innerHTML = `
         <span class="font-medium"></span> ${message}
     `;
@@ -55,62 +54,144 @@ function initializePusher(userId) {
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {
         console.log('Received like notification:', data);
-        handleNotification('likes', data.message);
+        const timestamp = data.timestamp || new Date().toISOString();
+        handleNotification('likes', data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
 
     // Handle "comment" notifications
     channel.bind('notification-postcomment', function(data) {
         console.log(`New comment notification: ${data.message}`);
-        handleNotification('comments', data.message);
+        const timestamp = data.timestamp || new Date().toISOString();
+        handleNotification('comments', data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
 
     // Handle "follow" notifications
     channel.bind('notification-follow', function (data) {
         console.log(`New follow notification: ${data.message}`);
+        const timestamp = data.timestamp || new Date().toISOString();
         const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
-        handleNotification(type, data.message);
+        handleNotification(type, data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
  
     console.log(`Subscribed to channel: public-user.${userId}`);
 }
 
-function handleNotification(type, message) {
+function handleNotification(type, message, timestamp, data) {
     // Update the "all-notifications" tab
     const allNotificationsContainer = document.getElementById('all-notifications-content');
     if (allNotificationsContainer) {
-        const notificationElement = createNotificationElement(message);
+        const notificationElement = createNotificationElement(type, message, timestamp, data);
         allNotificationsContainer.prepend(notificationElement);
     }
 
     // Update the specific tab for the notification type
     const specificNotificationsContainer = document.getElementById(`${type}-content`);
     if (specificNotificationsContainer) {
-        const notificationElement = createNotificationElement(message);
+        const notificationElement = createNotificationElement(type, message, timestamp, data);
         specificNotificationsContainer.prepend(notificationElement);
     }
 }
 
-function createNotificationElement(message) {
+function createNotificationElement(type, message, timestamp, data) {
+    if (!data) {
+        console.error("No data received for notification:", message);
+        return;  // Exit if data is undefined
+    }
+
     const notificationElement = document.createElement('div');
     notificationElement.classList.add('flex', 'items-center', 'p-4', 'mb-4', 'bg-gray-50', 'rounded-lg', 'shadow-sm', 'space-y-4');
 
-    notificationElement.innerHTML = `
+    const date = new Date(timestamp);
+    const formattedDate = formatRelativeTime(date);
+
+    let notificationContent = `
         <div class="flex-1">
             <div class="text-sm font-semibold text-gray-800">
                 ${message}
             </div>
         </div>
         <div class="text-xs text-gray-400">
-            ${new Date().toLocaleString()}
+            ${formattedDate}
         </div>
     `;
 
+    // Customize notification content based on type
+    if (data && data.message && data.user) {
+        const username = data.user.username || 'Unknown user';
+        const postUrl = `/posts/${data.post_id}`;
+        const usernameUrl = `/profile/${data.user.username}`;
+
+        if (type === 'likes') {
+            notificationContent = `
+                <div class="flex-1">
+                    <div class="text-sm font-semibold text-gray-800">
+                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> liked your post
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <a href="${postUrl}" class="text-blue-600 hover:underline">Your Post</a>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">
+                    ${formattedDate}
+                </div>
+            `;
+        } else if (type === 'comments') {
+            notificationContent = `
+                <div class="flex-1">
+                    <div class="text-sm font-semibold text-gray-800">
+                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> commented on your post
+                    </div>
+                    <div class="text-sm text-gray-500">
+                        <a href="${postUrl}" class="text-blue-600 hover:underline">Your Post</a>
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">
+                    ${formattedDate}
+                </div>
+            `;
+        } else if (type === 'follows') {
+            notificationContent = `
+                <div class="flex-1">
+                    <div class="text-sm font-semibold text-gray-800">
+                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> followed you
+                    </div>
+                </div>
+                <div class="text-xs text-gray-400">
+                    ${formattedDate}
+                </div>
+            `;
+        } else {
+            console.error("Unknown notification type:", type);
+        }
+    } else {
+        console.error("Missing or malformed data for notification");
+    }
+
+    notificationElement.innerHTML = notificationContent;
     return notificationElement;
 }
+function formatRelativeTime(date) {
+    const now = new Date();
+    const seconds = Math.floor((now - date) / 1000);
+    const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
 
+    if (seconds < 60) {
+        return rtf.format(-seconds, 'second');
+    } else if (seconds < 3600) {
+        return rtf.format(-Math.floor(seconds / 60), 'minute');
+    } else if (seconds < 86400) {
+        return rtf.format(-Math.floor(seconds / 3600), 'hour');
+    } else if (seconds < 2592000) {
+        return rtf.format(-Math.floor(seconds / 86400), 'day');
+    } else if (seconds < 31536000) {
+        return rtf.format(-Math.floor(seconds / 2592000), 'month');
+    } else {
+        return rtf.format(-Math.floor(seconds / 31536000), 'year');
+    }
+}
 
 
 function initializeNotificationTabs() {
