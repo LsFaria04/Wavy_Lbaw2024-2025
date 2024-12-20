@@ -44,7 +44,16 @@ class PostController extends Controller {
                                   ->orWhere('userid',$currentUser->userid);
                         })
                         ->whereNull('groupid')
-                        ->orderByRaw("CASE WHEN visibilitypublic = 'true' then 1 ELSE 0 END")
+                        ->orderByRaw("
+                            CASE 
+                                WHEN userid IN (" . implode(',', $followingIds) . ") THEN 1 
+                                WHEN EXISTS (
+                                    SELECT 1 FROM post_topics WHERE post_topics.postid = post.postid 
+                                    AND post_topics.topicid IN (" . implode(',', $favoriteUserTopics) . ")
+                                ) THEN 2
+                                ELSE 3
+                            END
+                        ")
                         ->orderBy('createddate', 'desc')
                         ->paginate(10);
 
