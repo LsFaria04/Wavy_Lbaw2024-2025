@@ -55,7 +55,6 @@ function initializePusher(userId) {
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {
         console.log('Received like notification:', data);
-        const message = `${data.username} liked your post`;
         handleNotification('likes', data.message);
         triggerPopupNotification(data.message);
     });

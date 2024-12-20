@@ -28,7 +28,7 @@ class PostComment implements ShouldBroadcast {
         $this->comment = $comment;
         $this->user = $user;
         $this->receiverid = $receiverid;
-        $this->message = $user->username . ' commented on your post: ' . $comment;  // Custom message
+        $this->message = $user->username . ' commented on your post';  // Custom message
     }
 
     /**

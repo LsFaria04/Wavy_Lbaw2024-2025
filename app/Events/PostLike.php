@@ -29,7 +29,7 @@ class PostLike implements ShouldBroadcast {
         $this->post_id = $post_id;
         $this->user = $user;
         $this->receiverid = $receiverid;
-        $this->message = $user->name . ' liked your post ' . $post_id;  // Custom message
+        $this->message = $user->username . ' liked your post';  // Custom message
     }
 
     /**
