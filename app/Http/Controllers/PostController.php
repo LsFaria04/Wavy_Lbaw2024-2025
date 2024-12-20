@@ -266,6 +266,7 @@ class PostController extends Controller {
                 }
             ])
             ->withCount('subcomments')
+            ->withCount('likes')
             ->paginate(10);  // This returns a LengthAwarePaginator
         
             foreach($comments as $comment){
@@ -309,7 +310,7 @@ class PostController extends Controller {
         foreach ($comments as $comment) {
             // Process likes for the current comment
             $comment->liked = $userId ? $comment->commentLikes()->where('userid', $userId)->exists() : false;
-            $comment->comment_likes_count = $comment->commentLikes()->count();
+            $comment->likes_count = $comment->commentLikes()->count();
 
             if (!$comment->relationLoaded('user')) {
                 $comment->load('user');
