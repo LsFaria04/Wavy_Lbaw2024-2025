@@ -131,7 +131,9 @@ class GroupController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $members = $group->members()->paginate(10);
+        Log::info($group->members()->paginate(10));
+
+        $members = $group->members()->with('profilePicture')->paginate(10);
 
         return response()->json($members);
     }
@@ -146,7 +148,7 @@ class GroupController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $invitations = GroupInvitation::with('user') 
+        $invitations = GroupInvitation::with('user', 'user.profilePicture') 
             ->where('groupid', $id)
             ->orderBy('createddate', 'desc')
             ->paginate(10);
@@ -168,7 +170,7 @@ class GroupController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        $joinRequests = JoinGroupRequest::with('user')
+        $joinRequests = JoinGroupRequest::with('user', 'user.profilePicture')
             ->where('groupid', $id)
             ->orderBy('createddate', 'desc')
             ->paginate(10);

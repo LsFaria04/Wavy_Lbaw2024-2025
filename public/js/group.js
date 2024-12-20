@@ -370,11 +370,16 @@ function createInvitation(invitationInfo) {
     invitation.innerHTML = `
         <div class="flex justify-between items-center">
             <div>
-                <h3 class="font-bold">
-                    <a href="../profile/${invitationInfo.user.username}" class="text-black hover:text-sky-900">
-                        ${invitationInfo.user.username}
-                    </a>
-                </h3>
+                <div class = "flex flex-row gap-2">
+                    <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                    ${invitationInfo.user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${invitationInfo.user.profile_picture[0].path.includes('profile') ? '/storage/' + invitationInfo.user.profile_picture[0].path : invitationInfo.user.profile_picture.length > 1 ? '/storage/' + invitationInfo.user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                    </div>
+                    <h3 class="font-bold">
+                        <a href="../profile/${invitationInfo.user.username}" class="text-black hover:text-sky-900">
+                            ${invitationInfo.user.username}
+                        </a>
+                    </h3>
+                </div>
                 <p class="text-sm text-gray-600">Sent ${invitationInfo.createddate || 'Date unavailable'}</p>
             </div>
             <button type="button" class="cancel-btn text-red-500 hover:text-red-700 ml-2" 
@@ -408,12 +413,17 @@ function createRequest(requestInfo) {
 
     request.innerHTML = `
         <div class="flex justify-between items-center">
-            <div>
-                <h3 class="font-bold">
-                    <a href="../profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
-                        ${requestInfo.user.username}
-                    </a>
-                </h3>
+            <div >
+                <div class = "flex flex-row gap-2">
+                    <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                    ${requestInfo.user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${requestInfo.user.profile_picture[0].path.includes('profile') ? '/storage/' + requestInfo.user.profile_picture[0].path : requestInfo.user.profile_picture.length > 1 ? '/storage/' + requestInfo.user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                    </div>
+                    <h3 class="font-bold">
+                        <a href="../profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
+                            ${requestInfo.user.username}
+                        </a>
+                    </h3>
+                </div>
                 <p class="text-sm text-gray-600">Request received: ${requestInfo.createddate || 'Date unavailable'}</p>
             </div>
             <div class="flex space-x-2">
@@ -450,11 +460,16 @@ function createMember(memberInfo) {
     member.innerHTML = `
         <div class="flex justify-between items-center">
             <div>
-                <h3 class="font-bold">
-                    <a href="../profile/${memberInfo.username}" class="text-black hover:text-sky-900">
-                        ${memberInfo.username}
-                    </a>
-                </h3>
+                <div class = "flex flex-row gap-2">
+                    <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                    ${memberInfo.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${memberInfo.profile_picture[0].path.includes('profile') ? '/storage/' + memberInfo.profile_picture[0].path : memberInfo.profile_picture.length > 1 ? '/storage/' + memberInfo.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                    </div>
+                    <h3 class="font-bold">
+                        <a href="../profile/${memberInfo.username}" class="text-black hover:text-sky-900">
+                            ${memberInfo.username}
+                        </a>
+                    </h3>
+                </div>
                 <p class="text-sm text-gray-600">${memberInfo.bio || ''}</p>
             </div>
             ${canRemove ? `
