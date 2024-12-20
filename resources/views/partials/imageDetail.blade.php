@@ -1,5 +1,5 @@
 <div id = "imageDetail" class = "max-w-screen w-full h-full fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden z-20">
-    <div class = "flex flex-col items-center justify-center bg-white max-w-screen w-[800px] max-h-[800px] rounded-xl">
+    <div class = "flex flex-col items-center justify-center bg-white w-full lg:w-[500px] lg:h-[500px] max-w-screen max-h-screen rounded-xl">
         <header class = " w-full max-w-full">
             <button onclick = "toggleImageDetails()" class="ml-4 mt-4">
                 <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -7,6 +7,8 @@
                 </svg>
             </button>
         </header>
-        <img id = "detailImg" src ="" alt = "image" class = "w-4/5 p-1">
+        <div class = "p-4 w-[500px] h-[450px] overflow-hidden rounded-lg flex items-center justify-center">
+            <img id = "detailImg" src ="" alt = "postImageDetail" class = "min-w-[200px] rounded-xl">
+        </div>
     </div>
 </div>

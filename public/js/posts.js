@@ -94,15 +94,23 @@ function createPost(postInfo) {
       `window.location.href='/posts/${postInfo.postid}'`
   );
 
+  let user = postInfo.user;
+
+
   post.innerHTML = `
-      <div class="post-header mb-2 flex justify-between items-center">
+      <div class="post-header mb-1 flex justify-between items-center">
           <div>
-              <h3 class="font-bold">
-                <a href="${postInfo.user.state === 'deleted' ? '#' : '/profile/' + postInfo.user.username}" 
-                    class="text-black hover:text-sky-900">
-                    ${postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username}
-                </a>
-              </h3>
+              <div class = "flex flex-row gap-2">
+                <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                  ${user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                </div>
+                <h3 class="font-bold">
+                  <a href="${postInfo.user.state === 'deleted' ? '#' : '/profile/' + postInfo.user.username}" 
+                      class="text-black hover:text-sky-900">
+                      ${postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username}
+                  </a>
+                </h3>
+              </div>
               <span class="text-gray-500 text-sm">${postInfo.createddate}</span>
           </div>
       </div>
@@ -550,7 +558,7 @@ function insertPostMedia(post, mediaArray){
   const postbody = post.querySelector('.post-body');
   let mediaContainer = document.createElement('div');
   mediaContainer.setAttribute('onclick','event.stopPropagation();');
-  mediaContainer.classList.add("post-media", "mt-4", "grid", "grid-cols-2", "gap-4");
+  mediaContainer.setAttribute("class", "post-media mt-4 flex flex-row flex-wrap gap-2 sm:justify-start items-center justify-center");
   
   for(let i = 0; i < mediaArray.length; i++){
     let media = mediaArray[i];
@@ -562,6 +570,7 @@ function insertPostMedia(post, mediaArray){
       if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)){
         const imageDetailButton = document.createElement('button');
         imageDetailButton.setAttribute('onclick', `toggleImageDetails('${'/storage/' + media.path}')`);
+        imageDetailButton.setAttribute("class", "h-60 w-60 sm:w-80 sm:h-80 overflow-hidden  rounded-md mb-2");
         imageDetailButton.innerHTML = `
           <img src="${'/storage/' + media.path}" alt="Image" class="max-w-full max-h-96  object-cover rounded-md mb-2 mx-auto ">
         `;
@@ -730,6 +739,7 @@ function removeSpecificFile(index) {
 }
 
 function toggleAddPostTopics(postid, isedit){
+  console.log(document.getElementById("addPostTopics"));
   if(document.getElementById("addPostTopics").classList.contains('hidden')){
     postTopicPage = 0;
     topicPostId = postid;

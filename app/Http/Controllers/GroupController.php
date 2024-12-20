@@ -15,27 +15,39 @@ use Illuminate\Support\Facades\Auth;
 class GroupController extends Controller
 {
     public function store(Request $request) {
-        $request->validate([
-            'groupname' => 'required|string|max:255',
-            'description' => 'nullable|string',
+        $validated = $request->validate([
+            'groupname' => 'required|string|max:255|unique:groups,groupname',
+            'description' => 'required|string',
             'visibilitypublic' => 'required|boolean',
         ]);
-
-        // Create the group
-        $group = Group::create([
-            'groupname' => $request->input('groupname'),
-            'description' => $request->input('description'),
-            'visibilitypublic' => $request->input('visibilitypublic'),
-            'ownerid' => Auth::id(),
-        ]);
-
-        // Add the owner as a member
-        GroupMembership::create([
-            'groupid' => $group->groupid, // Use the ID from the created group
-            'userid' => Auth::id(),
-        ]);
-
-        return redirect()->back()->with('success', 'Group created successfully!');
+    
+        try {
+            // Create the group
+            $group = Group::create([
+                'groupname' => 'groupname',
+                'description' => 'description',
+                'visibilitypublic' => 'visibilitypublic',
+                'ownerid' => Auth::id(),
+            ]);
+    
+            if (!$group) {
+                return redirect()->back()->withErrors(['error' => 'Failed to create the group. Please try again.']);
+            }
+    
+            // Add the owner as a member
+            $membership = GroupMembership::create([
+                'groupid' => $group->groupid, // Use the ID from the created group
+                'userid' => Auth::id(),
+            ]);
+    
+            if (!$membership) {
+                return redirect()->back()->withErrors(['error' => 'Failed to add the group owner as a member.']);
+            }
+    
+            return redirect()->back()->with('success', 'Group created successfully!');
+        } catch (\Exception $e) {
+            return redirect()->back()->withErrors(['error' => 'An unexpected error occurred. Please try again later.']);
+        }
     }
 
     /**
@@ -49,7 +61,7 @@ class GroupController extends Controller
         }
     
         $posts = $group->posts()
-                       ->with('user', 'media', 'topics') // Load necessary relationships
+                       ->with('user', 'media', 'topics', 'user.profilePicture') // Load necessary relationships
                        ->withCount('likes') 
                        ->withCount('comments')
                        ->orderBy('createddate', 'desc')
@@ -98,7 +110,7 @@ class GroupController extends Controller
         }
     
         $posts = $group->posts()
-                       ->with('user', 'media', 'topics') 
+                       ->with('user', 'media', 'topics', 'user.profilePicture') 
                        ->withCount('likes') 
                        ->withCount('comments')
                        ->orderBy('createddate', 'desc')
@@ -191,14 +203,22 @@ class GroupController extends Controller
     
         $userid = $request->input('userid');
     
+        // Check if the user is already a member
         if ($group->members()->where('group_membership.userid', $userid)->exists()) {
             return response()->json(['status' => 'error', 'message' => 'User is already a member.'], 400);
         }
     
+        // Check if the user has a pending join request
+        if (JoinGroupRequest::where('groupid', $groupid)->where('userid', $userid)->exists()) {
+            return response()->json(['status' => 'error', 'message' => 'User has already requested to join this group.'], 400);
+        }
+    
+        // Check if the user is already invited
         if (GroupInvitation::where('groupid', $groupid)->where('group_invitation.userid', $userid)->exists()) {
             return response()->json(['status' => 'error', 'message' => 'User is already invited.'], 400);
         }
     
+        // Create the invitation
         GroupInvitation::create([
             'groupid' => $groupid,
             'userid' => $userid,
@@ -252,6 +272,43 @@ class GroupController extends Controller
         return response()->json(['status' => 'success', 'message' => 'Invitation canceled successfully.'], 200);
     }
     
+    public function acceptInvitation($groupid, $invitationid) {
+        $invitation = GroupInvitation::where('groupid', $groupid)
+            ->where('invitationid', $invitationid)
+            ->firstOrFail();
+    
+        // Ensure the current user matches the invited user
+        if ($invitation->userid !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    
+        // Add the user to the group
+        GroupMembership::create([
+            'groupid' => $groupid,
+            'userid' => Auth::id(),
+        ]);
+    
+        // Delete the invitation
+        $invitation->delete();
+    
+        return response()->json(['status' => 'success', 'message' => 'You have joined the group.']);
+    }    
+    
+    public function rejectInvitation($groupid, $invitationid) {
+        $invitation = GroupInvitation::where('groupid', $groupid)
+            ->where('invitationid', $invitationid)
+            ->firstOrFail();
+    
+        // Ensure the current user matches the invited user
+        if ($invitation->userid !== Auth::id()) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+    
+        // Delete the invitation
+        $invitation->delete();
+    
+        return response()->json(['status' => 'success', 'message' => 'You have rejected the invitation.']);
+    }    
 
     public function sendJoinRequest(Request $request, $groupid) {
         $user = Auth::user();
@@ -268,6 +325,11 @@ class GroupController extends Controller
 
         if ($existingRequest) {
             return response()->json(['message' => 'You already have a pending join request.'], 400);
+        }
+
+        // Check if the user has a pending join request
+        if (GroupInvitation::where('groupid', $groupid)->where('userid', $user->userid)->exists()) {
+            return response()->json(['status' => 'error', 'message' => 'User has already been invited to join this group.'], 400);
         }
 
         // Create the join request
@@ -374,5 +436,4 @@ class GroupController extends Controller
                              ->with('error', 'Failed to delete the group. Please try again later.');
         }
     }    
-
 }

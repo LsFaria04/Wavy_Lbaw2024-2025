@@ -8,10 +8,13 @@
         <h1 class="text-4xl font-bold text-gray-800">Get in Touch with Wavy</h1>
         <p class="text-lg text-gray-600 mt-2">Send us a message, ask a question, or share your thoughts. We’re here to help!</p>
     </div>
+    <div id="messageContainer" class="fixed mx-auto right-1/2 top-6 flex items-center">
+        <!--Used to append messages with JS -->
+    </div>
 
     <!-- Contact Form -->
     <section class="mb-12">
-        <form class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md" method="POST" action="{{ route('contact.submit') }}">
+        <form class="max-w-lg mx-auto bg-white p-6 rounded-lg shadow-md">
             @csrf
             <div class="mb-4">
                 <label for="name" class="block text-lg font-semibold text-gray-700">Your Name</label>
@@ -28,7 +31,7 @@
                     style="resize: height; min-height: 50px;"></textarea>
 
             </div>
-            <button type="submit" class="w-full px-4 py-2 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 transition duration-300">Send Message</button>
+            <button type="button" id = "submit" onclick="contactEmail()" class="w-full px-4 py-2 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 transition duration-300">Send Message</button>
         </form>
     </section>
 </div>

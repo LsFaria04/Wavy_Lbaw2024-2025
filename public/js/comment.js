@@ -425,6 +425,7 @@ function syncCommentFilesWithInputEventListener(){
   });
 
   document.getElementById('subCommentForm')?.addEventListener('submit', function (e) {
+    console.log("Estou ??");
     if (selectedFiles.length > 4) {
       e.preventDefault(); // Prevent the form from submitting
       alert('You can only submit up to 4 files.');
@@ -536,6 +537,7 @@ function toggleSubcommentForm(commentId) {
             console.error(`Comment with ID ${commentId} not found.`);
             return;
         }
+        console.log("NIGGA");
 
         // Create the form dynamically
         const newForm = document.createElement('div');
@@ -543,45 +545,47 @@ function toggleSubcommentForm(commentId) {
         newForm.classList.add('addComment', 'mt-4', 'p-4', 'bg-gray-50', 'rounded-xl', 'shadow-md', 'border');
 
         newForm.innerHTML = `
-            <form id="subCommentForm-${commentId}" action="/comments/storeSubcomment" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
-                <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
-                <input type="hidden" name="parent_comment_id" value="${commentId}">
-                
-                <!-- Text Area -->
-                <textarea id="message-${commentId}" name="message" rows="3"
-                    class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none resize-none placeholder-gray-400 text-gray-700 text-sm"
-                    placeholder="Write your comment here..."></textarea>
-                
-                <!-- Action Buttons -->
-                <div class="flex justify-between items-center">
-                    <div class="flex items-center gap-2">
-                        <label for="image-${commentId}" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black">
-                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
-                                <path d="M19.828 11.244L12.707 18.364C10.755 20.317 7.589 20.317 5.636 18.364C3.684 16.411 3.684 13.246 5.636 11.293L12.472 4.458C13.774 3.156 15.884 3.156 17.186 4.458C18.488 5.759 18.488 7.87 17.186 9.172L10.361 15.996C9.71 16.647 8.655 16.647 8.004 15.996C7.353 15.345 7.353 14.29 8.004 13.639L14.226 7.418" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
-                            </svg>
-                            <span class="text-sm">Attach Media</span>
-                        </label>
-                        <input type="file" name="media[]" id="image-${commentId}" class="hidden" multiple onchange="updateFileList()">
-                    </div>
-                    
-                    <button type="submit" class="px-6 py-2 bg-sky-700 text-white font-semibold rounded-xl hover:bg-sky-800 text-sm">
-                        Comment
-                    </button>
-                </div>
-                
-                <ul id="fileDisplay-${commentId}" class="text-sm text-gray-500 mt-2 hidden"></ul>
-            </form>
+            <form id="subCommentForm" action="/comments/storeSubcomment" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
+                        <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
+                        <input type="hidden" name="parent_comment_id" value="${commentId}">
+
+                        <!-- Text Area -->
+                        <textarea id="message" name="message" rows="3"
+                                class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none resize-none placeholder-gray-400 text-gray-700 text-sm"
+                                placeholder="Write your comment here..."></textarea>
+
+                        <!-- Action Buttons -->
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <label for="image" class="cursor-pointer flex items-center gap-2 text-gray-500 hover:text-black">
+                                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-6 h-6">
+                                        <path d="M19.828 11.244L12.707 18.364C10.755 20.317 7.589 20.317 5.636 18.364C3.684 16.411 3.684 13.246 5.636 11.293L12.472 4.458C13.774 3.156 15.884 3.156 17.186 4.458C18.488 5.759 18.488 7.87 17.186 9.172L10.361 15.996C9.71 16.647 8.655 16.647 8.004 15.996C7.353 15.345 7.353 14.29 8.004 13.639L14.226 7.418" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
+                                    <span class="text-sm">Attach Media</span>
+                                </label>
+                                <input type="file" name="media[]" id="image" class="hidden" multiple onchange="updateFileList()">
+                            </div>
+
+                            <button type="submit" class="px-6 py-2 bg-sky-700 text-white font-semibold rounded-xl hover:bg-sky-800 text-sm">
+                                Comment
+                            </button>
+                        </div>
+
+                        <ul id="fileDisplay" class="text-sm text-gray-500 mt-2 hidden">
+                            <!-- File names appended dynamically -->
+                        </ul>
+              </form>
         `;
 
         // Append the form to the parent comment
         parentComment.parentNode.insertBefore(newForm, parentComment.nextSibling);
+        syncNewSubcommentForms(comment);
     }
 }
 
 function createComment(commentInfo){
-  console.log(commentInfo);
   let comment = document.createElement('div');
-  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer");
+  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer", "w-full", "max-w-full");
 
   let subcommentsHtml = '';
 
@@ -603,11 +607,11 @@ function createComment(commentInfo){
             <span class="text-gray-500 text-sm">${ commentInfo.createddate }</span>
         </div>
     </div>
-    <div class="comment-body mb-2 max-w-screen-lg" id=comment-content-${commentInfo.commentid}>
+    <div class="comment-body mb-2 cursor-pointer max-w-screen-lg" id="comment-content-${commentInfo.commentid}">
         <p>${ commentInfo.message }</p>
     </div>
     <div class="comment-interactions flex items-center gap-4 mt-4">
-          ${createCommentLikeButton(commentInfo.commentid, commentInfo.likes_count, commentInfo.liked)}
+          ${createCommentLikeButton(commentInfo.commentid, commentInfo.comment_likes_count, commentInfo.liked)}
           ${createCommentCommentButton(commentInfo.commentid, commentInfo.subcomments_count)}
     </div>
     <div class="subcomments mt-4 pl-4 border-l border-gray-200">
@@ -617,8 +621,36 @@ function createComment(commentInfo){
       ${createCommentHiddenForm(commentInfo.commentid)}
     </div>
   `;
-  console.log(commentInfo.subcomments);
+
+  syncNewSubcommentForms(comment);
+
   return comment
+}
+
+function syncNewSubcommentForms(comment){
+  const subCommentForm = comment.querySelector('#subCommentForm');
+  if (subCommentForm) {
+    subCommentForm.addEventListener('submit', function(e) {
+      console.log("Form submitted");
+
+      if (selectedFiles.length > 4) {
+        e.preventDefault(); // Prevent the form from submitting
+        alert('You can only submit up to 4 files.');
+        return; 
+      }
+
+      const fileInput = subCommentForm.querySelector('#image');
+      const dataTransfer = new DataTransfer();
+
+      // Append all files from selectedFiles to the new DataTransfer object
+      selectedFiles.forEach(file => {
+        dataTransfer.items.add(file);
+      });
+
+      // Update the file input's files property
+      fileInput.files = dataTransfer.files;
+    });
+  }
 }
 
 
