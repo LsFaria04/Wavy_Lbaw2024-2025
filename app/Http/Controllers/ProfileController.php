@@ -25,8 +25,6 @@ class ProfileController extends Controller {
             ->withCount(['follows' => function ($query) { $query->where('follow.state', 'Accepted');}])
             ->where('username', $username)
             ->first();
-
-            Log::info($user);
     
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');
@@ -335,9 +333,7 @@ class ProfileController extends Controller {
         Log::info("13");
 
         try{
-            Log::info("14");
-
-            $followers = Follow::with('follower')
+            $followers = Follow::with('follower', 'follower.profilePicture')
             ->where('followeeid', $userid )
             ->where('state', Follow::STATE_PENDING)->paginate(10);
         } catch (\Exception $e) {
@@ -352,14 +348,23 @@ class ProfileController extends Controller {
 
     public function getFollows(Request $request, $userid){
         try{
+<<<<<<< HEAD
             Log::info("17");
 
             $followers = Follow::with('followee')
-            ->where('followerid', $userid )
+=======
+            $followers = Follow::with('followee', 'followee.profilePicture')
+        }
+
+        return response()->json($followers);
+    }
+
+    public function getFollowers(Request $request, $userid){
+        try{
+            $followers = Follow::with('follower', 'follower.profilePicture')
+            ->where('followeeid', $userid )
             ->where('state', Follow::STATE_ACCEPTED)->paginate(10);
         } catch (\Exception $e) {
-            Log::info("18");
-
             return response()->json(['message' => 'Server Problem', 'response' => '500']);
         }
 
