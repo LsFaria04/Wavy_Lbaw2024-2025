@@ -37,14 +37,9 @@ class PostLike implements ShouldBroadcast {
      *
      * @return \Illuminate\Broadcasting\Channel|array
      */
-    public function broadcastOn(): array {
-        Log::info("like notification");
-
-        //public channel
-        return ['public-user.'];
-
-        // Broadcast to the private channel for the specific user (receiver)
-        //return [new PrivateChannel('user.' . $this->receiverid)];
+    public function broadcastOn(){
+        Log::info("like notification event");
+        return new Channel('public-user.' . $this->receiverid);
     }
 
     /**

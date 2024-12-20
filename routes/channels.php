@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Broadcast;
+use App\Models\User;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,15 +14,7 @@ use Illuminate\Support\Facades\Broadcast;
 |
 */
 
-/* Private channel
-Broadcast::channel('private-user.{id}', function ($user, $id) {
-    return (int) $user->id === (int) $id;
+//Public channel for each user
+Broadcast::channel('public-user.{id}', function (User $user, $id) {
+    return (int) $user->userid === (int) $id; 
 });
-*/
-
-//Public Channel - everybody receives every notification
-Broadcast::channel('public-user', function ($user, $id) {
-    return true; 
-});
-
-

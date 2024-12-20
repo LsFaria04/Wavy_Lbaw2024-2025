@@ -32,7 +32,6 @@
                     </svg>
 
                     <span class="hidden md:block">Notifications</span>
-                    <span id="notification-dot" class="notification-indicator absolute top-0 right-0 w-6 h-6 bg-red-500 rounded-full animate-pulse hidden"></span>
                 </a>
             </li>
             <!--

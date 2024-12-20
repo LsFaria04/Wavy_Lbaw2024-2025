@@ -260,7 +260,6 @@ function authId(){
   userId = response.id;
   isadmin = response.isadmin;
   currentUsername = response.username;
- 
 }
 
 let selectedFiles = [];
