@@ -458,6 +458,11 @@ function addTopicToUser(topicId){
     let response = JSON.parse(this.responseText);
 
     if(response.response == '200'){
+      //Display a message 
+      const messageContainer = document.getElementById("messageContainer");
+      createAlert(messageContainer, response.message, false);
+
+
       //remove element from the add topics page
       let topic = document.getElementById(`topic-${topicId}`);
       let topicName = topic.querySelector('p').innerHTML;
@@ -488,7 +493,9 @@ function addTopicToUser(topicId){
       }
     }
     else{
-      alert(response.message);
+      //Display a message 
+      const messageContainer = document.getElementById("messageContainer");
+      createAlert(messageContainer, response.message, true);
     }
   });
 }
@@ -499,6 +506,9 @@ function removeTopicFromUser(topicId){
     let response = JSON.parse(this.responseText);
 
     if(response.response == '200'){
+      const messageContainer = document.getElementById("messageContainer");
+      createAlert(messageContainer, response.message, false);
+
       //remove element from the my topics page
       let topic = document.getElementById(`topic-${topicId}`);
       topic.remove();
@@ -517,7 +527,9 @@ function removeTopicFromUser(topicId){
       }
     }
     else{
-      alert(response.message);
+     //Display a message 
+      const messageContainer = document.getElementById("messageContainer");
+      createAlert(messageContainer, response.message, true);
     }
   });
 }
@@ -899,8 +911,6 @@ function insertShowMoreFollow(){
   let section = null
   if(isFollower){
     section = document.querySelector("#followersList > ul");  
-    console.log("here");
-    console.log(section);
   }
   else{
     section = document.querySelector("#followsList > ul");  
@@ -1051,6 +1061,7 @@ function insertMoreFollows(){
     else{
       user = follows.data[i].followee;
     }
+    console.log(user);
     let li = document.createElement('li');
     li.setAttribute('id', 'follow-' + user.userid);
     li.classList.add("w-full","flex", "flex-col","p-2", "my-2", "shadow")
@@ -1061,7 +1072,7 @@ function insertMoreFollows(){
       </div>
       <p>${user.username}</p>
     </div>
-    <div class = "h-4 overflow-hidden">
+    <div class = "overflow-hidden">
       <p class="text-gray-500 text-sm truncate ...">${user.bio}</p>
     </a>
     `

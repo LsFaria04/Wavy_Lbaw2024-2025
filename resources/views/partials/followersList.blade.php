@@ -8,7 +8,7 @@
             </button>
             <h2 class=" col-start-2  text-2xl self-center font-bold text-nowrap">My Followers</h2>  
         </header>
-        <div id="followersList" class="border-[1px] rounded border-gray-300 h-60 overflow-y-scroll mb-4">
+        <div id="followersList" class="border-[1px] rounded border-gray-300 h-80 overflow-y-scroll mb-4">
             <ul class = "followsList flex flex-col justify-center items-center"></ul>
         </div>
     </div>
