@@ -273,7 +273,7 @@ class PostController extends Controller {
 
                 foreach($comment->subcomments as $subcomment){
                     $subcomment->createddate = $subcomment->createddate->diffForHumans();
-                    
+
                 }
             }
         $post->comments = $comments;
@@ -281,6 +281,7 @@ class PostController extends Controller {
         // Process likes and recursively handle subcomments
         if (Auth::check()) {
             $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
+            Log::info($post->liked);
             $post->createddate = $post->createddate->diffForHumans();
             $this->processComments($post->comments, Auth::user()->userid);
         } else {

@@ -24,8 +24,6 @@ class ProfileController extends Controller {
             ->withCount(['follows' => function ($query) { $query->where('follow.state', 'Accepted');}])
             ->where('username', $username)
             ->first();
-
-            Log::info($user);
     
         if (!$user) {
             return redirect('/home')->with('error', 'User not found.');

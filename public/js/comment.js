@@ -129,7 +129,6 @@ function openDeleteCommentMenu(commentid) {
 }
 
 function closeDeleteCommentMenu() {
-  console.log("Closing the delete comment");
   const modal = document.getElementById('deleteCommentMenu');
   modal.classList.add('hidden');
 }
@@ -150,7 +149,6 @@ function updateFileNameEditComment(commentId) {
     }
   });
 
-  console.log(selectedFilesEdit);
 
   
   const lenStoreMedia = fileDisplay.querySelectorAll('div').length - 1;
@@ -253,7 +251,6 @@ function removeSpecificFileEdit(commentId, index) {
 function addEventListenerToCommentForm(form){
   form.addEventListener('submit', function (e) {
     const commentId = form.dataset.commentId;
-    console.log(commentId);
     const fileInput = document.getElementById(`image-${commentId}`);
     
     // Check if there are more than 4 files, prevent submission
@@ -429,7 +426,6 @@ function syncCommentFilesWithInputEventListener(){
   });
 
   document.getElementById('subCommentForm')?.addEventListener('submit', function (e) {
-    console.log("Estou ??");
     if (selectedFiles.length > 4) {
       e.preventDefault(); // Prevent the form from submitting
       alert('You can only submit up to 4 files.');
@@ -498,9 +494,6 @@ function likeComment(commentId,event) {
   const heartEmpty = document.getElementById(`heart-empty-${commentId}`);
   const heartFilled = document.getElementById(`heart-filled-${commentId}`);
 
-  console.log(commentId);
-  console.log("Liked .");
-
   // Make the AJAX request to like/unlike the comment
   sendAjaxRequest('post', '/like-comment/' + commentId, null,  updateLikeComment);
 
@@ -541,7 +534,6 @@ function toggleSubcommentForm(commentId) {
             console.error(`Comment with ID ${commentId} not found.`);
             return;
         }
-        console.log("NIGGA");
 
         // Create the form dynamically
         const newForm = document.createElement('div');
@@ -640,7 +632,6 @@ function syncNewSubcommentForms(comment){
   const subCommentForm = comment.querySelector('#subCommentForm');
   if (subCommentForm) {
     subCommentForm.addEventListener('submit', function(e) {
-      console.log("Form submitted");
 
       if (selectedFiles.length > 4) {
         e.preventDefault(); // Prevent the form from submitting
@@ -699,7 +690,6 @@ function createCommentHiddenForm(commentId){
 }
 
 function createCommentLikeButton(commentId, likeCount, likedByUser) {
-  console.log(likeCount);
   return `
       <div class="comment-likes flex items-center gap-2">
           <button 
@@ -719,7 +709,7 @@ function createCommentLikeButton(commentId, likeCount, likedByUser) {
               <!-- Yes like -->
               <svg 
                   id="heart-filled-${commentId}" viewBox="0 0 24 24" aria-hidden="true"
-                  class="h-5 w-5 ${likedByUser ? 'fill-red-600 group-hover:fill-red-600' : 'hidden'}">
+                  class="h-5 w-5 fill-red-600 group-hover:fill-red-600 ${likedByUser ? "" : 'hidden'}">
                   <g>
                       <path d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z"></path>
                   </g>
