@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Follow;
+use App\Events\FollowNotification;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
@@ -237,19 +238,26 @@ class ProfileController extends Controller {
     }
 
     public function follow(Request $request, $userid) {
+        Log::info("1");
+
         // logged-in user (follower)
         $follower = Auth::user();
         
         if (!$follower) {
             return response()->json(['error' => 'You must be logged in to follow someone.'], 401);
         }
-    
+        Log::info("2");
+
         // user to be followed (followee)
         $followee = User::findOrFail($userid);
     
         try {
             $this->authorize('follow', [Follow::class, $followee]);
+            Log::info("3");
+
         } catch (\Exception $e) {
+            Log::info("4");
+
             return response()->json([
                 'error' => 'Authorization error.',
                 'details' => $e->getMessage()
@@ -262,17 +270,26 @@ class ProfileController extends Controller {
                                 ->first();
 
         if ($existingFollow) {
+            Log::info("5");
+
             return $this->handleExistingFollow($existingFollow, $request);
         } else {
+            Log::info("6");
+
             return $this->createFollowRequest($follower, $followee);
         }
     }
     
     private function handleExistingFollow(Follow $existingFollow, $request) {
+        Log::info("7");
+
         if ($existingFollow->state === Follow::STATE_ACCEPTED) {
+            Log::info("8");
+
             return $this->unfollow($request, $existingFollow->followeeid);
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
 
+            Log::info("9");
 
             Follow::where('followerid', $existingFollow->followerid)
             ->where('followeeid', $existingFollow->followeeid)
@@ -280,7 +297,7 @@ class ProfileController extends Controller {
 
             $follower = User::findOrFail($existingFollow->followerid);
 
-            event(new Follow($follower->toArray(), $existingFollow->followeeid, 'follow-request-canceled'));
+            event(new FollowNotification($follower, $existingFollow->followeeid, 'follow-request-canceled'));
 
             return response()->json([
                 'success' => true,
@@ -293,6 +310,8 @@ class ProfileController extends Controller {
     
     
     private function createFollowRequest($follower, $followee) {
+        Log::info("10");
+
         $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
 
         Follow::create([
@@ -301,9 +320,11 @@ class ProfileController extends Controller {
             'state' => $status,
             'followdate' => now(),
         ]);
+        Log::info("11");
 
-        event(new Follow($follower->toArray(), $followee->followeeid, $status));
-    
+        event(new FollowNotification($follower, $followee->followeeid, $status));
+        Log::info("12");
+
         return response()->json([
             'success' => true,
             'status' => $status === Follow::STATE_ACCEPTED ? 'Accepted' : 'Pending'
@@ -311,24 +332,34 @@ class ProfileController extends Controller {
     }
 
     public function getFollowRequests(Request $request, $userid){
+        Log::info("13");
 
         try{
+            Log::info("14");
+
             $followers = Follow::with('follower')
             ->where('followeeid', $userid )
             ->where('state', Follow::STATE_PENDING)->paginate(10);
         } catch (\Exception $e) {
+            Log::info("15");
+
             return response()->json(['message' => 'Server Problem', 'response' => '500']);
         }
+        Log::info("16");
 
         return response()->json($followers);
     }
 
     public function getFollows(Request $request, $userid){
         try{
+            Log::info("17");
+
             $followers = Follow::with('followee')
             ->where('followerid', $userid )
             ->where('state', Follow::STATE_ACCEPTED)->paginate(10);
         } catch (\Exception $e) {
+            Log::info("18");
+
             return response()->json(['message' => 'Server Problem', 'response' => '500']);
         }
 
@@ -358,6 +389,7 @@ class ProfileController extends Controller {
     }
     
     public function unfollow(Request $request, $userid) {
+        Log::info("20");
 
         $followerId = auth()->user()->userid;
 
@@ -367,11 +399,14 @@ class ProfileController extends Controller {
         
 
         if (!$existingFollow) {
+            Log::info("21");
+
             return response()->json([
                 'success' => false,
                 'message' => 'Follow relationship not found.',
             ], 404);
         }
+        Log::info("22");
 
         Follow::where('followerid', $followerId)
             ->where('followeeid', $userid)
@@ -379,8 +414,9 @@ class ProfileController extends Controller {
 
         $follower = User::findOrFail($existingFollow->followerid);
 
+        Log::info('Follower type', ['type' => get_class($follower)]);
 
-        event(new Follow($follower->toArray(), $userid, 'unfollowed'));
+        event(new FollowNotification($follower, $userid, 'unfollowed'));
     
         return response()->json([
             'success' => true,

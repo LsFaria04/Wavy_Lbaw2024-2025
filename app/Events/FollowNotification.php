@@ -2,65 +2,60 @@
 
 namespace App\Events;
 
+use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
-class Follow implements ShouldBroadcast {
+
+class FollowNotification implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $message;
-    public $userData;
+    public $user;
     public $receiverid;
     public $type;
 
     /**
      * Create a new event instance.
      *
-     * @param  \App\Models\User  $user
+     * @param  mixed  $user
      * @param  int  $receiverid
      * @param  string  $type
      */
-    public function __construct(User $user, int $receiverid, string $type = 'follow') {
-        $this->userData = $user->toArray();
+    public function __construct($user, $receiverid, $type = 'follow') {
+        $this->user = $user;
         $this->receiverid = $receiverid;
         $this->type = $type;
-
-        // Generate the message based on the user and type
-        $this->message = $this->generateMessage($user->username, $type);
-    }
-
-    /**
-     * Generate the notification message.
-     *
-     * @param  string  $username
-     * @param  string  $type
-     * @return string
-     */
-    private function generateMessage(string $username, string $type): string {
-
+    
         switch ($type) {
             case 'follow':
-                return "$username started following you.";
+                $this->message = "{$user->username} started following you.";
+                break;
             case 'follow-request':
-                return "$username sent you a follow request.";
+                $this->message = "{$user->username} sent you a follow request.";
+                break;
             case 'unfollowed':
-                return "$username unfollowed you.";
+                $this->message = "{$user->username} unfollowed you.";
+                break;
             default:
-                return "$username performed an action.";
+                $this->message = "{$user->username} performed an action.";
+                break;
         }
     }
+    
 
     /**
      * Get the channels the event should broadcast on.
      *
-     * @return \Illuminate\Broadcasting\Channel|array
+     * @return \Illuminate\Broadcasting\Channel
      */
-    public function broadcastOn(): array {
+    public function broadcastOn() {
         Log::info("follow notification event");
-        return ['public-user.' . $this->receiverid];
+        return new Channel('public-user.' . $this->receiverid);
     }
 
     /**
@@ -68,7 +63,7 @@ class Follow implements ShouldBroadcast {
      *
      * @return string
      */
-    public function broadcastAs(): string {
+    public function broadcastAs() {
         return 'notification-follow';  // The name of the event to bind to on the frontend
     }
 }
