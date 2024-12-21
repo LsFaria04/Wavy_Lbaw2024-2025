@@ -1,4 +1,5 @@
 function addEventListeners() {
+    window.addEventListener("scroll", infiniteScroll);
     document.addEventListener('DOMContentLoaded', () => {
         fadeAlert();
         initializeNotificationTabs();
@@ -236,33 +237,27 @@ function toggleTabHighlight(activeTabId, groupSelector) {
     }
 }
 
-function insertMoreNotifications() {
+function insertMoreNotifications(response) {
     removeLoadingCircle();
 
+    let notifications = JSON.parse(response);
+
+    maxPage = notifications.last_page;
+
     const notificationsContainer = document.querySelector("#notifications-content");
-    if (!notificationsContainer) return;
-
-    try {
-        let notifications = JSON.parse(this.responseText);
-
-        console.log(notifications);
-
-        maxPage = notifications.last_page || 0;
-
+    if (notificationsContainer) {
         if (notifications.data && notifications.data.length > 0) {
             notifications.data.forEach(notification => {
-                const notificationElement = document.createElement("div");
-                notificationElement.classList.add("notification-item");
-                notificationElement.innerHTML = `
-                    <div class="notification-content">
-                        <p>${notification.message}</p>
-                        <span class="notification-time">${notification.created_at}</span>
-                    </div>`;
+                const notificationElement = createNotificationElement(notification.type, notification.message, notification.created_at, notification);
                 notificationsContainer.appendChild(notificationElement);
             });
+
+
+        } else {
+            const warning = document.createElement('p');
+            warning.innerHTML = 'No more notifications found.';
+            notificationsContainer.appendChild(warning);
         }
-    } catch (error) {
-        console.error("Failed to load notifications:", error);
     }
 }
 
