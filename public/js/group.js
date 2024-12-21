@@ -463,6 +463,7 @@ function createMember(memberInfo) {
     member.classList.add("member", "border-b", "border-gray-300", "p-4", "bg-white");
 
     const canRemove = (parseInt(memberInfo.userid) !== parseInt(ownerid)) && ((userId === parseInt(ownerid)) || isadmin);
+    const isOwner = (parseInt(memberInfo.userid) === parseInt(ownerid));
 
     // Member card structure
     member.innerHTML = `
@@ -476,6 +477,7 @@ function createMember(memberInfo) {
                         <a href="../profile/${memberInfo.username}" class="text-black hover:text-sky-900">
                             ${memberInfo.username}
                         </a>
+                        ${isOwner ? '(Owner)' : ''}
                     </h3>
                 </div>
                 <p class="text-sm text-gray-600">${memberInfo.bio || ''}</p>

@@ -33,14 +33,10 @@
     <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">
         <main class = "flex flex-col grow lg:flex-row bg-white ">
             @include('partials.navigation_menu')
-            <section id="content" class= "grow flex flex-col mb-16 lg:mb-0">
+            <section id="content" class= "grow flex flex-col mb-16 lg:mb-0 lg:ml-52">
                 @yield('content')
                 @yield('scripts')
             </section>
-            
-        </main>
-
-        @include('partials.footer')
-   
+        </main>   
     </body>
 </html>

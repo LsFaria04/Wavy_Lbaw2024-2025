@@ -1,4 +1,4 @@
-<div id = "navigation-menu" class= "flex justify-items-center flex-row lg:flex-col lg:w-52 w-screen lg:max-h-screen bg-sky-900 py-4 md:p-4 text-white text-nowrap fixed bottom-0 lg:sticky lg:top-0 transition-w ease-in duration-300 z-10 border-r border-gray-300">
+<div id = "navigation-menu" class= "flex justify-items-center flex-row lg:flex-col lg:w-52 w-screen lg:max-h-screen bg-sky-900 py-4 md:p-4 text-white text-nowrap fixed bottom-0 lg:top-0 transition-w ease-in duration-300 z-10">
     <header class = "lg:flex items-center justify-between overflow-hidden">
             <h1 class = "text-xl font-bold">
                 <a href="{{ url('/home') }}" >
@@ -34,17 +34,6 @@
                     <span class="hidden md:block">Notifications</span>
                 </a>
             </li>
-            <!--
-            <li class = "test-white font-medium text-lg">
-                <a class = "flex flex-row items-center gap-3">
-                <svg class = "min-w-[20px]" xmlns="http://www.w3.org/2000/svg" id="Bold" viewBox="0 0 24 24" width="20" height="20">
-                    <path d="M18.5,1H5.5A5.506,5.506,0,0,0,0,6.5v11A5.506,5.506,0,0,0,5.5,23h13A5.506,5.506,0,0,0,24,17.5V6.5A5.506,5.506,0,0,0,18.5,1Zm0,3a2.476,2.476,0,0,1,1.643.631l-6.5,6.5a2.373,2.373,0,0,1-3.278,0l-6.5-6.5A2.476,2.476,0,0,1,5.5,4Zm0,16H5.5A2.5,2.5,0,0,1,3,17.5V8.017l5.239,5.239a5.317,5.317,0,0,0,7.521,0L21,8.017V17.5A2.5,2.5,0,0,1,18.5,20Z" fill = "currentColor"/>
-                </svg>
-
-                    <span class="hidden md:block">Messages</span>
-                </a>
-            </li>
-            -->
             @endauth
             <li class = "test-white font-medium text-lg">
 
@@ -98,7 +87,19 @@
                     </a>
                 </li>
             @endif
-        
+        </ul>
+    </nav>
+    <nav class="w-full hidden lg:block bottom-0">
+        <ul class="flex justify-center gap-2 text-xs mr-1">
+            <li>
+                <a href="{{ route('about') }}" class="hover:underline">About Us</a>
+            </li>
+            <li>
+                <a href="{{ route('features') }}" class="hover:underline">Main Features</a>
+            </li>
+            <li>
+                <a href="{{ route('contacts') }}" class="hover:underline">Contact</a>
+            </li>
         </ul>
     </nav>
 

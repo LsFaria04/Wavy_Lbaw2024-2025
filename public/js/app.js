@@ -60,7 +60,7 @@ function addEventListeners() {
   //creates an alert message and inserts it into the page
   function createAlert(element,message, isError){
     const alert = document.createElement('div');
-    alert.classList.add("self-center", "alert", "rounded","w-full", "max-w-full", "p-4", isError ? "bg-red-100" : "bg-green-100" , isError ?  "text-red-800" : "text-green-800" , "border", "shadow-md", "text-center", isError ? "border-red-300" : "border-green-300", "z-10");
+    alert.classList.add("self-center", "alert", "rounded","w-full", "max-w-full", "p-4", isError ? "bg-red-100" : "bg-blue-100" , isError ?  "text-red-800" : "text-blue-800" , "border", "shadow-md", "text-center", isError ? "border-red-300" : "border-blue-300", "z-10");
     alert.innerHTML = message;
 
     while(element.firstChild !== null){
@@ -82,6 +82,8 @@ function addEventListeners() {
     const message = document.getElementById('message');
     const sendButton = document.getElementById('submit');
     insertLoadingCircle(sendButton);
+    sendButton.disable = true;
+
     //resize the loading circle
     document.querySelector('#loading_circle').classList.remove('h-8');
     document.querySelector('#loading_circle').classList.remove('w-8');
@@ -96,6 +98,9 @@ function addEventListeners() {
     removeLoadingCircle();
     const response = JSON.parse(this.responseText);
     const messageDiv = document.getElementById('messageContainer');
+
+    const sendButton = document.getElementById('submit');
+    sendButton.disable = false;
 
     if(response.response !== '200'){
       createAlert(messageDiv, response.message, true);
@@ -208,6 +213,7 @@ function addEventListeners() {
       let postid = document.querySelector("#reportPost").value;
       let commentid = document.querySelector("#reportComment").value;
       let sendButton = document.querySelector("#sendReport");
+      sendButton.disable = true;
       insertLoadingCircle(sendButton);
       
       //resize the loading circle
@@ -225,6 +231,9 @@ function addEventListeners() {
     removeLoadingCircle();
     toggleReportForm(null, null);
     const response = JSON.parse(this.responseText);
+
+    let sendButton = document.querySelector("#sendReport");
+      sendButton.disable = false;
     
     const messageContainer = document.getElementById("messageContainer");
     if(response.response === '200'){

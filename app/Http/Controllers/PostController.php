@@ -53,6 +53,7 @@ class PostController extends Controller {
                 ->whereNull('groupid')
                 ->orderByRaw("
                     CASE 
+                        WHEN userid = {$currentUser->userid} THEN 1
                         WHEN " . (!empty($followingIds) ? "userid IN (" . implode(',', $followingIds) . ")" : "false") . " THEN 1 
                         WHEN " . (!empty($favoriteUserTopics) ? "EXISTS (
                             SELECT 1 FROM post_topics WHERE post_topics.postid = post.postid 

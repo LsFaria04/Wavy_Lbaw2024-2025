@@ -1,26 +1,26 @@
 <div class="post p-4 bg-white cursor-pointer border-b border-gray-300 w-full max-w-full" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
     <div class="post-header mb-1 flex justify-between items-center">
         <div>
-            <div class = "flex flex-row gap-2">
-                <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                    @php
-                            $filePath = null;
-                            foreach($post->user->profilepicture as $pic)
-                            if(Str::contains($pic, 'profile')){
-                                $filePath = asset('storage/' . $pic->path);
-                            }
-                            
-                        @endphp
-                        @if($filePath !== null)
-                            <img  src="{{ $filePath }}" alt="Image" class=" h-full w-full object-cover rounded-md mb-2 mx-auto" >
-                        @endif
-                </div>
-                <h3 class="font-bold">
-                    <a href="{{ $post->user->state === 'deleted' ? '#' : route('profile', $post->user->username) }}" class="text-black hover:text-sky-900">
+            <a href="{{ $post->user->state === 'deleted' ? '#' : route('profile', $post->user->username) }}">
+                <div class = "flex flex-row gap-2">
+                    <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                        @php
+                                $filePath = null;
+                                foreach($post->user->profilepicture as $pic)
+                                if(Str::contains($pic, 'profile')){
+                                    $filePath = asset('storage/' . $pic->path);
+                                }
+                                
+                            @endphp
+                            @if($filePath !== null)
+                                <img  src="{{ $filePath }}" alt="Image" class=" h-full w-full object-cover rounded-md mb-2 mx-auto" >
+                            @endif
+                    </div>
+                    <h3 class="font-bold text-black hover:text-sky-900">
                         {{ $post->user->state === 'deleted' ? 'Deleted User' : $post->user->username }}
-                    </a>
-                </h3>
-            </div>
+                    </h3>
+                </div>
+            </a>
             <span class="text-gray-500 text-sm">{{ $post->createddate->diffForHumans() }}</span>
         </div>
         @auth

@@ -30,7 +30,7 @@ function setupCreateUserMenu() {
   if (createUserBtn && createUserMenu && cancelCreateUserBtn) {
     createUserBtn.addEventListener("click", () => {
       createUserMenu.classList.toggle("hidden");
-      createUserMenu.classList.toggle("flex");
+      createUserMenu.classList.add("flex");
       
     });
 
@@ -94,6 +94,8 @@ function createTopicListener(){
     let topicname = document.getElementById('create-Topic').value;
 
     let confirmButton = document.getElementById('submitCreateTopicBtn');
+    confirmButton.disable = true;
+
     insertLoadingCircle(confirmButton);
         
     //resize the loading circle
@@ -118,6 +120,8 @@ function createUserListener(){
     let passwordConf = document.getElementById('create-password_confirmation').value;
 
     let confirmButton = document.getElementById('submitCreateUserBtn');
+    confirmButton.disable = true;
+
     insertLoadingCircle(confirmButton);
         
     //resize the loading circle
@@ -136,6 +140,8 @@ function confirmButtonListener(){
   if(confirmButton !== null){
     confirmButton.addEventListener('click', () => {
       insertLoadingCircle(confirmButton);
+
+      confirmButton.disable = true;
       
       //resize the loading circle
       document.querySelector('#loading_circle').classList.remove('h-8');
@@ -173,6 +179,7 @@ function confirmBanListener(){
   let confirmButton = document.getElementById('confirmBanButtonAdmin');
   if(confirmButton !== null){
     confirmButton.addEventListener('click', () => {
+      confirmButton.disable = true;
       insertLoadingCircle(confirmButton);
       
       //resize the loading circle
@@ -208,6 +215,9 @@ function handleBan(){
   banMenu.classList.toggle('flex');
   removeLoadingCircle();
   const response = JSON.parse(this.responseText);
+
+  let confirmButton = document.getElementById('confirmBanButtonAdmin');
+  confirmButton.disable = false;
     
     const messageContainer = document.getElementById("messageContainer");
     if(response.response === '200'){
@@ -246,6 +256,9 @@ function handleCreateTopic(){
   removeLoadingCircle();
   const response = JSON.parse(this.responseText);
 
+  let confirmButton = document.getElementById('submitCreateTopicBtn');
+  confirmButton.disable = false;
+
   const messageContainer = document.getElementById("messageContainer");
   if(response.response === '200'){
     const section = document.getElementById('topics');  
@@ -271,6 +284,9 @@ function handleCreateUser(){
   removeLoadingCircle();
   const response = JSON.parse(this.responseText);
 
+  let confirmButton = document.getElementById('submitCreateUserBtn');
+  confirmButton.disable = false;
+
   const messageContainer = document.getElementById("messageContainer");
   if(response.response === '200'){
     createAlert(messageContainer, response.message,false);
@@ -287,6 +303,9 @@ function handleReportDelete(){
   deleteMenu.classList.toggle('flex');
   removeLoadingCircle();
   const response = JSON.parse(this.responseText);
+
+  let confirmButton = document.getElementById('confirmButtonAdmin');
+  confirmButton.disable = false;
     
     const messageContainer = document.getElementById("messageContainer");
     if(response.response === '200'){
@@ -305,6 +324,10 @@ function handleUserDelete(){
   deleteMenu.classList.toggle('flex');
   removeLoadingCircle();
   const response = JSON.parse(this.responseText);
+
+  let confirmButton = document.getElementById('confirmButtonAdmin');
+  confirmButton.disable = false;
+
   const messageContainer = document.getElementById("messageContainer");
     if(response.response === '200'){
       createAlert(messageContainer, response.message,false);
@@ -323,6 +346,9 @@ function handleTopicDelete(){
   deleteMenu.classList.toggle('flex');
   removeLoadingCircle();
   const response = JSON.parse(this.responseText);
+
+  let confirmButton = document.getElementById('confirmButtonAdmin');
+  confirmButton.disable = false;
     
   const messageContainer = document.getElementById("messageContainer");
   if(response.response === '200'){
