@@ -65,7 +65,7 @@
                                                 @if($notification->follow->state === \App\Models\Follow::STATE_PENDING)
                                                     requested to follow you
                                                 @elseif($notification->follow->state === \App\Models\Follow::STATE_ACCEPTED)
-                                                    started following you
+                                                    followed you
                                                 @endif
                                             </div>
                                         @endif
@@ -162,7 +162,7 @@
                                                 @if($notification->follow->state === \App\Models\Follow::STATE_PENDING)
                                                     requested to follow you
                                                 @elseif($notification->follow->state === \App\Models\Follow::STATE_ACCEPTED)
-                                                    started following you
+                                                    followed you
                                                 @endif
                                             </div>
                                         </div>
