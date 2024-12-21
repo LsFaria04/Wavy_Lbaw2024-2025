@@ -13,6 +13,7 @@ function addEventListeners() {
                 return;
             }
 
+            const messageContainer = document.getElementById('messageContainer');
             sendAjaxRequest('delete', `/api/groups/${groupId}/invitations/${invitationId}`, {}, function () {
                 if (this.status === 200) {
                     const response = JSON.parse(this.responseText);
@@ -22,9 +23,9 @@ function addEventListeners() {
                     if (invitationElement) invitationElement.remove();
 
                     loadGroupContent('group-invitations');
-                    alert(response.message);
+                    createAlert(messageContainer, response.message, false);
                 } else {
-                    console.error('Failed to cancel the invitation:', this.responseText);
+                    createAlert(messageContainer, `Failed to cancel the invitation: ${this.responseText}`, true);
                 }
             });
         }
@@ -39,6 +40,7 @@ function addEventListeners() {
               return;
           }
 
+          const messageContainer = document.getElementById('messageContainer');
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/accept`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
@@ -48,9 +50,9 @@ function addEventListeners() {
                   if (requestElement) requestElement.remove();
 
                   loadGroupContent('group-requests');
-                  alert(response.message);
+                  createAlert(messageContainer, response.message, false);
               } else {
-                  console.error('Failed to accept request:', this.responseText);
+                  createAlert(messageContainer, `Failed to accept request: ${this.responseText}`, true);
               }
           });
       }
@@ -65,6 +67,7 @@ function addEventListeners() {
               return;
           }
 
+          const messageContainer = document.getElementById('messageContainer');
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/reject`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
@@ -74,9 +77,10 @@ function addEventListeners() {
                   if (requestElement) requestElement.remove();
 
                   loadGroupContent('group-requests');
-                  alert(response.message);
+                  createAlert(messageContainer, response.message, false);
+                  
               } else {
-                  console.error('Failed to reject request:', this.responseText);
+                  createAlert(messageContainer, `Failed to reject request: ${this.responseText}`, true);
               }
           });
       }
@@ -87,13 +91,16 @@ function addEventListeners() {
           console.log('Ask to Join button clicked.');
 
           // Send join request
+          const messageContainer = document.getElementById('messageContainer');
           sendAjaxRequest('post', `/api/groups/${groupId}/requests`, null, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
-                  alert(response.message || 'Join request sent successfully!');
+                  createAlert(messageContainer, response.message || 'Join request sent successfully!', false);
+                  
+                  
                   e.target.disabled = true; // Disable button after sending request
               } else {
-                  console.error('Failed to send join request:', this.responseText);
+                  createAlert(messageContainer, `Failed to send join request: ${this.responseText}`, true);
               }
           });
       }
@@ -136,18 +143,19 @@ function addEventListeners() {
             if (!selectedUserId) return;
 
             console.log('Sending invite to User ID:', selectedUserId);
-
+            const messageContainer = document.getElementById('messageContainer');
             sendAjaxRequest('post', `/api/groups/${groupId}/invitations`, { userid: selectedUserId }, function () {
                 if (this.status === 200) {
                     const response = JSON.parse(this.responseText);
-                    alert(response.message || 'Invitation sent successfully!');
+                    const messageContainer = document.getElementById('messageContainer');
+                    createAlert(messageContainer, response.message || 'Invitation sent successfully!', false);
                     inviteModal.classList.add('hidden');
                     searchResults.innerHTML = '';
                     userSearchInput.value = '';
                     sendInviteButton.disabled = true;
                     loadGroupContent('group-invitations');
                 } else {
-                    console.error('Failed to send invitation:', this.responseText);
+                    createAlert(messageContainer, `Failed to send invitation: ${this.responseText}`, true);
                 }
             });
         }

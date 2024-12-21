@@ -142,7 +142,8 @@ const newFileDisplay = document.getElementById(`newFiles-${commentId}`)
 
 Array.from(fileInput.files).forEach(file => {
   if (file.size > 2097152){
-    alert('File too big');
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, "File is too big (>2MB)", true);
   }
   else{
     selectedFilesEdit.push(file);
@@ -154,7 +155,8 @@ Array.from(fileInput.files).forEach(file => {
 const lenStoreMedia = fileDisplay.querySelectorAll('div').length - 1;
 // Check if there are more than 4 files
 if (lenStoreMedia + selectedFilesEdit.length > 4) {
-    alert('You can only select up to 4 files.');
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, "You can only select up to 4 files", true);
     // Remove the newly added files from the selectedFiles array
     selectedFilesEdit.splice(-fileInput.files.length);
     return; 
@@ -256,7 +258,8 @@ form.addEventListener('submit', function (e) {
   // Check if there are more than 4 files, prevent submission
   if (selectedFilesEdit.length > 4) {
       e.preventDefault();
-      alert('You can only submit up to 4 files.');
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "You can only submit up to 4 files", true);
       return;
   }
 
@@ -368,7 +371,8 @@ const fileDisplay = document.getElementById('fileDisplay');
 // Append new files to the list (preserve existing files)
 Array.from(fileInput.files).forEach(file => {
   if (file.size > 1048576){
-    alert('File too big');
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, "File is too big (>2MB)", true);
   }
   else{
     selectedFiles.push(file);
@@ -377,7 +381,8 @@ Array.from(fileInput.files).forEach(file => {
 
 // Check if there are more than 4 files
 if (selectedFiles.length > 4) {
-  alert('You can only select up to 4 files.');
+  const messageContainer = document.getElementById('messageContainer');
+  createAlert(messageContainer, "You can only select up to 4 files", true);
   // Remove the newly added files from the selectedFiles array
   selectedFiles.splice(-fileInput.files.length);
   return; 
@@ -409,7 +414,8 @@ function syncCommentFilesWithInputEventListener(){
 document.getElementById('commentForm')?.addEventListener('submit', function (e) {
   if (selectedFiles.length > 4) {
     e.preventDefault(); // Prevent the form from submitting
-    alert('You can only submit up to 4 files.');
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, "You can only submit up to 4 files", true);
     return; 
   }
 
@@ -428,7 +434,8 @@ document.getElementById('commentForm')?.addEventListener('submit', function (e) 
 document.getElementById('subCommentForm')?.addEventListener('submit', function (e) {
   if (selectedFiles.length > 4) {
     e.preventDefault(); // Prevent the form from submitting
-    alert('You can only submit up to 4 files.');
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, "You can only submit up to 4 files", true);
     return; 
   }
 
@@ -635,7 +642,8 @@ if (subCommentForm) {
 
     if (selectedFiles.length > 4) {
       e.preventDefault(); // Prevent the form from submitting
-      alert('You can only submit up to 4 files.');
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "You can only submit up to 4 files", true);
       return; 
     }
 

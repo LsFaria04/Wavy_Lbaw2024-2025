@@ -280,7 +280,8 @@ function updateFileList() {
   // Append new files to the list (preserve existing files)
   Array.from(fileInput.files).forEach(file => {
     if (file.size > 1048576){
-      alert('File too big');
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "File is too big (>2Mb)", true);
     }
     else{
       selectedFiles.push(file);
@@ -289,7 +290,8 @@ function updateFileList() {
 
   // Check if there are more than 4 files
   if (selectedFiles.length > 4) {
-    alert('You can only select up to 4 files.');
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, 'You can only select up to 4 files', true);
     // Remove the newly added files from the selectedFiles array
     selectedFiles.splice(-fileInput.files.length);
     return; 
@@ -384,7 +386,8 @@ function updateFileNameEdit(postId) {
 
   Array.from(fileInput.files).forEach(file => {
     if (file.size > 2097152){
-      alert('File too big');
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "File is too big (>2Mb)", true);
     }
     else{
       selectedFilesEdit.push(file);
@@ -395,7 +398,8 @@ function updateFileNameEdit(postId) {
   const lenStoreMedia = fileDisplay.querySelectorAll('div').length - 1;
   // Check if there are more than 4 files
   if (lenStoreMedia + selectedFilesEdit.length > 4) {
-      alert('You can only select up to 4 files.');
+    const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "You can only select up to 4 files", true);
       // Remove the newly added files from the selectedFiles array
       selectedFilesEdit.splice(-fileInput.files.length);
       return; 
@@ -443,7 +447,8 @@ function syncPostFilesWithInputEventListener(){
     
     if (selectedFiles.length > 4) {
       e.preventDefault(); // Prevent the form from submitting
-      alert('You can only submit up to 4 files.');
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "You can only submit up to 4 files", true);
       return; 
     }
 
@@ -521,7 +526,8 @@ function addEventListenerToForm(form){
     // Check if there are more than 4 files, prevent submission
     if (selectedFilesEdit.length > 4) {
         e.preventDefault();
-        alert('You can only submit up to 4 files.');
+        const messageContainer = document.getElementById('messageContainer');
+        createAlert(messageContainer, "You can only submit up to 4 files", true);
         return;
     }
 
@@ -548,7 +554,8 @@ function addEventListenerToForm(form){
     
     if(selectedTopics + notRemovedLen - topicsToDelete > 5){
       e.preventDefault();
-      alert('You can only submit up to 5 topics.');
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "You can only submit up to 5 topics", true);
       return;
     }
   });
@@ -814,7 +821,8 @@ function insertMorePostTopics(){
   postTopicPageMax = topics.last_page;
 
   if(topics.response !== undefined){
-    alert(topics.message);
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, topics.message, true);
     return;
   }
 
