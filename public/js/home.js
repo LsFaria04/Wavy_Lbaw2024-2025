@@ -3,6 +3,8 @@ function addEventListeners() {
   document.addEventListener('DOMContentLoaded', switchGroupTab);
   window.addEventListener("scroll", infiniteScroll);
   //window.addEventListener("scroll",loadMoreComments);
+  syncButtonPostTopicsWithInputEventListener();
+  syncButtonPostFilesWithInputEventListener();
   
 }
 //removes the loading circle from the page
@@ -180,8 +182,131 @@ function insertMoreCommentsPost(){
 
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const togglePostFormButton = document.getElementById("togglePostForm");
+    const modalContainer = document.getElementById("modalContainer");
+    const closeModalButton = document.getElementById("closeModal");
+
+    // Show the modal
+    togglePostFormButton.addEventListener("click", () => {
+        modalContainer.classList.remove("hidden");
+    });
+
+    // Hide the modal
+    closeModalButton.addEventListener("click", () => {
+        modalContainer.classList.add("hidden");
+    });
+
+    // Optional: Hide modal when clicking outside of it
+    modalContainer.addEventListener("click", (e) => {
+        if (e.target === modalContainer) {
+            modalContainer.classList.add("hidden");
+        }
+    });
+});
 
 
+function updateFileButtonList(){
+  const fileInput = document.getElementById('imageButton');
+  const fileDisplay = document.getElementById('buttonFileDisplay');
+
+  // Append new files to the list (preserve existing files)
+  Array.from(fileInput.files).forEach(file => {
+    if (file.size > 1048576){
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "File is too big (>2Mb)", true);
+    }
+    else{
+      selectedFiles.push(file);
+    }
+  });
+
+  // Check if there are more than 4 files
+  if (selectedFiles.length > 4) {
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, 'You can only select up to 4 files', true);
+    // Remove the newly added files from the selectedFiles array
+    selectedFiles.splice(-fileInput.files.length);
+    return; 
+  }
+
+  // Clear previous file list
+  fileDisplay.innerHTML = '';
+
+  // Show updated list of file names
+  selectedFiles.forEach((file, index) => {
+    const li = document.createElement('li');
+    li.classList.add('flex', 'items-center', 'gap-2');
+
+    li.innerHTML = `
+        <span class="text-sm text-gray-500">${file.name}</span>
+        <button type="button" onclick="removeSpecificFileButton(${index})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+    `;
+    fileDisplay.appendChild(li);
+  });
+
+  fileDisplay.classList.remove('hidden');
+
+  // Reset the file input to allow adding more files
+  fileInput.value = '';
+}
+
+function syncButtonPostTopicsWithInputEventListener(){
+  document.querySelector('.addButtonPost form')?.addEventListener('submit', function (e) {
+    //update the values before sending the form
+    let topicInput = document.getElementById('topicInput-1');
+    topicInput.value = selectedTopics;
+  });
+}
+
+function syncButtonPostFilesWithInputEventListener(){
+  // Synchronize selectedFiles with the file input before form submission
+  document.querySelector('.addButtonPost form')?.addEventListener('submit', function (e) {
+    
+    if (selectedFiles.length > 4) {
+      e.preventDefault(); // Prevent the form from submitting
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "You can only submit up to 4 files", true);
+      return; 
+    }
+
+    const fileInput = document.getElementById('imageButton');
+    const dataTransfer = new DataTransfer();
+
+    // Append all files from selectedFiles to the new DataTransfer object
+    selectedFiles.forEach(file => {
+        dataTransfer.items.add(file);
+    });
+
+    // Update the file input's files property
+    fileInput.files = dataTransfer.files;
+  });
+}
+
+function removeSpecificFileButton(index) {
+  const fileDisplay = document.getElementById('buttonFileDisplay');
+
+  // Remove file from the list
+  selectedFiles.splice(index, 1);
+
+  // Clear previous display and update with new list
+  fileDisplay.innerHTML = '';
+  selectedFiles.forEach((file, i) => {
+      const li = document.createElement('li');
+      li.classList.add('flex', 'items-center', 'gap-2');
+
+      li.innerHTML = `
+          <span class="text-sm text-gray-500 sm:w-12 text-ellipsis overflow-hidden ...">${file.name}</span>
+          <button type="button" onclick="removeSpecificFileButton(${i})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+      `;
+      fileDisplay.appendChild(li);
+  });
+
+  // Hide the display if no files remain
+  if (selectedFiles.length === 0) {
+      fileDisplay.classList.add('hidden');
+  }
+}
 
 
 addEventListeners();
