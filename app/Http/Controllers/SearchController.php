@@ -102,7 +102,7 @@ class SearchController extends Controller
                             ->where('isadmin', false)
                             ->paginate(10);
                         }
-                        else{
+                        else {
                             //with filter
                             $users = User::with('profilePicture')->where(function($query) use ($sanitizedQuery) {
                                 $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
@@ -127,7 +127,7 @@ class SearchController extends Controller
                             ->where('isadmin', false)
                             ->paginate(10);
                         }
-                        else{
+                        else {
                             //with filter
                             $users = User::with('profilePicture')->where(function($query) use ($sanitizedQuery) {
                                 $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
@@ -152,7 +152,7 @@ class SearchController extends Controller
                         $groups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                             ->paginate(10);
                     }
-                    else{
+                    else {
                         $groups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                             ->where('visibilitypublic', $visibility)
                             ->paginate(10);

@@ -43,7 +43,7 @@ class LikeController extends Controlle {
                 $like->comment->createddate = $like->comment->createddate->diffForHumans();
                 $like->comment->comment_likes_count = $like->comment->commentLikes()->count();
                 
-                if(Auth::check()){
+                if(Auth::check()) {
                     if ($like->comment->post) {
                         $like->comment->post->liked = $like->comment->post->likes()->where('userid', Auth::id())->exists();
                     }
@@ -59,7 +59,7 @@ class LikeController extends Controlle {
         return $likes;
     }
     
-    public function create(Request $request){
+    public function create(Request $request) {
 
         Like::create([
             'userid' => $request->userid,

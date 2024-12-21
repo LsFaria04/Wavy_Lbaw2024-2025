@@ -327,8 +327,7 @@ class ProfileController extends Controller {
         ]);
         Log::info("11");
 
-        event(new FollowNotification($follower, $followee->followeeid, $status));
-        Log::info("12");
+        event(new FollowNotification($follower, $followee->userid, $status));
 
         return response()->json([
             'success' => true,

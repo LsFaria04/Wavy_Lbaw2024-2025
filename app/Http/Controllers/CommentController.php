@@ -40,12 +40,12 @@ class CommentController extends Controller {
             if (Auth::check()) {
                 $comments[$i]->liked = $comments[$i]->commentlikes()->where('userid', Auth::user()->userid)->exists();
             }
-            else{
+            else {
                 $comments[$i]->liked = false;
             }
         }
 
-        if($request->ajax()){
+        if($request->ajax()) {
             return response()->json($comments);
         }
 
@@ -196,7 +196,7 @@ class CommentController extends Controller {
                         'path' => $mediaPath, // Store the image path
                     ]);
                 }
-                else{
+                else {
                     return redirect()->route('posts.show', $topcomment->postid)->with('error', 'Could not upload the file!');
                 }
             }
@@ -286,8 +286,8 @@ class CommentController extends Controller {
         }
 
         $mediaArray = Media::where('commentid', $comment->commentid)->get();
-        foreach($mediaArray as $media){
-            if (Storage::exists('public/'. $media->path)){
+        foreach($mediaArray as $media) {
+            if (Storage::exists('public/'. $media->path)) {
                 Storage::delete('public/'. $media->path);
             }
         }
@@ -295,7 +295,7 @@ class CommentController extends Controller {
         $comment->media()->delete();
         
         $topcomment = $comment;
-        while ($topcomment->parentcommentid != NULL){
+        while ($topcomment->parentcommentid != NULL) {
             $topcomment = $topcomment->parentComment;
         }
         
