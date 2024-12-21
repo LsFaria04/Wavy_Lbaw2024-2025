@@ -30,11 +30,11 @@ class ReportController extends Controller
         }
 
         try{
-            if($commentid === null){
+            if($commentid === null) {
                 Log::info("here");
                 $this->authorize('alreadyReported', [Report::class,$postid, true]);
             }
-            else{
+            else {
                 $this->authorize('alreadyReported', [Report::class,$commentid, false]);
             }
         } catch(\Exception $e){

@@ -278,11 +278,11 @@ function updateFileList() {
 
   // Append new files to the list (preserve existing files)
   Array.from(fileInput.files).forEach(file => {
-    if (file.size > 1048576){
+    if (file.size > 1048576) {
       const messageContainer = document.getElementById('messageContainer');
       createAlert(messageContainer, "File is too big (>2Mb)", true);
     }
-    else{
+    else {
       selectedFiles.push(file);
     }
   });
@@ -388,7 +388,7 @@ function updateFileNameEdit(postId) {
       const messageContainer = document.getElementById('messageContainer');
       createAlert(messageContainer, "File is too big (>2Mb)", true);
     }
-    else{
+    else {
       selectedFilesEdit.push(file);
     }
   });
@@ -608,7 +608,7 @@ function insertPostMedia(post, mediaArray){
       newMedia.classList.add("w-full","mb-2");
     }
   
-    else{
+    else {
       newMedia = document.createElement('p');
       newMedia.classList.add("text-gray-500");
       newMedia.innerHTML = 'Unsupported media type';
@@ -745,7 +745,7 @@ function removeSpecificFile(index) {
   }
 }
 
-function toggleAddPostTopics(postid, isedit){
+function toggleAddPostTopics(postid, isedit) {
   console.log(document.getElementById("addPostTopics"));
   if(document.getElementById("addPostTopics").classList.contains('hidden')){
     postTopicPage = 0;
@@ -753,7 +753,7 @@ function toggleAddPostTopics(postid, isedit){
     isEditPost = isedit;
     loadMorePostTopics();   
   }
-  else{
+  else {
     //remove the topics when we hide the the menu
     let topics = document.querySelectorAll('#postTopicsList .topicList li,#postTopicsList .topicList p ');
     topics.forEach(function (e) {e.remove()});
@@ -801,7 +801,7 @@ function loadMorePostTopics(){
     postTopicPage++;
     sendAjaxRequest('get', '/api/topics/search/all/'+ topicPostId + '?q=' + searchQuery + '&page=' + postTopicPage,null,insertMorePostTopics);
   }
-  else{
+  else {
     postTopicPage++;
     sendAjaxRequest('get', '/api/topics/all/' + topicPostId + '?page=' + postTopicPage,null,insertMorePostTopics);
   }
@@ -847,17 +847,17 @@ function insertMorePostTopics(){
     topicsList.appendChild(topic);
   }
 
-  if(topics.data.length > 0){
+  if(topics.data.length > 0) {
     if(postTopicPageMax > postTopicPage){
       //Show the button if there is more data to display
-      if(document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+      if(document.querySelector('#postTopicsList > button').classList.contains('hidden')) {
         document.querySelector('#postTopicsList > button').classList.toggle('hidden');
       }
     }
   }
-  else{
+  else {
     //there are no topics in the list and we could not found new ones with the ajax request so a warning is displayed
-    if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null){
+    if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null) {
       let warning = document.createElement('p');
       warning.innerHTML='No topics found';
       topicsList.appendChild(warning);

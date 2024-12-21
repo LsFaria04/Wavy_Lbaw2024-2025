@@ -170,7 +170,7 @@ class GroupController extends Controller
             ->orderBy('createddate', 'desc')
             ->paginate(10);
 
-        for($i = 0;$i < sizeof($invitations); $i++){
+        for($i = 0;$i < sizeof($invitations); $i++) {
             $invitations[$i]->createddate = $invitations[$i]->createddate->diffForHumans();
         }
 
@@ -192,7 +192,7 @@ class GroupController extends Controller
             ->orderBy('createddate', 'desc')
             ->paginate(10);
 
-        for($i = 0;$i < sizeof($joinRequests); $i++){
+        for($i = 0;$i < sizeof($joinRequests); $i++) {
             $joinRequests[$i]->createddate = $joinRequests[$i]->createddate->diffForHumans();
         }
 

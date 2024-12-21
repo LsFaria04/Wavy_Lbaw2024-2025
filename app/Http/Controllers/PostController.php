@@ -257,7 +257,7 @@ class PostController extends Controller {
                         'path' => $mediaPath, // Store the image path
                     ]);
                 }
-                else{
+                else {
                     return redirect()->route('home')->with('error', 'Could not upload the file!');
                 }
             }
