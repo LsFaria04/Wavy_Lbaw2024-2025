@@ -15,20 +15,25 @@ use Illuminate\Support\Facades\Auth;
 class GroupController extends Controller
 {
     public function store(Request $request) {
+        Log::info("Creating a group");
         $validated = $request->validate([
             'groupname' => 'required|string|max:255|unique:groups,groupname',
             'description' => 'required|string',
             'visibilitypublic' => 'required|boolean',
         ]);
+
+        Log::info("Validated");
     
         try {
+            Log::info($request);
             // Create the group
             $group = Group::create([
-                'groupname' => 'groupname',
-                'description' => 'description',
-                'visibilitypublic' => 'visibilitypublic',
+                'groupname' => $request->groupname,
+                'description' => $request->description,
+                'visibilitypublic' => $request->visibilitypublic,
                 'ownerid' => Auth::id(),
             ]);
+            Log::info("Created");
     
             if (!$group) {
                 return redirect()->back()->withErrors(['error' => 'Failed to create the group. Please try again.']);
