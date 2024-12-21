@@ -100,7 +100,7 @@ function createPost(postInfo) {
   post.innerHTML = `
       <div class="post-header mb-1 flex justify-between items-center">
           <div>
-              <a href="${postInfo.user.state === 'deleted' ? '#' : '/profile/' + postInfo.user.username}" 
+              <a href="${postInfo.user.state === 'deleted' ? '#' : '/profile/' + postInfo.user.username}">
                 <div class = "flex flex-row gap-2">
                   <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
                     ${user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}

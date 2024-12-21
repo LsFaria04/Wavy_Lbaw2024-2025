@@ -207,17 +207,17 @@ class GroupController extends Controller
     
         // Check if the user is already a member
         if ($group->members()->where('group_membership.userid', $userid)->exists()) {
-            return response()->json(['status' => 'error', 'message' => 'User is already a member.'], 400);
+            return response()->json('User is already a member.', 400);
         }
     
         // Check if the user has a pending join request
         if (JoinGroupRequest::where('groupid', $groupid)->where('userid', $userid)->exists()) {
-            return response()->json(['status' => 'error', 'message' => 'User has already requested to join this group.'], 400);
+            return response()->json('User has already requested to join this group.', 400);
         }
     
         // Check if the user is already invited
         if (GroupInvitation::where('groupid', $groupid)->where('group_invitation.userid', $userid)->exists()) {
-            return response()->json(['status' => 'error', 'message' => 'User is already invited.'], 400);
+            return response()->json('User is already invited.', 400);
         }
     
         // Create the invitation
