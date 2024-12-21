@@ -87,8 +87,7 @@ function createNotificationElement(type, message, timestamp, data) {
     const notificationElement = document.createElement('div');
     notificationElement.classList.add('flex', 'items-center', 'p-4', 'mb-4', 'bg-gray-50', 'rounded-lg', 'shadow-sm', 'space-y-4');
 
-    const date = new Date(timestamp);
-    const formattedDate = formatRelativeTime(date);
+    const formattedDate = timestamp
 
     let notificationContent = `
         <div class="flex-1">
@@ -102,10 +101,21 @@ function createNotificationElement(type, message, timestamp, data) {
     `;
 
     // Customize notification content based on type
-    if (data && data.message && data.user) {
-        const username = data.user.username || 'Unknown user';
+    if (data) {
+
+        let username = 'Unknown user';
+        if(data.like){
+            username = data.like.user.username;
+        }
+        else if(data.follow){
+            username = data.follow.follower.username;
+        }
+        else if(data.comment){
+            username = data.comment.user.username;
+        }
+        
         const postUrl = `/posts/${data.post_id}`;
-        const usernameUrl = `/profile/${data.user.username}`;
+        const usernameUrl = `/profile/${data.follow?.follower.username}`;
 
         if (type === 'likes') {
             notificationContent = `
@@ -114,7 +124,7 @@ function createNotificationElement(type, message, timestamp, data) {
                         <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> liked your post
                     </div>
                     <div class="text-sm text-gray-500">
-                        <a href="${postUrl}" class="text-blue-600 hover:underline">Your Post</a>
+                        <a href="${postUrl}" class="text-blue-600 hover:underline">"${message}"</a>
                     </div>
                 </div>
                 <div class="text-xs text-gray-400">
@@ -128,7 +138,7 @@ function createNotificationElement(type, message, timestamp, data) {
                         <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> commented on your post
                     </div>
                     <div class="text-sm text-gray-500">
-                        <a href="${postUrl}" class="text-blue-600 hover:underline">Your Post</a>
+                        <a href="${postUrl}" class="text-blue-600 hover:underline">"${message}"</a>
                     </div>
                 </div>
                 <div class="text-xs text-gray-400">
@@ -189,9 +199,17 @@ function initializeNotificationTabs() {
     });
 }
 
+let notificationsTab = 'all-notifications';
 function showTab(tab) {
+    notificationsTab = tab;
+    currentPage = 0;
+    const notificationsContainer = document.querySelector(`#${notificationsTab}-content`);
+    while(notificationsContainer.firstChild){
+        notificationsContainer.firstChild.remove();
+    }
     toggleVisibility(tab + '-content', '.notifications-section');
     toggleTabHighlight(tab + '-tab', '.tab-btn');
+    loadNotifications();
 }
 
 function toggleVisibility(activeId, groupSelector) {
@@ -220,6 +238,16 @@ function toggleTabHighlight(activeTabId, groupSelector) {
     }
 }
 
+function loadNotifications(){
+    currentPage++;
+    const notificationsPage = document.querySelector("#notifications-content");
+    insertLoadingCircle(notificationsPage);
+    sendAjaxRequest('post', '/api/notifications?page=' + currentPage + '&category=' + notificationsTab, null, function() {
+        insertMoreNotifications(this.responseText);
+        loading = false;
+    });
+}
+
 function insertMoreNotifications(response) {
     removeLoadingCircle();
 
@@ -227,11 +255,29 @@ function insertMoreNotifications(response) {
 
     maxPage = notifications.last_page;
 
-    const notificationsContainer = document.querySelector("#notifications-content");
+    const notificationsContainer = document.querySelector(`#${notificationsTab}-content`);
     if (notificationsContainer) {
+        console.log(notifications);
         if (notifications.data && notifications.data.length > 0) {
             notifications.data.forEach(notification => {
-                const notificationElement = createNotificationElement(notification.type, notification.message, notification.created_at, notification);
+                let type = null;
+                let message = null;
+                if(notification.followid !== null){
+                    type = 'follows';
+                    message = "Follow";
+                }
+                else if (notification.likeid !== null){
+                    type = 'likes';
+                    message = notification.like?.post.message;
+                    if(message === undefined){
+                        message = notification.like?.comment.message;
+                    }
+                }
+                else if (notification.commentid !== null){
+                    type = 'comments';
+                    message = notification.comment.message;
+                }
+                const notificationElement = createNotificationElement(type, message, notification.date, notification);
                 notificationsContainer.appendChild(notificationElement);
             });
 

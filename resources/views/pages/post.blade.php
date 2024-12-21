@@ -3,15 +3,17 @@
     <div class="flex flex-col items-center w-full max-w-full bg-white" id="postPage">
 
         <!-- Flash Messages -->
-        @if (session('error'))
-            <div class="absolute self-center alert w-full max-w-full p-4 mb-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 rounded-lg z-10">             
-                {{ session('error') }}          
-            </div>
-        @elseif(session('success'))
-            <div class="absolute self-center alert w-full max-w-full p-4 mb-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 rounded-lg z-10">             
-                {{ session('success') }}          
-            </div>
-        @endif 
+        <div class="fixed top-6 flex items-center z-50">
+            @if (session('error'))
+                <div class = "self-center alert w-full max-w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">             
+                    {{ session('error')}}          
+                </div>
+            @elseif(session('success'))
+                <div class = "self-center alert w-full max-w-full p-4 bg-blue-100 text-blue-800 border shadow-md text-center border-blue-300 z-10">             
+                    {{ session('success')}}          
+                </div>
+            @endif 
+        </div>
         <div id="messageContainer" class="fixed top-6 flex items-center">
             <!--Used to append messages with JS -->
         </div>
