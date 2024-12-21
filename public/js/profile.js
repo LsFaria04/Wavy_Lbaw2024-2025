@@ -226,7 +226,8 @@ function insertMoreTopics(){
 
     //received a response from the server that needs to be displayed (error messages)
     if(topics.response !== undefined){
-      alert(topics.message);
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, topics.message, true);
       return;
     }
 
@@ -548,7 +549,8 @@ function toggleFollow() {
 
       // if the user is trying to follow an admin, prevent it
       if (followStatus === 'admin') {
-          alert('You cannot follow an admin!');
+          const messageContainer = document.getElementById('messageContainer');
+          createAlert(messageContainer, 'You cannot follow an admin!', true);
           return;
       }
 
