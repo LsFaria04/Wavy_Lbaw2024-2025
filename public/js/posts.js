@@ -704,7 +704,7 @@ function insertPostTopics(post, topics){
   const postheader = post.querySelector('.post-header');
   let postTopics = document.createElement('div');
   postTopics.setAttribute('id', 'postTopics');
-  postTopics.classList.add('flex', 'flex-row');
+  postTopics.setAttribute('class', "flex flex-row gap-2");
 
   for(let i = 0; i < topics.length; i++){
     let topic = document.createElement('p');
@@ -893,17 +893,18 @@ function addTopicToPost(topicid, topicname, postid){
   //add the topic to the topic display
   let topicDisplay = document.getElementById(`topicDisplay-${postid}`);
 
-  const li = document.createElement('li');
-  li.classList.add('flex', 'items-center', 'gap-2');
-  li.setAttribute('id', `post-${postid}Topic-${topicid}`);
+  const div = document.createElement('div');
+  div.classList.add('flex', 'items-center', 'gap-2');
+  div.setAttribute('id', `post-${postid}Topic-${topicid}`);
 
-  li.innerHTML = `
-      <span class="text-sm text-gray-500 w-12 sm:w-full text-ellipsis overflow-hidden ...">${topicname}</span>
+  console.log("here")
+  div.innerHTML = `
+      <span class="text-sm text-gray-500">${topicname}</span>
   
       <button type="button" onclick="removeSpecificTopic(${topicid},${postid})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
   `;
 
-  topicDisplay.appendChild(li);
+  topicDisplay.appendChild(div);
 
   if(topicDisplay.classList.contains('hidden')){
     topicDisplay.classList.toggle('hidden');
