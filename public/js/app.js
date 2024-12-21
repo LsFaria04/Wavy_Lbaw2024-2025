@@ -60,7 +60,7 @@ function addEventListeners() {
   //creates an alert message and inserts it into the page
   function createAlert(element,message, isError){
     const alert = document.createElement('div');
-    alert.classList.add("self-center", "alert", "rounded","w-full", "max-w-full", "p-4", isError ? "bg-red-100" : "bg-green-100" , isError ?  "text-red-800" : "text-green-800" , "border", "shadow-md", "text-center", isError ? "border-red-300" : "border-green-300", "z-10");
+    alert.classList.add("self-center", "alert", "rounded","w-full", "max-w-full", "p-4", isError ? "bg-red-100" : "bg-blue-100" , isError ?  "text-red-800" : "text-blue-800" , "border", "shadow-md", "text-center", isError ? "border-red-300" : "border-blue-300", "z-10");
     alert.innerHTML = message;
 
     while(element.firstChild !== null){

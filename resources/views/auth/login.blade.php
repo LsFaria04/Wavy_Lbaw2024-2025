@@ -8,20 +8,22 @@
     <div id="messageContainer" class="fixed top-6 flex items-center z-40">
         <!--Used to append messages with JS -->
     </div>
+    <div class="fixed top-6 flex items-center z-50">
     @if ($errors->has('email'))
-            <div class = "fixed top-10 self-center alert rounded max-w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">             
+            <div class = "self-center alert rounded max-w-full p-4 bg-red-100 text-red-800 border shadow-md text-center border-red-300 z-10">             
                 {{ $errors->first('email') }}         
             </div>
         @elseif($errors->has('password'))
-            <div class = "fixed top-10 self-center alert max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">             
+            <div class = "self-center alert max-w-full p-4 bg-blue-100 text-blue-800 border shadow-md text-center border-blue-300 z-10">             
                 {{ $errors->first('password')}}          
             </div>
         @endif 
         @if (session('success'))
-            <div class = "fixed top-10 self-center alert max-w-full p-4 bg-green-100 text-green-800 border shadow-md text-center border-green-300 z-10">
+            <div class = "self-center alert max-w-full p-4 bg-blue-100 text-blue-800 border shadow-md text-center border-blue-300 z-10">
                         {{ session('success') }}
             </div>
-            @endif
+        @endif
+    </div>
     <div class = "grow flex items-center justify-center">
         <form method="POST" action="{{ route('login') }}" class = "max-w-xl grid-start-1 bg-slate-100 shadow-md rounded px-8 pt-6 pb-8 my-4" >
             {{ csrf_field() }}
