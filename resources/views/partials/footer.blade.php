@@ -1,5 +1,5 @@
 <footer class="w-full bg-sky-900 text-white p-4 border-t border-gray-300">
-    <div class="container mx-auto flex flex-col items-center lg:flex-row lg:justify-between items-center gap-4">
+    <div class="container mx-auto flex flex-col lg:flex-row lg:justify-between items-center gap-4">
         <!-- Logo and Copyright -->
         <div class="flex flex-col items-center lg:items-start text-center lg:text-left">
             <h1 class="text-xl font-bold">Wavy</h1>
