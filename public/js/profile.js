@@ -975,9 +975,13 @@ function removeShowMoreFollow(){
   document.getElementById('showMore')?.remove();
 }
 
+
+let userFollowId = 0;
 function rejectFollow(userid){
+  userFollowId = userid;
   const rejectButton = document.getElementById('reject-' + userid);
   insertLoadingCircle(rejectButton);
+  rejectButton.disable = true;
   //resize the loading circle
   document.querySelector('#loading_circle').classList.remove('h-8');
   document.querySelector('#loading_circle').classList.remove('w-8');
@@ -986,9 +990,13 @@ function rejectFollow(userid){
   sendAjaxRequest('post', '/api/profile/followrequest/reject/' + userid, null, handleRejectFollow);
 }
 
+
 function handleRejectFollow(){
   removeLoadingCircle();
   let response = JSON.parse(this.responseText);
+
+  const rejectButton = document.getElementById('reject-' + userFollowId);
+  rejectButton.disable = true;
 
   const messageContainer = document.getElementById('messageContainer');
   if(response.response === '200'){
@@ -1002,7 +1010,9 @@ function handleRejectFollow(){
 }
 
 function acceptFollow(userid){
+  userFollowId = userid;
   const acceptButton = document.getElementById('accept-' + userid);
+  acceptButton.disable = true;
   insertLoadingCircle(acceptButton);
   //resize the loading circle
   document.querySelector('#loading_circle').classList.remove('h-8');
@@ -1015,6 +1025,9 @@ function acceptFollow(userid){
 function handleAcceptFollow(){
   removeLoadingCircle();
   let response = JSON.parse(this.responseText);
+
+  const acceptButton = document.getElementById('accept-' + userFollowId);
+  acceptButton.disable = false;
 
   const messageContainer = document.getElementById('messageContainer');
   if(response.response === '200'){
