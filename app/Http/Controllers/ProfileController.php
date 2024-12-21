@@ -290,8 +290,8 @@ class ProfileController extends Controller {
 
         if ($existingFollow->state === Follow::STATE_ACCEPTED) {
             Log::info("8");
-
             return $this->unfollow($request, $existingFollow->followeeid);
+
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
 
             Log::info("9");
@@ -306,7 +306,7 @@ class ProfileController extends Controller {
 
             return response()->json([
                 'success' => true,
-                'status' => 'Unfollowed',
+                'status' => 'follow-request-canceled',
                 'message' => 'Follow request canceled.'
             ]);
         }
@@ -327,11 +327,17 @@ class ProfileController extends Controller {
         ]);
         Log::info("11");
 
+        if ($status == Follow::STATE_ACCEPTED) {
+            $status = 'follow';
+        }
+        else if ($status == Follow::STATE_PENDING) {
+            $status = 'follow-request';
+        }
         event(new FollowNotification($follower, $followee->userid, $status));
 
         return response()->json([
             'success' => true,
-            'status' => $status === Follow::STATE_ACCEPTED ? 'Accepted' : 'Pending'
+            'status' => $status === Follow::STATE_ACCEPTED ? 'follow' : 'follow-request'
         ]);
     }
 
@@ -419,9 +425,9 @@ class ProfileController extends Controller {
         }
         Log::info("22");
 
-        Follow::where('followerid', $followerId)
-            ->where('followeeid', $userid)
-            ->delete();
+
+
+        $existingFollow->delete();
 
         $follower = User::findOrFail($existingFollow->followerid);
 

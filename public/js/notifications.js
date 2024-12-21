@@ -17,6 +17,8 @@ function addEventListeners() {
 }
 
 function triggerPopupNotification(message) {
+    if (!message) return;
+    
     const notificationPopup = document.createElement('div');
     notificationPopup.classList.add('p-4', 'mb-4', 'text-sm', 'text-green-800', 'rounded-lg', 'bg-green-50', 'dark:bg-gray-800', 'dark:text-green-400');
     notificationPopup.setAttribute('role', 'alert');

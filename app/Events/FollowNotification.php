@@ -38,12 +38,6 @@ class FollowNotification implements ShouldBroadcast {
             case 'follow-request':
                 $this->message = "{$user->username} sent you a follow request.";
                 break;
-            case 'unfollowed':
-                $this->message = "{$user->username} unfollowed you.";
-                break;
-            case 'follow-request-canceled':
-                //no pop up notification triggers
-                break;
         }
     }
     

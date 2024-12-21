@@ -9,8 +9,7 @@ use App\Models\Group;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class SearchController extends Controller
-{   
+class SearchController extends Controller {   
     //Perfoms the search according to the query inserted by the user
     public function search(Request $request) {
         $query = $request->input('q');
