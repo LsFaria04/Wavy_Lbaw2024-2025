@@ -10,7 +10,7 @@ use Carbon\Carbon;
 
 class NotificationController extends Controller {
     public function index() {       
-        $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'follow.follower'])
+        $notifications = Notification::with(['comment.post', 'like.post', 'comment.user','like.comment', 'follow.follower'])
             ->where('receiverid', Auth::id())
             ->orderBy('date', 'desc')
             ->paginate(20);
@@ -36,27 +36,27 @@ class NotificationController extends Controller {
         $notifications = null;
         switch($category){
             case 'all-notifications':
-                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user', 'follow.follower'])
+                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user','like.comment', 'follow.follower'])
                     ->where('receiverid', Auth::id())
                     ->orderBy('date', 'desc')
                     ->paginate(20);
                 break;
             case 'likes':
-                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user', 'follow.follower'])
+                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user','like.comment', 'follow.follower'])
                     ->where('receiverid', Auth::id())
                     ->whereNotNull('likeid')
                     ->orderBy('date', 'desc')
                     ->paginate(20);
                 break;
             case 'comments':
-                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user', 'follow.follower'])
+                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user','like.comment', 'follow.follower'])
                     ->where('receiverid', Auth::id())
                     ->whereNotNull('commentid')
                     ->orderBy('date', 'desc')
                     ->paginate(20);
                 break;
             case 'follows':
-                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user', 'follow.follower'])
+                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user', 'like.comment','follow.follower'])
                     ->where('receiverid', Auth::id())
                     ->whereNotNull('followid')
                     ->orderBy('date', 'desc')

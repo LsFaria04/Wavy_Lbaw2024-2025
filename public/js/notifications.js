@@ -268,7 +268,8 @@ function insertMoreNotifications(response) {
                 }
                 else if (notification.likeid !== null){
                     type = 'likes';
-                    message = notification.like?.post.message;
+                    console.log(notification);
+                    message = notification.like?.post?.message;
                     if(message === undefined){
                         message = notification.like?.comment.message;
                     }
