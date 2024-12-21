@@ -118,7 +118,7 @@
 
 @auth
 <!-- Modal Overlay and Form -->
-<div id="modalContainer" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-50">
+<div id="modalContainer" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center hidden z-30">
     <div id="modalPostForm" class="addButtonPost p-4 bg-white border-b border-gray-300 w-full max-w-lg rounded-lg relative">
         <button id="closeModal" class="absolute top-2 right-2 text-gray-500 hover:text-black">
             &times;
