@@ -203,6 +203,7 @@ class PostController extends Controller {
 
         //the general topic is the default
         if($request->topics !== null){
+            Log::info($request->topics[0]);
             if($request->topics[0] == ""){
                 $request->topics[0] = "1";
             }
