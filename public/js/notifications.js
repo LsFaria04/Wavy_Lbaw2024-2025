@@ -198,8 +198,14 @@ function showTab(tab) {
     notificationsTab = tab;
     currentPage = 0;
     const notificationsContainer = document.querySelector(`#${notificationsTab}-content`);
-    while(notificationsContainer.firstChild){
-        notificationsContainer.firstChild.remove();
+
+    if(notificationsContainer === null){
+        //not in notifications page
+        return;
+    }
+
+    while(notificationsContainer?.firstChild){
+        notificationsContainer?.firstChild.remove();
     }
     toggleVisibility(tab + '-content', '.notifications-section');
     toggleTabHighlight(tab + '-tab', '.tab-btn');

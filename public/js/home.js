@@ -20,6 +20,7 @@ function addEventListeners() {
       
       //action to take place in the home page
       const timeline = document.querySelector("#timeline");
+      console.log(timeline);
       if((timeline !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
         currentPage++;
         insertLoadingCircle(timeline);
@@ -131,21 +132,22 @@ function addEventListeners() {
 
   //inserts a loading circle when an ajax request starts (infinite scroll) 
 function insertLoadingCircle(element){
+  
   if(document.querySelector("#loading_circle") !== null){
+    console.log("here");
     //already exists a loading circle
     return;
   }
 
   let loadingCircle = document.createElement("div");
 
-  loadingCircle.classList.add("ml-auto", "mr-auto", "inline-block", "h-8", "w-8", "animate-spin", "rounded-full", "border-4", "border-solid", "border-current", "border-e-transparent", "align-[-0.125em]", "text-primary", "motion-reduce:animate-[spin_1.5s_linear_infinite]");
+  loadingCircle.classList.add("ml-auto", "mr-auto", "inline-block", "h-8", "w-8", "animate-spin", "rounded-full", "border-4", "border-solid", "border-current", "border-e-transparent", "align-[-0.125em]", "text-primary", "motion-reduce:animate-[spin_1.5s_linear_infinite]", "z-50");
   loadingCircle.setAttribute('role', "status");
   loadingCircle.setAttribute('id', "loading_circle");
   loadingCircle.innerHTML = `
               <spanclass="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
               </span>
   `
-
   element.appendChild(loadingCircle);
 }
 
