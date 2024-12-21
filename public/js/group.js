@@ -153,7 +153,7 @@ function addEventListeners() {
                     searchResults.innerHTML = '';
                     userSearchInput.value = '';
                     sendInviteButton.disabled = true;
-                    loadGroupContent('group-invitations');
+                    if(groupTab=='group-invitations') loadGroupContent('group-invitations');
                 } else {
                     createAlert(messageContainer, `Failed to send invitation: ${this.responseText}`, true);
                 }
@@ -161,38 +161,44 @@ function addEventListeners() {
         }
     });
 
-  document.addEventListener('input', function (e) {
-      if (e.target && e.target.id === 'user-search') {
-          const query = e.target.value.trim();
-          const searchResults = document.getElementById('search-results');
+    document.addEventListener('input', function (e) {
+        if (e.target && e.target.id === 'user-search') {
+            const query = e.target.value.trim();
+            const searchResults = document.getElementById('search-results');
 
-          if (query.length < 3) {
-              searchResults.innerHTML = '<p class="text-gray-500">Please type at least 3 characters.</p>';
-              return;
-          }
+            // Retrieve the owner ID from the page
+            const ownerId = parseInt(document.getElementById('groupPage')?.dataset.ownerid);
 
-          sendAjaxRequest('get', `/api/search?q=${encodeURIComponent(query)}&category=users`, null, function () {
-              if (this.status === 200) {
-                  const response = JSON.parse(this.responseText);
-                  const users = response[1];
+            if (query.length < 3) {
+                searchResults.innerHTML = '<p class="text-gray-500">Please type at least 3 characters.</p>';
+                return;
+            }
 
-                  if (users.data.length === 0) {
-                      searchResults.innerHTML = '<p class="text-gray-500">No users found.</p>';
-                  } else {
-                    console.log(users);
-                      searchResults.innerHTML = users.data.map(user => `
-                          <div class="search-result p-2 hover:bg-gray-100 flex items-center cursor-pointer" data-id="${user.userid}">
-                            <div class="h-8 w-8 rounded-full mr-2 overflow-hidden bg-gray-300">
-                                ${user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}   
+            sendAjaxRequest('get', `/api/search?q=${encodeURIComponent(query)}&category=users`, null, function () {
+                if (this.status === 200) {
+                    const response = JSON.parse(this.responseText);
+                    const users = response[1];
+
+                    if (users.data.length === 0) {
+                        searchResults.innerHTML = '<p class="text-gray-500">No users found.</p>';
+                    } else {
+                        // Exclude the owner from the search results
+                        const filteredUsers = users.data.filter(user => user.userid !== ownerId);
+
+                        searchResults.innerHTML = filteredUsers.map(user => `
+                            <div class="search-result p-2 hover:bg-gray-100 flex items-center cursor-pointer" data-id="${user.userid}">
+                                <div class="h-8 w-8 rounded-full mr-2 overflow-hidden bg-gray-300">
+                                    ${user.profile_picture.length > 0 ? `<img h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : ""} alt="ProfilePicture">` : ""}
+                                </div>
+                                <span>${user.username}</span>
                             </div>
-                              <span>${user.username}</span>
-                          </div>
-                      `).join('');
-                  }
-              }
-          });
-      }
+                        `).join('');
+                    }
+                }
+            });
+        }
     });
+
 
     document.getElementById('cancelExitButton')?.addEventListener('click', () => {
         const exitMenu = document.getElementById('exitGroupMenu');
