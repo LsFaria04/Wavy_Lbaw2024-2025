@@ -59,7 +59,7 @@
             @endforeach
     </div>
 
-    <div class="post-body mb-2 cursor-pointer w-full" id="post-content-{{ $post->postid }}" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
+    <div class="post-body mb-2 cursor-pointer max-w-screen-lg" id="post-content-{{ $post->postid }}" onclick="window.location.href='{{ route('posts.show', $post->postid) }}'">
         <p>{{ $post->message }}</p>
 
         <!-- Loop through media files associated with the post -->
