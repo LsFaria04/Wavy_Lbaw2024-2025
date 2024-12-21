@@ -1,4 +1,5 @@
 function addEventListeners() {
+    window.addEventListener("scroll", infiniteScroll);
     document.addEventListener('DOMContentLoaded', () => {
         fadeAlert();
         initializeNotificationTabs();
@@ -55,7 +56,6 @@ function initializePusher(userId) {
     channel.bind('notification-postlike', function(data) {
         console.log('Received like notification:', data);
         const timestamp = data.timestamp || new Date().toISOString();
-        handleNotification('likes', data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
 
@@ -63,7 +63,6 @@ function initializePusher(userId) {
     channel.bind('notification-postcomment', function(data) {
         console.log(`New comment notification: ${data.message}`);
         const timestamp = data.timestamp || new Date().toISOString();
-        handleNotification('comments', data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
 
@@ -72,28 +71,12 @@ function initializePusher(userId) {
         console.log(`New follow notification: ${data.message}`);
         const timestamp = data.timestamp || new Date().toISOString();
         const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
-        handleNotification(type, data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
  
     console.log(`Subscribed to channel: public-user.${userId}`);
 }
 
-function handleNotification(type, message, timestamp, data) {
-    // Update the "all-notifications" tab
-    const allNotificationsContainer = document.getElementById('all-notifications-content');
-    if (allNotificationsContainer) {
-        const notificationElement = createNotificationElement(type, message, timestamp, data);
-        allNotificationsContainer.prepend(notificationElement);
-    }
-
-    // Update the specific tab for the notification type
-    const specificNotificationsContainer = document.getElementById(`${type}-content`);
-    if (specificNotificationsContainer) {
-        const notificationElement = createNotificationElement(type, message, timestamp, data);
-        specificNotificationsContainer.prepend(notificationElement);
-    }
-}
 
 function createNotificationElement(type, message, timestamp, data) {
     if (!data) {
@@ -173,6 +156,7 @@ function createNotificationElement(type, message, timestamp, data) {
     notificationElement.innerHTML = notificationContent;
     return notificationElement;
 }
+
 function formatRelativeTime(date) {
     const now = new Date();
     const seconds = Math.floor((now - date) / 1000);
@@ -236,33 +220,27 @@ function toggleTabHighlight(activeTabId, groupSelector) {
     }
 }
 
-function insertMoreNotifications() {
+function insertMoreNotifications(response) {
     removeLoadingCircle();
 
+    let notifications = JSON.parse(response);
+
+    maxPage = notifications.last_page;
+
     const notificationsContainer = document.querySelector("#notifications-content");
-    if (!notificationsContainer) return;
-
-    try {
-        let notifications = JSON.parse(this.responseText);
-
-        console.log(notifications);
-
-        maxPage = notifications.last_page || 0;
-
+    if (notificationsContainer) {
         if (notifications.data && notifications.data.length > 0) {
             notifications.data.forEach(notification => {
-                const notificationElement = document.createElement("div");
-                notificationElement.classList.add("notification-item");
-                notificationElement.innerHTML = `
-                    <div class="notification-content">
-                        <p>${notification.message}</p>
-                        <span class="notification-time">${notification.created_at}</span>
-                    </div>`;
+                const notificationElement = createNotificationElement(notification.type, notification.message, notification.created_at, notification);
                 notificationsContainer.appendChild(notificationElement);
             });
+
+
+        } else {
+            const warning = document.createElement('p');
+            warning.innerHTML = 'No more notifications found.';
+            notificationsContainer.appendChild(warning);
         }
-    } catch (error) {
-        console.error("Failed to load notifications:", error);
     }
 }
 

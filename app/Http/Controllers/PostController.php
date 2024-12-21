@@ -21,8 +21,7 @@ class PostController extends Controller {
     /**
      * Gets the posts for the timeline
      */
-    public function getPostsTimeline(Request $request)
-    {
+    public function getPostsTimeline(Request $request) {
         if (Auth::check()) {
 
                 $currentUser = Auth::user();
@@ -169,7 +168,9 @@ class PostController extends Controller {
             ]);
             $liked = true;
 
-            event(new PostLike($postId, $user, $post->user->userid));
+            if ($post->user->userid !== $user->userid) {
+                event(new PostLike($postId, $user, $post->user->userid));
+            }
         }
     
         // Get the updated like count

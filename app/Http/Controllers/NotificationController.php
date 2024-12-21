@@ -30,20 +30,22 @@ class NotificationController extends Controller {
     }
 
     public function getNotifications(Request $request) {
+        Log::info('Received Request for Notifications', ['page' => $request->get('page')]);
 
-        Log::error('Failed');
         $page = $request->get('page', 1);
     
         $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user'])
             ->where('receiverid', Auth::id())
             ->orderBy('date', 'desc')
             ->paginate(10, ['*'], 'page', $page);
-    
-        Log::error('Notifications', ['comment.post', 'like.post', 'comment.user', 'like.user']);
+
+        Log::info('Notifications Loaded', ['total_notifications' => $notifications->total()]);
+        Log::info('Notifications Data', ['data' => $notifications->items()]);
+
 
         return response()->json([
             'notifications' => $notifications->items(),
-            'next_page' => $notifications->hasMorePages() ? $notifications->currentPage() + 1 : null,
+            'last_page' => $notifications->lastPage(),
         ]);
     }
     

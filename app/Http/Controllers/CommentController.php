@@ -16,12 +16,10 @@ use App\Models\Media;
 use App\Models\Like;
 
 
-class CommentController extends Controller
-{
+class CommentController extends Controller {
 
 
-    public function create(Request $request)
-    {
+    public function create(Request $request) {
         Comment::create([
             'userid' => $request->userid,
             'message' => $request->message,
@@ -32,7 +30,7 @@ class CommentController extends Controller
     /**
      * Gets the comments created by user (By username)
      */
-    function getUserCommentsByUsername(Request $request, $username){
+    function getUserCommentsByUsername(Request $request, $username) {
         $user = User::where('username', $username)->firstOrFail();
         $comments = Comment::with('post', 'post.user','parentComment', 'parentComment.user', 'user', 'user.profilePicture')->where('userid', $user->userid)->orderBy('createddate', 'desc')->paginate(10);
 
@@ -54,8 +52,7 @@ class CommentController extends Controller
         return $comments;
     }
 
-    public function likeComment(Request $request, $commentId)
-    {
+    public function likeComment(Request $request, $commentId) {
 
         $user = Auth::user(); // Get the authenticated user
         $comment = Comment::findOrFail($commentId);
@@ -141,13 +138,16 @@ class CommentController extends Controller
         $user = Auth::user();
         $receiver = $post->user;
 
-        event(new PostComment($comment->message, $user, $receiver->userid));
+        if ($receiver->userid !== $user->userid) {
+            event(new PostComment($comment->message, $user, $receiver->userid));
+        } else {
+            Log::info('Self-comment detected, event not triggered.');
+        }
     
         return redirect()->route('posts.show',$request->postid)->with('success', 'Comment created successfully!');
     }
 
-    public function storeSubcomment(Request $request)
-    {
+    public function storeSubcomment(Request $request) {
         // Validate input
         $request->validate([
             'message' => 'required|string|max:255',
@@ -205,8 +205,7 @@ class CommentController extends Controller
     }
 
 
-    public function update(Request $request, Comment $comment)
-    {
+    public function update(Request $request, Comment $comment) {
         // Check if the authenticated user is the owner of the comment
         try { $this->authorize('edit', $comment); 
         }catch (AuthorizationException $e) {

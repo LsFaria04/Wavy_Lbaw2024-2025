@@ -126,7 +126,10 @@ function addEventListeners() {
         currentPage++;
         loading = true;
         insertLoadingCircle(notificationsPage);
-        sendAjaxRequest('get', `/api/notifications?page=${currentPage}`, null, insertMoreNotifications);
+        sendAjaxRequest('get', `/api/notifications?page=${currentPage}`, null, function(response) {
+          insertMoreNotifications(response);
+          loading = false;
+        });      
       }
     }
   }
