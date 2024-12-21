@@ -97,7 +97,7 @@ Route::post('/api/admin/users/create', [AdminController::class, 'storeUser']);
 Route::post('/api/admin/users/ban/{userid}', [AdminController::class, 'banUser']);
 Route::get('/api/admin/users/all', [AdminController::class, 'getUsersForAdmin']);
 Route::get('/api/admin/users/search/all', [AdminController::class, 'searchUsersForAdmin']);
-Route::get('/api/notifications', [NotificationController::class, 'getNotifications']);
+Route::post('/api/notifications', [NotificationController::class, 'getNotifications']);
 Route::post('/api/profile/followrequest/{userid}', [ProfileController::class, 'getFollowRequests']);
 Route::post('/api/profile/followrequest/accept/{userid}', [ProfileController::class, 'acceptFollowRequest']);
 Route::post('/api/profile/followrequest/reject/{userid}', [ProfileController::class, 'rejectFollowRequest']);
@@ -180,12 +180,6 @@ Route::view('/features', 'pages.features')->name('features');
 
 //Notifications
 Route::get('/notifications', [NotificationController::class, 'index'])->name('notifications');
-
-//Pusher
-// Pusher Authentication Route for Public Channels
-/*Route::post('/pusher/auth', function (Illuminate\Http\Request $request) {
-    return response()->json(['auth' => '']);
-})->name('pusher.auth');*/
 
 //Pusher Authentication Route for Public Channels Private Channels
 

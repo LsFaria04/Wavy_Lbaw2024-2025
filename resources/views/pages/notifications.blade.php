@@ -25,9 +25,9 @@
                 </button>
             </div>
 
-            <div id="notifications-content">
+            <div id="notifications-content" class = "flex flex-col items-center justify-center">
                 <!-- All Notifications Section -->
-                <div class="notifications-section" id="all-notifications-content">
+                <div class="notifications-section w-full" id="all-notifications-content">
                     @if($notifications->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600">No notifications available.</p>
@@ -80,7 +80,7 @@
                 </div>
 
                 <!-- Comments Section -->
-                <div class="notifications-section hidden" id="comments-content">
+                <div class="notifications-section hidden w-full" id="comments-content">
                     @if($commentNotifications->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600">No comment notifications available.</p>
@@ -112,7 +112,7 @@
                 </div>
 
                 <!-- Likes Section -->
-                <div class="notifications-section hidden" id="likes-content">
+                <div class="notifications-section hidden w-full" id="likes-content">
                     @if($likeNotifications->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600">No like notifications yet.</p>
@@ -143,7 +143,7 @@
                 </div>
                                                         
                 <!-- Follows Section -->
-                <div class="notifications-section hidden" id="follows-content">
+                <div class="notifications-section hidden w-full" id="follows-content">
                     @if($followNotifications->isEmpty())
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600">No follow notifications yet.</p>

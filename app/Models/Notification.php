@@ -18,8 +18,8 @@ class Notification extends Model {
         'receiverid', 'date', 'seen', 'followid', 'commentid', 'likeid',
     ];
 
-    protected $casts = [
-        'date' => 'datetime',
+    protected $dates = [
+        'date'
     ];
 
     public function comment() {

@@ -6,13 +6,14 @@ use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class NotificationController extends Controller {
     public function index() {       
-        $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'follow.follower'])
+        $notifications = Notification::with(['comment.post', 'like.post', 'comment.user','like.comment', 'follow.follower'])
             ->where('receiverid', Auth::id())
             ->orderBy('date', 'desc')
-            ->paginate(10);
+            ->paginate(20);
 
         $commentNotifications = $notifications->filter(function ($notification) {
             return isset($notification->comment);
@@ -30,23 +31,48 @@ class NotificationController extends Controller {
     }
 
     public function getNotifications(Request $request) {
-        Log::info('Received Request for Notifications', ['page' => $request->get('page')]);
 
-        $page = $request->get('page', 1);
+        $category = $request->input('category');
+        $notifications = null;
+        switch($category){
+            case 'all-notifications':
+                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user','like.comment', 'follow.follower'])
+                    ->where('receiverid', Auth::id())
+                    ->orderBy('date', 'desc')
+                    ->paginate(20);
+                break;
+            case 'likes':
+                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user','like.comment', 'follow.follower'])
+                    ->where('receiverid', Auth::id())
+                    ->whereNotNull('likeid')
+                    ->orderBy('date', 'desc')
+                    ->paginate(20);
+                break;
+            case 'comments':
+                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user','like.comment', 'follow.follower'])
+                    ->where('receiverid', Auth::id())
+                    ->whereNotNull('commentid')
+                    ->orderBy('date', 'desc')
+                    ->paginate(20);
+                break;
+            case 'follows':
+                $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user', 'like.comment','follow.follower'])
+                    ->where('receiverid', Auth::id())
+                    ->whereNotNull('followid')
+                    ->orderBy('date', 'desc')
+                    ->paginate(20);
+                break;
+        }
     
-        $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user'])
-            ->where('receiverid', Auth::id())
-            ->orderBy('date', 'desc')
-            ->paginate(10, ['*'], 'page', $page);
+        
+        
+        foreach($notifications as $notification){
+            $notification->date =  Carbon::parse($notification->date)->diffForHumans();
+        }
 
-        Log::info('Notifications Loaded', ['total_notifications' => $notifications->total()]);
-        Log::info('Notifications Data', ['data' => $notifications->items()]);
-
-
-        return response()->json([
-            'notifications' => $notifications->items(),
-            'last_page' => $notifications->lastPage(),
-        ]);
+        return response()->json(
+            $notifications
+        );
     }
     
 
