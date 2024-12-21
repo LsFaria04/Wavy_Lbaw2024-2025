@@ -16,6 +16,12 @@ function addEventListeners() {
 
 }
 
+
+
+//Pusher notifications -----------------------------------------------------------------------------
+
+
+//Trigger the notifications pop up when a notification is received
 function triggerPopupNotification(message) {
     const notificationPopup = document.createElement('div');
     notificationPopup.classList.add('p-4', 'mb-4', 'text-sm', 'text-green-800', 'rounded-lg', 'bg-green-50', 'dark:bg-gray-800', 'dark:text-green-400');
@@ -43,7 +49,7 @@ function triggerPopupNotification(message) {
     }, 5000); // popup stays for 5 seconds
 }
 
-
+//initializes the pusher
 function initializePusher(userId) {
     const pusher = new Pusher('0b3c646b9e8aeb6f4458', {
         cluster: 'eu',
@@ -54,30 +60,31 @@ function initializePusher(userId) {
 
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {
-        console.log('Received like notification:', data);
         const timestamp = data.timestamp || new Date().toISOString();
         triggerPopupNotification(data.message);
     });
 
     // Handle "comment" notifications
     channel.bind('notification-postcomment', function(data) {
-        console.log(`New comment notification: ${data.message}`);
         const timestamp = data.timestamp || new Date().toISOString();
         triggerPopupNotification(data.message);
     });
 
     // Handle "follow" notifications
     channel.bind('notification-follow', function (data) {
-        console.log(`New follow notification: ${data.message}`);
         const timestamp = data.timestamp || new Date().toISOString();
         const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
         triggerPopupNotification(data.message);
     });
  
-    console.log(`Subscribed to channel: public-user.${userId}`);
 }
 
 
+
+//Notifications creation ------------------------------------------------------------------------------------------------------------------------------
+
+
+//Creates the notification element (container and it's content)
 function createNotificationElement(type, message, timestamp, data) {
     if (!data) {
         console.error("No data received for notification:", message);
@@ -167,27 +174,12 @@ function createNotificationElement(type, message, timestamp, data) {
     return notificationElement;
 }
 
-function formatRelativeTime(date) {
-    const now = new Date();
-    const seconds = Math.floor((now - date) / 1000);
-    const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-
-    if (seconds < 60) {
-        return rtf.format(-seconds, 'second');
-    } else if (seconds < 3600) {
-        return rtf.format(-Math.floor(seconds / 60), 'minute');
-    } else if (seconds < 86400) {
-        return rtf.format(-Math.floor(seconds / 3600), 'hour');
-    } else if (seconds < 2592000) {
-        return rtf.format(-Math.floor(seconds / 86400), 'day');
-    } else if (seconds < 31536000) {
-        return rtf.format(-Math.floor(seconds / 2592000), 'month');
-    } else {
-        return rtf.format(-Math.floor(seconds / 31536000), 'year');
-    }
-}
 
 
+//Notification button tab functions (used when one of the buttons in the tab is clicked) -----------------------------------------------
+
+
+//Initializes the event listener for the clicks in the tab buttons
 function initializeNotificationTabs() {
     const tabs = ['all-notifications', 'comments', 'likes', 'follows'];
 
@@ -199,6 +191,8 @@ function initializeNotificationTabs() {
     });
 }
 
+
+//Shows the section that was selected by the user when he clicked the button in the tab. Calls the load function to load the notifications from the DB
 let notificationsTab = 'all-notifications';
 function showTab(tab) {
     notificationsTab = tab;
@@ -212,6 +206,7 @@ function showTab(tab) {
     loadNotifications();
 }
 
+//Toggles the visibility of the sections (shoe the one that the user selected)
 function toggleVisibility(activeId, groupSelector) {
     const sections = document.querySelectorAll(groupSelector);
     sections.forEach(section => {
@@ -224,6 +219,7 @@ function toggleVisibility(activeId, groupSelector) {
     }
 }
 
+//Changes the tab highlight depending on the section that is being displayed
 function toggleTabHighlight(activeTabId, groupSelector) {
     const tabs = document.querySelectorAll(groupSelector);
     tabs.forEach(tab => {
@@ -238,6 +234,10 @@ function toggleTabHighlight(activeTabId, groupSelector) {
     }
 }
 
+
+//Notification Loading and insertion (new notifications retrieved from the DB) ------------------------------------------
+
+//Loads the first set of notifications from the db and inserts them into the appropriated section
 function loadNotifications(){
     currentPage++;
     const notificationsPage = document.querySelector("#notifications-content");
@@ -248,6 +248,7 @@ function loadNotifications(){
     });
 }
 
+//inserts the notification loaded from the db into the appropriated section
 function insertMoreNotifications(response) {
     removeLoadingCircle();
 
@@ -257,7 +258,6 @@ function insertMoreNotifications(response) {
 
     const notificationsContainer = document.querySelector(`#${notificationsTab}-content`);
     if (notificationsContainer) {
-        console.log(notifications);
         if (notifications.data && notifications.data.length > 0) {
             notifications.data.forEach(notification => {
                 let type = null;
@@ -268,7 +268,6 @@ function insertMoreNotifications(response) {
                 }
                 else if (notification.likeid !== null){
                     type = 'likes';
-                    console.log(notification);
                     message = notification.like?.post?.message;
                     if(message === undefined){
                         message = notification.like?.comment.message;
