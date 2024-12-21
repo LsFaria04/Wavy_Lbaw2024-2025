@@ -198,7 +198,7 @@ function initializeNotificationTabs() {
 let notificationsTab = 'all-notifications';
 function showTab(tab) {
     notificationsTab = tab;
-    currentPage = 0;
+    currentPage = 1;
     const notificationsContainer = document.querySelector(`#${notificationsTab}-content`);
 
     if(notificationsContainer === null){
@@ -247,7 +247,6 @@ function toggleTabHighlight(activeTabId, groupSelector) {
 
 //Loads the first set of notifications from the db and inserts them into the appropriated section
 function loadNotifications(){
-    currentPage++;
     const notificationsPage = document.querySelector("#notifications-content");
     insertLoadingCircle(notificationsPage);
     sendAjaxRequest('post', '/api/notifications?page=' + currentPage + '&category=' + notificationsTab, null, function() {
