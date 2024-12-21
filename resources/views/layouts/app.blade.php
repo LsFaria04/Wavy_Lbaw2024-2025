@@ -30,7 +30,7 @@
         <script src="https://js.pusher.com/7.0/pusher.min.js" defer></script>
 
     </head>
-    <body class="flex flex-col min-h-screen overscroll-none">
+    <body class="flex flex-col min-h-screen overscroll-none overflow-x-hidden">
         <main class = "flex flex-col grow lg:flex-row bg-white ">
             @include('partials.navigation_menu')
             <section id="content" class= "grow flex flex-col mb-16 lg:mb-0 lg:ml-52">
