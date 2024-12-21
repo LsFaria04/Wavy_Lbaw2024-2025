@@ -455,8 +455,11 @@ function searchMyTopics(event){
 
 //adds more topics to a user using an ajax request and removing from the DOM in the add topic page and adding the topic in the DOM in my topics page
 function addTopicToUser(topicId){
+  const addButton = document.getElementById("topic-" + topicId);
+  addButton.disable = true;
   sendAjaxRequest('put', '/api/topics/add/' + topicId + '/' + userId, null, function(){
     let response = JSON.parse(this.responseText);
+    addButton.disable = false;
 
     if(response.response == '200'){
       //Display a message 
@@ -503,8 +506,12 @@ function addTopicToUser(topicId){
 
 //removes a topic from the user using an ajax request and removing the topic from the DOM.
 function removeTopicFromUser(topicId){
+  const removeButton = document.getElementById("topic-" + topicId);
+  removeButton.disable = true;
   sendAjaxRequest('delete', '/api/topics/remove/' + topicId + '/' + userId, null, function(){
     let response = JSON.parse(this.responseText);
+
+    removeButton.disable = false;
 
     if(response.response == '200'){
       const messageContainer = document.getElementById("messageContainer");
@@ -571,6 +578,7 @@ function toggleFollow() {
 }
 
 function sendFollowRequest(userId, csrfToken, followButton) {
+  followButton.disable = true;
   // Send the follow request (pending state)
   fetch('/profile/' + userId + '/follow', {
       method: 'POST',
@@ -584,12 +592,16 @@ function sendFollowRequest(userId, csrfToken, followButton) {
       })
   })
   .then(response => {
+      followButton.disable = false;
       if (!response.ok) {
-          throw new Error('Something went wrong with the follow request.');
+          const messageContainer = document.getElementById('messageContainer');
+          createAlert(messageContainer,'Something went wrong with the follow request.' , true);
+          return;
       }
       return response.json();
   })
   .then(data => {
+    followButton.disable = false;
       if (data.success) {
           followButton.textContent = 'Pending Request';
           followButton.classList.remove('bg-sky-700', 'hover:bg-sky-900');
@@ -598,11 +610,14 @@ function sendFollowRequest(userId, csrfToken, followButton) {
       }
   })
   .catch(error => {
-      console.error('Something went wrong with the follow request.', error);
+      followButton.disable = false;
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer,`Something went wrong with the follow request : ${error} `, true);
   });
 }
 
 function followUser(userId, csrfToken, followButton) {
+  followButton.disable = true;
 
   // Send the follow request (accepted state)
   fetch('/profile/' + userId + '/follow', {
@@ -617,12 +632,15 @@ function followUser(userId, csrfToken, followButton) {
       })
   })
   .then(response => {
+    followButton.disable = false;
       if (!response.ok) {
-          throw new Error('Something went wrong with the follow request.');
+        const messageContainer = document.getElementById('messageContainer');
+        createAlert(messageContainer,'Something went wrong with the follow request.' , true);
       }
       return response.json();
   })
   .then(data => {
+    followButton.disable = false;
       if (data.success) {
           followButton.textContent = 'Unfollow';  
           followButton.classList.remove('bg-sky-700', 'hover:bg-sky-900');
@@ -635,12 +653,16 @@ function followUser(userId, csrfToken, followButton) {
       }
   })
   .catch(error => {
-      console.error('Something went wrong with the follow request.', error);
+    followButton.disable = false;
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer,`Something went wrong with the follow request : ${error} `, true);
   });
 }
 
 function unfollowUser(userId, csrfToken, followButton) {
   // Send the unfollow request (remove follow relationship)
+
+  followButton.disable = true;
   fetch('/profile/' + userId + '/unfollow', {
       method: 'POST',
       headers: {
@@ -652,12 +674,15 @@ function unfollowUser(userId, csrfToken, followButton) {
       })
   })
   .then(response => {
+    followButton.disable = false;
       if (!response.ok) {
-          throw new Error('Something went wrong with the unfollow request.');
+        const messageContainer = document.getElementById('messageContainer');
+        createAlert(messageContainer,'Something went wrong with the follow request.' , true);
       }
       return response.json();
   })
   .then(data => {
+    followButton.disable = false;
     if (data.success) {
       const isPrivate = followButton.getAttribute('data-is-private') === 'true';
 
@@ -681,11 +706,14 @@ function unfollowUser(userId, csrfToken, followButton) {
   }
   })
   .catch(error => {
-      console.error('Something went wrong with the unfollow request.', error);
+    followButton.disable = false;
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer,`Something went wrong with the follow request : ${error} `, true);
   });
 }
 
 function cancelPendingRequest(userId, csrfToken, followButton) {
+  followButton.disable = true;
 
   fetch('/profile/' + userId + '/unfollow', {
       method: 'POST',
@@ -695,8 +723,11 @@ function cancelPendingRequest(userId, csrfToken, followButton) {
       },
       body: JSON.stringify({ user_id: userId })
   })
-  .then(response => response.json())
+  .then(response => {
+    followButton.disable = false;
+    return response.json()})
   .then(data => {
+    followButton.disable = false;
       if (data.success) {
           const isPrivate = followButton.getAttribute('data-is-private') === 'true';
           
@@ -713,7 +744,11 @@ function cancelPendingRequest(userId, csrfToken, followButton) {
           }
       }
   })
-  .catch(error => console.error('Error:', error));
+  .catch(error => {
+    followButton.disable = false;
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer,`Something went wrong with the cancel : ${error} `, true);
+    });
 }
 
 

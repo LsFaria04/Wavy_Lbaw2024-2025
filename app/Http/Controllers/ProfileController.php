@@ -429,7 +429,8 @@ class ProfileController extends Controller {
         Log::info('Follower type', ['type' => get_class($follower)]);
 
         event(new FollowNotification($follower, $userid, 'unfollowed'));
-    
+        
+        Log::info("pois");
         return response()->json([
             'success' => true,
             'status' => 'Unfollowed'

@@ -30,7 +30,7 @@ function setupCreateUserMenu() {
   if (createUserBtn && createUserMenu && cancelCreateUserBtn) {
     createUserBtn.addEventListener("click", () => {
       createUserMenu.classList.toggle("hidden");
-      createUserMenu.classList.toggle("flex");
+      createUserMenu.classList.add("flex");
       
     });
 
