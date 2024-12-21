@@ -8,7 +8,7 @@ use App\Models\Like;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
-class LikeController extends Controlle {
+class LikeController extends Controller {
 
     /**
      * Gets the likes created by user (By username)
