@@ -71,7 +71,7 @@
                                         @endif
                                     </div>
                                     <div class="text-xs text-gray-400">
-                                        {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
+                                        {{ $notification->date->diffForHumans() }}
                                     </div>
                                 </div>
                             @endforeach
@@ -103,7 +103,7 @@
                                         @endif
                                     </div>
                                     <div class="text-xs text-gray-400">
-                                        {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
+                                        {{ $notification->date->diffForHumans() }}
                                     </div>
                                 </div>
                             @endforeach
@@ -134,7 +134,7 @@
                                         @endif
                                     </div>
                                     <div class="text-xs text-gray-400">
-                                        {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
+                                            {{ $notification->date->diffForHumans() }}
                                     </div>
                                 </div>
                             @endforeach
@@ -167,7 +167,7 @@
                                             </div>
                                         </div>
                                         <div class="text-xs text-gray-400">
-                                            {{ \Carbon\Carbon::parse($notification->date)->diffForHumans() }}
+                                            {{ $notification->date->diffForHumans() }}
                                         </div>
                                     </div>
                                 @endif
