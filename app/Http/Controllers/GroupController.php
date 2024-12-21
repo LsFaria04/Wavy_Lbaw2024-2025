@@ -15,20 +15,25 @@ use Illuminate\Support\Facades\Auth;
 class GroupController extends Controller
 {
     public function store(Request $request) {
+        Log::info("Creating a group");
         $validated = $request->validate([
             'groupname' => 'required|string|max:255|unique:groups,groupname',
             'description' => 'required|string',
             'visibilitypublic' => 'required|boolean',
         ]);
+
+        Log::info("Validated");
     
         try {
+            Log::info($request);
             // Create the group
             $group = Group::create([
-                'groupname' => 'groupname',
-                'description' => 'description',
-                'visibilitypublic' => 'visibilitypublic',
+                'groupname' => $request->groupname,
+                'description' => $request->description,
+                'visibilitypublic' => $request->visibilitypublic,
                 'ownerid' => Auth::id(),
             ]);
+            Log::info("Created");
     
             if (!$group) {
                 return redirect()->back()->withErrors(['error' => 'Failed to create the group. Please try again.']);
@@ -207,17 +212,17 @@ class GroupController extends Controller
     
         // Check if the user is already a member
         if ($group->members()->where('group_membership.userid', $userid)->exists()) {
-            return response()->json(['status' => 'error', 'message' => 'User is already a member.'], 400);
+            return response()->json('User is already a member.', 400);
         }
     
         // Check if the user has a pending join request
         if (JoinGroupRequest::where('groupid', $groupid)->where('userid', $userid)->exists()) {
-            return response()->json(['status' => 'error', 'message' => 'User has already requested to join this group.'], 400);
+            return response()->json('User has already requested to join this group.', 400);
         }
     
         // Check if the user is already invited
         if (GroupInvitation::where('groupid', $groupid)->where('group_invitation.userid', $userid)->exists()) {
-            return response()->json(['status' => 'error', 'message' => 'User is already invited.'], 400);
+            return response()->json('User is already invited.', 400);
         }
     
         // Create the invitation

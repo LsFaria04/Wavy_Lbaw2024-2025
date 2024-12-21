@@ -95,13 +95,6 @@ function addEventListeners() {
       // Handle group page
       const groupPage = document.querySelector("#group-tab-content");
       if (groupPage !== null && (maxPage > currentPage || maxPage === -1)) {
-        /*
-        if (!isPublic && !isadmin) {
-          console.log("here2")
-            // Skip loading more for private groups
-            return;
-        }
-        */
 
         currentPage++;
         insertLoadingCircle(groupPage);
@@ -128,45 +121,14 @@ function addEventListeners() {
         currentPage++;
         loading = true;
         insertLoadingCircle(notificationsPage);
-        sendAjaxRequest('get', `/api/notifications?page=${currentPage}`, null, insertMoreNotifications);
+        sendAjaxRequest('post', '/api/notifications?page=' + currentPage + '&category=' + notificationsTab, null, function() {
+            insertMoreNotifications(this.responseText);
+            loading = false;
+          });
+             
       }
     }
   }
-
-/*
-  async function loadMoreComments() {
-    if ((comments !== null) && (maxPage > currentPage || maxPage == -1) && (!loading)) {
-      currentPage++;
-      insertLoadingCircle(comments); // Function to insert the loading indicator
-      loading = true; // Set loading flag to true
-  
-      const postId = document.querySelector('input[name="postid"]').value;
-      
-      try {
-        const response = await fetch(`/api/comments/post/${postId}?page=${currentPage}`, {
-          headers: {
-            'Accept': 'application/json', // Tell the server that we expect JSON
-          },
-        });
-        
-        // Ensure the response is OK before proceeding
-        if (!response.ok) {
-          throw new Error(`Failed to fetch comments, status: ${response.status}`);
-        }
-  
-        const data = await response.json(); // Assuming the response is in JSON format
-  
-        // Pass the data to the function that will insert more comments
-        insertMoreCommentsPost(data);
-  
-      } catch (error) {
-        console.error('Error loading comments:', error);  // Log the error with more context
-      } finally {
-        loading = false; // Reset loading flag, regardless of success or failure
-      }
-    }
-}
-*/
   
 
   //inserts a loading circle when an ajax request starts (infinite scroll) 

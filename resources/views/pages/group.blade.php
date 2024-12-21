@@ -84,35 +84,34 @@
                     </select>
                 </div>
                 <div class="flex justify-end space-x-2">
-                    <button type="button" class="px-4 py-2 bg-gray-400 text-white rounded-2xl hover:bg-gray-600" onclick="toggleEditGroupMenu()">Cancel</button>
-                    <button type="submit" class="px-4 py-2 bg-sky-700 text-white rounded-2xl hover:bg-sky-900">Save</button>
+                    <button type="button" class="px-4 py-2 w-20 bg-gray-700 text-white font-semibold rounded-3xl hover:bg-gray-800" onclick="toggleEditGroupMenu()">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800">Save</button>
                 </div>
             </form>
         </div>
     </div>
 
     <!-- Modal for inviting users -->
-    <div id="invite-modal" class="hidden fixed top-0 left-0 w-full h-full bg-gray-800 bg-opacity-50 justify-center items-center z-50">
-        <div class="bg-white rounded-lg shadow-lg p-6 w-3/4 max-w-lg">
-                       
-            <div class="grid grid-cols-3 justify-center w-full max-w-full mb-4">
+    <div id="invite-modal" class="fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden z-50">
+        <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
+            <header class="grid grid-cols-3 justify-center w-full max-w-full mb-4">
                 <button id="close-invite-modal" class="text-gray-500 hover:text-gray-700 col-start-1 col-span-1 justify-self-start">
                     <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button> 
-                <h3 class="col-start-2  text-2xl self-center font-bold text-nowrap">Invite Users</h3>
-            </div>
+                <h2 class="col-start-2  text-2xl self-center font-bold text-nowrap">Invite Users</h3>
+                </header>
             <input
                 type="text"
                 id="user-search"
                 placeholder="Search for a user..."
-                class="w-full border border-gray-300 rounded-lg px-4 py-2 my-2"
+                class="border rounded-3xl p-2.5 pl-5 w-full my-2 focus:outline-none border-gray-300"
             />
             <div id="search-results" class="max-h-64 overflow-y-auto pb-3">
                 <!-- Search results will be dynamically injected here -->
             </div>
-            <button id="send-invite" class="bg-blue-500 text-white px-4 py-3 rounded-md hover:bg-blue-700 disabled:opacity-50" disabled>
+            <button id="send-invite" class="px-4 py-2 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800 disabled:opacity-50" disabled>
                 Send Invite
             </button>
         </div>

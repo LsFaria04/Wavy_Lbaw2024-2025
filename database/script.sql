@@ -1026,6 +1026,12 @@ INSERT INTO USER_REPORTS (userID, postID, commentID, reason) VALUES
 INSERT INTO GROUP_INVITATION (groupID, userID, createdDate) VALUES
     (3, 2, '2024-10-03 14:00:00'), 
     (3, 3, '2024-12-03 16:00:00'),
+    (2, 4, NOW()),
+    (4, 4, NOW()),
+    (5, 4, NOW()),
+    (6, 4, NOW()),
+    (7, 4, NOW()),
+    (8, 4, NOW()),
     (8, 3, NOW());
 
 INSERT INTO POST_TOPICS (postID, topicID) 

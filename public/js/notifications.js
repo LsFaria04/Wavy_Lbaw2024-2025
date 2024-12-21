@@ -1,4 +1,5 @@
 function addEventListeners() {
+    window.addEventListener("scroll", infiniteScroll);
     document.addEventListener('DOMContentLoaded', () => {
         fadeAlert();
         initializeNotificationTabs();
@@ -15,6 +16,12 @@ function addEventListeners() {
 
 }
 
+
+
+//Pusher notifications -----------------------------------------------------------------------------
+
+
+//Trigger the notifications pop up when a notification is received
 function triggerPopupNotification(message) {
     const notificationPopup = document.createElement('div');
     notificationPopup.classList.add('p-4', 'mb-4', 'text-sm', 'text-green-800', 'rounded-lg', 'bg-green-50', 'dark:bg-gray-800', 'dark:text-green-400');
@@ -42,7 +49,7 @@ function triggerPopupNotification(message) {
     }, 5000); // popup stays for 5 seconds
 }
 
-
+//initializes the pusher
 function initializePusher(userId) {
     const pusher = new Pusher('0b3c646b9e8aeb6f4458', {
         cluster: 'eu',
@@ -53,48 +60,31 @@ function initializePusher(userId) {
 
     // Handle "like" notifications
     channel.bind('notification-postlike', function(data) {
-        console.log('Received like notification:', data);
         const timestamp = data.timestamp || new Date().toISOString();
-        handleNotification('likes', data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
 
     // Handle "comment" notifications
     channel.bind('notification-postcomment', function(data) {
-        console.log(`New comment notification: ${data.message}`);
         const timestamp = data.timestamp || new Date().toISOString();
-        handleNotification('comments', data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
 
     // Handle "follow" notifications
     channel.bind('notification-follow', function (data) {
-        console.log(`New follow notification: ${data.message}`);
         const timestamp = data.timestamp || new Date().toISOString();
         const type = data.type === 'follow-request' ? 'follow-requests' : 'follows';
-        handleNotification(type, data.message, timestamp, data);
         triggerPopupNotification(data.message);
     });
  
-    console.log(`Subscribed to channel: public-user.${userId}`);
 }
 
-function handleNotification(type, message, timestamp, data) {
-    // Update the "all-notifications" tab
-    const allNotificationsContainer = document.getElementById('all-notifications-content');
-    if (allNotificationsContainer) {
-        const notificationElement = createNotificationElement(type, message, timestamp, data);
-        allNotificationsContainer.prepend(notificationElement);
-    }
 
-    // Update the specific tab for the notification type
-    const specificNotificationsContainer = document.getElementById(`${type}-content`);
-    if (specificNotificationsContainer) {
-        const notificationElement = createNotificationElement(type, message, timestamp, data);
-        specificNotificationsContainer.prepend(notificationElement);
-    }
-}
 
+//Notifications creation ------------------------------------------------------------------------------------------------------------------------------
+
+
+//Creates the notification element (container and it's content)
 function createNotificationElement(type, message, timestamp, data) {
     if (!data) {
         console.error("No data received for notification:", message);
@@ -104,8 +94,7 @@ function createNotificationElement(type, message, timestamp, data) {
     const notificationElement = document.createElement('div');
     notificationElement.classList.add('flex', 'items-center', 'p-4', 'mb-4', 'bg-gray-50', 'rounded-lg', 'shadow-sm', 'space-y-4');
 
-    const date = new Date(timestamp);
-    const formattedDate = formatRelativeTime(date);
+    const formattedDate = timestamp
 
     let notificationContent = `
         <div class="flex-1">
@@ -119,10 +108,21 @@ function createNotificationElement(type, message, timestamp, data) {
     `;
 
     // Customize notification content based on type
-    if (data && data.message && data.user) {
-        const username = data.user.username || 'Unknown user';
+    if (data) {
+
+        let username = 'Unknown user';
+        if(data.like){
+            username = data.like.user.username;
+        }
+        else if(data.follow){
+            username = data.follow.follower.username;
+        }
+        else if(data.comment){
+            username = data.comment.user.username;
+        }
+        
         const postUrl = `/posts/${data.post_id}`;
-        const usernameUrl = `/profile/${data.user.username}`;
+        const usernameUrl = `/profile/${data.follow?.follower.username}`;
 
         if (type === 'likes') {
             notificationContent = `
@@ -131,7 +131,7 @@ function createNotificationElement(type, message, timestamp, data) {
                         <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> liked your post
                     </div>
                     <div class="text-sm text-gray-500">
-                        <a href="${postUrl}" class="text-blue-600 hover:underline">Your Post</a>
+                        <a href="${postUrl}" class="text-blue-600 hover:underline">"${message}"</a>
                     </div>
                 </div>
                 <div class="text-xs text-gray-400">
@@ -145,7 +145,7 @@ function createNotificationElement(type, message, timestamp, data) {
                         <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> commented on your post
                     </div>
                     <div class="text-sm text-gray-500">
-                        <a href="${postUrl}" class="text-blue-600 hover:underline">Your Post</a>
+                        <a href="${postUrl}" class="text-blue-600 hover:underline">"${message}"</a>
                     </div>
                 </div>
                 <div class="text-xs text-gray-400">
@@ -173,27 +173,13 @@ function createNotificationElement(type, message, timestamp, data) {
     notificationElement.innerHTML = notificationContent;
     return notificationElement;
 }
-function formatRelativeTime(date) {
-    const now = new Date();
-    const seconds = Math.floor((now - date) / 1000);
-    const rtf = new Intl.RelativeTimeFormat('en', { numeric: 'auto' });
-
-    if (seconds < 60) {
-        return rtf.format(-seconds, 'second');
-    } else if (seconds < 3600) {
-        return rtf.format(-Math.floor(seconds / 60), 'minute');
-    } else if (seconds < 86400) {
-        return rtf.format(-Math.floor(seconds / 3600), 'hour');
-    } else if (seconds < 2592000) {
-        return rtf.format(-Math.floor(seconds / 86400), 'day');
-    } else if (seconds < 31536000) {
-        return rtf.format(-Math.floor(seconds / 2592000), 'month');
-    } else {
-        return rtf.format(-Math.floor(seconds / 31536000), 'year');
-    }
-}
 
 
+
+//Notification button tab functions (used when one of the buttons in the tab is clicked) -----------------------------------------------
+
+
+//Initializes the event listener for the clicks in the tab buttons
 function initializeNotificationTabs() {
     const tabs = ['all-notifications', 'comments', 'likes', 'follows'];
 
@@ -205,11 +191,22 @@ function initializeNotificationTabs() {
     });
 }
 
+
+//Shows the section that was selected by the user when he clicked the button in the tab. Calls the load function to load the notifications from the DB
+let notificationsTab = 'all-notifications';
 function showTab(tab) {
+    notificationsTab = tab;
+    currentPage = 0;
+    const notificationsContainer = document.querySelector(`#${notificationsTab}-content`);
+    while(notificationsContainer.firstChild){
+        notificationsContainer.firstChild.remove();
+    }
     toggleVisibility(tab + '-content', '.notifications-section');
     toggleTabHighlight(tab + '-tab', '.tab-btn');
+    loadNotifications();
 }
 
+//Toggles the visibility of the sections (shoe the one that the user selected)
 function toggleVisibility(activeId, groupSelector) {
     const sections = document.querySelectorAll(groupSelector);
     sections.forEach(section => {
@@ -222,6 +219,7 @@ function toggleVisibility(activeId, groupSelector) {
     }
 }
 
+//Changes the tab highlight depending on the section that is being displayed
 function toggleTabHighlight(activeTabId, groupSelector) {
     const tabs = document.querySelectorAll(groupSelector);
     tabs.forEach(tab => {
@@ -236,33 +234,59 @@ function toggleTabHighlight(activeTabId, groupSelector) {
     }
 }
 
-function insertMoreNotifications() {
+
+//Notification Loading and insertion (new notifications retrieved from the DB) ------------------------------------------
+
+//Loads the first set of notifications from the db and inserts them into the appropriated section
+function loadNotifications(){
+    currentPage++;
+    const notificationsPage = document.querySelector("#notifications-content");
+    insertLoadingCircle(notificationsPage);
+    sendAjaxRequest('post', '/api/notifications?page=' + currentPage + '&category=' + notificationsTab, null, function() {
+        insertMoreNotifications(this.responseText);
+        loading = false;
+    });
+}
+
+//inserts the notification loaded from the db into the appropriated section
+function insertMoreNotifications(response) {
     removeLoadingCircle();
 
-    const notificationsContainer = document.querySelector("#notifications-content");
-    if (!notificationsContainer) return;
+    let notifications = JSON.parse(response);
 
-    try {
-        let notifications = JSON.parse(this.responseText);
+    maxPage = notifications.last_page;
 
-        console.log(notifications);
-
-        maxPage = notifications.last_page || 0;
-
+    const notificationsContainer = document.querySelector(`#${notificationsTab}-content`);
+    if (notificationsContainer) {
         if (notifications.data && notifications.data.length > 0) {
             notifications.data.forEach(notification => {
-                const notificationElement = document.createElement("div");
-                notificationElement.classList.add("notification-item");
-                notificationElement.innerHTML = `
-                    <div class="notification-content">
-                        <p>${notification.message}</p>
-                        <span class="notification-time">${notification.created_at}</span>
-                    </div>`;
+                let type = null;
+                let message = null;
+                if(notification.followid !== null){
+                    type = 'follows';
+                    message = "Follow";
+                }
+                else if (notification.likeid !== null){
+                    type = 'likes';
+                    message = notification.like?.post?.message;
+                    if(message === undefined){
+                        message = notification.like?.comment.message;
+                    }
+                }
+                else if (notification.commentid !== null){
+                    type = 'comments';
+                    message = notification.comment.message;
+                }
+                const notificationElement = createNotificationElement(type, message, notification.date, notification);
                 notificationsContainer.appendChild(notificationElement);
             });
+
+
+        } else {
+            const warning = document.createElement('p');
+            warning.innerHTML = 'No more notifications found.';
+            notificationsContainer.appendChild(warning);
         }
-    } catch (error) {
-        console.error("Failed to load notifications:", error);
     }
 }
 
