@@ -289,7 +289,7 @@ function updateFileList() {
   Array.from(fileInput.files).forEach(file => {
     if (file.size > 1048576) {
       const messageContainer = document.getElementById('messageContainer');
-      createAlert(messageContainer, "File is too big (>2Mb)", true);
+      createAlert(messageContainer, "File is too big (>1Mb)", true);
     }
     else {
       selectedFiles.push(file);
@@ -393,9 +393,9 @@ function updateFileNameEdit(postId) {
   const newFileDisplay = document.getElementById(`newFiles-${postId}`)
 
   Array.from(fileInput.files).forEach(file => {
-    if (file.size > 2097152) {
+    if (file.size > 1048576) {
       const messageContainer = document.getElementById('messageContainer');
-      createAlert(messageContainer, "File is too big (>2Mb)", true);
+      createAlert(messageContainer, "File is too big (>1Mb)", true);
     }
     else {
       selectedFilesEdit.push(file);

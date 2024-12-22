@@ -141,9 +141,9 @@ const newFileDisplay = document.getElementById(`newFiles-${commentId}`)
 
 
 Array.from(fileInput.files).forEach(file => {
-  if (file.size > 2097152) {
+  if (file.size > 1048576) {
     const messageContainer = document.getElementById('messageContainer');
-    createAlert(messageContainer, "File is too big (>2MB)", true);
+    createAlert(messageContainer, "File is too big (>1MB)", true);
   }
   else {
     selectedFilesEdit.push(file);
@@ -372,7 +372,7 @@ const fileDisplay = document.getElementById('fileDisplay');
 Array.from(fileInput.files).forEach(file => {
   if (file.size > 1048576) {
     const messageContainer = document.getElementById('messageContainer');
-    createAlert(messageContainer, "File is too big (>2MB)", true);
+    createAlert(messageContainer, "File is too big (>1MB)", true);
   }
   else {
     selectedFiles.push(file);

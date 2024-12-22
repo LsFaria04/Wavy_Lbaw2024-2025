@@ -207,7 +207,7 @@ function updateFileButtonList(){
   Array.from(fileInput.files).forEach(file => {
     if (file.size > 1048576){
       const messageContainer = document.getElementById('messageContainer');
-      createAlert(messageContainer, "File is too big (>2Mb)", true);
+      createAlert(messageContainer, "File is too big (>1Mb)", true);
     }
     else{
       selectedFiles.push(file);
