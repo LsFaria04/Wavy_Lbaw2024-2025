@@ -149,12 +149,6 @@
             </button>
         </div>
     </div>
-    <div class="subcomments mt-4 pl-4 border-l border-gray-200">
-    <!-- Loop through subcomments -->
-    @foreach ($comment->subcomments as $subcomment)
-        @include('partials.comment', ['comment' => $subcomment])
-    @endforeach
-    </div>
     <!-- Hidden form for adding subcomment -->
     <div id="subComment-form-{{ $comment->commentid }}" class="addComment mt-4 p-4 bg-gray-50 rounded-xl shadow-md border hidden">
         <form id="subCommentForm" action="{{ route('comments.storeSubcomment') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
@@ -162,7 +156,7 @@
             <input type="hidden" name="parent_comment_id" value="{{ $comment->commentid }}">
 
             <!-- Text Area -->
-            <textarea id="message" name="message" rows="3"
+            <textarea id="message-{{ $comment->commentid }}" name="message" rows="3"
                     class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none resize-none placeholder-gray-400 text-gray-700 text-sm"
                     placeholder="Write your comment here..."></textarea>
 
@@ -188,6 +182,13 @@
             </ul>
         </form>
     </div>
+    <div class="subcomments mt-4 pl-4 border-l border-gray-200">
+    <!-- Loop through subcomments -->
+    @foreach ($comment->subcomments as $subcomment)
+        @include('partials.comment', ['comment' => $subcomment])
+    @endforeach
+    </div>
+    
     @auth
         @if(auth()->id() === $comment->userid || Auth::user()->isadmin) 
             <!-- Edit Section in comment.blade.php -->

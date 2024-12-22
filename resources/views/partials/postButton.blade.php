@@ -14,7 +14,7 @@
             @endif
             <div class="flex items-start">
                 <div class="flex-1">
-                    <textarea id="message" name="message" rows="2" class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none block" placeholder="What's on your mind?" required></textarea>
+                    <textarea id="message27" name="message" rows="2" class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none block" placeholder="What's on your mind?" required></textarea>
                 </div>
             </div>
 
