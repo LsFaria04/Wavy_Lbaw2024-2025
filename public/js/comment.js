@@ -568,52 +568,64 @@ function toggleSubcommentForm(commentId) {
 }
 
 function createComment(commentInfo) {
-let comment = document.createElement('div');
-comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer", "w-full", "max-w-full");
+  let comment = document.createElement('div');
+  comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer", "w-full", "max-w-full");
 
-let subcommentsHtml = '';
+  let subcommentsHtml = '';
 
-const subcomments = Array.isArray(commentInfo.subcomments) ? commentInfo.subcomments : [];
+  const subcomments = Array.isArray(commentInfo.subcomments) ? commentInfo.subcomments : [];
 
-if (subcomments.length > 0) {
-  subcommentsHtml = insertMoreSubCommentsToComment(subcomments); 
-}
+  if (subcomments.length > 0) {
+      subcommentsHtml = insertMoreSubCommentsToComment(subcomments); 
+  }
 
-comment.innerHTML = `
-  <div class="comment-header mb-2 flex justify-between items-center">
-      <div>
-        <div class = "flex flex-row gap-2">
-              <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                ${commentInfo.user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${commentInfo.user.profile_picture[0].path.includes('profile') ? '/storage/' + commentInfo.user.profile_picture[0].path : commentInfo.user.profile_picture.length > 1 ? '/storage/' + commentInfo.user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+  const profilePicture = commentInfo.user.profile_picture.length > 0
+      ? commentInfo.user.profile_picture[0].path.includes('profile')
+          ? '/storage/' + commentInfo.user.profile_picture[0].path
+          : commentInfo.user.profile_picture.length > 1
+          ? '/storage/' + commentInfo.user.profile_picture[1].path
+          : ''
+      : null;
+
+  comment.innerHTML = `
+      <div class="comment-header mb-2 flex justify-between items-center">
+          <div>
+              <div class="flex flex-row gap-2">
+                  <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                      ${profilePicture 
+                          ? `<img class="h-full w-full object-cover rounded-md mb-2 mx-auto" 
+                                   src="${profilePicture}" 
+                                   alt="ProfilePicture">`
+                          : ''}
+                  </div>
+                  <h3 class="font-bold">
+                      <a href="${commentInfo.user.state === 'deleted' ? '#' : '../profile/' + commentInfo.user.username}" 
+                          class="text-black hover:text-sky-900">
+                          ${commentInfo.user.state === 'deleted' ? 'Deleted User' : commentInfo.user.username}
+                      </a>
+                  </h3>
               </div>
-          <h3 class="font-bold">
-            <a href="${ commentInfo.user.state === 'deleted' ? '#' : '../profile/' + commentInfo.user.username }" 
-                class="text-black hover:text-sky-900">
-                ${ commentInfo.user.state === 'deleted' ? 'Deleted User' : commentInfo.user.username }
-            </a>
-          </h3>
-        </div>
-          <span class="text-gray-500 text-sm">${ commentInfo.createddate }</span>
+              <span class="text-gray-500 text-sm">${commentInfo.createddate}</span>
+          </div>
       </div>
-  </div>
-  <div class="comment-body mb-2 cursor-pointer max-w-screen-lg" id="comment-content-${commentInfo.commentid}">
-      <p>${ commentInfo.message }</p>
-  </div>
-  <div class="comment-interactions flex items-center gap-4 mt-4">
-        ${createCommentLikeButton(commentInfo.commentid, commentInfo.comment_likes_count, commentInfo.liked)}
-        ${createCommentCommentButton(commentInfo.commentid, commentInfo.subcomments_count)}
-  </div>
-  <div class="subcomments mt-4 pl-4 border-l border-gray-200">
-        ${subcommentsHtml}   <!-- Recursive call -->
-  </div>
-  <div id="subComment-form-${commentInfo.commentid}" class="addComment mt-4 p-4 bg-gray-50 rounded-xl shadow-md border hidden">
-    ${createCommentHiddenForm(commentInfo.commentid)}
-  </div>
-`;
+      <div class="comment-body mb-2 cursor-pointer max-w-screen-lg" id="comment-content-${commentInfo.commentid}">
+          <p>${commentInfo.message}</p>
+      </div>
+      <div class="comment-interactions flex items-center gap-4 mt-4">
+          ${createCommentLikeButton(commentInfo.commentid, commentInfo.comment_likes_count, commentInfo.liked)}
+          ${createCommentCommentButton(commentInfo.commentid, commentInfo.subcomments_count)}
+      </div>
+      <div class="subcomments mt-4 pl-4 border-l border-gray-200">
+          ${subcommentsHtml}   <!-- Recursive call -->
+      </div>
+      <div id="subComment-form-${commentInfo.commentid}" class="addComment mt-4 p-4 bg-gray-50 rounded-xl shadow-md border hidden">
+          ${createCommentHiddenForm(commentInfo.commentid)}
+      </div>
+  `;
 
-syncNewSubcommentForms(comment);
+  syncNewSubcommentForms(comment);
 
-return comment
+  return comment;
 }
 
 function syncNewSubcommentForms(comment) {
