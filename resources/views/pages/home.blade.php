@@ -27,7 +27,6 @@
                 @each('partials.post', $posts, 'post')
             @endif
         </section>
-        @include('partials.addPostTopics')
         @include('partials.reportForm')
         @include('partials.imageDetail')
     </div>
