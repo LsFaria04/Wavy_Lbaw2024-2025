@@ -124,10 +124,9 @@ function createNotificationElement(type, message, timestamp, data) {
             username = data.comment.user.username;
         }
         
-        const postUrl = `/posts/${data.post_id}`;
-        const usernameUrl = `/profile/${data.follow?.follower.username}`;
-
         if (type === 'likes') {
+            const postUrl = `/posts/${data.like.post.postid}`;
+            const usernameUrl = `/profile/${data.like.user.username}`;
             notificationContent = `
                 <div class="flex-1">
                     <div class="text-sm font-semibold text-gray-800">
@@ -142,9 +141,12 @@ function createNotificationElement(type, message, timestamp, data) {
                 </div>
             `;
         } else if (type === 'comments') {
+            const postUrl = `/posts/${data.comment.postid}`;
+            const usernameUrl = `/profile/${data.comment.user.username}`;
             let commentMessage = limitText(message);
 
             if (data.comment && data.comment.parent_comment) { //reply to a comment
+                const postUrl = `/posts/${data.parent_comment.postid}`;
                 notificationContent = `
                     <div class="flex-1">
                         <div class="text-sm font-semibold text-gray-800">
@@ -180,6 +182,7 @@ function createNotificationElement(type, message, timestamp, data) {
                 `;
             }
         } else if (type === 'follows') {
+            const usernameUrl = `/profile/${data.follow?.follower.username}`;
             notificationContent = `
                 <div class="flex-1">
                     <div class="text-sm font-semibold text-gray-800">
