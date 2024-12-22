@@ -3,7 +3,7 @@
 @section('content')
 <section class = "grow flex flex-col justify-center items-center" id = "login" >
     <header class = "py-12">
-        <h1 class= "text-3xl font-bold">Login<h1>
+        <h2 class= "text-3xl font-bold">Login</h2>
     </header>
     <div id="messageContainer" class="fixed top-6 flex items-center z-40">
         <!--Used to append messages with JS -->
@@ -42,7 +42,7 @@
             
             <div class = "flex flex-row justify-evenly my-4">
                 <a class="bg-sky-800 rounded w-32 py-2 text-center shadow text-white font-bold shadow-sky-900 hover:shadow-lg" href="{{ route('register') }}">Register</a>
-                <button class = "bg-sky-800 rounded w-32 py-2  text-white font-bold shadow shadow-sky-900 hover:shadow-lg"type="submit">
+                <button class = "bg-sky-800 rounded w-32 py-2  text-white font-bold shadow shadow-sky-900 hover:shadow-lg" type="submit">
                     Login
                 </button>
             </div>

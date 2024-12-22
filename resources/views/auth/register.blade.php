@@ -3,7 +3,7 @@
 @section('content')
 <section class = "grow flex flex-col justify-center items-center " id = "register">
   <header class = "py-12">
-        <h1 class= "text-3xl font-bold">Register<h1>
+        <h2 class= "text-3xl font-bold">Register </h2>
   </header>
   <div class="fixed top-6 flex items-center z-50">
     @if ($errors->has('email'))

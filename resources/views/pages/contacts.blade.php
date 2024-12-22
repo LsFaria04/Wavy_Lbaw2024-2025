@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mx-auto py-12 px-4">
     <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-800">Get in Touch with Wavy</h1>
+        <h2 class="text-4xl font-bold text-gray-800">Get in Touch with Wavy</h2>
         <p class="text-lg text-gray-600 mt-2">Send us a message, ask a question, or share your thoughts. We’re here to help!</p>
     </div>
     <div id="messageContainer" class="fixed mx-auto right-1/2 top-6 flex items-center">

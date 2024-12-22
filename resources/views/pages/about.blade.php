@@ -5,7 +5,7 @@
 @section('content')
 <div class="container mx-auto py-12 px-4">
     <div class="text-center mb-8">
-        <h1 class="text-4xl font-bold text-gray-800">About Wavy</h1>
+        <h2 class="text-4xl font-bold text-gray-800">About Wavy</h2>
         <p class="text-lg text-gray-600 mt-2">Discover our mission, values, and what makes us unique.</p>
     </div>
 

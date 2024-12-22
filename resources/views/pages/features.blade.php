@@ -6,7 +6,7 @@
 <div class="container mx-auto py-12 px-4">
     <!-- Title and Introduction -->
     <div class="text-center mb-12">
-        <h1 class="text-4xl font-extrabold text-gray-800">Discover the Power of Wavy</h1>
+        <h2 class="text-4xl font-extrabold text-gray-800">Discover the Power of Wavy</h2>
         <p class="text-lg text-gray-600 mt-4">Your journey to a personalized and secure online presence begins here.</p>
     </div>
 
