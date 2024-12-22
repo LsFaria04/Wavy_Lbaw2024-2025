@@ -208,7 +208,6 @@
             @include('partials.reportForm')
             @include('partials.imageDetail')
         @endif
-        @include('partials.addPostTopics')
     </div>
 </div>
 @endsection
