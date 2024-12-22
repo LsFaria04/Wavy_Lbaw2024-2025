@@ -159,30 +159,38 @@ function addEventListeners() {
         if (e.target && e.target.id === 'user-search') {
             const query = e.target.value.trim();
             const searchResults = document.getElementById('search-results');
-
+    
             // Retrieve the owner ID from the page
             const ownerId = parseInt(document.getElementById('groupPage')?.dataset.ownerid);
-
+    
             if (query.length < 3) {
                 searchResults.innerHTML = '<p class="text-gray-500">Please type at least 3 characters.</p>';
                 return;
             }
-
+    
             sendAjaxRequest('get', `/api/search?q=${encodeURIComponent(query)}&category=users`, null, function () {
                 if (this.status === 200) {
                     const response = JSON.parse(this.responseText);
                     const users = response[1];
-
+    
                     if (users.data.length === 0) {
                         searchResults.innerHTML = '<p class="text-gray-500">No users found.</p>';
                     } else {
                         // Exclude the owner from the search results
                         const filteredUsers = users.data.filter(user => user.userid !== ownerId);
-
+    
                         searchResults.innerHTML = filteredUsers.map(user => `
                             <div class="search-result p-2 hover:bg-gray-100 flex items-center cursor-pointer" data-id="${user.userid}">
                                 <div class="h-8 w-8 rounded-full mr-2 overflow-hidden bg-gray-300">
-                                    ${user.profile_picture.length > 0 ? `<img h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : ""} alt="ProfilePicture">` : ""}
+                                    ${user.profile_picture.length > 0 ? `
+                                        <img class="h-full w-full object-cover rounded-md mb-2 mx-auto" 
+                                             src="${user.profile_picture[0].path.includes('profile') 
+                                                    ? '/storage/' + user.profile_picture[0].path 
+                                                    : user.profile_picture.length > 1 
+                                                    ? '/storage/' + user.profile_picture[1].path 
+                                                    : ''}" 
+                                             alt="ProfilePicture">`
+                                        : ''}
                                 </div>
                                 <span>${user.username}</span>
                             </div>
@@ -191,8 +199,7 @@ function addEventListeners() {
                 }
             });
         }
-    });
-
+    });    
 
     document.getElementById('cancelExitButton')?.addEventListener('click', () => {
         const exitMenu = document.getElementById('exitGroupMenu');
@@ -395,15 +402,27 @@ function createInvitation(invitationInfo) {
         return invitation;
     }
 
+    const profilePicture = invitationInfo.user.profile_picture.length > 0
+        ? invitationInfo.user.profile_picture[0].path.includes('profile')
+            ? '/storage/' + invitationInfo.user.profile_picture[0].path
+            : invitationInfo.user.profile_picture.length > 1
+            ? '/storage/' + invitationInfo.user.profile_picture[1].path
+            : ''
+        : null;
+
     invitation.innerHTML = `
         <div class="flex justify-between items-center">
             <div>
-                <div class = "flex flex-row gap-2">
+                <div class="flex flex-row gap-2">
                     <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                    ${invitationInfo.user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${invitationInfo.user.profile_picture[0].path.includes('profile') ? '/storage/' + invitationInfo.user.profile_picture[0].path : invitationInfo.user.profile_picture.length > 1 ? '/storage/' + invitationInfo.user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                        ${profilePicture 
+                            ? `<img class="h-full w-full object-cover rounded-md mb-2 mx-auto" 
+                                     src="${profilePicture}" 
+                                     alt="ProfilePicture">`
+                            : ''}
                     </div>
                     <h3 class="font-bold">
-                        <a href="../profile/${invitationInfo.user.username}" class="text-black hover:text-sky-900">
+                        <a href="/profile/${invitationInfo.user.username}" class="text-black hover:text-sky-900">
                             ${invitationInfo.user.username}
                         </a>
                     </h3>
@@ -439,15 +458,27 @@ function createRequest(requestInfo) {
         return request;
     }
 
+    const profilePicture = requestInfo.user.profile_picture.length > 0
+        ? requestInfo.user.profile_picture[0].path.includes('profile')
+            ? '/storage/' + requestInfo.user.profile_picture[0].path
+            : requestInfo.user.profile_picture.length > 1
+            ? '/storage/' + requestInfo.user.profile_picture[1].path
+            : ''
+        : null;
+
     request.innerHTML = `
         <div class="flex justify-between items-center">
-            <div >
-                <div class = "flex flex-row gap-2">
+            <div>
+                <div class="flex flex-row gap-2">
                     <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                    ${requestInfo.user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${requestInfo.user.profile_picture[0].path.includes('profile') ? '/storage/' + requestInfo.user.profile_picture[0].path : requestInfo.user.profile_picture.length > 1 ? '/storage/' + requestInfo.user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                        ${profilePicture 
+                            ? `<img class="h-full w-full object-cover rounded-md mb-2 mx-auto" 
+                                     src="${profilePicture}" 
+                                     alt="ProfilePicture">`
+                            : ''}
                     </div>
                     <h3 class="font-bold">
-                        <a href="../profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
+                        <a href="/profile/${requestInfo.user.username}" class="text-black hover:text-sky-900">
                             ${requestInfo.user.username}
                         </a>
                     </h3>
@@ -485,22 +516,33 @@ function createMember(memberInfo) {
     const canRemove = (parseInt(memberInfo.userid) !== parseInt(ownerid)) && ((userId === parseInt(ownerid)) || isadmin);
     const isOwner = (parseInt(memberInfo.userid) === parseInt(ownerid));
 
-    // Member card structure
+    const profilePicture = memberInfo.profile_picture.length > 0
+        ? memberInfo.profile_picture[0].path.includes('profile')
+            ? '/storage/' + memberInfo.profile_picture[0].path
+            : memberInfo.profile_picture.length > 1
+            ? '/storage/' + memberInfo.profile_picture[1].path
+            : ''
+        : null;
+
     member.innerHTML = `
         <div class="flex justify-between items-center">
             <div>
-                <div class="flex flex-row gap-2">
-                    <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                    ${memberInfo.profile_picture.length > 0 ? `<img h-full w-full object-cover rounded-md mb-2 mx-auto src=${memberInfo.profile_picture[0].path.includes('profile') ? '/storage/' + memberInfo.profile_picture[0].path : memberInfo.profile_picture.length > 1 ? '/storage/' + memberInfo.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                <a href="${memberInfo.state === 'deleted' ? '#' : '/profile/' + memberInfo.username}">
+                    <div class="flex flex-row gap-2">
+                        <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                            ${profilePicture 
+                                ? `<img class="h-full w-full object-cover rounded-md mb-2 mx-auto" 
+                                         src="${profilePicture}" 
+                                         alt="ProfilePicture">`
+                                : ''}
+                        </div>
+                        <h3 class="font-bold text-black hover:text-sky-900">
+                            ${memberInfo.state === 'deleted' ? 'Deleted User' : memberInfo.username}
+                            ${isOwner ? '(Owner)' : ''}
+                        </h3>
                     </div>
-                    <h3 class="font-bold">
-                        <a href="../profile/${memberInfo.username}" class="text-black hover:text-sky-900">
-                            ${memberInfo.username}
-                        </a>
-                        ${isOwner ? '(Owner)' : ''}
-                    </h3>
-                </div>
-                <p class="text-sm text-gray-600">${memberInfo.bio || ''}</p>
+                </a>
+                <p class="text-sm text-gray-600">${memberInfo.bio || 'No bio available.'}</p>
             </div>
             ${canRemove ? `
                 <button type="button" onclick="openRemoveMemberMenu(${memberInfo.userid}, '${memberInfo.username}')" 

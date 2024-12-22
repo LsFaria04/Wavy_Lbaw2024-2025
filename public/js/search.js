@@ -10,11 +10,7 @@ let searchCategory = null;
   searchCategory = document.querySelector('input[name="category"]').value;
 }
 
-
-
 //Search menus toggles -----------------------------------------------------------------------------------------------------
-
-
 
 //Used to change the search category when a user clicks in a search tab option
 function changeCategory(category) {
@@ -206,8 +202,6 @@ function changeCategory(category) {
 
 //Search content loading and content insertion functions --------------------------------------------------------------------------------------
 
-
-
 //loads the first content of a search when selecting another category
 function loadSearchContent(category, query, filters) {
   const searchResults = document.querySelector("#search-results");
@@ -333,21 +327,11 @@ function insertMoreTopicsFilters() {
   }
 }
 
-
-
 function insertMoreGroups(element, groups) {
   for(let i = 0; i < groups.data.length; i++) {
     let group = createGroup(groups.data[i]);
     element.appendChild(group);
   
-  }
-}
-
-//inserts more users into an element
-function insertMoreUsers(element, users) {
-  for(let i = 0; i < users.data.length; i++) {
-    let user = createUser(users.data[i]);
-    element.appendChild(user);
   }
 }
 
@@ -465,8 +449,6 @@ function insertMoreSubCommentsToComment(subcomments) {
 
 //Search content creation functions ---------------------------------------------------------------------------
 
-
-
 // Creates a new group container with all the needed info
 function createGroup(groupInfo) {
   let group = document.createElement('div');
@@ -490,21 +472,39 @@ function createGroup(groupInfo) {
 
 function createUser(userInfo) {
   let user = document.createElement('div');
-  user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
-  
-    user.innerHTML= `
-      <div class="user-header mb-2">
-              <h3 class="font-bold">
-                  <a href="../profile/${userInfo.username}" class="text-black hover:text-sky-900">
-                      ${userInfo.username}
-                  </a>
-              </h3>
+  user.classList.add("user", "border-b", "border-gray-300", "p-4", "bg-white");
+
+  // Dynamically set profile picture path
+  const profilePicture = userInfo.profile_picture.length > 0
+      ? userInfo.profile_picture[0].path.includes('profile')
+          ? '/storage/' + userInfo.profile_picture[0].path
+          : userInfo.profile_picture.length > 1
+          ? '/storage/' + userInfo.profile_picture[1].path
+          : ''
+      : null;
+
+  user.innerHTML = `
+      <div class="flex justify-between items-center">
+          <div>
+              <a href="${userInfo.state === 'deleted' ? '#' : '/profile/' + userInfo.username}">
+                  <div class="flex flex-row gap-2">
+                      <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                          ${profilePicture
+                              ? `<img class="h-full w-full object-cover rounded-md mb-2 mx-auto" 
+                                       src="${profilePicture}" 
+                                       alt="ProfilePicture">`
+                              : ''}
+                      </div>
+                      <h3 class="font-bold text-black hover:text-sky-900">
+                          ${userInfo.state === 'deleted' ? 'Deleted User' : userInfo.username}
+                      </h3>
+                  </div>
+              </a>
+              <p class="text-sm text-gray-600">${userInfo.bio || 'No bio available.'}</p>
           </div>
-          <div class="user-body mb-2">
-              <p>${userInfo.bio === null ? "" : userInfo.bio }</p>
-          </div>
-    `;
-  
+      </div>
+  `;
+
   return user;
 }
      
