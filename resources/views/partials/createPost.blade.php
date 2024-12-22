@@ -38,7 +38,7 @@
                 </label>
 
                 <button type = "button" class = "hidden" id="topic-0" onclick = "toggleAddPostTopics(0, false)"></button>
-                <input type="hidden" id="topicInput-0" name="topics[]" value="[]" multiple>
+                <input type="hidden" id="topicInput-0" name="topics[]" value="[]">
                 
                 <ul id="topicDisplay-0" class="items-center gap-2 hidden">
                     <!-- topic names appended here by JavaScript -->

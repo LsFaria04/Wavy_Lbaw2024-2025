@@ -218,8 +218,8 @@ function createPostOptions(post, id, needReport) {
   const postheader = post.querySelector('.post-header');
   let options = document.createElement('div');
   options.classList.add("flex", "items-center", "gap-2");
-  options.setAttribute('id', 'postOptions');
-
+  options.setAttribute('id', 'postOptions-' + id);
+  
   if (!needReport) {
     options.innerHTML = `
       <button type="button" onclick="toggleEditPost(${id}); event.stopPropagation();" class="text-gray-500 hover:text-black">
@@ -658,8 +658,8 @@ function insertUpdateForm(post, id, message, media, topics) {
             </label>
             <div id="topicDisplay-${id}" class="flex-col items-center gap-2 text-gray-500 hover:text-black mt-2 ${topics.length === 0 ? 'hidden' : ''}">
             </div>
-            <button type="button" class="hidden" id="topic-${id}" onclick="toggleAddPostTopics(${id}, true)"></button>
-            <input type="hidden" id="topicInput-${id}" class="topicInput" name="topics[]" value="[]" multiple>
+            <button type="button" class="hidden" id="topic-{{ $index }}" onclick="toggleAddPostTopics(${id}, true)"></button>
+            <input type="hidden" id="topicInput-{{ $index }}" class="topicInput" name="topics[]" value="[]">
             <input type="hidden" name="remove_topics[]" id="removeTopics-${id}" class="topicRemove" value="[]">
         </div>
 

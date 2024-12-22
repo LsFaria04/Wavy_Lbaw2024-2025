@@ -862,7 +862,7 @@ function insertShowMoreRequests() {
               <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
               </svg>
-              <p>Show More</p>
+              <span>Show More</span>
   `;
   section.appendChild(showMore);
 }
@@ -965,7 +965,7 @@ function insertShowMoreFollow() {
               <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
               </svg>
-              <p>Show More</p>
+              <span>Show More</span>
   `;
   section.appendChild(showMore);
 }
