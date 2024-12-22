@@ -21,8 +21,8 @@
     </div>
     @endif
   </div>
-  <div class = "grow flex items-center justify-center">
-    <form method="POST" action="{{ route('register') }}" class = "max-w-xl grid-start-1 bg-slate-100 shadow-md rounded px-8 pt-6 pb-8 my-4" >
+  <div class = "grow flex items-center justify-center mt-[-80px]">
+    <form method="POST" action="{{ route('register') }}" class = "max-w-xl grid-start-1 bg-slate-100 shadow-md rounded px-8 pt-6 pb-8 my-2" >
         {{ csrf_field() }}
 
         <label class="font-medium text-lg">Name</label>

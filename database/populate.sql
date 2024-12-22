@@ -67,6 +67,23 @@ VALUES
     (9, 6, 'Ivy, I think your story would make a great film!', '2024-11-04 11:45:00'),
     (10, 7, 'Jack, I’d love to hear you play sometime!', '2024-11-04 12:00:00');
 
+INSERT INTO TOPIC (topicName) 
+VALUES 
+    ('General'),
+    ('Technology'),
+    ('Health'),
+    ('Travel'),
+    ('Food'),
+    ('Art'),
+    ('Sports'),
+    ('Environment'),
+    ('Gaming'),
+    ('Gambling'),
+    ('Politics'),
+    ('Education'),
+    ('Football'),
+    ('Manchester United');
+
 INSERT INTO POST (userID, message, visibilityPublic, createdDate, groupID) 
 VALUES 
     (2, 'Just returned from an amazing hike in the mountains.', TRUE, '2022-10-01 10:30:00', NULL), 
@@ -97,22 +114,6 @@ VALUES
     (10, 'I drew Taylor to a T! :D #terrific', TRUE, NOW(), 9), 
     (10, 'Taylor Swift''s Wins Grammy!', TRUE, NOW(), 9);
 
-INSERT INTO TOPIC (topicName) 
-VALUES 
-    ('General'),
-    ('Technology'),
-    ('Health'),
-    ('Travel'),
-    ('Food'),
-    ('Art'),
-    ('Sports'),
-    ('Environment'),
-    ('Gaming'),
-    ('Gambling'),
-    ('Politics'),
-    ('Education'),
-    ('Football'),
-    ('Manchester United');
 
 INSERT INTO COMMENT (userID, message, createdDate, postID, parentCommentID) 
 VALUES 
