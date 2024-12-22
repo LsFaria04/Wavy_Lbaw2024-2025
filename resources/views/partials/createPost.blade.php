@@ -1,5 +1,5 @@
 <div class="addPost p-4 bg-white border-b border-gray-300 w-full max-w-full">
-    <h1 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h1>
+    <h2 class="text-xl font-bold text-black pb-2">{{ Auth::user()->username }}</h2>
     <form action="{{ route('posts.store') }}" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
         @csrf
         @isset($group)
@@ -8,7 +8,7 @@
         <div class="flex items-start">
             
             <div class="flex-1">
-                <textarea id="message" name="message" rows="2" class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none block" placeholder="What's on your mind?" required></textarea>
+                <textarea id="messageCreatePost" name="message" rows="2" class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none block" placeholder="What's on your mind?" required></textarea>
             </div>
         </div>
 

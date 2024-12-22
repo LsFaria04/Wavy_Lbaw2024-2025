@@ -25,8 +25,8 @@
                 <input type="email" id="email" name="email" placeholder="johndoe@example.com" required class="w-full mt-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200">
             </div>
             <div class="mb-4">
-                <label for="message" class="block text-lg font-semibold text-gray-700">Message</label>
-                <textarea id="message" name="message" rows="4" placeholder="How can we assist you?" required
+                <label for="messageContacts" class="block text-lg font-semibold text-gray-700">Message</label>
+                <textarea id="messageContacts" name="message" rows="4" placeholder="How can we assist you?" required
                     class="w-full mt-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
                     style="resize: vertical; min-height: 50px;"></textarea>
             </div>
