@@ -121,7 +121,7 @@ class ProfileController extends Controller {
                     $previousFile->delete();
                 }
 
-                $fileName = 'banner' . $userid . '.' . $request->profilePic->extension();
+                $fileName = 'banner' . $userid . '.' . $request->bannerPic->extension();
                 $mediaPath = $request->file('bannerPic')->storeAs('images', $fileName, 'public');
 
                     // Create new media record for the post
