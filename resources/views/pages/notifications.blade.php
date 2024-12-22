@@ -2,27 +2,29 @@
 
 @auth
 @section('content')
-    <div class="flex flex-col items-center w-full max-w-full bg-white">
-        <!-- Notifications header -->
-        <header id="notifications-header" class="w-full max-w-full pt-4 shadow-md items-center sticky top-0 z-10 backdrop-blur">
+<div class="flex flex-col items-center w-full max-w-full bg-white">
+    <!-- Notifications header -->
+    <header id="notifications-header" class="w-full max-w-full pt-4 shadow-md sticky top-0 z-10 backdrop-blur">
+        <div class="flex justify-center items-center">
             <h2 class="text-xl font-bold text-gray-800">Notifications</h2>
+        </div>
 
-            <!-- Tabs for different notification types -->
-            <nav class="tabs flex justify-around mt-4">
-                <button type="button" id="all-notifications-tab" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900  border-sky-900 text-sky-900">
-                    All Notifications
-                </button>
-                <button type="button" id="comments-tab" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">
-                    Comments
-                </button>
-                <button type="button" id="likes-tab" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">
-                    Likes
-                </button>
-                <button type="button" id="follows-tab" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">
-                    Follows
-                </button>
-            </nav>
-        </header>
+        <!-- Tabs for different notification types -->
+        <nav class="tabs flex justify-around mt-4">
+            <button type="button" id="all-notifications-tab" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900  border-sky-900 text-sky-900">
+                All Notifications
+            </button>
+            <button type="button" id="comments-tab" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">
+                Comments
+            </button>
+            <button type="button" id="likes-tab" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">
+                Likes
+            </button>
+            <button type="button" id="follows-tab" class="tab-btn flex-1 text-center py-3 text-sm font-semibold border-b-2 hover:text-sky-900">
+                Follows
+            </button>
+        </nav>
+    </header>
 
             <div id="notifications-content" class = "flex flex-col items-center justify-center">
                 <!-- All Notifications Section -->
