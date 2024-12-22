@@ -68,7 +68,7 @@
                 @forelse ($post->comments as $comment)
                     @include('partials.comment', ['comment' => $comment])
                 @empty
-                    <p class="text-gray-500 mb-4">No comments yet.</p>
+                    <p class="text-gray-500 mb-4 p-4">No comments yet.</p>
                 @endforelse
             </div>
         </section>
