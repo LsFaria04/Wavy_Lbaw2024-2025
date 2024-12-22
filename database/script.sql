@@ -854,6 +854,15 @@ VALUES
     (1, 3), 
     (2, 6),
     (10, 11),
+    (10, 10),
+    (10, 9),
+    (10, 8),
+    (10, 7),
+    (10, 6),
+    (10, 5),
+    (10, 4),
+    (10, 3),
+    (10, 2),
     (9, 2),
     (9, 4),
     (9, 5),
@@ -908,7 +917,19 @@ VALUES
     (7, 'I don’t understand the concept of people turning to facebook for medical advice especially for their children wtf', TRUE, '2024-12-14 10:05:00', NULL),
     (2, 'would you guys still love taylor if she was a worm #taylorpede', TRUE, '2024-12-17 10:05:00', 9), 
     (10, 'I drew Taylor to a T! :D #terrific', TRUE, NOW(), 9), 
-    (10, 'Taylor Swift''s Wins Grammy!', TRUE, NOW(), 9);
+    (10, 'Taylor Swift''s Wins Grammy!', TRUE, NOW(), 9),
+    /*post id 28*/(11, 'Welcome, we can freely discuss everything related to United here.', TRUE, '2024-12-20 9:00:00', 10),
+    (11, 'What a performance by Rashford last night! Truly world-class.', TRUE, '2024-12-20 10:00:00', 10),
+    (11, 'We really need reinforcements in defense this January. Thoughts?', TRUE, '2024-12-20 12:30:00', 10),
+    (6, 'Ten Hag was terrible', TRUE, '2024-12-20 14:00:00', 10),
+    (7, 'Looking forward to the next match! Hoping to see more from Garnacho.', TRUE, '2024-12-20 16:45:00', 10),
+    (4, 'Ruben’s tactics are starting to really show their worth. What do you guys think?', TRUE, '2024-12-20 18:00:00', 10),
+    (5, 'Does anyone else think that Bruno deserves more credit for his leadership?', TRUE, '2024-12-20 19:30:00', 10),
+    (6, 'I miss the days when we had Vidic and Rio Ferdinand at the back.', TRUE, '2024-12-20 21:00:00', 10),
+    (7, 'How amazing was that Casemiro header? Pure class!', TRUE, '2024-12-21 09:00:00', 10),
+    (8, 'Can we all agree that Old Trafford is the best stadium in the world?', TRUE, '2024-12-21 11:00:00', 10),
+    (9, 'What’s everyone’s prediction for the game against Arsenal?', TRUE, '2024-12-21 13:00:00', 10),
+    (10, 'This season has been a rollercoaster, but I still believe in this squad!', TRUE, '2024-12-21 15:00:00', 10);
 
 INSERT INTO TOPIC (topicName) 
 VALUES 
@@ -956,7 +977,31 @@ VALUES
     (6, 'Hola, soy Marcos Rashford', '2024-12-18 15:03:00', 20, NULL),  
     (7, 'We shouldn’t be selling him to premier league rivals who are challenging for the title.', '2024-12-18 15:04:00', 20, NULL),
     (6, 'Atletico maybe?', '2024-12-18 17:26:00', NULL, 22),
-    (7, 'how sweet! 🥰🥰😍', '2024-12-19 8:26:00', 25, NULL); 
+    (7, 'how sweet! 🥰🥰😍', '2024-12-19 8:26:00', 25, NULL),
+    
+    /* comment id 29*/(2, 'Rashford was incredible! That goal will be remembered for ages.', '2024-12-20 10:30:00', 29, NULL),
+    (3, 'Absolutely agree! He’s been our standout player this season.', '2024-12-20 10:45:00', 29, NULL),
+    (4, 'The chemistry between Rashford and Bruno is unreal!', '2024-12-20 11:00:00', 29, NULL),
+    (5, 'Let’s hope he keeps this form up!', '2024-12-20 11:15:00', 29, NULL),
+    (6, 'We desperately need a center-back. Who should we go for?', '2024-12-20 12:45:00', 30, NULL),
+    (7, 'I think Timber would be a great addition.', '2024-12-20 13:00:00', 30, NULL),
+    (8, 'Maybe we should try for Pau Torres again?', '2024-12-20 13:15:00', 30, NULL),
+    (9, 'We also need a solid backup for Dalot.', '2024-12-20 13:30:00', 30, NULL),
+    (10, 'Last weekend’s win was a testament to Ruben’s brilliance!', '2024-12-20 14:15:00', 31, NULL),
+    (11, 'Agreed! The team really showed character.', '2024-12-20 14:30:00', 31, NULL),
+    (2, 'Still can’t believe that comeback!', '2024-12-20 14:45:00', 31, NULL),
+    (3, 'I’m so proud of this team!', '2024-12-20 15:00:00', 31, NULL),
+    (4, 'Garnacho has so much potential! Hope he gets more minutes.', '2024-12-20 17:00:00', 32, NULL),
+    (5, 'He’s a future star for sure.', '2024-12-20 17:15:00', 32, NULL),
+    (6, 'Can’t wait to see him play in the next match!', '2024-12-20 17:30:00', 32, NULL),
+    (7, 'His dribbling is insane for his age.', '2024-12-20 17:45:00', 32, NULL),
+    (8, 'Ruben has transformed this team. Tactics on point!', '2024-12-20 18:15:00', 33, NULL),
+    (9, 'His substitutions have been brilliant too.', '2024-12-20 18:30:00', 33, NULL),
+    (10, 'Finally, we have a manager who understands the club.', '2024-12-20 18:45:00', 33, NULL),
+    (11, 'Let’s hope he brings us some trophies soon!', '2024-12-20 19:00:00', 33, NULL),
+    (2, 'Old Trafford is a fortress!', '2024-12-21 12:00:00', 34, NULL),
+    (3, 'Arsenal game predictions? 3-1 to United!', '2024-12-21 12:15:00', 35, NULL),
+    (4, 'We need to strengthen our midfield depth.', '2024-12-21 13:30:00', 36, NULL);
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -984,7 +1029,155 @@ VALUES
     (11, NOW(), NULL, 3),
     (11, NOW(), NULL, 5),
     (11, NOW(), NULL, 9),
-    (11, NOW(), NULL, 11);
+    (11, NOW(), NULL, 11),
+
+    (7, NOW(), 28, NULL),
+    (8, NOW(), 28, NULL), 
+    (4, NOW(), 28, NULL), 
+
+    (7, NOW(), 29, NULL),
+    (8, NOW(), 29, NULL), 
+    (4, NOW(), 29, NULL), 
+    (5, NOW(), 29, NULL), 
+    (6, NOW(), 29, NULL), 
+
+    (7, NOW(), 30, NULL), 
+    (5, NOW(), 30, NULL), 
+    (6, NOW(), 30, NULL),
+
+    (7, NOW(), 31, NULL), 
+    (8, NOW(), 31, NULL), 
+    (4, NOW(), 31, NULL), 
+    (5, NOW(), 31, NULL), 
+    (6, NOW(), 31, NULL), 
+
+    (7, NOW(), 32, NULL), 
+    (8, NOW(), 32, NULL), 
+    (4, NOW(), 32, NULL), 
+    (6, NOW(), 32, NULL), 
+
+    (7, NOW(), 33, NULL), 
+    (8, NOW(), 33, NULL), 
+    (4, NOW(), 33, NULL), 
+    (5, NOW(), 33, NULL), 
+    (6, NOW(), 33, NULL),
+    (2, NOW(), 33, NULL),
+
+    (5, NOW(), 34, NULL),
+    (6, NOW(), 34, NULL),
+    (7, NOW(), 34, NULL),
+
+    (7, NOW(), 35, NULL),
+    (8, NOW(), 35, NULL),
+    (4, NOW(), 35, NULL),
+    (3, NOW(), 35, NULL),
+
+    (7, NOW(), 36, NULL),
+    (8, NOW(), 36, NULL),
+    (4, NOW(), 36, NULL),
+    (5, NOW(), 36, NULL),
+
+    (6, NOW(), 37, NULL),
+    (8, NOW(), 37, NULL),
+    (10, NOW(), 37, NULL),
+    (7, NOW(), 37, NULL),
+    (5, NOW(), 37, NULL),
+    (4, NOW(), 37, NULL),
+
+    (7, NOW(), 38, NULL),
+    (8, NOW(), 38, NULL),
+    (4, NOW(), 38, NULL),
+    (5, NOW(), 38, NULL),
+    (10, NOW(), 38, NULL),
+    (11, NOW(), 38, NULL),
+    (2, NOW(), 38, NULL),
+
+    (7, NOW(), 39, NULL),
+    (9, NOW(), 39, NULL),
+    (5, NOW(), 39, NULL),
+    (10, NOW(), 39, NULL),
+    (11, NOW(), 39, NULL),
+    (2, NOW(), 39, NULL),
+    (8, NOW(), 39, NULL),
+    (4, NOW(), 39, NULL),
+
+    (7, NOW(), NULL, 29),
+    (8, NOW(), NULL, 29),
+    (4, NOW(), NULL, 29),
+    
+    (5, NOW(), NULL, 30),
+    (6, NOW(), NULL, 30),
+    (3, NOW(), NULL, 30),
+
+    (7, NOW(), NULL, 31),
+    (8, NOW(), NULL, 31),
+
+    (4, NOW(), NULL, 32),
+    (6, NOW(), NULL, 32),
+    (7, NOW(), NULL, 32),
+
+    (5, NOW(), NULL, 33),
+    (8, NOW(), NULL, 33),
+    (10, NOW(), NULL, 33),
+
+    (3, NOW(), NULL, 34),
+    (5, NOW(), NULL, 34),
+    (6, NOW(), NULL, 34),
+
+    (8, NOW(), NULL, 35),
+    (7, NOW(), NULL, 35),
+    (4, NOW(), NULL, 35),
+
+    (9, NOW(), NULL, 36),
+    (2, NOW(), NULL, 36),
+    (7, NOW(), NULL, 36),
+
+    (5, NOW(), NULL, 37),
+    (6, NOW(), NULL, 37),
+    (10, NOW(), NULL, 37),
+
+    (3, NOW(), NULL, 38),
+    (4, NOW(), NULL, 38),
+    (6, NOW(), NULL, 38),
+
+    (7, NOW(), NULL, 39),
+    (8, NOW(), NULL, 39),
+    (4, NOW(), NULL, 39),
+
+    (5, NOW(), NULL, 40),
+    (3, NOW(), NULL, 40),
+    (6, NOW(), NULL, 40),
+
+    (7, NOW(), NULL, 41),
+    (8, NOW(), NULL, 41),
+    (5, NOW(), NULL, 41),
+
+    (4, NOW(), NULL, 42),
+    (6, NOW(), NULL, 42),
+    (3, NOW(), NULL, 42),
+
+    (9, NOW(), NULL, 43),
+    (10, NOW(), NULL, 43),
+    (8, NOW(), NULL, 43),
+
+    (5, NOW(), NULL, 44),
+    (7, NOW(), NULL, 44),
+
+    (8, NOW(), NULL, 45),
+    (6, NOW(), NULL, 45),
+    (10, NOW(), NULL, 45),
+
+    (3, NOW(), NULL, 46),
+    (5, NOW(), NULL, 46),
+    (7, NOW(), NULL, 46),
+
+    (3, NOW(), NULL, 47),
+    (5, NOW(), NULL, 47),
+    (7, NOW(), NULL, 47),
+    (4, NOW(), NULL, 47),
+    (6, NOW(), NULL, 47),
+    (9, NOW(), NULL, 47);
+        
 
 INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (7, 2, 'Accepted', '2024-12-18 10:00:00'),
