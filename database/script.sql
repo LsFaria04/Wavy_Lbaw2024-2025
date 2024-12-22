@@ -925,11 +925,11 @@ VALUES
     (7, 'Looking forward to the next match! Hoping to see more from Garnacho.', TRUE, '2024-12-20 16:45:00', 10),
     (4, 'Ruben’s tactics are starting to really show their worth. What do you guys think?', TRUE, '2024-12-20 18:00:00', 10),
     (5, 'Does anyone else think that Bruno deserves more credit for his leadership?', TRUE, '2024-12-20 19:30:00', 10),
-    (6, 'I miss the days when we had Vidic and Rio Ferdinand at the back.', TRUE, '2024-12-20 21:00:00', 10),
+    (6, 'What’s up with City?', TRUE, '2024-12-20 21:00:00', 10),
     (7, 'How amazing was that Casemiro header? Pure class!', TRUE, '2024-12-21 09:00:00', 10),
-    (8, 'Can we all agree that Old Trafford is the best stadium in the world?', TRUE, '2024-12-21 11:00:00', 10),
+    (8, 'Love this man!', TRUE, '2024-12-21 11:00:00', 10),
     (9, 'What’s everyone’s prediction for the game against Arsenal?', TRUE, '2024-12-21 13:00:00', 10),
-    (10, 'This season has been a rollercoaster, but I still believe in this squad!', TRUE, '2024-12-21 15:00:00', 10);
+    (10, 'Not sure if there are any sports cards collectors here. But I just picked this up. Couldn’t be happier. My current favorite player on our team ❤️ ', TRUE, '2024-12-21 15:00:00', 10);
 
 INSERT INTO TOPIC (topicName) 
 VALUES 
@@ -1000,15 +1000,15 @@ VALUES
     (10, 'Finally, we have a manager who understands the club.', '2024-12-20 18:45:00', 33, NULL),
     (11, 'Let’s hope he brings us some trophies soon!', '2024-12-20 19:00:00', 33, NULL),
     (2, 'Old Trafford is a fortress!', '2024-12-21 12:00:00', 34, NULL),
-    (3, 'Arsenal game predictions? 3-1 to United!', '2024-12-21 12:15:00', 35, NULL),
+    (3, 'Don’t ask questions. Just drink the tears of all 5 of their fans LMAO', '2024-12-21 12:15:00', 35, NULL),
     (4, 'We need to strengthen our midfield depth.', '2024-12-21 13:30:00', 36, NULL),
     (2, 'That header was pure class! Casemiro is a beast in the air.', '2024-12-21 09:15:00', 36, NULL),
     (3, 'His experience really shines in moments like that.', '2024-12-21 09:30:00', 36, NULL),
     (4, 'We needed that goal so badly. What a player!', '2024-12-21 09:45:00', 36, NULL),
     (5, 'Casemiro’s leadership is unmatched. He’s so reliable.', '2024-12-21 10:00:00', 36, NULL),
-    (6, 'Old Trafford truly feels like home for any United fan.', '2024-12-21 11:15:00', 37, NULL),
-    (7, 'The atmosphere there is unmatched. I can’t wait to visit again!', '2024-12-21 11:30:00', 37, NULL),
-    (8, 'Every match day at Old Trafford feels like a festival.', '2024-12-21 11:45:00', 37, NULL),
+    (6, 'Ruben is the best thing that happened to this team during these terrible years without Fergie ♥️♥️♥️', '2024-12-21 11:15:00', 37, NULL),
+    (7, 'The genuine excitement of winning a derby in this fashion is probably one of the greatest feelings from either side in any derby.', '2024-12-21 11:30:00', 37, NULL),
+    (8, 'Casemiro lol', NOW(), 37, NULL),
     (9, 'I think we’ll win 2-1. Rashford and Bruno to score.', '2024-12-21 13:15:00', 38, NULL),
     (10, 'This will be a tough game, but I believe in our squad.', '2024-12-21 13:30:00', 38, NULL),
     (2, 'Arsenal is strong, but we can counter them effectively.', '2024-12-21 13:45:00', 38, NULL),
@@ -1016,13 +1016,13 @@ VALUES
     (4, 'As long as we stay compact defensively, we’ll win.', '2024-12-21 14:15:00', 38, NULL),
     (5, 'Looking forward to Bruno bossing the midfield.', '2024-12-21 14:30:00', 38, NULL),
     (6, 'This squad has so much potential. We’re just getting started!', '2024-12-21 15:15:00', 39, NULL),
-    (7, 'There have been some ups and downs, but the highs are worth it. Go Devils!', '2024-12-21 15:30:00', 39, NULL),
-    (8, 'The resilience of this team is inspiring. I’m so proud.', '2024-12-21 15:45:00', 39, NULL),
-    (9, 'We’ve had ups and downs, but the future looks bright.', '2024-12-21 16:00:00', 39, NULL),
-    (10, 'This squad just needs some time to gel. Patience is key.', '2024-12-21 16:15:00', 39, NULL),
-    (2, 'Ruben’s vision is slowly coming to life. Trust the process.', '2024-12-21 16:30:00', 39, NULL),
-    (3, 'No matter what, I’ll always back this team.', '2024-12-21 16:45:00', 39, NULL),
-    (4, 'This season is just the beginning of something special.', '2024-12-21 17:00:00', 39, NULL);
+    (7, 'ETH’s biggest trick was to make us believe we were never even in the UCL last season.', '2024-12-21 15:30:00', 39, NULL),
+    (8, 'Get it PSA graded if you’re in the US!', '2024-12-21 15:45:00', 39, NULL),
+    (9, 'i used to be a card collector and my best purchase was a signed ogs card that is still at the front of my folder today ', '2024-12-21 16:00:00', 39, NULL),
+    (10, 'Im in America and baseball cards are big business. I didn’t know Topps finest made soccer cards. That’s a beauty ', '2024-12-21 16:15:00', 39, NULL),
+    (2, 'I’ve been saying for a while the Hojlund will thrive under Amorim - could be worth a pretty penny in time to come.', '2024-12-21 16:30:00', 39, NULL),
+    (3, 'I love Rasmus as well, no need for a new striker, invest the money in lcb/lwb/lcam, our left side is lacking compared to the right', NOW(), 39, NULL),
+    (4, 'We were in the champions league last season? How much did I drink to forget that? ', NOW(), 39, NULL);
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -1349,4 +1349,8 @@ VALUES
     ('images/banner11.jpg', NULL, NULL, 11),
     ('images/profile7.jpg', NULL, NULL, 7),
     ('images/W0Iq8td3d876eBLr9oYc5qlJy2SrJ6aJDPuqeWYN.jpg', 27, NULL, NULL),
+    ('images/hnVykJfTYUnAGRkXlMo7JHK4tZtoGe9JP6DUDDrj.png', 39, NULL, NULL),
+    ('images/G53aG15AolcXQiHurfmfgSrr3hDrpszgXqH5RCEJ.png', 39, NULL, NULL),
+    ('images/smP9x1Gqbq0qdzFiBL0PvobajXsb1IeNIsPqvLss.png', 37, NULL, NULL),
+    ('images/8K6euTnk7t1hPVvJyLWUegWynjmufWuLhif3f0gn.png', 35, NULL, NULL),
     ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL);
