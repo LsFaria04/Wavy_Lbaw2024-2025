@@ -1063,7 +1063,13 @@ VALUES
     (10, 'Im in America and baseball cards are big business. I didn’t know Topps finest made soccer cards. That’s a beauty ', '2024-12-21 16:15:00', 39, NULL),
     (2, 'I’ve been saying for a while the Hojlund will thrive under Amorim - could be worth a pretty penny in time to come.', '2024-12-21 16:30:00', 39, NULL),
     (3, 'I love Rasmus as well, no need for a new striker, invest the money in lcb/lwb/lcam, our left side is lacking compared to the right', NOW(), 39, NULL),
-    (4, 'We were in the champions league last season? How much did I drink to forget that? ', NOW(), 39, NULL);
+    (4, 'We were in the champions league last season? How much did I drink to forget that? ', NOW(), 39, NULL),
+    (2, 'I agree, Barcelona seems like a great fit for Rashford. They need a player like him.', '2024-12-22 18:20:00', 20, NULL),
+    (3, 'Arsenal or Chelsea could really use him, but their poor seasons might hurt their chances.', '2024-12-22 18:25:00', 20, NULL),
+    (4, 'I think Barcelona will make a strong push, especially with their financial troubles. They’ll need a player like Rashford.', '2024-12-22 18:30:00', 20, NULL),
+    (5, 'Seems like Rashford is stealing the spotlight! That''s a lot of focus for one player before a big game.', '2024-12-22 18:20:00', 21, NULL),
+    (6, 'Rashford''s future is certainly the talk of the town. Wonder if it''ll distract from the Spurs game?', '2024-12-22 18:25:00', 21, NULL),
+    (7, 'Amorim must''ve been frustrated with all those questions! The game against Spurs should be the focus right now.', '2024-12-22 18:30:00', 21, NULL);
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -1306,7 +1312,17 @@ VALUES
     (10, NOW(), NULL, 71),
     (3, NOW(), NULL, 72),
     (2, NOW(), NULL, 72),
-    (4, NOW(), NULL, 72);
+    (4, NOW(), NULL, 72),
+
+    (3, '2024-12-22 18:25:00', 21, NULL),
+    (4, '2024-12-22 18:30:00', 22, NULL),
+    (5, '2024-12-22 18:35:00', 23, NULL),
+    (7, '2024-12-22 18:45:00', 21, NULL),
+    (8, '2024-12-22 18:50:00', 22, NULL),
+    (9, '2024-12-22 18:55:00', 23, NULL),
+    (11, '2024-12-22 19:05:00', 21, NULL);
+
+
         
 
 INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
@@ -1333,7 +1349,15 @@ INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (9, 6, 'Accepted', '2024-12-20 01:00:00'),
     (2, 8, 'Accepted', '2024-12-20 02:00:00'),
     (3, 6, 'Accepted', '2024-12-20 03:00:00'),
-    (10, 3, 'Pending', '2024-12-20 04:00:00');
+    (10, 3, 'Pending', '2024-12-20 04:00:00'),
+    (11, 2, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 3, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 4, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 5, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 6, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 8, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 12, 'Accepted', '2024-12-22 10:00:00');
+
 
 INSERT INTO NOTIFICATION (receiverID, date, seen, followID, commentID, likeID) VALUES
     (2, '2024-12-18 10:05:00', FALSE, 1, NULL, NULL),  
