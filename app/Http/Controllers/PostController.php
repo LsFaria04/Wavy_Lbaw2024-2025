@@ -372,18 +372,6 @@ class PostController extends Controller {
             return redirect()->route('home')->with('error', 'You are not authorized to update this post.');
         }
 
-        
-        if($request->topics !== null) {
-            $request->topics = explode(',', $request->topics[0]);
-            //detach the general topic  because we are inserting specific topics
-            $post->topics()->detach(1);
-        }
-
-
-        if(count($request->remove_topics) !== null) {
-            $request->remove_topics = explode(',', $request->remove_topics[0]);
-        }
-
         // Validate the input
         $request->validate([
             'message' => 'required|string|max:255',
