@@ -311,6 +311,7 @@ function loadGroupContent(tab) {
     // Send AJAX request based on the selected tab
     switch (tab) {
         case 'group-posts':
+            
             sendAjaxRequest('get', `/api/groups/${groupId}/posts?page=${currentPage}`, null, insertMoreGroupContent);
             if(addPost) {
               addPost.classList.add('flex');
