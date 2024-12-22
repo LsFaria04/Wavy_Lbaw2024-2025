@@ -133,7 +133,7 @@ function createNotificationElement(type, message, timestamp, data) {
                         <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> liked your post
                     </div>
                     <div class="text-sm text-gray-500">
-                        <a href="${postUrl}" class="text-blue-600 hover:underline">"${message}"</a>
+                        <a href="${postUrl}" class="text-blue-600 hover:underline">"${limitText(message)}"</a>
                     </div>
                 </div>
                 <div class="text-xs text-gray-400">
@@ -144,10 +144,13 @@ function createNotificationElement(type, message, timestamp, data) {
             notificationContent = `
                 <div class="flex-1">
                     <div class="text-sm font-semibold text-gray-800">
-                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> commented on your post
+                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> commented:
+                        <span class="italic text-gray-600">"${limitText(message)}"</span>
                     </div>
                     <div class="text-sm text-gray-500">
-                        <a href="${postUrl}" class="text-blue-600 hover:underline">"${message}"</a>
+                        <a href="${postUrl}" class="text-blue-600 hover:underline">
+                            On post: "${limitText(data.comment.post.message)}"
+                        </a>
                     </div>
                 </div>
                 <div class="text-xs text-gray-400">
@@ -158,7 +161,8 @@ function createNotificationElement(type, message, timestamp, data) {
             notificationContent = `
                 <div class="flex-1">
                     <div class="text-sm font-semibold text-gray-800">
-                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> followed you
+                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a>
+                        ${data.follow.state === 'pending' ? 'requested to follow you' : 'followed you'}
                     </div>
                 </div>
                 <div class="text-xs text-gray-400">
@@ -176,7 +180,12 @@ function createNotificationElement(type, message, timestamp, data) {
     return notificationElement;
 }
 
-
+function limitText(text, limit = 50) {
+    if (text.length > limit) {
+        return text.substring(0, limit) + '...';
+    }
+    return text;
+}
 
 //Notification button tab functions (used when one of the buttons in the tab is clicked) -----------------------------------------------
 
