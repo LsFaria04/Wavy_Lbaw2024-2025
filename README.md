@@ -24,8 +24,8 @@ To run our project, you can use this command:
 
 ### Credentials
 
-- administrator@example.com / frank@example.com (Administrator Account)
-- frank@example.com / frank@example.com (Normal Account)
+- administrator@example.com / Teste1234 (Administrator Account)
+- frank@example.com / Teste1234 (Normal Account)
 - up202207540@g.uporto.pt / password (Mail Trap)
 
 ## Authors and acknowledgment
