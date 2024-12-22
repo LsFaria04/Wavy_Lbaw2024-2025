@@ -187,8 +187,11 @@ class PostController extends Controller {
     /**
      * Stores a new post.
      */
-    public function store(Request $request)
-    {   
+    public function store(Request $request) {  
+
+        if ($request->user()->state == "suspended") {
+            return redirect()->route('home')->with('error', 'Your account is suspended!');
+        }
 
         if($request->topics !== null) {
             $request->topics = explode(',', $request->topics[0]);
@@ -209,7 +212,6 @@ class PostController extends Controller {
         }
 
         
-    
         // Check if the user is authorized to create a post
         if ($request->user()->cannot('create', Post::class)) {
             if($request->user()->state == "suspended") {
@@ -272,8 +274,7 @@ class PostController extends Controller {
         return redirect()->route('home')->with('success', 'Post created successfully!');
     }
 
-    public function show($id)
-    {
+    public function show($id) {
         // Eager load user, media, and likes, but not comments here
         $post = Post::with([
             'user',
@@ -336,8 +337,7 @@ class PostController extends Controller {
     
     
 
-    private function processComments($comments, $userId)
-    {
+    private function processComments($comments, $userId) {
         foreach ($comments as $comment) {
             // Process likes for the current comment
             $comment->liked = $userId ? $comment->commentLikes()->where('userid', $userId)->exists() : false;
@@ -363,6 +363,10 @@ class PostController extends Controller {
      */
     public function update(Request $request, Post $post) {
         // Check if the authenticated user is the owner of the post
+        if ($request->user()->state == "suspended") {
+            return redirect()->route('home')->with('error', 'Your account is suspended!');
+        }
+
         try { $this->authorize('edit', $post); 
         }catch (AuthorizationException $e) {
             if($request->groupname !== null) {
