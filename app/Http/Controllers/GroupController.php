@@ -58,7 +58,9 @@ class GroupController extends Controller {
         if (!$group) {
             return redirect('/home')->withErrors(['Group not found.']);
         }
-    
+        
+        $members = $group->members;
+
         $posts = $group->posts()
                        ->with('user', 'media', 'topics', 'user.profilePicture') // Load necessary relationships
                        ->withCount('likes') 
@@ -429,7 +431,6 @@ class GroupController extends Controller {
             return redirect()->route('groupList')
                              ->with('success', 'Group deleted successfully.');
         } catch (\Exception $e) {
-    
             return redirect()->route('group', $group->groupname)
                              ->with('error', 'Failed to delete the group. Please try again later.');
         }

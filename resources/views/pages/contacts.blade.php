@@ -29,7 +29,6 @@
                 <textarea id="message" name="message" rows="4" placeholder="How can we assist you?" required
                     class="w-full mt-2 px-4 py-2 border rounded-lg focus:outline-none focus:ring focus:ring-blue-200"
                     style="resize: vertical; min-height: 50px;"></textarea>
-
             </div>
             <button type="button" id = "submit" onclick="contactEmail()" class="w-full px-4 py-2 bg-blue-500 text-white text-lg font-semibold rounded-lg hover:bg-blue-600 transition duration-300">Send Message</button>
         </form>
