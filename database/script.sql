@@ -1316,7 +1316,24 @@ INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (6, 7, 'Accepted', '2024-12-18 13:00:00'),
     (2, 11, 'Accepted', '2024-12-18 14:00:00'),
     (3, 11, 'Accepted', '2024-12-18 15:00:00'),
-    (6, 11, 'Accepted', '2024-12-18 16:00:00');
+    (6, 11, 'Accepted', '2024-12-18 16:00:00'),
+    (2, 3, 'Accepted', '2024-12-19 10:30:00'),
+    (7, 6, 'Accepted', '2024-12-19 12:00:00'),
+    (8, 7, 'Accepted', '2024-12-19 13:00:00'),
+    (5, 9, 'Accepted', '2024-12-19 14:00:00'),
+    (9, 10, 'Pending', '2024-12-19 15:00:00'),
+    (2, 7, 'Accepted', '2024-12-19 16:00:00'),
+    (4, 8, 'Accepted', '2024-12-19 17:00:00'),
+    (10, 2, 'Pending', '2024-12-19 19:00:00'),
+    (8, 3, 'Accepted', '2024-12-19 20:00:00'),
+    (5, 2, 'Accepted', '2024-12-19 21:00:00'),
+    (7, 9, 'Accepted', '2024-12-19 22:00:00'),
+    (2, 6, 'Accepted', '2024-12-19 23:00:00'),
+    (4, 10, 'Pending', '2024-12-20 00:30:00'),
+    (9, 6, 'Accepted', '2024-12-20 01:00:00'),
+    (2, 8, 'Accepted', '2024-12-20 02:00:00'),
+    (3, 6, 'Accepted', '2024-12-20 03:00:00'),
+    (10, 3, 'Pending', '2024-12-20 04:00:00');
 
 INSERT INTO NOTIFICATION (receiverID, date, seen, followID, commentID, likeID) VALUES
     (2, '2024-12-18 10:05:00', FALSE, 1, NULL, NULL),  
@@ -1326,9 +1343,6 @@ INSERT INTO NOTIFICATION (receiverID, date, seen, followID, commentID, likeID) V
     (11, '2024-12-18 14:05:00', FALSE, 5, NULL, NULL), 
     (11, '2024-12-18 15:05:00', FALSE, 6, NULL, NULL), 
     (11, '2024-12-18 16:05:00', FALSE, 7, NULL, NULL); 
-
-INSERT INTO BLOCK (blockerID, blockedID) VALUES
-    (4, 5); 
 
 INSERT INTO USER_TOPICS (userID, topicID) 
 VALUES 
