@@ -169,29 +169,27 @@ function likePost(postId,event) {
   const heartEmpty = document.getElementById(`heart-empty-${postId}`);
   const heartFilled = document.getElementById(`heart-filled-${postId}`);
 
-
-  // Make the AJAX request to like/unlike the post
-  sendAjaxRequest('post', '/like-post/' + postId, null,  updateLikePost);
-
-  function updateLikePost() {
-    const response = JSON.parse(this.responseText);
-    if (response.liked) {
-        heartEmpty.classList.add('hidden');
+  if(heartEmpty.classList.contains('hidden')){
+    heartEmpty?.classList.remove('hidden');
+    heartFilled?.classList.add('hidden');
+    heartEmpty.classList.add('fill-gray-500', 'group-hover:fill-red-600');
+    if (likeCountElement !== null) {
+      likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
+    }
+    likeCountElement.classList.remove('text-red-600');
+  }
+  else{
+    heartEmpty.classList.add('hidden');
         heartFilled.classList.remove('hidden');
         heartFilled.classList.add('fill-red-600', 'group-hover:fill-red-600');
         likeCountElement.textContent = parseInt(likeCountElement.textContent) + 1;
         likeCountElement.classList.add('text-red-600');
 
-    } else {
-        heartEmpty?.classList.remove('hidden');
-        heartFilled?.classList.add('hidden');
-        heartEmpty.classList.add('fill-gray-500', 'group-hover:fill-red-600');
-        if (likeCountElement !== null) {
-          likeCountElement.textContent = parseInt(likeCountElement.textContent) - 1;
-        }
-        likeCountElement.classList.remove('text-red-600');
-    }
   }
+
+
+  // Make the AJAX request to like/unlike the post
+  sendAjaxRequest('post', '/like-post/' + postId, null,  null);
 }
 
 function createCommentButton(postId, commentCount = 0) {

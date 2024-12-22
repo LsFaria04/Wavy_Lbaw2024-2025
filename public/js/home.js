@@ -22,7 +22,6 @@ function addEventListeners() {
       
       //action to take place in the home page
       const timeline = document.querySelector("#timeline");
-      console.log(timeline);
       if((timeline !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
         currentPage++;
         insertLoadingCircle(timeline);
@@ -50,7 +49,6 @@ function addEventListeners() {
           loading = true;
           insertLoadingCircle(searchPage);
           const query = document.querySelector('input[name="q"]').value;
-          console.log(filters)
           sendAjaxRequest('post', '/api/search/filtered?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + searchCategory, filters, insertMoreSearchResults);
           loading = false;
       }
@@ -136,7 +134,6 @@ function addEventListeners() {
 function insertLoadingCircle(element){
   
   if(document.querySelector("#loading_circle") !== null){
-    console.log("here");
     //already exists a loading circle
     return;
   }
@@ -172,9 +169,6 @@ function insertMoreCommentsPost(){
   removeLoadingCircle(); //remove the circle because we already have the data
   const comments = document.querySelector("#comments");
   let newComments = JSON.parse(this.responseText);
-
-  console.log("olaaaaa");
-
 
   maxPage = newComments.last_page; //used to stop send requests when maximum page is reached
 

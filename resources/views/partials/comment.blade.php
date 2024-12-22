@@ -122,7 +122,7 @@
                 
                 <span id="like-count-{{ $comment->commentid }}" 
                     class="ml-1 group-hover:text-red-600">
-                    {{ $comment->likes_count ?? 0 }}
+                    {{ $comment->comment_likes_count ?? 0 }}
                 </span>            
             </button>
         </div>
