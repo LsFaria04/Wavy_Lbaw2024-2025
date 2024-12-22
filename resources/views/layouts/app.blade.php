@@ -13,6 +13,8 @@
         <!-- Styles -->
         @vite('resources/css/app.css')
         @vite('resources/js/app.js')
+        <link rel="stylesheet" href = "{{ url('build.css')}}">
+        
         <script src="{{ url('js/app.js') }}" defer></script>
         <script src="{{ url('js/admin.js') }}" defer></script>
         <script src="{{ url('js/comment.js') }}" defer></script>
