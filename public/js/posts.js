@@ -96,19 +96,30 @@ function createPost(postInfo) {
 
   let user = postInfo.user;
 
+  const profilePicture = user.profile_picture.length > 0
+      ? user.profile_picture[0].path.includes('profile')
+          ? '/storage/' + user.profile_picture[0].path
+          : user.profile_picture.length > 1
+          ? '/storage/' + user.profile_picture[1].path
+          : ''
+      : null;
 
   post.innerHTML = `
       <div class="post-header mb-1 flex justify-between items-center">
           <div>
               <a href="${postInfo.user.state === 'deleted' ? '#' : '/profile/' + postInfo.user.username}">
-                <div class = "flex flex-row gap-2">
-                  <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                    ${user.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${user.profile_picture[0].path.includes('profile') ? '/storage/' + user.profile_picture[0].path : user.profile_picture.length > 1 ? '/storage/' + user.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                  <div class="flex flex-row gap-2">
+                      <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                          ${profilePicture 
+                              ? `<img class="h-full w-full object-cover rounded-md mb-2 mx-auto" 
+                                       src="${profilePicture}" 
+                                       alt="ProfilePicture">`
+                              : ''}
+                      </div>
+                      <h3 class="font-bold text-black hover:text-sky-900">
+                          ${postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username}
+                      </h3>
                   </div>
-                  <h3 class="font-bold text-black hover:text-sky-900">
-                    ${postInfo.user.state === 'deleted' ? 'Deleted User' : postInfo.user.username}
-                  </h3>
-                </div>
               </a>
               <span class="text-gray-500 text-sm">${postInfo.createddate}</span>
           </div>

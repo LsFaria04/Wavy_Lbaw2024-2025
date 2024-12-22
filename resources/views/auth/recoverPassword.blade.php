@@ -7,7 +7,7 @@
     <div id="messageContainer" class="flex items-center mt-6">
         <!--Used to append messages with JS -->
     </div>
-    <div id="recoveryContainer" class = "grow flex items-center justify-center mt-[-150px]">
+    <div id="recoveryContainer" class = "grow flex items-center justify-center">
 
         <!-- Email form-->
         <form id = "recoveryEmail" class = "flex flex-col max-w-xl grid-start-1 bg-slate-100 shadow-md rounded px-8 pt-6 pb-8 my-4" >
