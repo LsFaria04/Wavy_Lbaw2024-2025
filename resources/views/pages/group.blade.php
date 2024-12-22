@@ -161,26 +161,6 @@
         </div>
     </div>
 
-    <!-- Remove Member Confirmation Menu -->
-    <div id="removeMemberMenu" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center z-20">
-        <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
-            <h2 class="text-xl font-semibold text-gray-900">Remove Member</h2>
-            <p id="removeMemberMessage" class="mt-4 text-sm text-gray-600"></p>
-            <div class="mt-6 flex justify-end gap-3">
-                <button id="cancelRemoveButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
-                    Cancel
-                </button>
-                <form id="removeMemberForm" action="" method="POST">
-                    @csrf
-                    @method('DELETE')
-                    <button type="submit" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
-                        Remove
-                    </button>
-                </form>
-            </div>
-        </div>
-    </div>
-
     @auth
         @if ($group->members->contains(Auth::user()))
             <div id="addPostSection" class="w-full">
