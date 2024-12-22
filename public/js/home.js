@@ -19,7 +19,6 @@ function addEventListeners() {
   //check if the we have reached the end of the page and takes the apropriate actions
   function infiniteScroll(){ 
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
-      
       //action to take place in the home page
       const timeline = document.querySelector("#timeline");
       if((timeline !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
@@ -43,7 +42,7 @@ function addEventListeners() {
       
   
       //actions to take place in the search page
-      const searchPage = document.querySelector("#search-results");
+      const searchPage = document.querySelector("#searchPage #search-results");
       if((searchPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ){
           currentPage++;
           loading = true;
