@@ -13,20 +13,20 @@
         <!-- Styles -->
         @vite('resources/css/app.css')
         @vite('resources/js/app.js')
-        <script type="text/javascript">
+        <script>
             // Fix for Firefox autofocus CSS bug
             // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
         </script>
-        <script type="text/javascript" src="{{ url('js/app.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/admin.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/comment.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/group.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/home.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/posts.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/profile.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/search.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/groupList.js') }}" defer></script>
-        <script type="text/javascript" src="{{ url('js/notifications.js') }}" defer></script>
+        <script src="{{ url('js/app.js') }}" defer></script>
+        <script src="{{ url('js/admin.js') }}" defer></script>
+        <script src="{{ url('js/comment.js') }}" defer></script>
+        <script src="{{ url('js/group.js') }}" defer></script>
+        <script src="{{ url('js/home.js') }}" defer></script>
+        <script src="{{ url('js/posts.js') }}" defer></script>
+        <script src="{{ url('js/profile.js') }}" defer></script>
+        <script src="{{ url('js/search.js') }}" defer></script>
+        <script src="{{ url('js/groupList.js') }}" defer></script>
+        <script src="{{ url('js/notifications.js') }}" defer></script>
         <script src="https://js.pusher.com/7.0/pusher.min.js" defer></script>
 
     </head>

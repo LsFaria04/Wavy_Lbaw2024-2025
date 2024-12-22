@@ -6,9 +6,6 @@
             <input type="hidden" name="groupid" value="{{ $group->groupid }}">
         @endif
         <div class="flex items-start">
-            <div>
-                <!-- If we want a layout like twitter we can put the profile image here -->
-            </div>
             
             <div class="flex-1">
                 <textarea id="message" name="message" rows="2" class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none block" placeholder="What's on your mind?" required></textarea>
