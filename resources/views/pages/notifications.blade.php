@@ -26,7 +26,7 @@
         </nav>
     </header>
 
-            <div id="notifications-content" class = "flex flex-col items-center justify-center">
+            <div id="notifications-content" class = "flex flex-col w-full max-w-full">
                 <!-- All Notifications Section -->
                 <div class="notifications-section w-full" id="all-notifications-content">
                     @if($notifications->isEmpty())
