@@ -1366,7 +1366,31 @@ VALUES
     (19, 4),
     (20, 14),
     (20, 13),
-    (20, 7);
+    (20, 7),
+    (28, 14),
+    (28, 13),
+    (29, 14),
+    (29, 13),
+    (30, 14),
+    (30, 13),
+    (31, 14),
+    (31, 13),
+    (32, 14),
+    (32, 13),
+    (33, 14),
+    (33, 13),
+    (34, 14),
+    (34, 13),
+    (35, 14),
+    (35, 13),
+    (36, 14),
+    (36, 13),
+    (37, 14),
+    (37, 13),
+    (38, 14),
+    (38, 13),
+    (39, 14),
+    (39, 13);
 
 INSERT INTO MEDIA (path, postID, commentID, userID) 
 VALUES 
@@ -1381,5 +1405,7 @@ VALUES
     ('images/smP9x1Gqbq0qdzFiBL0PvobajXsb1IeNIsPqvLss.png', 37, NULL, NULL),
     ('images/8K6euTnk7t1hPVvJyLWUegWynjmufWuLhif3f0gn.png', 35, NULL, NULL),
     ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL),
+    ('images/profile3.jpg', NULL, NULL, 3),
+    ('images/banner3.jpg', NULL, NULL, 3),
     ('images/banner2.jpg', NULL, NULL, 2),
     ('images/profile2.jpg', NULL, NULL, 2);

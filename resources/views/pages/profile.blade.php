@@ -111,7 +111,7 @@
                                 onclick = "toggleMyTopics()"
                                 class="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-red-500 rounded-md">
                                 My Topics
-                            <button>
+                            </button>
                         @endif
                         @if (Auth::user()->isadmin)
                             <button
@@ -197,24 +197,24 @@
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
                                     <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
-                                <span>Profile Picture<span>
+                                <span>Profile Picture</span>
                             </label>
                             <div id="profilePicDisplay" class="flex-col gap-2">
                                 <!-- New files to add appended via JS -->
                             </div>
-                            <input class = "hidden" type="file" id="profilePic" name = "profilePic" onchange = "updateFileProfile(false)"/>
+                            <input class = "hidden" type="file" id="profilePic" name = "profilePic" onchange = "updateFileProfile(false)">
                         </div>
                         <div class="mb-4">
                             <label for="bannerPic" class="cursor-pointer flex flex-row text-sm font-medium text-gray-700">
                                 <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-7 h-7">
                                     <path d="M19.8278 11.2437L12.7074 18.3641C10.7548 20.3167 7.58896 20.3167 5.63634 18.3641C3.68372 16.4114 3.68372 13.2456 5.63634 11.293L12.4717 4.45763C13.7735 3.15589 15.884 3.15589 17.1858 4.45763C18.4875 5.75938 18.4875 7.86993 17.1858 9.17168L10.3614 15.9961C9.71048 16.647 8.6552 16.647 8.00433 15.9961C7.35345 15.3452 7.35345 14.2899 8.00433 13.6391L14.2258 7.41762" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
                                 </svg>
-                                <span>Banner Picture<span>
+                                <span>Banner Picture</span>
                             </label>
                             <div id="bannerPicDisplay" class="flex-col gap-2">
                                 <!-- New files to add appended via JS -->
                             </div>
-                            <input class = "hidden" type="file" id="bannerPic" name = "bannerPic" onchange = "updateFileProfile(true)" />
+                            <input class = "hidden" type="file" id="bannerPic" name = "bannerPic" onchange = "updateFileProfile(true)" >
                         </div>
                         <div class="flex justify-end space-x-2">
                             <button type="button" class="px-4 py-2 w-20 bg-gray-700 text-white font-semibold rounded-3xl hover:bg-gray-800" onclick="toggleEditMenu()">Cancel</button>
@@ -296,7 +296,7 @@
                         <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
-                        <p>Show More</p>
+                        <span>Show More</span>
                     </button>
                 </section>
             </div>
@@ -322,7 +322,7 @@
                         <svg class="-rotate-90 w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                         </svg>
-                        <p>Show More</p>
+                        <span>Show More</span>
                     </button>
                     </div>
             </div>
@@ -332,7 +332,7 @@
         <div class="flex flex-col content-evenly flex-wrap place-content-evenly bg-white w-full lg:w-[500px] lg:h-[550px] max-w-screen max-h-screen rounded-xl shadow-lg">
             <h3 class = "font-semibold text-xl ml-4 my-2">Image Preview</h3>
             <div  id = "croppPreview" class = "p-4 w-[500px] h-[400px] overflow-hidden rounded-lg">
-                <img id = "image" src = "" class = "rounded-xl">
+                <img id = "image" alt="Image preview" src = "storage/app/public/images/xAUDHa0TJjgx4P46o7PRmeil1E8HiP4pimYBhLBC" class = "rounded-xl">
             </div>
             <button onclick = "closeImagePreview()" class = "ml-4 my-2 px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800" >Done</button>
         </div>
