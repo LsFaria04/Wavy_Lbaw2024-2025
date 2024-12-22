@@ -337,7 +337,6 @@
             <button onclick = "closeImagePreview()" class = "ml-4 my-2 px-4 py-2 w-20 bg-sky-700 text-white font-semibold rounded-3xl hover:bg-sky-800" >Done</button>
         </div>
    </div> 
-        @include('partials.addPostTopics')
         @include('partials.reportForm')
         @include('partials.admin.banMenu')
         @include('partials.imageDetail')

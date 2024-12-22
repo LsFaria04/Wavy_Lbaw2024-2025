@@ -176,23 +176,23 @@ function insertMoreCommentsPost(){
 
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document?.addEventListener("DOMContentLoaded", () => {
     const togglePostFormButton = document.getElementById("togglePostForm");
     const modalContainer = document.getElementById("modalContainer");
     const closeModalButton = document.getElementById("closeModal");
 
     // Show the modal
-    togglePostFormButton.addEventListener("click", () => {
+    togglePostFormButton?.addEventListener("click", () => {
         modalContainer.classList.remove("hidden");
     });
 
     // Hide the modal
-    closeModalButton.addEventListener("click", () => {
+    closeModalButton?.addEventListener("click", () => {
         modalContainer.classList.add("hidden");
     });
 
     // Optional: Hide modal when clicking outside of it
-    modalContainer.addEventListener("click", (e) => {
+    modalContainer?.addEventListener("click", (e) => {
         if (e.target === modalContainer) {
             modalContainer.classList.add("hidden");
         }
