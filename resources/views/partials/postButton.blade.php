@@ -13,12 +13,8 @@
                 <input type="hidden" name="groupid" value="{{ $group->groupid }}">
             @endif
             <div class="flex items-start">
-                <div>
-                    <!-- If we want a layout like twitter we can put the profile image here -->
-                </div>
-                
                 <div class="flex-1">
-                    <textarea id="message" name="message" rows="2" class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none block" placeholder="What's on your mind?" required></textarea>
+                    <textarea id="message7" name="message" rows="2" class="w-full p-4 rounded-xl border focus:ring-2 focus:ring-sky-700 shadow-sm outline-none block" placeholder="What's on your mind?" required></textarea>
                 </div>
             </div>
 
@@ -48,7 +44,7 @@
                     </label>
 
                     <button type = "button" class = "hidden" id="topic-1" onclick = "toggleAddPostTopics(1, false)"></button>
-                    <input type="hidden" id="topicInput-1" name="topics[]" value="[]" multiple>
+                    <input type="hidden" id="topicInput-1" name="topics[]" value="[]">
                     
                     <ul id="topicDisplay-1" class="items-center gap-2 hidden">
                         <!-- topic names appended here by JavaScript -->
