@@ -169,7 +169,7 @@ function likePost(postId,event) {
   const heartEmpty = document.getElementById(`heart-empty-${postId}`);
   const heartFilled = document.getElementById(`heart-filled-${postId}`);
 
-  if(heartEmpty.classList.contains('hidden')){
+  if(heartEmpty.classList.contains('hidden')) {
     heartEmpty?.classList.remove('hidden');
     heartFilled?.classList.add('hidden');
     heartEmpty.classList.add('fill-gray-500', 'group-hover:fill-red-600');
@@ -178,7 +178,7 @@ function likePost(postId,event) {
     }
     likeCountElement.classList.remove('text-red-600');
   }
-  else{
+  else {
     heartEmpty.classList.add('hidden');
         heartFilled.classList.remove('hidden');
         heartFilled.classList.add('fill-red-600', 'group-hover:fill-red-600');
@@ -253,15 +253,15 @@ let userId = -1;
 let isadmin = false;
 let currentUsername = "";
 sendAjaxRequest('post', '/api/auth-check', null, authInfo);
-function authInfo(){
+function authInfo() {
   const response = JSON.parse(this.responseText);
   isAuthenticated = response.authenticated;
-  if(isAuthenticated){
+  if(isAuthenticated) {
     sendAjaxRequest('post', '/api/auth-id', null, authId);
   }
 }
 
-function authId(){
+function authId() {
   const response = JSON.parse(this.responseText);
   userId = response.id;
   isadmin = response.isadmin;
@@ -319,7 +319,6 @@ const originalFormData = {};
 
 // Toggle the edit form visibility
 function toggleEditPost(postid) {
-  console.log(postid);
     event.stopPropagation();
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
@@ -336,7 +335,6 @@ function toggleEditPost(postid) {
     postContent.classList.toggle('hidden');
 
     // If showing the edit form, save original values
-    console.log(editForm);
     if (!editForm.classList.contains('hidden')) {
         if (!originalFormData[postid]) {
             // Store the original values in the object
@@ -384,7 +382,7 @@ function updateFileNameEdit(postId) {
   const newFileDisplay = document.getElementById(`newFiles-${postId}`)
 
   Array.from(fileInput.files).forEach(file => {
-    if (file.size > 2097152){
+    if (file.size > 2097152) {
       const messageContainer = document.getElementById('messageContainer');
       createAlert(messageContainer, "File is too big (>2Mb)", true);
     }
@@ -409,7 +407,7 @@ function updateFileNameEdit(postId) {
 
   // Show updated list of file names
   selectedFilesEdit.forEach((file, index) => {
-    if(newFileDisplay.classList.contains('hidden')){
+    if(newFileDisplay.classList.contains('hidden')) {
       newFileDisplay.classList.toggle('hidden');
     }
       const li = document.createElement('li');
@@ -440,7 +438,7 @@ function removeFileEdit(postId, mediaId) {
 }
 
 
-function syncPostFilesWithInputEventListener(){
+function syncPostFilesWithInputEventListener() {
   // Synchronize selectedFiles with the file input before form submission
   document.querySelector('.addPost form')?.addEventListener('submit', function (e) {
     
@@ -465,9 +463,9 @@ function syncPostFilesWithInputEventListener(){
 }
 
 // Synchronize selectedFilesEdit with the file input before form submission
-function addEventListenerToPostForms(){
+function addEventListenerToPostForms() {
 
-  if(document.querySelectorAll('.edit-post-form form').length === 0){
+  if(document.querySelectorAll('.edit-post-form form').length === 0) {
     //did not found post edit forms
     return;
   }
@@ -517,7 +515,7 @@ function removeSpecificFileEdit(postId, index) {
 }
 
 //adds a event listener to a post form
-function addEventListenerToForm(form){
+function addEventListenerToForm(form) {
   form.addEventListener('submit', function (e) {
     const postId = form.dataset.postId;
     const fileInput = document.getElementById(`image-${postId}`);
@@ -551,7 +549,7 @@ function addEventListenerToForm(form){
     let notRemovedLen = document.querySelectorAll(`topicDisplay-${postId} > div`).length - 1;
 
     
-    if(selectedTopics + notRemovedLen - topicsToDelete > 5){
+    if(selectedTopics + notRemovedLen - topicsToDelete > 5) {
       e.preventDefault();
       const messageContainer = document.getElementById('messageContainer');
       createAlert(messageContainer, "You can only submit up to 5 topics", true);
@@ -561,20 +559,20 @@ function addEventListenerToForm(form){
 }
 
 //inserts the media (images, audio and video) of a post into a post container. Returns the updated post container
-function insertPostMedia(post, mediaArray){
+function insertPostMedia(post, mediaArray) {
   const postbody = post.querySelector('.post-body');
   let mediaContainer = document.createElement('div');
   mediaContainer.setAttribute('onclick','event.stopPropagation();');
   mediaContainer.setAttribute("class", "post-media mt-4 flex flex-row flex-wrap gap-2 sm:justify-start items-center justify-center");
   
-  for(let i = 0; i < mediaArray.length; i++){
+  for(let i = 0; i < mediaArray.length; i++) {
     let media = mediaArray[i];
     let fileExtension = media.path.split('.').pop();
   
     let newMedia = document.createElement('img');
   
       
-      if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)){
+      if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
         const imageDetailButton = document.createElement('button');
         imageDetailButton.setAttribute('onclick', `toggleImageDetails('${'/storage/' + media.path}')`);
         imageDetailButton.setAttribute("class", "h-60 w-60 sm:w-80 sm:h-80 overflow-hidden  rounded-md mb-2");
@@ -585,7 +583,7 @@ function insertPostMedia(post, mediaArray){
         continue;
       }
   
-      else if(['mp4', 'avi', 'mov'].includes(fileExtension)){
+      else if(['mp4', 'avi', 'mov'].includes(fileExtension)) {
         newMedia = document.createElement('video');
         newMedia.setAttribute("controls", "");
         let source = document.createElement('source');
@@ -597,7 +595,7 @@ function insertPostMedia(post, mediaArray){
       newMedia.classList.add("max-w-full", "max-h-96", "object-cover", "rounded-md", "mb-2", "mx-auto");
     }
   
-      else if(['mp3', 'wav', 'ogg'].includes(fileExtension)){
+      else if(['mp3', 'wav', 'ogg'].includes(fileExtension)) {
         newMedia = document.createElement('audio');
         let source = document.createElement('source');
       
@@ -700,13 +698,13 @@ function insertUpdateForm(post, id, message, media, topics) {
 }
 
 //inserts the topics into the posts
-function insertPostTopics(post, topics){
+function insertPostTopics(post, topics) {
   const postheader = post.querySelector('.post-header');
   let postTopics = document.createElement('div');
   postTopics.setAttribute('id', 'postTopics');
   postTopics.setAttribute('class', "flex flex-row gap-2");
 
-  for(let i = 0; i < topics.length; i++){
+  for(let i = 0; i < topics.length; i++) {
     let topic = document.createElement('p');
     topic.classList.add("text-xs");
     topic.innerHTML = `
@@ -746,8 +744,7 @@ function removeSpecificFile(index) {
 }
 
 function toggleAddPostTopics(postid, isedit) {
-  console.log(document.getElementById("addPostTopics"));
-  if(document.getElementById("addPostTopics").classList.contains('hidden')){
+  if(document.getElementById("addPostTopics").classList.contains('hidden')) {
     postTopicPage = 0;
     topicPostId = postid;
     isEditPost = isedit;
@@ -763,20 +760,20 @@ function toggleAddPostTopics(postid, isedit) {
   
 }
 
-function searchPostTopics(e){
+function searchPostTopics(e) {
   e.preventDefault();
   postTopicPage = 0;
   isQuery = true;
   searchQuery = document.querySelector('#topicsPostSearch').value;
 
    //cancel the search if there is not a query
-   if(searchQuery == ""){
+   if(searchQuery == "") {
     isQuery = false;
   }
 
   //remove the existing topics from the list that is being displayed to the user 
   let topics = document.querySelectorAll("#postTopicsList > ul li, #postTopicsList > ul p");
-  topics.forEach( function (topic){
+  topics.forEach( function (topic) {
     topic.remove();
   })
 
@@ -787,7 +784,7 @@ function searchPostTopics(e){
 let postTopicPage = 0;
 let postTopicPageMax = -1;
 let isEditPost = false;
-function loadMorePostTopics(){
+function loadMorePostTopics() {
 
   let topicsList = null;
 
@@ -797,7 +794,7 @@ function loadMorePostTopics(){
   insertLoadingCircle(topicsList);
 
   
-  if(isQuery){
+  if(isQuery) {
     postTopicPage++;
     sendAjaxRequest('get', '/api/topics/search/all/'+ topicPostId + '?q=' + searchQuery + '&page=' + postTopicPage,null,insertMorePostTopics);
   }
@@ -811,7 +808,7 @@ function loadMorePostTopics(){
 
 let selectedTopics = [];
 let topicPostId = -1;
-function insertMorePostTopics(){
+function insertMorePostTopics() {
   removeLoadingCircle();
   let topics = JSON.parse(this.responseText);
 
@@ -819,27 +816,27 @@ function insertMorePostTopics(){
 
   postTopicPageMax = topics.last_page;
 
-  if(topics.response !== undefined){
+  if(topics.response !== undefined) {
     const messageContainer = document.getElementById('messageContainer');
     createAlert(messageContainer, topics.message, true);
     return;
   }
 
-  if(postTopicPageMax === postTopicPage){
+  if(postTopicPageMax === postTopicPage) {
     //hide the button if there is the last page is being displayed
-    if(!document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+    if(!document.querySelector('#postTopicsList > button').classList.contains('hidden')) {
       document.querySelector('#postTopicsList > button').classList.toggle('hidden');
     }
   }
 
   //iterate throw the topics and add them into the list
-  for(let i = 0; i < topics.data.length; i++){
+  for(let i = 0; i < topics.data.length; i++) {
     //only create and add a topic if it isn't already selected
-    if(selectedTopics.includes(topics.data[i].topicid)){
+    if(selectedTopics.includes(topics.data[i].topicid)) {
       continue;
     }
     //do not show the general topic because it is the default
-    if(topics.data[i].topicid === 1){
+    if(topics.data[i].topicid === 1) {
       continue;
     }
 
@@ -848,7 +845,7 @@ function insertMorePostTopics(){
   }
 
   if(topics.data.length > 0) {
-    if(postTopicPageMax > postTopicPage){
+    if(postTopicPageMax > postTopicPage) {
       //Show the button if there is more data to display
       if(document.querySelector('#postTopicsList > button').classList.contains('hidden')) {
         document.querySelector('#postTopicsList > button').classList.toggle('hidden');
@@ -864,22 +861,22 @@ function insertMorePostTopics(){
     }
 
     //hide the button when there is no more content to display
-    if(!document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+    if(!document.querySelector('#postTopicsList > button').classList.contains('hidden')) {
       document.querySelector('#postTopicsList > button').classList.toggle('hidden');
     }
     
   }
 }
 
-function addTopicToPost(topicid, topicname, postid){
+function addTopicToPost(topicid, topicname, postid) {
   const messageContainer = document.getElementById('messageContainer');
 
   //maximum number of topics per post reached
-  if(selectedTopics.length == 5){
+  if(selectedTopics.length == 5) {
     createAlert(messageContainer, "Can only select up to 5 topics per post!", true);
     return;
   }
-  if(!selectedTopics.includes(topicid)){
+  if(!selectedTopics.includes(topicid)) {
     selectedTopics.push(topicid);
   }
 
@@ -897,7 +894,6 @@ function addTopicToPost(topicid, topicname, postid){
   div.classList.add('flex', 'items-center', 'gap-2');
   div.setAttribute('id', `post-${postid}Topic-${topicid}`);
 
-  console.log("here")
   div.innerHTML = `
       <span class="text-sm text-gray-500">${topicname}</span>
   
@@ -906,14 +902,14 @@ function addTopicToPost(topicid, topicname, postid){
 
   topicDisplay.appendChild(div);
 
-  if(topicDisplay.classList.contains('hidden')){
+  if(topicDisplay.classList.contains('hidden')) {
     topicDisplay.classList.toggle('hidden');
   }
 
   
 }
 
-function removeSpecificTopic(topicid, postid){
+function removeSpecificTopic(topicid, postid) {
   //remove from the display topics so that the user knows that the topic was removed
   let topic = document.getElementById(`post-${postid}Topic-${topicid}`);
   topic.remove();
@@ -925,8 +921,8 @@ function removeSpecificTopic(topicid, postid){
 
 let topicsToDelete = []
 //adds a topic to the list of topics that is going to be removed when the update is done
-function addToDeleteTopic(topicid, postid){
-  if(!topicsToDelete.includes(topicid)){
+function addToDeleteTopic(topicid, postid) {
+  if(!topicsToDelete.includes(topicid)) {
     topicsToDelete.push(topicid);
   }
   //remove the topic from the screen
@@ -935,7 +931,7 @@ function addToDeleteTopic(topicid, postid){
 
 
 
-function syncPostTopicsWithInputEventListener(){
+function syncPostTopicsWithInputEventListener() {
   document.querySelector('.addPost form')?.addEventListener('submit', function (e) {
     //update the values before sending the form
     let topicInput = document.getElementById('topicInput-0');

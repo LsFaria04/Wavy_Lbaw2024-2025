@@ -68,14 +68,7 @@ function initializePusher(userId) {
 
     // Handle "comment" notifications
     channel.bind('notification-postcomment', function(data) {
-        console.log('Received comment notification:', data);
         const timestamp = data.timestamp || new Date().toISOString();
-
-        if (data.comment.parentcommentid) {
-            console.log('Reply message:', data.message);
-        } else {
-            console.log('Comment message:', data.message);
-        }
 
         triggerPopupNotification(data.message);
     });
@@ -121,13 +114,13 @@ function createNotificationElement(type, message, timestamp, data) {
     if (data) {
 
         let username = 'Unknown user';
-        if(data.like){
+        if(data.like) {
             username = data.like.user.username;
         }
-        else if(data.follow){
+        else if(data.follow) {
             username = data.follow.follower.username;
         }
-        else if(data.comment){
+        else if(data.comment) {
             username = data.comment.user.username;
         }
         
@@ -239,12 +232,12 @@ function showTab(tab) {
     currentPage = 1;
     const notificationsContainer = document.querySelector(`#${notificationsTab}-content`);
 
-    if(notificationsContainer === null){
+    if(notificationsContainer === null) {
         //not in notifications page
         return;
     }
 
-    while(notificationsContainer?.firstChild){
+    while(notificationsContainer?.firstChild) {
         notificationsContainer?.firstChild.remove();
     }
     toggleVisibility(tab + '-content', '.notifications-section');
@@ -284,7 +277,7 @@ function toggleTabHighlight(activeTabId, groupSelector) {
 //Notification Loading and insertion (new notifications retrieved from the DB) ------------------------------------------
 
 //Loads the first set of notifications from the db and inserts them into the appropriated section
-function loadNotifications(){
+function loadNotifications() {
     const notificationsPage = document.querySelector("#notifications-content");
     insertLoadingCircle(notificationsPage);
     sendAjaxRequest('post', '/api/notifications?page=' + currentPage + '&category=' + notificationsTab, null, function() {
@@ -307,18 +300,18 @@ function insertMoreNotifications(response) {
             notifications.data.forEach(notification => {
                 let type = null;
                 let message = null;
-                if(notification.followid !== null){
+                if(notification.followid !== null) {
                     type = 'follows';
                     message = "Follow";
                 }
-                else if (notification.likeid !== null){
+                else if (notification.likeid !== null) {
                     type = 'likes';
                     message = notification.like?.post?.message;
-                    if(message === undefined){
+                    if(message === undefined) {
                         message = notification.like?.comment.message;
                     }
                 }
-                else if (notification.commentid !== null){
+                else if (notification.commentid !== null) {
                     type = 'comments';
                     message = notification.comment.message;
                 }

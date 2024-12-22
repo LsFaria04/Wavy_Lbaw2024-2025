@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\Log;
 
 use App\Events\PostLike;
 
@@ -191,7 +190,7 @@ class PostController extends Controller {
     public function store(Request $request)
     {   
 
-        if($request->topics !== null){
+        if($request->topics !== null) {
             $request->topics = explode(',', $request->topics[0]);
         }
 
@@ -203,9 +202,8 @@ class PostController extends Controller {
         ]);
 
         //the general topic is the default
-        if($request->topics !== null){
-            Log::info($request->topics[0]);
-            if($request->topics[0] == ""){
+        if($request->topics !== null) {
+            if($request->topics[0] == "") {
                 $request->topics[0] = "1";
             }
         }
@@ -214,7 +212,7 @@ class PostController extends Controller {
     
         // Check if the user is authorized to create a post
         if ($request->user()->cannot('create', Post::class)) {
-            if($request->user()->state == "suspended"){
+            if($request->user()->state == "suspended") {
                 return redirect()->route('home')->with('error', 'Your account is suspended!');
             }
             return redirect()->route('home')->with('error', 'You cannot create a post!');
@@ -233,8 +231,8 @@ class PostController extends Controller {
         ]);
 
         //insert the topics to the post
-        if($request->topics !== null){
-            foreach($request->topics as $topic){
+        if($request->topics !== null) {
+            foreach($request->topics as $topic) {
                 $post->topics()->attach($topic);
             }
         }
@@ -247,7 +245,7 @@ class PostController extends Controller {
             
             // Store the images in the 'images' directory under 'public'
             foreach ($request->file('media') as $file) {
-                if($file->isValid()){
+                if($file->isValid()) {
                     $mediaPath = $file->store('images', 'public');
 
                     Media::create([
@@ -303,10 +301,10 @@ class PostController extends Controller {
             ->withCount('subcomments')
             ->paginate(10);  // This returns a LengthAwarePaginator
         
-            foreach($comments as $comment){
+            foreach($comments as $comment) {
                 $comment->createddate = $comment->createddate->diffForHumans();
 
-                foreach($comment->subcomments as $subcomment){
+                foreach($comment->subcomments as $subcomment) {
                     $subcomment->createddate = $subcomment->createddate->diffForHumans();
 
                 }
@@ -316,7 +314,6 @@ class PostController extends Controller {
         // Process likes and recursively handle subcomments
         if (Auth::check()) {
             $post->liked = $post->likes()->where('userid', Auth::user()->userid)->exists();
-            Log::info($post->liked);
             $post->createddate = $post->createddate->diffForHumans();
             $this->processComments($post->comments, Auth::user()->userid);
         } else {
@@ -368,7 +365,7 @@ class PostController extends Controller {
         // Check if the authenticated user is the owner of the post
         try { $this->authorize('edit', $post); 
         }catch (AuthorizationException $e) {
-            if($request->groupname !== null){
+            if($request->groupname !== null) {
                 return redirect()->route('group', $request->groupname)
                 ->with('error', 'You are not authorized to update this post.');
             }
@@ -376,14 +373,14 @@ class PostController extends Controller {
         }
 
         
-        if($request->topics !== null){
+        if($request->topics !== null) {
             $request->topics = explode(',', $request->topics[0]);
             //detach the general topic  because we are inserting specific topics
             $post->topics()->detach(1);
         }
 
 
-        if(count($request->remove_topics) !== null){
+        if(count($request->remove_topics) !== null) {
             $request->remove_topics = explode(',', $request->remove_topics[0]);
         }
 
@@ -402,9 +399,9 @@ class PostController extends Controller {
 
         
         //removes the topics from the post
-        if($request->topics !== null){
-            foreach($request->remove_topics as $topic){
-                if($topic == ""){
+        if($request->topics !== null) {
+            foreach($request->remove_topics as $topic) {
+                if($topic == "") {
                     continue;
                 }
                 $post->topics()->detach($topic);
@@ -412,15 +409,15 @@ class PostController extends Controller {
         }
 
         //insert the topics to the post
-        foreach($request->topics as $topic){
-            if($topic == ""){
+        foreach($request->topics as $topic) {
+            if($topic == "") {
                 continue;
             }
             $post->topics()->attach($topic);
         }
 
         //attach the general topic if there are no topics in the post after the update
-        if($post->topics()->count() == 0){
+        if($post->topics()->count() == 0) {
             $post->topics()->attach(1);
         }
 
@@ -445,7 +442,7 @@ class PostController extends Controller {
         $mediaCount = $request->hasFile('media') ? count($request->file('media')) : 0;
 
         if ($currentMediaCount + $mediaCount > 4) {
-            if($request->groupname !== null){
+            if($request->groupname !== null) {
                 return redirect()->route('group', $request->groupname)
                 ->with('error', 'You can only upload a maximum of 4 files.');
             }
@@ -467,7 +464,7 @@ class PostController extends Controller {
                 ]);
             }
         }
-        if($request->groupname !== null){
+        if($request->groupname !== null) {
             return redirect()->route('group', $request->groupname)
             ->with('success', 'Group post updated successfully!');
         }

@@ -7,7 +7,6 @@ use App\Models\Post;
 use App\Models\User;
 use App\Models\Group;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class SearchController extends Controller {   
     //Perfoms the search according to the query inserted by the user
@@ -43,7 +42,6 @@ class SearchController extends Controller {
                         $topics = explode(',', $request->topics);
                         $topics = array_map('intval', $topics);
                     }
-                    Log::info($request);
                 
                     // Build the query for posts
                     $postsQuery = Post::with('user', 'media', 'topics', 'user.profilePicture')
@@ -85,12 +83,12 @@ class SearchController extends Controller {
 
                 case 'users':
                     $visibility = null;
-                    if(isset($request->visibilityPublic)){
+                    if(isset($request->visibilityPublic)) {
                         $visibility = $request->visibilityPublic;
                     }
                    
                     if(Auth::check()) {
-                        if($visibility === null){
+                        if($visibility === null) {
                             //no filter
                             
                             $users = User::with('profilePicture')->where(function($query) use ($sanitizedQuery) {
@@ -115,7 +113,7 @@ class SearchController extends Controller {
                     }
 
                     else {
-                        if($visibility === null){
+                        if($visibility === null) {
                             //no filter
                             $users = User::with('profilePicture')->where(function($query) use ($sanitizedQuery) {
                                 $query->whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
@@ -144,10 +142,10 @@ class SearchController extends Controller {
 
                 case 'groups':
                     $visibility = null;
-                    if(isset($request->visibilityPublic)){
+                    if(isset($request->visibilityPublic)) {
                         $visibility = $request->visibilityPublic;
                     }
-                    if($visibility === null){
+                    if($visibility === null) {
                         $groups = Group::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                             ->paginate(10);
                     }
@@ -161,7 +159,7 @@ class SearchController extends Controller {
                     $posts = Post::whereRaw("search @@ plainto_tsquery('english', ?)", [$sanitizedQuery])
                         ->where('visibilitypublic', true)
                         ->paginate(10);
-                        for($i = 0;$i < sizeof($posts); $i++){
+                        for($i = 0;$i < sizeof($posts); $i++) {
                             $posts[$i]->createddate = $posts[$i]->createddate->diffForHumans();
                         }
                     break;
@@ -170,7 +168,7 @@ class SearchController extends Controller {
 
         $message = null;
 
-        if($request->ajax()){
+        if($request->ajax()) {
             return response()->json([$posts, $users, $groups]);
         }
 

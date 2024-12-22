@@ -41,7 +41,6 @@ class GroupListController extends Controller
                             return $invitation;
                         });
                     } catch (\Exception $e) {
-                        \Log::error('Error in manage-invitations: ' . $e->getMessage());
                         return response()->json(['error' => $e->getMessage()], 500);
                     }
                     break;

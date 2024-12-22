@@ -4,27 +4,24 @@ namespace App\Policies;
 
 use App\Models\User;
 use App\Models\Report;
-use Illuminate\Support\Facades\Log;
 
-class ReportPolicy
-{
+class ReportPolicy {
     /**
      * Create a new policy instance.
      */
-    public function __construct()
-    {
+    public function __construct() {
         //
     }
 
     
-    public function create (User $user){
+    public function create (User $user) {
         //admins cannot make reports
         return !$user->isadmin;    
     }
 
-    public function alreadyReported(User $user, $contentId, $isPost){
+    public function alreadyReported(User $user, $contentId, $isPost) {
         //verify if the user already reported that content
-        if($isPost){
+        if($isPost) {
             $report = Report::where('postid', $contentId)
                     ->where('userid', $user->userid)
                     ->first();
@@ -39,12 +36,12 @@ class ReportPolicy
         }
     }
 
-    public function delete (User $user){
+    public function delete (User $user) {
         //only admins can remove reports
         return $user->isadmin;
     }
 
-    public function get (User $user){
+    public function get (User $user) {
         //only admins can get reports from the db to view and manage them
         return $user->isadmin;
     }

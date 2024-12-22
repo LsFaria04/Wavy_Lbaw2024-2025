@@ -3,8 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
-
 
 class UserPolicy {
 
@@ -16,15 +14,15 @@ class UserPolicy {
         return $authUser->id === $user->id || $authUser->isadmin;
     }
 
-    public function createAdmin(User $user){
+    public function createAdmin(User $user) {
         return $user->isadmin;
     }
 
-    public function getForAdmin(User $user){
+    public function getForAdmin(User $user) {
         return $user->isadmin;
     }
 
-    public function banUser(User $user){
+    public function banUser(User $user) {
         return $user->isadmin;
     }
 }

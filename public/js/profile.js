@@ -14,7 +14,7 @@ function toggleHidden(element) {
 }
 
 
-function handleProfileInfo(){
+function handleProfileInfo() {
   const response = JSON.parse(this.responseText);
   isPublic = response.visibilitypublic;
 }
@@ -22,7 +22,7 @@ function handleProfileInfo(){
 //store user profile info (only accessed if we enter a profile)
 let isPublic = false;
 let username = "";
-if(document.querySelector("#profile-tab-content") !== null){
+if(document.querySelector("#profile-tab-content") !== null) {
   username = document.getElementById('profile-username').innerHTML;
   sendAjaxRequest('get', '/api/' + username, null, handleProfileInfo);
 }
@@ -81,7 +81,7 @@ function toggleAddTopics() {
   //show add topics menu
   const addTopicsMenu = document.getElementById('addTopics');
 
-  if(addTopicsMenu.classList.contains('hidden')){
+  if(addTopicsMenu.classList.contains('hidden')) {
     addTopicPage = 0;
     loadMoreTopics(false);
 
@@ -120,20 +120,20 @@ function confirmDeleteProfile() {
 //toggles the password form when it is needed in the delete user menu
 function togglePasswordForm() {
   const passwordForm = document.getElementById('passwordForm');
-  if(passwordForm.classList.contains('hidden')){
+  if(passwordForm.classList.contains('hidden')) {
     return;
   }
   passwordForm.classList.toggle('hidden');
 }
 
 //inserts more content into the profile page
-function insertMoreProfileContent(){
+function insertMoreProfileContent() {
   removeLoadingCircle();//remove the circle because we already have the data
   const profileContent = document.querySelector("#profile-tab-content");
 
   let results = JSON.parse(this.responseText);
 
-  if((!isPublic && !isadmin) && (username != currentUsername)){
+  if((!isPublic && !isadmin) && (username != currentUsername)) {
     profileContent.innerHTML = `
     <div class="flex justify-center items-center h-32">
             <p class="text-gray-600 text-center">Account is private.</p>
@@ -142,7 +142,7 @@ function insertMoreProfileContent(){
     return;   
   }
 
-  switch(profileTab){
+  switch(profileTab) {
 
     case 'user-posts':
       maxPage = results.last_page; 
@@ -163,7 +163,7 @@ function insertMoreProfileContent(){
       return;
   }
 
-  if(profileContent.firstChild == null){
+  if(profileContent.firstChild == null) {
     profileContent.innerHTML = `
       <div class="flex justify-center items-center h-32">
               <p class="text-gray-600 text-center">No ${profileTab == 'user-posts' ? 'posts' : (profileTab == 'user-comments' ? 'comments' : 'liked content')} found for this user.</p>
@@ -180,11 +180,11 @@ let addTopicPage = 0;
 let addTopicPageMax = -1;
 let searchQuery = "";
 let isQuery = false;
-function loadMoreTopics(isMy){
+function loadMoreTopics(isMy) {
   isMyTopics = isMy;
 
   let topicsList = null;
-  if(isMyTopics){
+  if(isMyTopics) {
     topicsList = document.querySelector("#myTopicsList > ul");
   }
   else {
@@ -204,7 +204,7 @@ function loadMoreTopics(isMy){
     }   
   }
   else {
-    if(isMyTopics){
+    if(isMyTopics) {
       myTopicPage++;
       sendAjaxRequest('get', '/api/topics/' + userId +'?page=' + myTopicPage, null,insertMoreTopics);
     }
@@ -219,13 +219,13 @@ function loadMoreTopics(isMy){
 }
 
 //insert topics in the topics list in the topics menu (my topics and add topics)
-function insertMoreTopics(){
+function insertMoreTopics() {
     removeLoadingCircle();
     
     let topics = JSON.parse(this.responseText);
 
     //received a response from the server that needs to be displayed (error messages)
-    if(topics.response !== undefined){
+    if(topics.response !== undefined) {
       const messageContainer = document.getElementById('messageContainer');
       createAlert(messageContainer, topics.message, true);
       return;
@@ -238,7 +238,7 @@ function insertMoreTopics(){
       
       //already loaded everything from the db. Hide the button
       if(myTopicPageMax == myTopicPage) {
-        if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')){
+        if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')) {
           document.querySelector('#myTopicsList > button').classList.toggle('hidden');
         }
       }
@@ -249,16 +249,16 @@ function insertMoreTopics(){
 
       //already loaded everything from the db. Hide the button
       if(addTopicPageMax == addTopicPage) {
-        if(!document.querySelector('#topicsList > button').classList.toggle('hidden')){
+        if(!document.querySelector('#topicsList > button').classList.toggle('hidden')) {
           document.querySelector('#topicsList > button').classList.toggle('hidden');
         }
       }
     }
 
     //iterate throw the topics and add them into the list
-    for(let i = 0; i < topics.data.length; i++){
+    for(let i = 0; i < topics.data.length; i++) {
       //do not show the general topic because it is the default
-      if(topics.data[i].topicid === 1){
+      if(topics.data[i].topicid === 1) {
         continue;
       }
       let topic = createTopic(topics.data[i], isMyTopics, false,null);
@@ -266,16 +266,16 @@ function insertMoreTopics(){
     }
 
     //show the more topics button again if we found more topics. We also display a warning if no topics were found
-    if(topics.data.length > 0){
+    if(topics.data.length > 0) {
 
       //show the button to load more topics if it is not on the screen
-      if(isMyTopics && (myTopicPageMax > myTopicPage)){
-        if(document.querySelector('#myTopicsList > button').classList.contains('hidden')){
+      if(isMyTopics && (myTopicPageMax > myTopicPage)) {
+        if(document.querySelector('#myTopicsList > button').classList.contains('hidden')) {
           document.querySelector('#myTopicsList > button').classList.toggle('hidden');
         }
       }
       else if (!isMyTopics && (addTopicPageMax > addTopicPage)) {
-        if(document.querySelector('#topicsList > button').classList.contains('hidden')){
+        if(document.querySelector('#topicsList > button').classList.contains('hidden')) {
           document.querySelector('#topicsList > button').classList.toggle('hidden');
         }
       }
@@ -283,7 +283,7 @@ function insertMoreTopics(){
     }
     else {
       //there are no topics in the list and we could not found new ones with the ajax request so a warning is displayed
-      if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null){
+      if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null) {
         let warning = document.createElement('p');
         warning.innerHTML='No topics found';
         topicsList.appendChild(warning);
@@ -291,12 +291,12 @@ function insertMoreTopics(){
       
       //hide the button if it isn't hidden
       if(isMyTopics) {
-        if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')){ 
+        if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')) { 
         document.querySelector('#myTopicsList > button').classList.toggle('hidden');
         }
       }
       else {
-        if(!document.querySelector('#topicsList > button').classList.contains('hidden')){
+        if(!document.querySelector('#topicsList > button').classList.contains('hidden')) {
         document.querySelector('#topicsList > button').classList.toggle('hidden');
         }
       }
@@ -305,7 +305,7 @@ function insertMoreTopics(){
 }
 
 //creates a new topic with a layout that depends on the page where the topic is going to be inserted
-function createTopic(topicInfo, isMyTopics, isFromPosts, postid){
+function createTopic(topicInfo, isMyTopics, isFromPosts, postid) {
   let topic = document.createElement('li');
   topic.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow");
   topic.setAttribute('id',`topic-${topicInfo.topicid}`)
@@ -338,7 +338,7 @@ function createTopic(topicInfo, isMyTopics, isFromPosts, postid){
 }
 
   //loads the first content of a search when selecting another category
-  function loadProfileContent(category){
+  function loadProfileContent(category) {
     const profileContent = document.querySelector("#profile-tab-content");
     if(!profileContent) return;
 
@@ -348,7 +348,7 @@ function createTopic(topicInfo, isMyTopics, isFromPosts, postid){
 
     insertLoadingCircle(profileContent);
 
-    switch(category){
+    switch(category) {
       case 'user-posts':
         sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
         break;
@@ -388,8 +388,8 @@ function switchProfileTab() {
 }
 
 //inserts more comments into an element
-function insertMoreComments(element, comments){
-  for(let i = 0; i < comments.data.length; i++){
+function insertMoreComments(element, comments) {
+  for(let i = 0; i < comments.data.length; i++) {
     let comment = createComment(comments.data[i]);
     element.appendChild(comment);
 
@@ -398,8 +398,8 @@ function insertMoreComments(element, comments){
 
 //inserts more liked contents into an element
 function insertMoreLikedContent(element, likes) {
-  for(let i = 0; i < likes.data.length; i++){
-    if(likes.data[i].post !== null){
+  for(let i = 0; i < likes.data.length; i++) {
+    if(likes.data[i].post !== null) {
       let post = createPost(likes.data[i].post);
       element.append(post);
     }
@@ -412,20 +412,20 @@ function insertMoreLikedContent(element, likes) {
 
 
 //search for all the topics
-function searchTopics(event){
+function searchTopics(event) {
   event.preventDefault();
   addTopicPage = 0;
   isQuery = true;
   searchQuery = document.querySelector('#topicsSearch').value;
   
   //cancel the search if there is not a query
-  if(searchQuery == ""){
+  if(searchQuery == "") {
     isQuery = false;
   }
 
   //remove the existing topics from the list that is being displayed to the user 
   let topics = document.querySelectorAll("#topicsList > ul li, #topicsList > ul p");
-  topics.forEach( function (topic){
+  topics.forEach( function (topic) {
     topic.remove();
   })
 
@@ -433,20 +433,20 @@ function searchTopics(event){
 }
 
 //search for topics that are associated to a user
-function searchMyTopics(event){
+function searchMyTopics(event) {
   event.preventDefault();
   myTopicPage = 0;
   isQuery = true;
   searchQuery = document.querySelector('#myTopicsSearch ').value;
   
   //cancel the search if there is not a query
-  if(searchQuery == ""){
+  if(searchQuery == "") {
     isQuery = false;
   }
 
   //remove the existing topics from the list that is being displayed to the user 
   let topics = document.querySelectorAll("#myTopicsList > ul li, #myTopicsList > ul p");
-  topics.forEach( function (topic){
+  topics.forEach( function (topic) {
     topic.remove();
   })
 
@@ -454,14 +454,14 @@ function searchMyTopics(event){
 }
 
 //adds more topics to a user using an ajax request and removing from the DOM in the add topic page and adding the topic in the DOM in my topics page
-function addTopicToUser(topicId){
+function addTopicToUser(topicId) {
   const addButton = document.getElementById("topic-" + topicId);
   addButton.disable = true;
-  sendAjaxRequest('put', '/api/topics/add/' + topicId + '/' + userId, null, function(){
+  sendAjaxRequest('put', '/api/topics/add/' + topicId + '/' + userId, null, function() {
     let response = JSON.parse(this.responseText);
     addButton.disable = false;
 
-    if(response.response == '200'){
+    if(response.response == '200') {
       //Display a message 
       const messageContainer = document.getElementById("messageContainer");
       createAlert(messageContainer, response.message, false);
@@ -474,7 +474,7 @@ function addTopicToUser(topicId){
 
       //remove the warning if it is there
       let warning = document.querySelector("#myTopicsList .topicList > p");
-      if(warning != null){
+      if(warning != null) {
         warning.remove();
       }
 
@@ -485,7 +485,7 @@ function addTopicToUser(topicId){
 
       //insert the warning there are no more topics in the topics list
       let topicsList = document.querySelector("#topicsList > ul")
-      if(topicsList.firstChild == null){
+      if(topicsList.firstChild == null) {
         let warning = document.createElement('p');
         warning.innerHTML='No topics found';
         topicsList.appendChild(warning);
@@ -505,15 +505,15 @@ function addTopicToUser(topicId){
 }
 
 //removes a topic from the user using an ajax request and removing the topic from the DOM.
-function removeTopicFromUser(topicId){
+function removeTopicFromUser(topicId) {
   const removeButton = document.getElementById("topic-" + topicId);
   removeButton.disable = true;
-  sendAjaxRequest('delete', '/api/topics/remove/' + topicId + '/' + userId, null, function(){
+  sendAjaxRequest('delete', '/api/topics/remove/' + topicId + '/' + userId, null, function() {
     let response = JSON.parse(this.responseText);
 
     removeButton.disable = false;
 
-    if(response.response == '200'){
+    if(response.response == '200') {
       const messageContainer = document.getElementById("messageContainer");
       createAlert(messageContainer, response.message, false);
 
@@ -523,13 +523,13 @@ function removeTopicFromUser(topicId){
 
       //insert the warning there are no more topics in the topics list
       let topicsList = document.querySelector("#myTopicsList > ul")
-      if(topicsList.firstChild == null){
+      if(topicsList.firstChild == null) {
         let warning = document.createElement('p');
         warning.innerHTML='No topics found';
         topicsList.appendChild(warning);
 
         //hide button only if needed
-        if(!topicsList.nextElementSibling.classList.contains('hidden')){
+        if(!topicsList.nextElementSibling.classList.contains('hidden')) {
           topicsList.nextElementSibling.classList.toggle('hidden');
         }
       }
@@ -757,7 +757,7 @@ function cancelPendingRequest(userId, csrfToken, followButton) {
 
 
 //Funtion that displays a preview of the images that are going to be uploaded
-function imageCropper(){
+function imageCropper() {
   document.getElementById('profilePic')?.addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
@@ -796,7 +796,7 @@ function imageCropper(){
 }
 
 //Closes the preview menu
-function closeImagePreview(){
+function closeImagePreview() {
   const croppModal = document.getElementById("croppModal");
   croppModal.classList.toggle('hidden');
   croppModal.classList.toggle('flex');
@@ -874,8 +874,8 @@ function toggleFollowRequests() {
   followRequest.classList.toggle('flex');
   let followList = document.querySelector("#requestsList> ul");
 
-  if(followRequest.classList.contains('flex')){
-    if(followList.firstChild === null){
+  if(followRequest.classList.contains('flex')) {
+    if(followList.firstChild === null) {
       currentFollowPage = 0;
       loadFollowMoreRequests();
     }
@@ -971,13 +971,13 @@ function insertShowMoreFollow() {
 }
 
 //remove the shoe more button
-function removeShowMoreFollow(){
+function removeShowMoreFollow() {
   document.getElementById('showMore')?.remove();
 }
 
 
 let userFollowId = 0;
-function rejectFollow(userid){
+function rejectFollow(userid) {
   userFollowId = userid;
   const rejectButton = document.getElementById('reject-' + userid);
   insertLoadingCircle(rejectButton);
@@ -991,7 +991,7 @@ function rejectFollow(userid){
 }
 
 
-function handleRejectFollow(){
+function handleRejectFollow() {
   removeLoadingCircle();
   let response = JSON.parse(this.responseText);
 
@@ -1040,21 +1040,21 @@ function handleAcceptFollow() {
 
 }
 
-function toggleFollowerList(){
+function toggleFollowerList() {
   const followers = document.getElementById('followers');
   followers.classList.toggle('hidden');
   followers.classList.toggle('flex');
   let followList = document.querySelector("#followersList > ul");
 
-  if(followers.classList.contains('flex')){
-    if(followList.firstChild === null){
+  if(followers.classList.contains('flex')) {
+    if(followList.firstChild === null) {
       currentFollowPage = 0;
       loadMoreFollowers();
     }
   }
 }
 
-function loadMoreFollowers(){
+function loadMoreFollowers() {
   let followList = document.querySelector("#followsList > ul");
   insertLoadingCircle(followList);
   currentFollowPage++;
@@ -1062,21 +1062,21 @@ function loadMoreFollowers(){
   sendAjaxRequest('post', '/api/profile/followers/'+ userId + '?page=' + currentFollowPage ,null,insertMoreFollows);
 }
 
-function toggleFollowList(){
+function toggleFollowList() {
   const follows = document.getElementById('follows');
   follows.classList.toggle('hidden');
   follows.classList.toggle('flex');
   let followList = document.querySelector("#followsList> ul");
 
-  if(follows.classList.contains('flex')){
-    if(followList.firstChild === null){
+  if(follows.classList.contains('flex')) {
+    if(followList.firstChild === null) {
       currentFollowPage = 0;
       loadMoreFollows();
     }
   }
 }
 
-function loadMoreFollows(){
+function loadMoreFollows() {
   let followList = document.querySelector("#followsList > ul");
   insertLoadingCircle(followList);
   currentFollowPage++;
@@ -1085,7 +1085,7 @@ function loadMoreFollows(){
 }
 
 let isFollower = false;
-function insertMoreFollows(){
+function insertMoreFollows() {
   removeLoadingCircle();
   removeShowMoreFollow();
   let follows = JSON.parse(this.responseText);
@@ -1111,7 +1111,6 @@ function insertMoreFollows(){
     else {
       user = follows.data[i].followee;
     }
-    console.log(user);
     let li = document.createElement('li');
     li.setAttribute('id', 'follow-' + user.userid);
     li.classList.add("w-full","flex", "flex-col","p-2", "my-2", "shadow")
@@ -1130,7 +1129,6 @@ function insertMoreFollows(){
   }
 
   if(currentFollowPage < maxFollowPage) {
-    console.log("here");
     insertShowMoreFollow();
   }
 

@@ -1,7 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-use Illuminate\Support\Facades\Log;
 
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
@@ -34,7 +33,7 @@ class CommentController extends Controller {
         $user = User::where('username', $username)->firstOrFail();
         $comments = Comment::with('post', 'post.user','parentComment', 'parentComment.user', 'user', 'user.profilePicture')->where('userid', $user->userid)->orderBy('createddate', 'desc')->paginate(10);
 
-        for($i = 0;$i < sizeof($comments); $i++){
+        for($i = 0;$i < sizeof($comments); $i++) {
             $comments[$i]->createddate = $comments[$i]->createddate->diffForHumans();
             $comments[$i]->comment_likes_count = $comments[$i]->commentLikes()->count();
             if (Auth::check()) {
@@ -95,7 +94,7 @@ class CommentController extends Controller {
 
         // Check if the user is authorized to create a comment
         if ($request->user()->cannot('create', Comment::class)) {
-            if($request->user()->state === 'suspended'){
+            if($request->user()->state === 'suspended') {
                 return redirect()->route('posts.show',$request->postid)->with('error', 'You account is suspended!');
             }
             return redirect()->route('posts.show',$request->postid)->with('error', 'You cannot create a comment!');
@@ -130,8 +129,6 @@ class CommentController extends Controller {
                     return redirect()->route('posts.show', $request->postid)->with('error', 'Could not upload the file!');
                 }
             }
-        } else {
-            Log::warning('No media files uploaded.');
         }
 
         $post = Post::findOrFail($postId);
@@ -140,8 +137,6 @@ class CommentController extends Controller {
 
         if ($receiver->userid !== $user->userid) {
             event(new PostComment($comment->message, $user, $receiver->userid));
-        } else {
-            Log::info('Self-comment detected, event not triggered.');
         }
     
         return redirect()->route('posts.show',$request->postid)->with('success', 'Comment created successfully!');
@@ -183,7 +178,7 @@ class CommentController extends Controller {
         }
 
         $topcomment = $comment;
-        while ($topcomment->parentcommentid != NULL){
+        while ($topcomment->parentcommentid != NULL) {
             $topcomment = $topcomment->parentComment;
         }
         
@@ -195,7 +190,7 @@ class CommentController extends Controller {
             
             // Store the images in the 'images' directory under 'public'
             foreach ($request->file('media') as $file) {
-                if($file->isValid()){
+                if($file->isValid()) {
                     $mediaPath = $file->store('images', 'public');
 
                     Media::create([
@@ -271,7 +266,7 @@ class CommentController extends Controller {
             }
         }
         $topcomment = $comment;
-        while ($topcomment->parentcommentid != NULL){
+        while ($topcomment->parentcommentid != NULL) {
             $topcomment = $topcomment->parentComment;
         }
         return redirect()->route('posts.show', $topcomment->postid)->with('success', 'Comment updated successfully!');

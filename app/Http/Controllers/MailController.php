@@ -8,7 +8,6 @@ use App\Mail\ContactMailModel;
 use App\Models\User;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Mail;
 
 class MailController extends Controller
@@ -20,7 +19,7 @@ class MailController extends Controller
 
         $token = Str::random(32); //creates a 32 char long token to send
 
-        if($user === null){
+        if($user === null) {
             return response()->json(['message' => 'Email doens not exist', 'response' => '404']);
         }
 
@@ -32,7 +31,7 @@ class MailController extends Controller
         try{
             Mail::to($request->email)->send(new MailModel($mailData));
 
-        } catch(\Exception $e){
+        } catch(\Exception $e) {
             return response()->json(['message' => 'Could not send the email', 'response' => '500']);
         }
 
@@ -42,7 +41,7 @@ class MailController extends Controller
         return response()->json(['message' => 'Email successfully sended', 'response' => '200']);
     }
 
-    function sendContactMessage(Request $request){
+    function sendContactMessage(Request $request) {
         $message = $request->message;
         $name = $request->name;
         $email = $request->email;
@@ -55,7 +54,7 @@ class MailController extends Controller
 
         try{
             Mail::to('contacts@wavy.com')->send(new ContactMailModel($emailData));
-        } catch(\Exception $e){
+        } catch(\Exception $e) {
             return response()->json(['message' => 'Could not send the email', 'response' => '500']);
         }
 

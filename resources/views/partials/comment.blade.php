@@ -6,7 +6,7 @@
                     @php
                             $filePath = null;
                             foreach($comment->user->profilepicture as $pic)
-                            if(Str::contains($pic, 'profile')){
+                            if(Str::contains($pic, 'profile')) {
                                 $filePath = asset('storage/' . $pic->path);
                             }
                             
@@ -71,9 +71,6 @@
         <p>{{ $comment->message }}</p>
 
         <!-- Loop through media files associated with the comment -->
-        @php
-            Log::info($comment->media);
-        @endphp
         <div class="comment-media mt-4 grid grid-cols-2 gap-4">
             @foreach ($comment->media as $media)
                 @php

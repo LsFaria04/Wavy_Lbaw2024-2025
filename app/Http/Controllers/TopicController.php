@@ -7,7 +7,6 @@ use App\Models\Topic;
 use App\Models\Post;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Database\Eloquent\Builder;
 
 class TopicController extends Controller
@@ -15,7 +14,7 @@ class TopicController extends Controller
     /*
     Used to add a topic on the database. Only admins can add new topics
     */
-    function create(Request $request){
+    function create(Request $request) {
 
         //check if an user is authorized to create a topic
         try { 
@@ -43,11 +42,11 @@ class TopicController extends Controller
     /*
     Used to delete topics on the database. Only admins can delete topics
     */
-    function delete(Request $request, $topicid){
+    function delete(Request $request, $topicid) {
         try{
             $topic = Topic::findOrFail($topicid);
         }
-        catch (\Exception $e){
+        catch (\Exception $e) {
             return response()->json(['message' => 'Topic does not exist', 'response' => '404']);
         }
 
@@ -62,9 +61,9 @@ class TopicController extends Controller
             //update the topics in the posts and give them the general topic if they don't have any
             $posts = Post::whereHas('topics', function ($query) use ($topicid) {$query->where('topic.topicid', $topicid); })->get();
 
-            foreach($posts as $post){
+            foreach($posts as $post) {
                 $post->topics()->detach($topicid);
-                if($post->topics()->count() == 0){
+                if($post->topics()->count() == 0) {
                     $post->topics()->attach(1);
                 }
             }
@@ -80,10 +79,10 @@ class TopicController extends Controller
     }
 
     //gets topics that a user can user
-    function getTopicsToAdd(Request $request, $userId){
+    function getTopicsToAdd(Request $request, $userId) {
         try{
             $this->authorize('userTopics', [Topic::class,$userId]);
-        } catch(AuthorizationException $e){
+        } catch(AuthorizationException $e) {
             return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
 
@@ -99,7 +98,7 @@ class TopicController extends Controller
                         ->distinct()
                         ->paginate(10);
             return response()->json($topics);
-        }catch(\Exception $e){
+        }catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
@@ -109,11 +108,11 @@ class TopicController extends Controller
     /*
     Returns the topics that are associated to an user
     */
-    function getUserTopics(Request $request, $userId){
+    function getUserTopics(Request $request, $userId) {
 
         try{
             $this->authorize('userTopics', [Topic::class,$userId]);
-        } catch(AuthorizationException $e){
+        } catch(AuthorizationException $e) {
             return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
 
@@ -126,7 +125,7 @@ class TopicController extends Controller
                         ->setBindings([$userId])
                         ->paginate(10);
             return response()->json($topics);
-        } catch(\Exception $e){
+        } catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
@@ -136,10 +135,10 @@ class TopicController extends Controller
     /*
     Returns all the topics that can be added to a new post
     */
-    function getAllTopics(Request $request){
+    function getAllTopics(Request $request) {
         try{
             $topics = Topic::paginate(10);
-        }catch(\Exception $e){
+        }catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
@@ -149,7 +148,7 @@ class TopicController extends Controller
     /*
     Returns all the topics that can be added to a new post
     */
-    function getAllTopicsToPost(Request $request, $postid){
+    function getAllTopicsToPost(Request $request, $postid) {
         try{
             $topics = DB::table('topic')
             ->leftjoin('post_topics', function($join) use ($postid) { 
@@ -161,7 +160,7 @@ class TopicController extends Controller
             ->distinct()
             ->paginate(10);
 
-        }catch(\Exception $e){
+        }catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
@@ -171,10 +170,10 @@ class TopicController extends Controller
     /*
     Associates a topic to a user
     */
-    function addTopicToUser(Request $request, $topicId, $userid){
+    function addTopicToUser(Request $request, $topicId, $userid) {
         try{
             $this->authorize('userTopics', [Topic::class,$userid]);
-        } catch(AuthorizationException $e){
+        } catch(AuthorizationException $e) {
             return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
 
@@ -184,7 +183,7 @@ class TopicController extends Controller
                     'topicid' => $topicId,
                     'userid' => $userid
                 ]);
-        } catch(\Exception $e){
+        } catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
         
@@ -194,10 +193,10 @@ class TopicController extends Controller
     /*
     Removes the association of a topic to a user
     */
-    function removeTopicFromUser(Request $request,$topicId, $userid){
+    function removeTopicFromUser(Request $request,$topicId, $userid) {
         try{
             $this->authorize('userTopics', [Topic::class,$userid]);
-        } catch(AuthorizationException $e){
+        } catch(AuthorizationException $e) {
             return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
 
@@ -208,7 +207,7 @@ class TopicController extends Controller
             'userid' => $userid
             ])
             ->delete();
-        }catch(\Exception $e){
+        }catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
         return response()->json(['response' => '200', 'message' => 'Topic removed successfully']); 
@@ -217,14 +216,14 @@ class TopicController extends Controller
     /*
     Searches for topics that belong to a user using a search query
     */
-    function searchUserTopic(Request $request, $userid){
+    function searchUserTopic(Request $request, $userid) {
         $query = $request->input('q');
         //sanitizes the query to separate the words
         $sanitizedQuery = str_replace("'", "''", $query);
 
         try{
             $this->authorize('userTopics', [Topic::class,$userid]);
-        } catch(AuthorizationException $e){
+        } catch(AuthorizationException $e) {
             return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
         try{
@@ -237,7 +236,7 @@ class TopicController extends Controller
                 ->paginate(10);
 
             return response()->json($topics);
-        }catch(\Exception $e){
+        }catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server Problem. Try again']);
         }
         return response()->json(['response' => '403', 'message' => 'Cannot access other users topics']);    
@@ -246,14 +245,14 @@ class TopicController extends Controller
     /*
     Searches for topics that a user can add using a search query
     */
-    function searchTopicsToAdd(Request $request, $userid){
+    function searchTopicsToAdd(Request $request, $userid) {
         $query = $request->input('q');
         //sanitizes the query to separate the words
         $sanitizedQuery = str_replace("'", "''", $query);
 
         try{
             $this->authorize('userTopics', [Topic::class,$userid]);
-        } catch(AuthorizationException $e){
+        } catch(AuthorizationException $e) {
             return response()->json(['message' => 'Cannot access other users topics', 'response' => '403']);
         }
         try{
@@ -271,7 +270,7 @@ class TopicController extends Controller
 
             return response()->json($topics);
 
-        }catch(\Exception $e){
+        }catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
         return response()->json(['response' => '403', 'message' => 'Cannot search other users topics']);   
@@ -281,7 +280,7 @@ class TopicController extends Controller
     /*
     Searches all the topics that can be added to a post  using a search query
     */
-    function searchAllTopicsToPost(Request $request, $postid){
+    function searchAllTopicsToPost(Request $request, $postid) {
         $query = $request->input('q');
         //sanitizes the query to separate the words
         $sanitizedQuery = str_replace("'", "''", $query);
@@ -299,14 +298,14 @@ class TopicController extends Controller
             ->setBindings([$query])
             ->paginate(10);
 
-        }catch(\Exception $e){
+        }catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 
         return response()->json($topics);
     }
 
-    function searchAllTopics(Request $request){
+    function searchAllTopics(Request $request) {
         $query = $request->input('q');
         //sanitizes the query to separate the words
         $sanitizedQuery = str_replace("'", "''", $query);
@@ -315,7 +314,7 @@ class TopicController extends Controller
             $topics = Topic::whereRaw("search @@ plainto_tsquery('english', ?)")
                         ->setBindings([$query])
                         ->paginate(10);
-        }catch(\Exception $e){
+        }catch(\Exception $e) {
             return response()->json(['response' => '500', 'message' => 'Server problem. Try again']);
         }
 

@@ -17,7 +17,6 @@ function addEventListeners() {
             sendAjaxRequest('delete', `/api/groups/${groupId}/invitations/${invitationId}`, {}, function () {
                 if (this.status === 200) {
                     const response = JSON.parse(this.responseText);
-                    console.log(response.message);
 
                     const invitationElement = cancelButton.closest('.invitation');
                     if (invitationElement) invitationElement.remove();
@@ -44,7 +43,6 @@ function addEventListeners() {
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/accept`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
-                  console.log(response.message);
 
                   const requestElement = e.target.closest('.request');
                   if (requestElement) requestElement.remove();
@@ -71,7 +69,6 @@ function addEventListeners() {
           sendAjaxRequest('post', `/api/groups/${groupId}/requests/${requestId}/reject`, {}, function () {
               if (this.status === 200) {
                   const response = JSON.parse(this.responseText);
-                  console.log(response.message);
 
                   const requestElement = e.target.closest('.request');
                   if (requestElement) requestElement.remove();
@@ -88,7 +85,6 @@ function addEventListeners() {
 
   document.addEventListener('click', function (e) {
       if (e.target && e.target.id === 'ask-to-join-btn') {
-          console.log('Ask to Join button clicked.');
 
           // Send join request
           const messageContainer = document.getElementById('messageContainer');
@@ -134,7 +130,6 @@ function addEventListeners() {
         if (e.target && e.target.closest('.search-result')) {
             const result = e.target.closest('.search-result');
             selectedUserId = result.dataset.id;
-            console.log('User ID Found:', selectedUserId);
             sendInviteButton.disabled = false;
         }
 
@@ -142,7 +137,6 @@ function addEventListeners() {
         if (e.target && e.target.id === 'send-invite') {
             if (!selectedUserId) return;
 
-            console.log('Sending invite to User ID:', selectedUserId);
             const messageContainer = document.getElementById('messageContainer');
             sendAjaxRequest('post', `/api/groups/${groupId}/invitations`, { userid: selectedUserId }, function () {
                 if (this.status === 200) {
@@ -362,7 +356,7 @@ function insertMoreGroupContent() {
             return;
     }
 
-    if(groupContent.firstChild == null){
+    if(groupContent.firstChild == null) {
       groupContent.innerHTML = `
         <div class="flex justify-center items-center h-32">
                 <p class="text-gray-600 text-center">No ${groupTab == 'group-posts' ? 'posts' : (groupTab == 'group-members' ? 'members' : (groupTab == 'group-invitations' ? 'invitations' : 'join requests'))} found for this group.</p>
@@ -503,8 +497,8 @@ function createMember(memberInfo) {
 }
     
 //inserts more members into an element
-function insertMoreMembers(element, members){
-    for(let i = 0; i < members.data.length; i++){
+function insertMoreMembers(element, members) {
+    for(let i = 0; i < members.data.length; i++) {
       let member = createMember(members.data[i]);
       element.appendChild(member);
     }

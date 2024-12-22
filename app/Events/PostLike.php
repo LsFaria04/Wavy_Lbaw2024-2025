@@ -8,7 +8,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class PostLike implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
@@ -37,8 +36,7 @@ class PostLike implements ShouldBroadcast {
      *
      * @return \Illuminate\Broadcasting\Channel
      */
-    public function broadcastOn(){
-        Log::info("like notification event");
+    public function broadcastOn() {
         return new Channel('public-user.' . $this->receiverid);
     }
 

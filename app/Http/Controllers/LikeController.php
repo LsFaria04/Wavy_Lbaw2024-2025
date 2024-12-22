@@ -6,14 +6,13 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Like;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 
 class LikeController extends Controller {
 
     /**
      * Gets the likes created by user (By username)
      */
-    function getUserLikesByUsername(Request $request, $username){
+    function getUserLikesByUsername(Request $request, $username) {
         $user = User::where('username', $username)->firstOrFail();
     
         $likes = Like::with([

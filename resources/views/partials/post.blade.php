@@ -7,7 +7,7 @@
                         @php
                                 $filePath = null;
                                 foreach($post->user->profilepicture as $pic)
-                                if(Str::contains($pic, 'profile')){
+                                if(Str::contains($pic, 'profile')) {
                                     $filePath = asset('storage/' . $pic->path);
                                 }
                                 

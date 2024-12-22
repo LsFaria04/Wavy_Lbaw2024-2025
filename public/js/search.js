@@ -6,7 +6,7 @@ function addEventListeners() {
 
 //gets the search category to be used by the other functions
 let searchCategory = null;
-  if(document.querySelector('input[name="category"]') !== null){
+  if(document.querySelector('input[name="category"]') !== null) {
   searchCategory = document.querySelector('input[name="category"]').value;
 }
 
@@ -40,9 +40,9 @@ function changeCategory(category) {
 
   // shows/hides the toggle filters menu
   let filtersLoaded = false
-  function toggleFilters(){
+  function toggleFilters() {
     const filtersMenu = document.getElementById('filterMenu');
-    if(filtersMenu.classList.contains('hidden') && !filtersLoaded){
+    if(filtersMenu.classList.contains('hidden') && !filtersLoaded) {
       buildFilterOptions();
       filtersLoaded = true;
     }
@@ -58,16 +58,16 @@ function changeCategory(category) {
 
 
   //builds the filter options menu with the options related to the corresponding category
-  function buildFilterOptions(){
+  function buildFilterOptions() {
     const filtersOptions = document.getElementById('filterOptions');
 
     //remove previous filter options
-    while(filtersOptions.firstChild !== null){
+    while(filtersOptions.firstChild !== null) {
       filtersOptions.firstChild.remove();
     }
 
     //build the filters according to the category of the search
-    switch(searchCategory){
+    switch(searchCategory) {
       case 'posts':
         buildPostFilterOptions();
         break;
@@ -85,7 +85,7 @@ function changeCategory(category) {
   }
 
   //builds the filter options menu for the posts
-  function buildPostFilterOptions(){
+  function buildPostFilterOptions() {
     const filtersOptions = document.getElementById('filterOptions');
 
     const topicContainer = document.createElement('div');
@@ -102,7 +102,7 @@ function changeCategory(category) {
   }
 
   //builds the filter options menu for the groups
-  function buildGroupFilterOptions(){
+  function buildGroupFilterOptions() {
     const filtersOptions = document.getElementById('filterOptions');
     const visibilityContainer = document.createElement('div');
     visibilityContainer.setAttribute('id', 'visibilityFilterContainer')
@@ -124,7 +124,7 @@ function changeCategory(category) {
   }
 
   //builds the filter options menu for the users
-  function buildUserFilterOptions(){
+  function buildUserFilterOptions() {
     const filtersOptions = document.getElementById('filterOptions');
     const visibilityContainer = document.createElement('div');
     visibilityContainer.setAttribute('id', 'visibilityFilterContainer')
@@ -146,16 +146,16 @@ function changeCategory(category) {
 
   //send an ajax request with the the filters that the user selected
   let filters = {}
-  function applyFilters(){
+  function applyFilters() {
     currentFilterPage = 0;
     currentPage = 1;
     const query = document.querySelector('input[name="q"]').value;
-    switch(searchCategory){
+    switch(searchCategory) {
       case 'posts':
         //get the check topics
         let checkedTopics = document.querySelectorAll("#topicsFilterContainer input:checked");
         let checkedList = [];
-        for(let i = 0; i < checkedTopics.length; i++){
+        for(let i = 0; i < checkedTopics.length; i++) {
           checkedList.push(checkedTopics[i].getAttribute('id'));
         }
         filters = {'topics' : checkedList};
@@ -184,13 +184,13 @@ function changeCategory(category) {
       case 'users':
         let publicCheckBoxUser = document.querySelectorAll('#publicCheck:checked');
         let privateCheckBoxUser = document.querySelectorAll('#privateCheck:checked');
-        if(privateCheckBoxUser.length > 0 && publicCheckBoxUser.length > 0){
+        if(privateCheckBoxUser.length > 0 && publicCheckBoxUser.length > 0) {
           //no need to add a filter because we want all
         }
-        else if(privateCheckBoxUser.length > 0){
+        else if(privateCheckBoxUser.length > 0) {
           filters['visibilityPublic'] = false;
         }
-        else if(publicCheckBoxUser.length > 0){
+        else if(publicCheckBoxUser.length > 0) {
           filters['visibilityPublic'] = true;
         }
         else {
@@ -209,7 +209,7 @@ function changeCategory(category) {
 
 
 //loads the first content of a search when selecting another category
-function loadSearchContent(category, query, filters){
+function loadSearchContent(category, query, filters) {
   const searchResults = document.querySelector("#search-results");
   
   while (searchResults.firstChild) {
@@ -220,11 +220,11 @@ function loadSearchContent(category, query, filters){
   sendAjaxRequest('post', '/api/search/filtered?page=' + currentPage + "&" + 'q=' + query + "&" + "category=" + category, filters, insertMoreSearchResults);
 }
   
-function insertMoreSearchResults(){
+function insertMoreSearchResults() {
     removeLoadingCircle();
     const searchResults = document.querySelector("#search-results");
 
-    if(document.getElementById('filter') === null){
+    if(document.getElementById('filter') === null) {
       const filterButton = document.createElement('button');
       filterButton.innerHTML = `
           Filter
@@ -242,7 +242,7 @@ function insertMoreSearchResults(){
   
     let results = JSON.parse(this.responseText);
   
-    switch(searchCategory){
+    switch(searchCategory) {
   
         case 'posts':
           if(results[0] === undefined) break;
@@ -266,7 +266,7 @@ function insertMoreSearchResults(){
         return;
   }
   
-  if(searchResults.childElementCount == 1){
+  if(searchResults.childElementCount == 1) {
       searchResults.innerHTML = `
          <button id="filter" class = "flex flex-row gap-2 self-start p-4" onclick = "toggleFilters()" >
                     Filter
@@ -282,7 +282,7 @@ function insertMoreSearchResults(){
 }
 
 //Inserts a show more button for the filters menu
-function insertShowMoreFilter(){
+function insertShowMoreFilter() {
   const section = document.getElementById('topicsFilterContainer');  
   let showMore = document.createElement('button');
   showMore.classList.add("flex", "w-full", "justify-center", "items-center");
@@ -301,7 +301,7 @@ function insertShowMoreFilter(){
 //loads more topics to insert into the filter menu
 let currentFilterPage = 0;
 let maxFilterPage = -1;
-function loadTopicsForFilters(){
+function loadTopicsForFilters() {
   currentFilterPage++;
   let topicContainerList = document.querySelector('#topicsFilterContainer');
   insertLoadingCircle(topicContainerList);
@@ -310,7 +310,7 @@ function loadTopicsForFilters(){
 }
 
 //inserts more topics into the filter menu
-function insertMoreTopicsFilters(){
+function insertMoreTopicsFilters() {
   let topicContainerList = document.querySelector('#topicsFilterContainer > .optionsList');
   removeShowMoreAdmin();
   removeLoadingCircle();
@@ -318,7 +318,7 @@ function insertMoreTopicsFilters(){
   maxFilterPage = topics.last_page;
   currentFilterPage = topics.current_page
 
-  for(let i = 0; i < topics.data.length; i++){
+  for(let i = 0; i < topics.data.length; i++) {
     let row = document.createElement('li');
     row.setAttribute('class', "my-1 mx-4 flex flex-row justify-between");
     row.innerHTML = `
@@ -328,15 +328,15 @@ function insertMoreTopicsFilters(){
     topicContainerList.appendChild(row);
     
   }
-  if(currentFilterPage < maxFilterPage){
+  if(currentFilterPage < maxFilterPage) {
     insertShowMoreFilter();
   }
 }
 
 
 
-function insertMoreGroups(element, groups){
-  for(let i = 0; i < groups.data.length; i++){
+function insertMoreGroups(element, groups) {
+  for(let i = 0; i < groups.data.length; i++) {
     let group = createGroup(groups.data[i]);
     element.appendChild(group);
   
@@ -344,16 +344,16 @@ function insertMoreGroups(element, groups){
 }
 
 //inserts more users into an element
-function insertMoreUsers(element, users){
-  for(let i = 0; i < users.data.length; i++){
+function insertMoreUsers(element, users) {
+  for(let i = 0; i < users.data.length; i++) {
     let user = createUser(users.data[i]);
     element.appendChild(user);
   }
 }
 
 //inserts more users into an element
-function insertMoreUsers(element, users){
-  for(let i = 0; i < users.data.length; i++){
+function insertMoreUsers(element, users) {
+  for(let i = 0; i < users.data.length; i++) {
     let user = createUser(users.data[i]);
     element.appendChild(user);
   }
@@ -367,7 +367,7 @@ function insertMorePosts(element, posts) {
 
     let post = createPost(posts.data[i]);
 
-    if(isAuthenticated){
+    if(isAuthenticated) {
       if (userId == posts.data[i].user.userid || isadmin) {
         post = createPostOptions(post, posts.data[i].postid, false);
       } else {
@@ -392,7 +392,7 @@ function insertMorePosts(element, posts) {
 }
 
 function insertMoreCommentsToPost(element, comments) {
-  if (comments.data && comments.data.length > 0){
+  if (comments.data && comments.data.length > 0) {
     for (let i = 0; i < comments.data.length; i++) {
       if (comments.data[i].user.state === 'deleted') {
         comments.data[i].user.username = 'Deleted User';
@@ -431,7 +431,6 @@ function insertMoreSubCommentsToComment(subcomments) {
       if (subcomments[i].user.state === 'deleted') {
         subcomments[i].user.username = 'Deleted User';
       }
-      console.log(subcomments[i]);
 
       let comment = createComment(subcomments[i]);
 
@@ -489,7 +488,7 @@ function createGroup(groupInfo) {
   return group;
 }
 
-function createUser(userInfo){
+function createUser(userInfo) {
   let user = document.createElement('div');
   user.classList.add("user", "mb-4", "p-4", "bg-white", "rounded-md", "shadow-md");
   

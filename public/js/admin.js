@@ -20,7 +20,7 @@ function addEventListeners() {
 function setupCreateUserMenu() {
   const createUserBtn = document.getElementById("createUserBtn");
 
-  if(createUserBtn === null){
+  if(createUserBtn === null) {
     return;
   }
   const createUserMenu = document.getElementById("createUserMenu");
@@ -54,7 +54,7 @@ function setupCreateUserMenu() {
 function setupCreateTopicMenu() {
   const createTopicBtn = document.getElementById("createTopicBtn");
 
-  if(createTopicBtn === null){
+  if(createTopicBtn === null) {
     return;
   }
   const createTopicMenu = document.getElementById("createTopicMenu");
@@ -86,7 +86,7 @@ function setupCreateTopicMenu() {
 //admin Listeners ----------------------------------------------------------------------------
 
 //Adds a listener to the submission of the create topic form. Performs a ajax request instead of the default request
-function createTopicListener(){
+function createTopicListener() {
   let createTopic = document.getElementById('createTopicForm');
 
   createTopic?.addEventListener('submit', (form) => {
@@ -109,7 +109,7 @@ function createTopicListener(){
 }
 
 //Adds a listener to the submission of the create user form. Performs a ajax request instead of the default request
-function createUserListener(){
+function createUserListener() {
   let createUser = document.getElementById('createUserForm');
 
   createUser?.addEventListener('submit', (form) => {
@@ -135,9 +135,9 @@ function createUserListener(){
 }
 
 //adds a listener to the confirmation button. Performs a ajax request for deletion depending on the category selected
-function confirmButtonListener(){
+function confirmButtonListener() {
   let confirmButton = document.getElementById('confirmButtonAdmin');
-  if(confirmButton !== null){
+  if(confirmButton !== null) {
     confirmButton.addEventListener('click', () => {
       insertLoadingCircle(confirmButton);
 
@@ -149,13 +149,13 @@ function confirmButtonListener(){
       document.querySelector('#loading_circle').classList.add('h-4');
       document.querySelector('#loading_circle').classList.add('w-4');
 
-      if(window.categoryDelete == 'topics'){
+      if(window.categoryDelete == 'topics') {
         sendAjaxRequest('post', '/api/topics/delete/' + window.elementToDelete, null, handleTopicDelete);
       }
-      if(window.categoryDelete == 'reports'){
+      if(window.categoryDelete == 'reports') {
         sendAjaxRequest('post', '/api/reports/delete/' + window.elementToDelete, null, handleReportDelete);
       }
-      if(window.categoryDelete == 'users'){
+      if(window.categoryDelete == 'users') {
         sendAjaxRequest('post', '/api/profile/' + window.elementToDelete + '/delete', null, handleUserDelete);
       }
 
@@ -164,9 +164,9 @@ function confirmButtonListener(){
 }
 
 //adds a listener to the cancel button. Hides the menu and cancels the delete action
-function cancelButtonListener(){
+function cancelButtonListener() {
   let cancelButton = document.getElementById('cancelButtonAdmin');
-  if(cancelButton !== null){
+  if(cancelButton !== null) {
     cancelButton.addEventListener('click', () => {
     const deleteMenu = document.getElementById('deleteMenuAdmin');
     deleteMenu.classList.toggle('hidden');
@@ -175,9 +175,9 @@ function cancelButtonListener(){
   }
 }
 
-function confirmBanListener(){
+function confirmBanListener() {
   let confirmButton = document.getElementById('confirmBanButtonAdmin');
-  if(confirmButton !== null){
+  if(confirmButton !== null) {
     confirmButton.addEventListener('click', () => {
       confirmButton.disable = true;
       insertLoadingCircle(confirmButton);
@@ -194,9 +194,9 @@ function confirmBanListener(){
   }
 }
 
-function cancelBanListener(){
+function cancelBanListener() {
   let cancelButton = document.getElementById('cancelBanButtonAdmin');
-  if(cancelButton !== null){
+  if(cancelButton !== null) {
     cancelButton.addEventListener('click', () => {
     const banMenu = document.getElementById('banMenuAdmin');
     banMenu.classList.toggle('hidden');
@@ -209,7 +209,7 @@ function cancelBanListener(){
 
 //Admin ajax response handlers ---------------------------------------------------------------------------------
 
-function handleBan(){
+function handleBan() {
   let banMenu = document.getElementById('banMenuAdmin');
   banMenu.classList.toggle('hidden');
   banMenu.classList.toggle('flex');
@@ -220,10 +220,10 @@ function handleBan(){
   confirmButton.disable = false;
     
     const messageContainer = document.getElementById("messageContainer");
-    if(response.response === '200'){
+    if(response.response === '200') {
       createAlert(messageContainer, response.message,false);
       const row = document.querySelector('#User-' + window.userBan + ' .userState');
-      if(userState !== null){
+      if(userState !== null) {
         //ban was made from the profile page
         document.getElementById('profileBan').innerHTML=`${userState === "suspended" ? "Ban account" : "Unban account"}`
         if(userState === "suspended") {
@@ -248,7 +248,7 @@ function handleBan(){
 
 }
 //handles the responses from the requests related to the topic creation. Displays a message with the request result
-function handleCreateTopic(){
+function handleCreateTopic() {
   let createTopicMenu = document.getElementById('createTopicMenu');
   createTopicMenu.classList.toggle('hidden');
   createTopicMenu.classList.toggle('flex');
@@ -264,7 +264,7 @@ function handleCreateTopic(){
     const section = document.getElementById('topics');  
     const sectionContentTable = section.querySelector('table');
     createAlert(messageContainer, response.message,false);
-    if(sectionContentTable.childElementCount < 9){
+    if(sectionContentTable.childElementCount < 9) {
       topic = createAdminTopic(response.topicname, response.topicid);
       sectionContentTable.appendChild(topic);
     }
@@ -276,7 +276,7 @@ function handleCreateTopic(){
 }
 
 //handles the responses from the requests related to the user creation. Displays a message with the request result
-function handleCreateUser(){
+function handleCreateUser() {
   let createUserMenu = document.getElementById('createUserMenu');
   createUserMenu.classList.toggle('hidden');
   createUserMenu.classList.toggle('flex');
@@ -297,7 +297,7 @@ function handleCreateUser(){
 }
 
 //handles the responses from the requests related to the reports deletion. Displays a message with the request result
-function handleReportDelete(){
+function handleReportDelete() {
   let deleteMenu = document.getElementById('deleteMenuAdmin');
   deleteMenu.classList.toggle('hidden');
   deleteMenu.classList.toggle('flex');
@@ -318,7 +318,7 @@ function handleReportDelete(){
 
 }
 
-function handleUserDelete(){
+function handleUserDelete() {
   let deleteMenu = document.getElementById('deleteMenuAdmin');
   deleteMenu.classList.toggle('hidden');
   deleteMenu.classList.toggle('flex');
@@ -340,7 +340,7 @@ function handleUserDelete(){
 }
 
 //handles the responses from the requests related to the topics deletion. Displays a message with the request result
-function handleTopicDelete(){
+function handleTopicDelete() {
   let deleteMenu = document.getElementById('deleteMenuAdmin');
   deleteMenu.classList.toggle('hidden');
   deleteMenu.classList.toggle('flex');
@@ -364,10 +364,10 @@ function handleTopicDelete(){
 
 //Admin menu toggles ---------------------------------------------------------------------------------------------
  
-function toggleReasonDetails(reportid){
+function toggleReasonDetails(reportid) {
   const reasonDetailsText = document.querySelector("#reasonDetails textarea ");
   const reasonDetails = document.querySelector("#reasonDetails");
-  if(reportid !== null){
+  if(reportid !== null) {
   const report =  document.getElementById("Report-" + reportid);
   const reason = report.querySelector(".reportReason").innerHTML;
 
@@ -390,10 +390,10 @@ function toggleReasonDetails(reportid){
 
       const section = document.getElementById(sectionId);  
       const sectionContentTable = section.querySelector('table');
-      if(sectionContentTable == null){
+      if(sectionContentTable == null) {
         return;
       }
-      while(sectionContentTable.firstChild){
+      while(sectionContentTable.firstChild) {
         sectionContentTable.firstChild.remove();
       }
 
@@ -406,7 +406,7 @@ function toggleReasonDetails(reportid){
     }
 
   
-  function showDeleteAdminMenu(elementId, category){
+  function showDeleteAdminMenu(elementId, category) {
     let deleteMenu = document.getElementById('deleteMenuAdmin');
     deleteMenu.querySelector('h2').innerHTML = `Delete ${category === 'topics' ? 'Topic' : category === 'reports' ? 'Reports' : 'User'}`;
     deleteMenu.querySelector('p').innerHTML = `Are you sure you want to delete this ${category == 'topics' ? 'topic' : category == 'reports' ? 'report' : 'user'}? This action cannot be undone.`;
@@ -417,15 +417,13 @@ function toggleReasonDetails(reportid){
   }
 
   let userState = null;
-  function showBanAdminMenu(elementId, state){
+  function showBanAdminMenu(elementId, state) {
     let banMenu = document.getElementById('banMenuAdmin');
     
-    console.log("here");
-
     const row = document.querySelector('#User-' + elementId + ' .userState');
-      if(row === null){
+      if(row === null) {
         //row is null when the admin is banning from the user profile
-        if(userState === null){
+        if(userState === null) {
           userState = state;
         }
         if(userState === "suspended") {
@@ -454,7 +452,6 @@ function toggleReasonDetails(reportid){
     
     banMenu.classList.toggle('hidden');
     banMenu.classList.toggle('flex');
-    console.log(banMenu);
     window.userBan = elementId;
   }
 
@@ -462,7 +459,7 @@ function toggleReasonDetails(reportid){
 //Admin content insertion and creation ----------------------------------------------------------------------------------------
 
   //inserts the show more button into the end of a table on the admins page. Only used when there is more content to retrieve from the DB 
-  function insertShowMoreAdmin(sectionId){
+  function insertShowMoreAdmin(sectionId) {
     const section = document.getElementById(sectionId);  
     let showMore = document.createElement('button');
     showMore.classList.add("flex", "w-full", "justify-center", "items-center");
@@ -478,20 +475,20 @@ function toggleReasonDetails(reportid){
   }
 
   //remove the shoe more button
-  function removeShowMoreAdmin(){
+  function removeShowMoreAdmin() {
     document.getElementById('showMore')?.remove();
   }
 
   
   //inserts more reposts into the reports table in the admin page
-  function insertMoreReports(){
+  function insertMoreReports() {
     removeLoadingCircle();
     const loadingWrapper = document.getElementById('loadingWrapper');
     loadingWrapper.remove();
 
     let reports =  JSON.parse(this.responseText);
 
-    if(reports.response){
+    if(reports.response) {
       let messageDiv = document.getElementById('messageContainer');
       createAlert(messageDiv, response.message, true);
       return;
@@ -500,7 +497,7 @@ function toggleReasonDetails(reportid){
     const section = document.getElementById('reports');  
     const sectionContentTable = section.querySelector('table');
 
-    if(document.querySelector('#reports th') === null){
+    if(document.querySelector('#reports th') === null) {
       let header = document.createElement('tr');
       header.classList.add("shadow", "font-medium");
       header.innerHTML = `
@@ -512,7 +509,7 @@ function toggleReasonDetails(reportid){
       sectionContentTable.appendChild(header);
     }
 
-    for(let i = 0; i < reports.data.length; i++){
+    for(let i = 0; i < reports.data.length; i++) {
       let row = document.createElement('tr');
       row.setAttribute('id', 'Report-' + reports.data[i].reportid);
       row.classList.add("shadow", "font-medium");
@@ -539,14 +536,14 @@ function toggleReasonDetails(reportid){
       sectionContentTable.appendChild(row);
     }
 
-    if(currentAdminPage < maxAdminPage){
+    if(currentAdminPage < maxAdminPage) {
       insertShowMoreAdmin('reports'); 
     }
 
   }
 
   //Creates a row with the topic information to be inserted into the topics table in the admin page
-  function createAdminTopic(topicname, topicid){
+  function createAdminTopic(topicname, topicid) {
     let row = document.createElement('tr');
       row.setAttribute('id', 'Topic-' + topicid);
       row.classList.add("flex", "w-full", "shadow", "font-medium");
@@ -570,7 +567,7 @@ function toggleReasonDetails(reportid){
 
 
   //inserts more topics into the topics table in the admins page
-  function insertMoreAdminTopics(){
+  function insertMoreAdminTopics() {
     removeLoadingCircle();
     const loadingWrapper = document.getElementById('loadingWrapper');
     loadingWrapper.remove();
@@ -583,16 +580,16 @@ function toggleReasonDetails(reportid){
     let topics =  JSON.parse(this.responseText);
     maxAdminPage = topics.last_page;
 
-    if(reports.response){
+    if(reports.response) {
       let messageDiv = document.getElementById('messageContainer');
       createAlert(messageDiv, response.message, true);
       return;
     }
 
-    for(let i = 0; i < topics.data.length; i++){
+    for(let i = 0; i < topics.data.length; i++) {
 
       //ignore the default topic 
-      if(topics.data[i].topicid == 1){
+      if(topics.data[i].topicid == 1) {
         continue;
       }
 
@@ -600,19 +597,19 @@ function toggleReasonDetails(reportid){
       sectionContentTable.appendChild(row);
     }
 
-    if(currentAdminPage < maxAdminPage){
+    if(currentAdminPage < maxAdminPage) {
       insertShowMoreAdmin('topics');
     }
   }
 
-  function insertMoreAdminUsers(){
+  function insertMoreAdminUsers() {
     removeLoadingCircle();
     const loadingWrapper = document.getElementById('loadingWrapper');
     loadingWrapper.remove();
 
     let users =  JSON.parse(this.responseText);
 
-    if(reports.response){
+    if(reports.response) {
       let messageDiv = document.getElementById('messageContainer');
       createAlert(messageDiv, response.message, true);
       return;
@@ -621,7 +618,7 @@ function toggleReasonDetails(reportid){
     const section = document.getElementById('users');  
     const sectionContentTable = section.querySelector('table');
 
-    if(document.querySelector('#users th') === null){
+    if(document.querySelector('#users th') === null) {
       let header = document.createElement('tr');
       header.classList.add("shadow", "font-medium");
       header.innerHTML = `
@@ -632,7 +629,7 @@ function toggleReasonDetails(reportid){
       sectionContentTable.appendChild(header);
     }
 
-    for(let i = 0; i < users.data.length; i++){
+    for(let i = 0; i < users.data.length; i++) {
       let row = document.createElement('tr');
       row.setAttribute('id', 'User-' + users.data[i].userid);
       row.classList.add("shadow", "font-medium");
@@ -659,7 +656,7 @@ function toggleReasonDetails(reportid){
       sectionContentTable.appendChild(row);
     }
 
-    if(currentAdminPage < maxAdminPage){
+    if(currentAdminPage < maxAdminPage) {
       insertShowMoreAdmin('users'); 
     }
 
@@ -670,9 +667,9 @@ function toggleReasonDetails(reportid){
   //Loads more content and calls calls the apropriated insert function to insert the loaded content
   let maxAdminPage = -1;
   let currentAdminPage = 0;
-  function loadMoreAdminContent(sectionId){
+  function loadMoreAdminContent(sectionId) {
 
-      if((maxAdminPage < currentPage) && (maxAdminPage != -1)){
+      if((maxAdminPage < currentPage) && (maxAdminPage != -1)) {
         return;
       }
 
@@ -716,7 +713,7 @@ function toggleReasonDetails(reportid){
 
 
   //Triggered when a search input is submited. Loads more content that corresponds to the  search query
-  function searchAdmin(event, sectionId){
+  function searchAdmin(event, sectionId) {
     event.preventDefault();
 
     currentAdminPage = 0;
@@ -724,17 +721,17 @@ function toggleReasonDetails(reportid){
     searchQuery = document.querySelector(`#${sectionId}AdminSearch`).value;
   
      //cancel the search if there is not a query
-     if(searchQuery == ""){
+     if(searchQuery == "") {
       isQuery = false;
     }
   
     //remove the existing topics from the list that is being displayed to the user 
     const section = document.getElementById(sectionId);  
     const sectionContentTable = section.querySelector('table');
-    if(sectionContentTable == null){
+    if(sectionContentTable == null) {
       return;
     }
-    while(sectionContentTable.firstChild){
+    while(sectionContentTable.firstChild) {
       sectionContentTable.firstChild.remove();
     }
   

@@ -14,7 +14,6 @@ function addEventListeners() {
             sendAjaxRequest('post', `/groups/${groupId}/invitations/${invitationId}/accept`, {}, function () {
                 if (this.status === 200) {
                     const response = JSON.parse(this.responseText);
-                    console.log(response.message);
     
                     const invitationElement = e.target.closest('.invitation');
                     if (invitationElement) invitationElement.remove();
@@ -39,7 +38,6 @@ function addEventListeners() {
             sendAjaxRequest('post', `/groups/${groupId}/invitations/${invitationId}/reject`, {}, function () {
                 if (this.status === 200) {
                     const response = JSON.parse(this.responseText);
-                    console.log(response.message);
     
                     const invitationElement = e.target.closest('.invitation');
                     if (invitationElement) invitationElement.remove();
@@ -55,7 +53,7 @@ function addEventListeners() {
 }
 
 let searchGroupCategory = null;
-if(document.querySelector('input[name="category"]') !== null){
+if(document.querySelector('input[name="category"]') !== null) {
     searchGroupCategory = document.querySelector('input[name="category"]').value;
 }
 
@@ -124,7 +122,7 @@ function insertMoreGroupSearchResults() {
             return;
     }
 
-    if(groupResults.firstChild == null){
+    if(groupResults.firstChild == null) {
         groupResults.innerHTML = `
           <div class="flex justify-center items-center h-32">
               <p class="text-gray-600 text-center">No groups found matching your search.</p>

@@ -8,7 +8,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 class PostComment implements ShouldBroadcast {
     use Dispatchable, InteractsWithSockets, SerializesModels;
@@ -47,7 +46,6 @@ class PostComment implements ShouldBroadcast {
      * @return \Illuminate\Broadcasting\Channel
      */
     public function broadcastOn() {
-        Log::info("comment notification event");
         return new Channel('public-user.' . $this->receiverid);
     }
 

@@ -3,7 +3,7 @@ function addEventListeners() {
 
   let cancelCommentButton = document.getElementById('cancelCommentButton');
 
-  if(cancelCommentButton !== null){
+  if(cancelCommentButton !== null) {
     cancelCommentButton.addEventListener('click', () => {
       const deleteMenu = document.getElementById('deleteCommentMenu');
       html.classList.toggle('overflow-hidden');
@@ -12,7 +12,7 @@ function addEventListeners() {
   }
 
   let confirmCommentButton = document.getElementById('confirmCommentButton');
-  if(confirmCommentButton !== null){
+  if(confirmCommentButton !== null) {
     confirmCommentButton.addEventListener('click', () => {
       const deleteForm = document.getElementById(`deleteCommentForm-${window.selectedCommentId}`);
       deleteForm.submit();
@@ -25,7 +25,7 @@ function addEventListeners() {
 
 function encodeForAjax(data) {
   if (data == null) return null;
-  return Object.keys(data).map(function(k){
+  return Object.keys(data).map(function(k) {
     return encodeURIComponent(k) + '=' + encodeURIComponent(data[k])
   }).join('&');
 }
@@ -42,7 +42,7 @@ function sendAjaxRequest(method, url, data, handler) {
 }
 
 //gets the csrf token to insert in new forms
-function getCsrfToken(){
+function getCsrfToken() {
   return document.querySelector('meta[name="csrf-token"]').content;
 }
 
@@ -58,12 +58,12 @@ const alertBoxes = document.querySelectorAll('.alert');
 }
 
 //creates an alert message and inserts it into the page
-function createAlert(element,message, isError){
+function createAlert(element,message, isError) {
   const alert = document.createElement('div');
   alert.classList.add("self-center", "alert", "rounded","w-full", "max-w-full", "p-4", isError ? "bg-red-100" : "bg-blue-100" , isError ?  "text-red-800" : "text-blue-800" , "border", "shadow-md", "text-center", isError ? "border-red-300" : "border-blue-300", "z-10");
   alert.innerHTML = message;
 
-  while(element.firstChild !== null){
+  while(element.firstChild !== null) {
     element.firstChild.remove();
   }
   
@@ -76,7 +76,7 @@ function createAlert(element,message, isError){
 //Emails related functions -----------------------------------------------------------------------------
 
 
-function contactEmail(){
+function contactEmail() {
   const email = document.getElementById('email');
   const name = document.getElementById('name');
   const message = document.getElementById('message');
@@ -207,7 +207,7 @@ function toggleReportForm(contentId, category) {
 
 //submits the report to the server
 function reportFormSubmission() {
-  document.getElementById('reportFormModal')?.addEventListener('submit', function (form){
+  document.getElementById('reportFormModal')?.addEventListener('submit', function (form) {
     form.preventDefault();
     let reason = document.querySelector("#reason").value;
     let postid = document.querySelector("#reportPost").value;
@@ -252,7 +252,7 @@ function confirmReport() {
 
 //toggles the images details when a user clicks on an image
 function toggleImageDetails(src) {
-  if(src !== null){
+  if(src !== null) {
     document.getElementById('detailImg').src = src;
   }
 

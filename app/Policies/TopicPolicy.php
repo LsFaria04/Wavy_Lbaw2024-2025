@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Support\Facades\Log;
 
 class TopicPolicy {
     /*
@@ -17,7 +16,6 @@ class TopicPolicy {
     Only admins can delete topics
     */
     public function delete(User $user) {
-        Log::info(strval($user->isadmin));
         return $user->isadmin;
     }
 

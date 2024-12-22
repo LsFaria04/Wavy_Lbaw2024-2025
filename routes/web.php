@@ -2,7 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Broadcast;
-use Illuminate\Support\Facades\Log;
 
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\Auth\LoginController;
@@ -45,7 +44,7 @@ Route::post('/profile/{userid}/unfollow', [ProfileController::class, 'unfollow']
 
 
 // API
-Route::controller(PostController::class)->group(function (){
+Route::controller(PostController::class)->group(function () {
     Route::get('api/posts','getPostsTimeline' );
     Route::get('api/posts/{username}', 'getUserPosts');
     Route::get('api/comments/post/{id}', 'show');
@@ -74,7 +73,7 @@ Route::post('/api/groups/{group}/requests/{request}/reject', [GroupController::c
 Route::post('/api/groups/{group}/requests/{request}/accept', [GroupController::class, 'acceptJoinRequest']);
 Route::post('/groups/{groupid}/invitations/{invitationid}/accept', [GroupController::class, 'acceptInvitation']);
 Route::post('/groups/{groupid}/invitations/{invitationid}/reject', [GroupController::class, 'rejectInvitation']);
-Route::controller(TopicController::class)->group(function (){
+Route::controller(TopicController::class)->group(function () {
     Route::get('/api/topics/all/{postid}', 'getAllTopicsToPost');
     Route::get('/api/topics/search/all/{postid}', 'searchAllTopicsToPost');
     Route::get('/api/topics/all', 'getAllTopics');
@@ -109,7 +108,7 @@ Route::post('/api/contact/submit', [MailController::class, 'sendContactMessage']
 Route::post('/reports/delete/{reportid}', [ReportController::class, 'delete']);
 
 //Topics
-Route::controller(TopicController::class)->group(function (){
+Route::controller(TopicController::class)->group(function () {
     Route::post('/topics/add', 'create');
     Route::post('/topics/delete/{topicid}', 'delete');
 });
@@ -185,7 +184,6 @@ Route::get('/notifications', [NotificationController::class, 'index'])->name('no
 
 Route::get('/pusher/auth', function (Illuminate\Http\Request $request) {
     if (auth()->check()) {
-        Log::info("Aqui");
         return Broadcast::auth($request);
     } else {
         return response()->json(['error' => 'Unauthorized'], 403);

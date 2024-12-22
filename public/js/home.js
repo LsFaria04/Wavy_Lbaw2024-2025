@@ -8,7 +8,7 @@ function addEventListeners() {
   
 }
 //removes the loading circle from the page
-  function removeLoadingCircle(){
+  function removeLoadingCircle() {
     let loadingCircles = document.querySelectorAll("#loading_circle");
     loadingCircles.forEach((loadingCircle) => loadingCircle.remove());
   }
@@ -17,12 +17,12 @@ function addEventListeners() {
   let maxPage = -1;
   let loading = false;
   //check if the we have reached the end of the page and takes the apropriate actions
-  function infiniteScroll(){ 
+  function infiniteScroll() { 
     if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 1) {
       
       //action to take place in the home page
       const timeline = document.querySelector("#timeline");
-      if((timeline !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
+      if((timeline !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ) {
         currentPage++;
         insertLoadingCircle(timeline);
         loading = true;
@@ -32,7 +32,7 @@ function addEventListeners() {
 
       
       const comments = document.querySelector("#comments");
-      if((comments !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
+      if((comments !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ) {
         currentPage++;
         insertLoadingCircle(comments);
         loading = true;
@@ -44,7 +44,7 @@ function addEventListeners() {
   
       //actions to take place in the search page
       const searchPage = document.querySelector("#search-results");
-      if((searchPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ){
+      if((searchPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ) {
           currentPage++;
           loading = true;
           insertLoadingCircle(searchPage);
@@ -54,7 +54,7 @@ function addEventListeners() {
       }
 
       const groupListPage = document.querySelector("#group-results");
-      if((groupListPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ){
+      if((groupListPage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading) ) {
         currentPage++;
         loading = true;
         insertLoadingCircle(groupListPage);
@@ -67,7 +67,7 @@ function addEventListeners() {
       const profilePage = document.querySelector("#profile-tab-content");
       if((profilePage !== null) && (maxPage > currentPage || (maxPage == -1)) && (!loading)) {
   
-        if(!isPublic && !isadmin){
+        if(!isPublic && !isadmin) {
           //doesn´t need to load more info because the account is private
           return;
         }
@@ -75,7 +75,7 @@ function addEventListeners() {
         currentPage++;
         loading = true;
         insertLoadingCircle(profilePage);
-        switch(profileTab){
+        switch(profileTab) {
           case 'user-posts':
               sendAjaxRequest('get', '/api/posts/' + username + "?page=" + currentPage, null, insertMoreProfileContent);
               break;
@@ -131,9 +131,9 @@ function addEventListeners() {
   
 
   //inserts a loading circle when an ajax request starts (infinite scroll) 
-function insertLoadingCircle(element){
+function insertLoadingCircle(element) {
   
-  if(document.querySelector("#loading_circle") !== null){
+  if(document.querySelector("#loading_circle") !== null) {
     //already exists a loading circle
     return;
   }
@@ -152,7 +152,7 @@ function insertLoadingCircle(element){
 
 
 //inserts more posts into the timeline
-function insertMoreTimeline(){
+function insertMoreTimeline() {
   removeLoadingCircle(); //remove the circle because we already have the data
   const timeline = document.querySelector("#timeline");
   let posts = JSON.parse(this.responseText);
@@ -165,7 +165,7 @@ function insertMoreTimeline(){
 }
 
 //inserts more comments into the post
-function insertMoreCommentsPost(){
+function insertMoreCommentsPost() {
   removeLoadingCircle(); //remove the circle because we already have the data
   const comments = document.querySelector("#comments");
   let newComments = JSON.parse(this.responseText);
@@ -200,17 +200,17 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 
-function updateFileButtonList(){
+function updateFileButtonList() {
   const fileInput = document.getElementById('imageButton');
   const fileDisplay = document.getElementById('buttonFileDisplay');
 
   // Append new files to the list (preserve existing files)
   Array.from(fileInput.files).forEach(file => {
-    if (file.size > 1048576){
+    if (file.size > 1048576) {
       const messageContainer = document.getElementById('messageContainer');
       createAlert(messageContainer, "File is too big (>2Mb)", true);
     }
-    else{
+    else {
       selectedFiles.push(file);
     }
   });
@@ -245,7 +245,7 @@ function updateFileButtonList(){
   fileInput.value = '';
 }
 
-function syncButtonPostTopicsWithInputEventListener(){
+function syncButtonPostTopicsWithInputEventListener() {
   document.querySelector('.addButtonPost form')?.addEventListener('submit', function (e) {
     //update the values before sending the form
     let topicInput = document.getElementById('topicInput-1');
@@ -253,7 +253,7 @@ function syncButtonPostTopicsWithInputEventListener(){
   });
 }
 
-function syncButtonPostFilesWithInputEventListener(){
+function syncButtonPostFilesWithInputEventListener() {
   // Synchronize selectedFiles with the file input before form submission
   document.querySelector('.addButtonPost form')?.addEventListener('submit', function (e) {
     

@@ -30,7 +30,7 @@
                 @php
                     $filePath = null;
                     foreach($user->profilepicture as $pic)
-                    if(Str::contains($pic, 'banner')){
+                    if(Str::contains($pic, 'banner')) {
                         $filePath = asset('storage/' . $pic->path);
                     }
                     
@@ -47,7 +47,7 @@
                 <!-- Profile Image To Add -->
                 @php
                 foreach($user->profilepicture as $pic)
-                    if(Str::contains($pic, 'profile')){
+                    if(Str::contains($pic, 'profile')) {
                         $filePath = asset('storage/' . $pic->path);
                     }
                 @endphp

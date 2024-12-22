@@ -4,12 +4,12 @@ function addEventListeners() {
 }
 
 //inserts the media (images, audio and video) of a comment into a comment container. Returns the updated comment container
-function insertCommentMedia(comment, mediaArray){
+function insertCommentMedia(comment, mediaArray) {
 const commentbody = comment.querySelector('.comment-body');
 let mediaContainer = document.createElement('div');
 mediaContainer.classList.add("comment-media", "mt-4", "grid", "grid-cols-2", "gap-4");
 
-for(let i = 0; i < mediaArray.length; i++){
+for(let i = 0; i < mediaArray.length; i++) {
   let media = mediaArray[i];
   let fileExtension = media.path.split('.').pop();
 
@@ -167,7 +167,7 @@ newFileDisplay.innerHTML = '';
 
 // Show updated list of file names
 selectedFilesEdit.forEach((file, index) => {
-  if(newFileDisplay.classList.contains('hidden')){
+  if(newFileDisplay.classList.contains('hidden')) {
     newFileDisplay.classList.toggle('hidden');
   }
     const li = document.createElement('li');
@@ -198,9 +198,9 @@ fileElement.remove();
 }
 
 // Synchronize selectedFilesEdit with the file input before form submission
-function addEventListenerToCommentForms(){
+function addEventListenerToCommentForms() {
 
-if(document.querySelectorAll('.edit-comment-form form').length === 0){
+if(document.querySelectorAll('.edit-comment-form form').length === 0) {
   //did not found comment edit forms
   return;
 }
@@ -250,7 +250,7 @@ if (selectedFilesEdit.length === 0) {
 }
 
 //adds a event listener to a comment form
-function addEventListenerToCommentForm(form){
+function addEventListenerToCommentForm(form) {
 form.addEventListener('submit', function (e) {
   const commentId = form.dataset.commentId;
   const fileInput = document.getElementById(`image-${commentId}`);
@@ -278,7 +278,7 @@ form.addEventListener('submit', function (e) {
 });
 }
 //inserts the delete menu into a comment container. Returns an updated comment
-function insertDeleteCommentMenu(comment){
+function insertDeleteCommentMenu(comment) {
 const commentheader = comment.querySelector('.comment-header');
 let menu = document.createAttribute('div');
 menu.setAttribute('id', 'deleteCommentMenu');
@@ -305,7 +305,7 @@ return comment;
 }
 
 //inserts the update comment form into a comment container. Return the updated comment container.
-function insertUpdateCommentForm(comment, id, message, media){
+function insertUpdateCommentForm(comment, id, message, media) {
 let formContainer = document.createElement('div');
 formContainer.classList.add("edit-comment-form", "hidden", "mt-4", "bg-white", "rounded-xl", "shadow-md", "p-4");
 formContainer.setAttribute('id',"edit-comment-" + id);
@@ -340,7 +340,7 @@ formContainer.innerHTML = `
 
 
 const fileDisplay = formContainer.querySelector('#fileDisplay-' + id);
-for(let i = 0; i < media.length; i++){
+for(let i = 0; i < media.length; i++) {
   let mediaRemove = document.createElement('div');
   mediaRemove.classList.add("flex", "items-center", "gap-2");
   mediaRemove.setAttribute('id', 'file-' + media[i].mediaid);
@@ -370,7 +370,7 @@ const fileDisplay = document.getElementById('fileDisplay');
 
 // Append new files to the list (preserve existing files)
 Array.from(fileInput.files).forEach(file => {
-  if (file.size > 1048576){
+  if (file.size > 1048576) {
     const messageContainer = document.getElementById('messageContainer');
     createAlert(messageContainer, "File is too big (>2MB)", true);
   }
@@ -409,7 +409,7 @@ fileDisplay.classList.remove('hidden');
 fileInput.value = '';
 }
 
-function syncCommentFilesWithInputEventListener(){
+function syncCommentFilesWithInputEventListener() {
 // Synchronize selectedFiles with the file input before form submission
 document.getElementById('commentForm')?.addEventListener('submit', function (e) {
   if (selectedFiles.length > 4) {
@@ -454,9 +454,9 @@ document.getElementById('subCommentForm')?.addEventListener('submit', function (
 }
 
 // Synchronize selectedFilesEdit with the file input before form submission
-function addEventListenerToCommentForms(){
+function addEventListenerToCommentForms() {
 
-if(document.querySelectorAll('.edit-comment-form form').length === 0){
+if(document.querySelectorAll('.edit-comment-form form').length === 0) {
   //did not found comment edit forms
   return;
 }
@@ -480,7 +480,7 @@ const likeCountElement = document.getElementById(`like-count-${commentId}`);
 const heartEmpty = document.getElementById(`heart-empty-${commentId}`);
 const heartFilled = document.getElementById(`heart-filled-${commentId}`);
 
-if(heartEmpty.classList.contains('hidden')){
+if(heartEmpty.classList.contains('hidden')) {
   heartEmpty?.classList.remove('hidden');
   heartFilled?.classList.add('hidden');
   heartEmpty.classList.add('fill-gray-500', 'group-hover:fill-red-600');
@@ -489,7 +489,7 @@ if(heartEmpty.classList.contains('hidden')){
   }
   likeCountElement.classList.remove('text-red-600');
 }
-else{
+else {
   heartEmpty.classList.add('hidden');
       heartFilled.classList.remove('hidden');
       heartFilled.classList.add('fill-red-600', 'group-hover:fill-red-600');
@@ -567,7 +567,7 @@ function toggleSubcommentForm(commentId) {
   }
 }
 
-function createComment(commentInfo){
+function createComment(commentInfo) {
 let comment = document.createElement('div');
 comment.classList.add("comment", "border-b", "border-gray-300", "p-4", "bg-white", "cursor-pointer", "w-full", "max-w-full");
 
@@ -616,7 +616,7 @@ syncNewSubcommentForms(comment);
 return comment
 }
 
-function syncNewSubcommentForms(comment){
+function syncNewSubcommentForms(comment) {
 const subCommentForm = comment.querySelector('#subCommentForm');
 if (subCommentForm) {
   subCommentForm.addEventListener('submit', function(e) {
@@ -643,7 +643,7 @@ if (subCommentForm) {
 }
 
 
-function createCommentHiddenForm(commentId){
+function createCommentHiddenForm(commentId) {
 return `
       <form id="subCommentForm" action="/comments/storeSubcomment" method="POST" enctype="multipart/form-data" class="flex flex-col gap-4">
           <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').getAttribute('content')}">
@@ -737,13 +737,13 @@ return `
 `;
 }
 
-function createCommentOptions(comment, id, needReport){
+function createCommentOptions(comment, id, needReport) {
 const commentheader = comment.querySelector('.comment-header');
 let options = document.createElement('div');
 options.classList.add("flex", "items-center", "gap-2");
 options.setAttribute('id', 'commentOptions');
 
-if(!needReport){
+if(!needReport) {
   options.innerHTML = `
     <button type="button" onclick="toggleEditComment(${id})" class="text-gray-500 hover:text-black">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="black" viewBox="0 0 24 24" stroke="currentColor">

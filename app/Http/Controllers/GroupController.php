@@ -9,23 +9,18 @@ use App\Models\JoinGroupRequest;
 use App\Models\GroupInvitation;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 
-class GroupController extends Controller
-{
+class GroupController extends Controller {
     public function store(Request $request) {
-        Log::info("Creating a group");
         $validated = $request->validate([
             'groupname' => 'required|string|max:255|unique:groups,groupname',
             'description' => 'required|string',
             'visibilitypublic' => 'required|boolean',
         ]);
 
-        Log::info("Validated");
     
         try {
-            Log::info($request);
             // Create the group
             $group = Group::create([
                 'groupname' => $request->groupname,
@@ -33,7 +28,6 @@ class GroupController extends Controller
                 'visibilitypublic' => $request->visibilitypublic,
                 'ownerid' => Auth::id(),
             ]);
-            Log::info("Created");
     
             if (!$group) {
                 return redirect()->back()->withErrors(['error' => 'Failed to create the group. Please try again.']);
@@ -148,7 +142,6 @@ class GroupController extends Controller
             return response()->json(['error' => 'Unauthorized'], 403);
         }
 
-        Log::info($group->members()->paginate(10));
 
         $members = $group->members()->with('profilePicture')->paginate(10);
 
@@ -259,7 +252,6 @@ class GroupController extends Controller
             return redirect()->route('group', $group->groupname)
                              ->with('success', 'Group Page updated successfully!');
         } catch (\Exception $e) {
-            Log::error('Failed to update group page', ['groupid' => $group->groupid, 'error' => $e->getMessage()]);
 
             return redirect()->route('group', $group->groupname)
                              ->with('error', 'Your changes were rejected.');
@@ -437,7 +429,6 @@ class GroupController extends Controller
             return redirect()->route('groupList')
                              ->with('success', 'Group deleted successfully.');
         } catch (\Exception $e) {
-            Log::error('Failed to delete group', ['groupid' => $groupid, 'error' => $e->getMessage()]);
     
             return redirect()->route('group', $group->groupname)
                              ->with('error', 'Failed to delete the group. Please try again later.');

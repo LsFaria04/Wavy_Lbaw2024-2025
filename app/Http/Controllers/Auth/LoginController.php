@@ -9,14 +9,12 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 
-class LoginController extends Controller
-{
+class LoginController extends Controller {
 
     /**
      * Display a login form.
      */
-    public function showLoginForm()
-    {
+    public function showLoginForm() {
         if (Auth::check()) {
             return redirect('/home');
         } else {
@@ -27,8 +25,7 @@ class LoginController extends Controller
     /**
      * Handle an authentication attempt.
      */
-    public function authenticate(Request $request): RedirectResponse
-    {
+    public function authenticate(Request $request): RedirectResponse {
         $credentials = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required'],
@@ -49,8 +46,7 @@ class LoginController extends Controller
     /**
      * Log out the user from application.
      */
-    public function logout(Request $request)
-    {
+    public function logout(Request $request) {
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();

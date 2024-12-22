@@ -11,7 +11,6 @@ use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use App\Models\Media;
 use Illuminate\Support\Facades\Storage;
 
@@ -80,7 +79,6 @@ class ProfileController extends Controller {
         $user = User::findOrFail($userid);
         $this->authorize('update', $user);
     
-        Log::info($request);
         //try the data input validation
         try {
             $validatedData = $request->validate([
@@ -100,7 +98,7 @@ class ProfileController extends Controller {
             if ($request->hasFile('profilePic')) {
 
                 $previousFile = Media::where('path', 'Like', 'images/profile%')->where('userid', $userid)->first();
-                if($previousFile && Storage::exists('public/' . $previousFile->path)){
+                if($previousFile && Storage::exists('public/' . $previousFile->path)) {
                     Storage::delete('public/' . $previousFile->path);
                     $previousFile->delete();
                 }
@@ -118,7 +116,7 @@ class ProfileController extends Controller {
             if ($request->hasFile('bannerPic')) {
 
                 $previousFile = Media::where('path', 'Like', 'images/banner%')->where('userid', $userid)->first();
-                if($previousFile && Storage::exists('public/' . $previousFile->path)){
+                if($previousFile && Storage::exists('public/' . $previousFile->path)) {
                     Storage::delete('public/' . $previousFile->path);
                     $previousFile->delete();
                 }
@@ -141,7 +139,6 @@ class ProfileController extends Controller {
             return redirect()->route('profile', $user->username)
                              ->with('success', 'Profile updated successfully!');
         } catch (\Exception $e) {
-            Log::error('Failed to update user profile', ['user_id' => $user->id, 'error' => $e->getMessage()]);
 
             return redirect()->route('profile', $user->username)
                              ->with('error', 'Your changes were rejected.');
@@ -181,8 +178,8 @@ class ProfileController extends Controller {
         }
 
         $files = Media::where('userid', $id)->get();
-        foreach($files as $file){
-            if(Storage::exists('public/' . $file->path)){
+        foreach($files as $file) {
+            if(Storage::exists('public/' . $file->path)) {
                 Storage::delete('public/' . $file->path);
                 $file->delete();
             }
@@ -197,7 +194,7 @@ class ProfileController extends Controller {
                 ], 400);
             }
             
-            if($request->ajax()){
+            if($request->ajax()) {
                 return response()->json(['message' => 'User was already deleted', 'response' => '403']);
             }
             return redirect()->route('home')->with('error', 'User has already been deleted.');
@@ -223,7 +220,7 @@ class ProfileController extends Controller {
                 $request->session()->regenerateToken();
             }
     
-            if($request->ajax()){
+            if($request->ajax()) {
                 return response()->json(['message' => 'User deleted sucessfully', 'response' => '200']);
             }
             return redirect()->route('home')->with('success', 'User deleted successfully!');
@@ -236,7 +233,7 @@ class ProfileController extends Controller {
                     'message' => 'Failed to delete the user.',
                 ], 500);
             }
-            if($request->ajax()){
+            if($request->ajax()) {
                 return response()->json(['message' => 'Server Problem', 'response' => '500']);
             }
             return redirect()->route('home')->with('error', 'Failed to delete the user.');
@@ -244,7 +241,6 @@ class ProfileController extends Controller {
     }
 
     public function follow(Request $request, $userid) {
-        Log::info("1");
 
         // logged-in user (follower)
         $follower = Auth::user();
@@ -252,17 +248,14 @@ class ProfileController extends Controller {
         if (!$follower) {
             return response()->json(['error' => 'You must be logged in to follow someone.'], 401);
         }
-        Log::info("2");
 
         // user to be followed (followee)
         $followee = User::findOrFail($userid);
     
         try {
             $this->authorize('follow', [Follow::class, $followee]);
-            Log::info("3");
 
         } catch (\Exception $e) {
-            Log::info("4");
 
             return response()->json([
                 'error' => 'Authorization error.',
@@ -276,26 +269,20 @@ class ProfileController extends Controller {
                                 ->first();
 
         if ($existingFollow) {
-            Log::info("5");
 
             return $this->handleExistingFollow($existingFollow, $request);
         } else {
-            Log::info("6");
 
             return $this->createFollowRequest($follower, $followee);
         }
     }
     
     private function handleExistingFollow(Follow $existingFollow, $request) {
-        Log::info("7");
 
         if ($existingFollow->state === Follow::STATE_ACCEPTED) {
-            Log::info("8");
             return $this->unfollow($request, $existingFollow->followeeid);
 
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
-
-            Log::info("9");
 
             Follow::where('followerid', $existingFollow->followerid)
             ->where('followeeid', $existingFollow->followeeid)
@@ -316,7 +303,6 @@ class ProfileController extends Controller {
     
     
     private function createFollowRequest($follower, $followee) {
-        Log::info("10");
 
         $status = $followee->visibilitypublic ? Follow::STATE_ACCEPTED : Follow::STATE_PENDING;
 
@@ -326,7 +312,6 @@ class ProfileController extends Controller {
             'state' => $status,
             'followdate' => now(),
         ]);
-        Log::info("11");
 
         if ($status == Follow::STATE_ACCEPTED) {
             $status = 'follow';
@@ -342,24 +327,21 @@ class ProfileController extends Controller {
         ]);
     }
 
-    public function getFollowRequests(Request $request, $userid){
-        Log::info("13");
+    public function getFollowRequests(Request $request, $userid) {
 
         try{
             $followers = Follow::with('follower', 'follower.profilePicture')
             ->where('followeeid', $userid )
             ->where('state', Follow::STATE_PENDING)->paginate(10);
         } catch (\Exception $e) {
-            Log::info("15");
 
             return response()->json(['message' => 'Server Problem', 'response' => '500']);
         }
-        Log::info("16");
 
         return response()->json($followers);
     }
 
-    public function getFollows(Request $request, $userid){
+    public function getFollows(Request $request, $userid) {
         try{
             $followers = Follow::with('followee', 'followee.profilePicture')
             ->where('followerid', $userid )
@@ -372,7 +354,7 @@ class ProfileController extends Controller {
     }
 
 
-    public function getFollowers(Request $request, $userid){
+    public function getFollowers(Request $request, $userid) {
         try{
             $followers = Follow::with('follower', 'follower.profilePicture')
             ->where('followeeid', $userid )
@@ -384,7 +366,7 @@ class ProfileController extends Controller {
         return response()->json($followers);
     }
 
-    public function acceptFollowRequest(Request $request, $userid){
+    public function acceptFollowRequest(Request $request, $userid) {
         try{
             DB::update('update follow set state = ? where followeeid = ? and followerid = ?', [Follow::STATE_ACCEPTED, Auth::user()->userid, $userid]);
         } catch (\Exception $e) {
@@ -394,7 +376,7 @@ class ProfileController extends Controller {
         return response()->json(["message" => "Follow request accepted successfully", "response" => "200", "acceptedId" => $userid]);
     }
 
-    public function rejectFollowRequest(Request $request, $userid){
+    public function rejectFollowRequest(Request $request, $userid) {
         try{
             $follow = Follow::where('followeeid',Auth::user()->userid )->where('followerid', $userid);
             $follow->delete();
@@ -407,7 +389,6 @@ class ProfileController extends Controller {
     }
     
     public function unfollow(Request $request, $userid) {
-        Log::info("20");
 
         $followerId = auth()->user()->userid;
 
@@ -417,17 +398,14 @@ class ProfileController extends Controller {
         
 
         if (!$existingFollow) {
-            Log::info("21");
 
             return response()->json([
                 'success' => false,
                 'message' => 'Follow relationship not found.',
             ], 404);
         }
-        Log::info("22");
 
         $existingFollow->delete();
-        Log::info("23");
 
         $previousNotification = Notification::where('followid', $followerId)
         ->where('receiverid', $userid)
@@ -439,11 +417,8 @@ class ProfileController extends Controller {
 
         $follower = User::findOrFail($existingFollow->followerid);
 
-        Log::info('Follower type', ['type' => get_class($follower)]);
-
         event(new FollowNotification($follower, $userid, 'unfollowed'));
         
-        Log::info("pois");
         return response()->json([
             'success' => true,
             'status' => 'Unfollowed'

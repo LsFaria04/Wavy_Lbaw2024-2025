@@ -28,7 +28,7 @@ class Report extends Model
         'postid',
     ];
 
-    public function user(){
+    public function user() {
         return $this->belongsTo(User::class, 'userid');
     }
 }

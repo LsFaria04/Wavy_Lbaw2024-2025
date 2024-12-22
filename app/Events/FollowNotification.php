@@ -8,7 +8,6 @@ use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Log;
 
 
 class FollowNotification implements ShouldBroadcast {
@@ -48,7 +47,6 @@ class FollowNotification implements ShouldBroadcast {
      * @return \Illuminate\Broadcasting\Channel
      */
     public function broadcastOn() {
-        Log::info("follow notification event");
         return new Channel('public-user.' . $this->receiverid);
     }
 

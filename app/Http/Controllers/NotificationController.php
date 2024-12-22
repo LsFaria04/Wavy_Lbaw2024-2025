@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Notification;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Auth;
 use Carbon\Carbon;
 
@@ -34,7 +33,7 @@ class NotificationController extends Controller {
 
         $category = $request->input('category');
         $notifications = null;
-        switch($category){
+        switch($category) {
             case 'all-notifications':
                 $notifications = Notification::with(['comment.post', 'like.post', 'comment.user', 'like.user','like.comment', 'follow.follower'])
                     ->where('receiverid', Auth::id())
@@ -65,7 +64,7 @@ class NotificationController extends Controller {
         }
     
         
-        foreach($notifications as $notification){
+        foreach($notifications as $notification) {
             $notification->date =  Carbon::parse($notification->date)->diffForHumans();
 
             if (isset($notification->comment)) {
