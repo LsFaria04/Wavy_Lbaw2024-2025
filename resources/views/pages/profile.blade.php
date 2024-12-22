@@ -226,7 +226,7 @@
             <!-- Content Tabs -->
             <div class="flex flex-col w-full max-w-full bg-white" id = "profile-tab-content">
                 <!-- Content Section (starts with the posts) -->
-                    @if((($user->visibilitypublic === false && !Auth::check())  || ($user->visibilitypublic === false && ($followStatus === "not-following" || $followStatus === "Pending"))) && ($user->userid != auth()->id()))
+                    @if((($user->visibilitypublic === false && !Auth::check())  || ($user->visibilitypublic === false && ($followStatus === "not-following" || $followStatus === "Pending"))) && ($user->userid != auth()->id()) && !Auth::user()->isadmin)
                         <div class="flex justify-center items-center h-32">
                             <p class="text-gray-600 text-center">Account is private.</p>
                         </div>
