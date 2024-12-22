@@ -249,6 +249,10 @@ VALUES
     ('images/banner11.jpg', NULL, NULL, 11),
     ('images/profile7.jpg', NULL, NULL, 7),
     ('images/W0Iq8td3d876eBLr9oYc5qlJy2SrJ6aJDPuqeWYN.jpg', 27, NULL, NULL),
-    ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL);
-
-
+    ('images/hnVykJfTYUnAGRkXlMo7JHK4tZtoGe9JP6DUDDrj.png', 39, NULL, NULL),
+    ('images/G53aG15AolcXQiHurfmfgSrr3hDrpszgXqH5RCEJ.png', 39, NULL, NULL),
+    ('images/smP9x1Gqbq0qdzFiBL0PvobajXsb1IeNIsPqvLss.png', 37, NULL, NULL),
+    ('images/8K6euTnk7t1hPVvJyLWUegWynjmufWuLhif3f0gn.png', 35, NULL, NULL),
+    ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL),
+    ('images/banner2.jpg', NULL, NULL, 2),
+    ('images/profile2.jpg', NULL, NULL, 2);

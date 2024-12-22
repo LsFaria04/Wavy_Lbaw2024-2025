@@ -811,7 +811,7 @@ FOR EACH ROW
 EXECUTE FUNCTION delete_rejected_follow_request();
 
 -- Function to assign the general topic to a post if it has no topics (TRIGGER 22)
-CREATE FUNCTION assign_general_topic_to_post()
+CREATE OR REPLACE FUNCTION assign_general_topic_to_post()
 RETURNS TRIGGER AS $$
 BEGIN
     -- Check if the post has no associated topics
@@ -1380,4 +1380,6 @@ VALUES
     ('images/G53aG15AolcXQiHurfmfgSrr3hDrpszgXqH5RCEJ.png', 39, NULL, NULL),
     ('images/smP9x1Gqbq0qdzFiBL0PvobajXsb1IeNIsPqvLss.png', 37, NULL, NULL),
     ('images/8K6euTnk7t1hPVvJyLWUegWynjmufWuLhif3f0gn.png', 35, NULL, NULL),
-    ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL);
+    ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL),
+    ('images/banner2.jpg', NULL, NULL, 2),
+    ('images/profile2.jpg', NULL, NULL, 2);
