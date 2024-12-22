@@ -987,7 +987,10 @@ VALUES
     (7, 'How amazing was that Casemiro header? Pure class!', TRUE, '2024-12-21 09:00:00', 10),
     (8, 'Love this man!', TRUE, '2024-12-21 11:00:00', 10),
     (9, 'What’s everyone’s prediction for the game against Arsenal?', TRUE, '2024-12-21 13:00:00', 10),
-    (10, 'Not sure if there are any sports cards collectors here. But I just picked this up. Couldn’t be happier. My current favorite player on our team ❤️ ', TRUE, '2024-12-21 15:00:00', 10);
+    (10, 'Not sure if there are any sports cards collectors here. But I just picked this up. Couldn’t be happier. My current favorite player on our team ❤️ ', TRUE, '2024-12-21 15:00:00', 10),
+    (3, 'Visited an amazing art gallery today! So inspired to create something new.', TRUE, '2024-12-22 18:41:54', NULL),
+    (4, 'Just cooked up a new recipe: spicy truffle pasta! Who wants the recipe?', TRUE, '2024-12-22 18:46:54', NULL),
+    (12, 'Training camp is going strong! Feeling ready for the next challenge. #UFC #Champion', TRUE, '2024-12-22 18:51:54', NULL);
 
 INSERT INTO COMMENT (userID, message, createdDate, postID, parentCommentID) 
 VALUES 
@@ -1069,7 +1072,16 @@ VALUES
     (4, 'I think Barcelona will make a strong push, especially with their financial troubles. They’ll need a player like Rashford.', '2024-12-22 17:30:00', 20, NULL),
     (5, 'Seems like Rashford is stealing the spotlight! That''s a lot of focus for one player before a big game.', '2024-12-22 18:00:00', 21, NULL),
     (6, 'Rashford''s future is certainly the talk of the town. Wonder if it''ll distract from the Spurs game?', '2024-12-22 17:21:00', 21, NULL),
-    (7, 'Amorim must''ve been frustrated with all those questions! The game against Spurs should be the focus right now.', '2024-12-22 18:00:00', 21, NULL);
+    (7, 'Amorim must''ve been frustrated with all those questions! The game against Spurs should be the focus right now.', '2024-12-22 18:00:00', 21, NULL),
+    (5, 'That dish looks amazing! What ingredients did you use?', NOW(), 40, NULL),
+    (6, 'I need to try this recipe! Can you share it?', NOW(), 40, NULL),
+    (7, 'Amazing fight, champ! You’re an inspiration.', NOW(), 41, NULL),
+    (8, 'When’s the next title defense? Can’t wait to watch!', NOW(), 41, NULL),
+    (9, 'What’s your favorite post-fight meal, Jonny?', NOW(), 41, NULL),
+    (10, 'Your art is so inspiring, Charlie! What medium did you use?', NOW(), 42, NULL),
+    (11, 'I’d love to see more of your pieces. Are they displayed somewhere?', NOW(), 42, NULL),
+    (2, 'This is so creative! Can you share the inspiration behind it?', NOW(), 42, NULL),
+    (3, 'Your gallery visits always seem exciting! Any recommendations?', NOW(), 42, NULL);
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -1413,6 +1425,35 @@ VALUES
     (2, NOW(), NULL, 72),
     (4, NOW(), NULL, 72),
 
+    (2, NOW(), 40, NULL),
+    (3, NOW(), 40, NULL),
+    (4, NOW(), 40, NULL),
+    (5, NOW(), 40, NULL),
+    (6, NOW(), 40, NULL),
+    (7, NOW(), 40, NULL),
+    (8, NOW(), 40, NULL),
+    (9, NOW(), 40, NULL),
+    (10, NOW(), 40, NULL),
+    (11, NOW(), 40, NULL),
+
+    (2, NOW(), 41, NULL),
+    (3, NOW(), 41, NULL),
+    (4, NOW(), 41, NULL),
+    (5, NOW(), 41, NULL),
+    (6, NOW(), 41, NULL),
+    (7, NOW(), 41, NULL),
+    (8, NOW(), 41, NULL),
+    (9, NOW(), 41, NULL),
+    (10, NOW(), 41, NULL),
+
+    (2, NOW(), 42, NULL),
+    (3, NOW(), 42, NULL),
+    (4, NOW(), 42, NULL),
+    (5, NOW(), 42, NULL),
+    (6, NOW(), 42, NULL),
+    (7, NOW(), 42, NULL),
+    (8, NOW(), 42, NULL),
+
     (3, '2024-12-22 18:25:00', 21, NULL),
     (4, '2024-12-22 18:30:00', 22, NULL),
     (5, '2024-12-22 18:35:00', 23, NULL),
@@ -1431,7 +1472,14 @@ INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (6, 7, 'Accepted', '2024-12-18 13:00:00'),
     (2, 11, 'Accepted', '2024-12-18 14:00:00'),
     (3, 11, 'Accepted', '2024-12-18 15:00:00'),
-    (6, 11, 'Accepted', '2024-12-18 16:00:00'),
+    (4, 11, 'Accepted', '2024-12-18 16:00:00'),
+    (5, 11, 'Accepted', '2024-12-18 14:00:00'),
+    (6, 11, 'Accepted', '2024-12-18 15:00:00'),
+    (7, 11, 'Accepted', '2024-12-18 14:00:00'),
+    (8, 11, 'Accepted', '2024-12-18 15:00:00'),
+    (9, 11, 'Accepted', '2024-12-18 16:00:00'),
+    (10, 11, 'Accepted', '2024-12-18 14:00:00'),
+    (12, 11, 'Accepted', '2024-12-18 15:00:00'),
     (2, 3, 'Accepted', '2024-12-19 10:30:00'),
     (7, 6, 'Accepted', '2024-12-19 12:00:00'),
     (8, 7, 'Accepted', '2024-12-19 13:00:00'),
@@ -1449,12 +1497,10 @@ INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
     (2, 8, 'Accepted', '2024-12-20 02:00:00'),
     (3, 6, 'Accepted', '2024-12-20 03:00:00'),
     (10, 3, 'Pending', '2024-12-20 04:00:00'),
-    (11, 2, 'Accepted', '2024-12-22 10:00:00'),
-    (11, 3, 'Accepted', '2024-12-22 10:00:00'),
     (11, 4, 'Accepted', '2024-12-22 10:00:00'),
-    (11, 5, 'Accepted', '2024-12-22 10:00:00'),
-    (11, 6, 'Accepted', '2024-12-22 10:00:00'),
-    (11, 8, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 7, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 3, 'Accepted', '2024-12-22 10:00:00'),
+    (11, 9, 'Accepted', '2024-12-22 10:00:00'),
     (11, 12, 'Accepted', '2024-12-22 10:00:00');
 
 
