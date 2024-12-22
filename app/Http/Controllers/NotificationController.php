@@ -65,9 +65,18 @@ class NotificationController extends Controller {
         }
     
         
-        
         foreach($notifications as $notification){
             $notification->date =  Carbon::parse($notification->date)->diffForHumans();
+
+            if (isset($notification->comment)) {
+                // if subcomment, add additional data to parent comment
+                if ($notification->comment->parentcommentid) {
+                    $notification->is_reply = true;
+                    $notification->parent_comment = $notification->comment->parentComment;
+                } else {
+                    $notification->is_reply = false;
+                }
+            }
         }
 
         return response()->json(

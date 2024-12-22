@@ -173,6 +173,15 @@ class CommentController extends Controller {
 
         $comment->save();
 
+        $parentComment = Comment::find($request->parent_comment_id); //for notifications
+
+        if ($parentComment) {
+            $parentCommentUser = $parentComment->user; 
+    
+            // send a notification to the user who made the parent comment
+            event(new PostComment($comment->message, Auth::user(), $parentCommentUser->userid, true));
+        }
+
         $topcomment = $comment;
         while ($topcomment->parentcommentid != NULL){
             $topcomment = $topcomment->parentComment;

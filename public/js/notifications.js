@@ -69,6 +69,13 @@ function initializePusher(userId) {
     // Handle "comment" notifications
     channel.bind('notification-postcomment', function(data) {
         const timestamp = data.timestamp || new Date().toISOString();
+
+        if (data.comment.parentcommentid) {
+            data.message = `${data.comment.user.username} replied to a comment: "${data.message}"`;
+        } else {
+            data.message = `${data.comment.user.username} commented: "${data.message}"`;
+        }
+
         triggerPopupNotification(data.message);
     });
 
@@ -141,22 +148,43 @@ function createNotificationElement(type, message, timestamp, data) {
                 </div>
             `;
         } else if (type === 'comments') {
-            notificationContent = `
-                <div class="flex-1">
-                    <div class="text-sm font-semibold text-gray-800">
-                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> commented:
-                        <span class="italic text-gray-600">"${limitText(message)}"</span>
+            let commentMessage = limitText(message);
+
+            if (data.comment && data.comment.parent_comment) { //reply to a comment
+                notificationContent = `
+                    <div class="flex-1">
+                        <div class="text-sm font-semibold text-gray-800">
+                            <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> replied to a comment:
+                            <span class="italic text-gray-600">"${commentMessage}"</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            <a href="${postUrl}" class="text-blue-600 hover:underline">
+                                On comment: "${limitText(data.comment.parent_comment.message)}"
+                            </a>
+                        </div>
                     </div>
-                    <div class="text-sm text-gray-500">
-                        <a href="${postUrl}" class="text-blue-600 hover:underline">
-                            On post: "${limitText(data.comment.post.message)}"
-                        </a>
+                    <div class="text-xs text-gray-400">
+                        ${formattedDate}
                     </div>
-                </div>
-                <div class="text-xs text-gray-400">
-                    ${formattedDate}
-                </div>
-            `;
+                `;
+            } else {  // Normal comment
+                notificationContent = `
+                    <div class="flex-1">
+                        <div class="text-sm font-semibold text-gray-800">
+                            <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> commented:
+                            <span class="italic text-gray-600">"${commentMessage}"</span>
+                        </div>
+                        <div class="text-sm text-gray-500">
+                            <a href="${postUrl}" class="text-blue-600 hover:underline">
+                                On post: "${limitText(data.comment.post.message)}"
+                            </a>
+                        </div>
+                    </div>
+                    <div class="text-xs text-gray-400">
+                        ${formattedDate}
+                    </div>
+                `;
+            }
         } else if (type === 'follows') {
             notificationContent = `
                 <div class="flex-1">

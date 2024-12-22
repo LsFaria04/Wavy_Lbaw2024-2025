@@ -17,6 +17,8 @@ class PostComment implements ShouldBroadcast {
     public $comment;
     public $user;
     public $receiverid;
+    public $isSubcomment;
+
 
     /**
      * Create a new event instance.
@@ -24,12 +26,19 @@ class PostComment implements ShouldBroadcast {
      * @param  mixed  $comment
      * @param  mixed  $user
      * @param  int  $receiverid
+     * @param  bool  $isSubcomment
      */
-    public function __construct($comment, $user, $receiverid) {
+    public function __construct($comment, $user, $receiverid, $isSubcomment = false) {
         $this->comment = $comment;
         $this->user = $user;
         $this->receiverid = $receiverid;
-        $this->message = $user->username . ' commented on your post';  // Custom message
+        $this->isSubcomment = $isSubcomment;
+
+        if ($isSubcomment) {
+            $this->message = $user->username . ' replied to your comment';
+        } else {
+            $this->message = $user->username . ' commented on your post'; 
+        }
     }
 
     /**

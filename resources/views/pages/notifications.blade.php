@@ -39,7 +39,12 @@
                                     <div class="flex-1">
                                         @if(isset($notification->comment) && isset($notification->comment->post))
                                             <div class="text-sm font-semibold text-gray-800">
-                                                {{ $notification->comment->user->username }} commented:
+                                                {{ $notification->comment->user->username }} 
+                                                @if($notification->comment->parentcommentid)
+                                                    replied to a comment:
+                                                @else
+                                                    commented:
+                                                @endif
                                                 <span class="italic text-gray-600">"{{ Str::limit($notification->comment->message, 50) }}"</span>
                                             </div>
                                             <div class="text-sm text-gray-500">
@@ -92,7 +97,12 @@
                                     <div class="flex-1">
                                         @if(isset($notification->comment) && isset($notification->comment->post))
                                             <div class="text-sm font-semibold text-gray-800">
-                                                {{ $notification->comment->user->username }} commented:
+                                                {{ $notification->comment->user->username }} 
+                                                @if($notification->comment->parentcommentid)
+                                                    replied to a comment:
+                                                @else
+                                                    commented:
+                                                @endif
                                                 <span class="italic text-gray-600">"{{ Str::limit($notification->comment->message, 50) }}"</span>
                                             </div>
                                             <div class="text-sm text-gray-500">
