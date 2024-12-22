@@ -38,7 +38,7 @@ function triggerPopupNotification(message) {
     // Apply position and animation styles
     notificationPopup.style.position = 'fixed';
     notificationPopup.style.top = '20px';
-    notificationPopup.style.right = '20px';
+    notificationPopup.style.left = '50%';
     notificationPopup.style.zIndex = '9999';
     notificationPopup.style.opacity = '1';
     notificationPopup.style.transition = 'opacity 0.5s ease, transform 0.3s ease';
