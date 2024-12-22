@@ -848,10 +848,11 @@ VALUES
     ('EveBlack', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Traveler at heart, exploring cultures and cuisines around the world.', 'eve.black@example.com', 'active', TRUE, FALSE),
     ('FrankMoore', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Sports coach who enjoys mentoring young athletes and staying active.', 'frank.moore@example.com', 'active', TRUE, FALSE),
     ('GraceHall', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Yoga instructor and wellness advocate, passionate about mindfulness.', 'grace.hall@example.com', 'active', TRUE, FALSE),
-    ('HenryKing', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Gardener with a love for growing fresh vegetables and herbs.', 'henry.king@example.com', 'suspended', TRUE, FALSE),
+    ('HenryKing', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Farmer with a love for growing fresh vegetables and herbs.', 'henry.king@example.com', 'suspended', TRUE, FALSE),
     ('IvyAdams', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Bookworm and aspiring novelist, always lost in a good story.', 'ivy.adams@example.com', 'active', TRUE, FALSE),
     ('JackLee', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'Music enthusiast and amateur guitarist, loves performing at local cafes.', 'jack.lee@example.com', 'active', FALSE, FALSE),
-    ('Frank', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'MUFC Fan Account • NOT Affiliated with Rúben Amorim • DM for promos/ads etc', 'frank@example.com', 'active', TRUE, FALSE);
+    ('Frank', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'MUFC Fan Account • NOT Affiliated with Rúben Amorim • DM for promos/ads etc', 'frank@example.com', 'active', TRUE, FALSE),
+    ('JonnyBones', '$2y$10$ucilw0DqyGGYCybQLesgLOCCZLy07yOwMcdLMrU50yYPTTxLMg37C', 'John "Bones" Jones • UFC Heavyweight Champion • I love to duck • Dana’s Favorite Son', 'jonnybones@example.com', 'active', TRUE, FALSE);
 
 INSERT INTO GROUPS (groupName, description, visibilityPublic, ownerID) 
 VALUES 
@@ -1396,9 +1397,6 @@ INSERT INTO MEDIA (path, postID, commentID, userID)
 VALUES 
     ('images/kNmEQPAAOLWmeP2S8IgcpRmUpWzjKLqk4Sq71R0r.jpg', 20, NULL, NULL),
     ('images/8QYuyrGxDqEHQmrrOeosTuHhgz5wKpX23kXqP0ZY.jpg', NULL, 25, NULL),
-    ('images/profile11.jpg', NULL, NULL, 11),
-    ('images/banner11.jpg', NULL, NULL, 11),
-    ('images/profile7.jpg', NULL, NULL, 7),
     ('images/W0Iq8td3d876eBLr9oYc5qlJy2SrJ6aJDPuqeWYN.jpg', 27, NULL, NULL),
     ('images/hnVykJfTYUnAGRkXlMo7JHK4tZtoGe9JP6DUDDrj.png', 39, NULL, NULL),
     ('images/G53aG15AolcXQiHurfmfgSrr3hDrpszgXqH5RCEJ.png', 39, NULL, NULL),
@@ -1407,5 +1405,23 @@ VALUES
     ('images/iuHdxsvZ3gG9ZVvK8JoRJfmk3HEXeLD4gBR6Ip5l.jpg', 25, NULL, NULL),
     ('images/profile3.jpg', NULL, NULL, 3),
     ('images/banner3.jpg', NULL, NULL, 3),
+    ('images/profile4.jpg', NULL, NULL, 4),
+    ('images/banner4.jpg', NULL, NULL, 4),
+    ('images/profile5.jpg', NULL, NULL, 5),
+    ('images/banner5.jpg', NULL, NULL, 5),
+    ('images/profile6.jpg', NULL, NULL, 6),
+    ('images/banner6.jpg', NULL, NULL, 6),
+    ('images/profile7.jpg', NULL, NULL, 7),
+    ('images/banner7.jpg', NULL, NULL, 7),
+    ('images/profile8.jpg', NULL, NULL, 8),
+    ('images/banner8.jpg', NULL, NULL, 8),
+    ('images/profile9.jpg', NULL, NULL, 9),
+    ('images/banner9.jpg', NULL, NULL, 9),
+    ('images/profile10.jpg', NULL, NULL, 10),
+    ('images/banner10.jpg', NULL, NULL, 10),
+    ('images/profile11.jpg', NULL, NULL, 11),
+    ('images/banner11.jpg', NULL, NULL, 11),
+    ('images/profile12.jpg', NULL, NULL, 12),
+    ('images/banner12.jpg', NULL, NULL, 12),
     ('images/banner2.jpg', NULL, NULL, 2),
     ('images/profile2.jpg', NULL, NULL, 2);
