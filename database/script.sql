@@ -825,6 +825,19 @@ BEGIN
         VALUES (NEW.postID, 1); --1 is the id of general topic
     END IF;
 
+    -- Detach general topic if it is no longer relevant
+    IF EXISTS (
+        SELECT 1
+        FROM post_topics
+        WHERE postID = NEW.postID AND topicID = 1
+    ) AND NOT EXISTS (
+        SELECT 1
+        FROM post_topics
+        WHERE postID = NEW.postID AND topicID != 1
+    ) THEN
+        DELETE FROM post_topics WHERE postID = NEW.postID AND topicID = 1;
+    END IF;
+
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
