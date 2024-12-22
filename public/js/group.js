@@ -227,22 +227,42 @@ function openExitGroupMenu() {
 }
 
 function openRemoveMemberMenu(memberId, username) {
-    const removeMenu = document.getElementById('removeMemberMenu');
-    const removeMessage = document.getElementById('removeMemberMessage');
-    const removeForm = document.getElementById('removeMemberForm');
+    // Remove any existing menu to avoid duplication
+    const existingMenu = document.getElementById('removeMemberMenu');
+    if (existingMenu) existingMenu.remove();
 
-    // Update the confirmation message and form action
-    removeMessage.textContent = `Are you sure you want to remove ${username} from the group?`;
-    removeForm.action = `/groups/${groupId}/remove/${memberId}`;
+    // Create the confirmation menu
+    const removeMenu = document.createElement('div');
+    removeMenu.id = 'removeMemberMenu';
+    removeMenu.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-20';
 
-    // Show the dialog
-    removeMenu.classList.remove('hidden');
-    removeMenu.classList.add('flex');
+    removeMenu.innerHTML = `
+        <div class="bg-white rounded-xl shadow-lg p-6 max-w-sm w-full">
+            <h2 class="text-xl font-semibold text-gray-900">Remove Member</h2>
+            <p id="removeMemberMessage" class="mt-4 text-sm text-gray-600">
+                Are you sure you want to remove ${username} from the group?
+            </p>
+            <div class="mt-6 flex justify-end gap-3">
+                <button id="cancelRemoveButton" class="px-4 py-2 text-white bg-gray-400 hover:bg-gray-600 rounded-2xl focus:outline-none">
+                    Cancel
+                </button>
+                <form id="removeMemberForm" action="/groups/${groupId}/remove/${memberId}" method="POST">
+                    <input type="hidden" name="_token" value="${document.querySelector('meta[name="csrf-token"]').content}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" class="px-4 py-2 text-white bg-red-600 hover:bg-red-700 rounded-2xl focus:outline-none">
+                        Remove
+                    </button>
+                </form>
+            </div>
+        </div>
+    `;
 
+    // Add the menu to the document
+    document.body.appendChild(removeMenu);
+
+    // Add event listener to cancel button
     document.getElementById('cancelRemoveButton').addEventListener('click', () => {
-        const removeMenu = document.getElementById('removeMemberMenu');
-        removeMenu.classList.add('hidden');
-        removeMenu.classList.remove('flex')
+        removeMenu.remove();
     });
 }
 
@@ -469,9 +489,9 @@ function createMember(memberInfo) {
     member.innerHTML = `
         <div class="flex justify-between items-center">
             <div>
-                <div class = "flex flex-row gap-2">
+                <div class="flex flex-row gap-2">
                     <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                    ${memberInfo.profile_picture.length > 0 ? `<img  h-full w-full object-cover rounded-md mb-2 mx-auto src=${memberInfo.profile_picture[0].path.includes('profile') ? '/storage/' + memberInfo.profile_picture[0].path : memberInfo.profile_picture.length > 1 ? '/storage/' + memberInfo.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                    ${memberInfo.profile_picture.length > 0 ? `<img h-full w-full object-cover rounded-md mb-2 mx-auto src=${memberInfo.profile_picture[0].path.includes('profile') ? '/storage/' + memberInfo.profile_picture[0].path : memberInfo.profile_picture.length > 1 ? '/storage/' + memberInfo.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
                     </div>
                     <h3 class="font-bold">
                         <a href="../profile/${memberInfo.username}" class="text-black hover:text-sky-900">
