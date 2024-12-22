@@ -26,7 +26,7 @@
     </div>
     <div class = "grow flex items-center justify-center mt-[-180px]">
         <form method="POST" action="{{ route('login') }}" class = "max-w-xl grid-start-1 bg-slate-100 shadow-md rounded px-8 pt-6 pb-8 my-4" >
-            {{ csrf_field() }}
+            @csrf
 
             <label class="font-medium text-lg" for="email">E-mail</label>
             <input class="shadow appearance-none border rounded w-full my-4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline shadow-sky-900" id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>

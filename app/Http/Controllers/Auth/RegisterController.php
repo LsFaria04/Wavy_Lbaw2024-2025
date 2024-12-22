@@ -12,8 +12,7 @@ use Illuminate\View\View;
 
 use App\Models\User;
 
-class RegisterController extends Controller
-{
+class RegisterController extends Controller {
     /**
      * Display a login form.
      */
