@@ -762,20 +762,20 @@ BEFORE INSERT ON POST
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions();
 
--- Trigger to prevent admin users from creating a comment (TRIGGER 18)
+-- Trigger to prevent admin users from creating a comment (TRIGGER 19)
 CREATE TRIGGER prevent_admin_actions_comment
 BEFORE INSERT ON COMMENT
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions();
 
--- Trigger to prevent admin users from liking a post or comment (TRIGGER 18)
+-- Trigger to prevent admin users from liking a post or comment (TRIGGER 19)
 CREATE TRIGGER prevent_admin_actions_like
 BEFORE INSERT ON LIKES
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions();
 
 
--- Create function to prevent admin users from following other users
+-- Create function to prevent admin users from following other users (TRIGGER 20)
 CREATE OR REPLACE FUNCTION prevent_admin_actions_follow()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -786,13 +786,13 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
--- Trigger to prevent admin users from creating a post (TRIGGER 18)
+-- Trigger to prevent admin users from creating a post (TRIGGER 20)
 CREATE TRIGGER prevent_admin_actions_follow
 BEFORE INSERT ON FOLLOW
 FOR EACH ROW
 EXECUTE FUNCTION prevent_admin_actions_follow();
 
--- Create function to delete rejected follow requests
+-- Create function to delete rejected follow requests (TRIGGER 21)
 CREATE OR REPLACE FUNCTION delete_rejected_follow_request()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -804,10 +804,37 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER delete_rejected_follow
+-- (TRIGGER 21)
+CREATE TRIGGER delete_rejected_follow  
 AFTER UPDATE ON follow
 FOR EACH ROW
 EXECUTE FUNCTION delete_rejected_follow_request();
+
+-- Function to assign the general topic to a post if it has no topics (TRIGGER 22)
+CREATE FUNCTION assign_general_topic_to_post()
+RETURNS TRIGGER AS $$
+BEGIN
+    -- Check if the post has no associated topics
+    IF NOT EXISTS (
+        SELECT 1
+        FROM post_topics
+        WHERE postID = NEW.postID
+    ) THEN
+        -- Insert the general topic for the post
+        INSERT INTO post_topics (postID, topicID)
+        VALUES (NEW.postID, 1); --1 is the id of general topic
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger to invoke the function after a post is inserted (TRIGGER 22)
+CREATE TRIGGER add_general_topic_to_post
+AFTER INSERT ON post    
+FOR EACH ROW
+EXECUTE FUNCTION assign_general_topic_to_post();
+
 
 
 --------------- POPULATE DATABASE ---------------------------------
@@ -889,6 +916,23 @@ VALUES
     (9, 6, 'Ivy, I think your story would make a great film!', '2024-11-04 11:45:00'),
     (10, 7, 'Jack, I’d love to hear you play sometime!', '2024-11-04 12:00:00');
 
+INSERT INTO TOPIC (topicName) 
+VALUES 
+    ('General'),
+    ('Technology'),
+    ('Health'),
+    ('Travel'),
+    ('Food'),
+    ('Art'),
+    ('Sports'),
+    ('Environment'),
+    ('Gaming'),
+    ('Gambling'),
+    ('Politics'),
+    ('Education'),
+    ('Football'),
+    ('Manchester United');
+
 INSERT INTO POST (userID, message, visibilityPublic, createdDate, groupID) 
 VALUES 
     (2, 'Just returned from an amazing hike in the mountains.', TRUE, '2022-10-01 10:30:00', NULL), 
@@ -930,23 +974,6 @@ VALUES
     (8, 'Can we all agree that Old Trafford is the best stadium in the world?', TRUE, '2024-12-21 11:00:00', 10),
     (9, 'What’s everyone’s prediction for the game against Arsenal?', TRUE, '2024-12-21 13:00:00', 10),
     (10, 'This season has been a rollercoaster, but I still believe in this squad!', TRUE, '2024-12-21 15:00:00', 10);
-
-INSERT INTO TOPIC (topicName) 
-VALUES 
-    ('General'),
-    ('Technology'),
-    ('Health'),
-    ('Travel'),
-    ('Food'),
-    ('Art'),
-    ('Sports'),
-    ('Environment'),
-    ('Gaming'),
-    ('Gambling'),
-    ('Politics'),
-    ('Education'),
-    ('Football'),
-    ('Manchester United');
 
 INSERT INTO COMMENT (userID, message, createdDate, postID, parentCommentID) 
 VALUES 
