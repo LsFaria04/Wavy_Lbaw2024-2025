@@ -102,7 +102,7 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
                     </svg>
                 </button> 
-                <h2 class="col-start-2  text-2xl self-center font-bold text-nowrap">Invite Users</h3>
+                <h2 class="col-start-2  text-2xl self-center font-bold text-nowrap">Invite Users</h2>
                 </header>
             <input
                 type="text"
