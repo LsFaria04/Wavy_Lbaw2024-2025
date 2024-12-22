@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\User;
 use App\Models\Follow;
 use App\Events\FollowNotification;
@@ -425,9 +426,16 @@ class ProfileController extends Controller {
         }
         Log::info("22");
 
-
-
         $existingFollow->delete();
+        Log::info("23");
+
+        $previousNotification = Notification::where('followid', $followerId)
+        ->where('receiverid', $userid)
+        ->first();
+
+        if ($previousNotification) {
+            $previousNotification->delete();
+        }
 
         $follower = User::findOrFail($existingFollow->followerid);
 
