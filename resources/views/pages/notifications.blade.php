@@ -5,7 +5,7 @@
     <div class="w-full max-w-4xl mx-auto bg-white">
         <!-- Notifications header -->
         <header id="notifications-header" class="w-full p-4 shadow-md flex items-center sticky top-0 z-10 backdrop-blur bg-white">
-            <h1 class="text-xl font-bold text-gray-800">Notifications</h1>
+            <h2 class="text-xl font-bold text-gray-800">Notifications</h2>
         </header>
 
         <div class="p-6">

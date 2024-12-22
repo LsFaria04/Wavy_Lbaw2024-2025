@@ -13,10 +13,6 @@
         <!-- Styles -->
         @vite('resources/css/app.css')
         @vite('resources/js/app.js')
-        <script>
-            // Fix for Firefox autofocus CSS bug
-            // See: http://stackoverflow.com/questions/18943276/html-5-autofocus-messes-up-css-loading/18945951#18945951
-        </script>
         <script src="{{ url('js/app.js') }}" defer></script>
         <script src="{{ url('js/admin.js') }}" defer></script>
         <script src="{{ url('js/comment.js') }}" defer></script>
