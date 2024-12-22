@@ -36,7 +36,7 @@
                     
                 @endphp
                 @if($filePath !== null)
-                    <img  src="{{ $filePath }}" alt="Image" class=" h-full w-full object-cover rounded-md mb-2 mx-auto" >
+                    <img  src="{{ $filePath }}" alt="Image" class=" h-full w-full object-cover mb-2 mx-auto" >
                 @endif
             </div>
         </div>

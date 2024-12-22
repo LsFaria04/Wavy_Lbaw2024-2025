@@ -489,18 +489,18 @@ function createMember(memberInfo) {
     member.innerHTML = `
         <div class="flex justify-between items-center">
             <div>
-                <div class="flex flex-row gap-2">
-                    <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                    ${memberInfo.profile_picture.length > 0 ? `<img h-full w-full object-cover rounded-md mb-2 mx-auto src=${memberInfo.profile_picture[0].path.includes('profile') ? '/storage/' + memberInfo.profile_picture[0].path : memberInfo.profile_picture.length > 1 ? '/storage/' + memberInfo.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                <a href="${memberInfo.state === 'deleted' ? '#' : '/profile/' + memberInfo.username}">
+                    <div class="flex flex-row gap-2">
+                        <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                            ${memberInfo.profile_picture.length > 0 ? `<img h-full w-full object-cover rounded-md mb-2 mx-auto src=${memberInfo.profile_picture[0].path.includes('profile') ? '/storage/' + memberInfo.profile_picture[0].path : memberInfo.profile_picture.length > 1 ? '/storage/' + memberInfo.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
+                        </div>
+                        <h3 class="font-bold text-black hover:text-sky-900">
+                            ${memberInfo.state === 'deleted' ? 'Deleted User' : memberInfo.username}
+                            ${isOwner ? '(Owner)' : ''}
+                        </h3>
                     </div>
-                    <h3 class="font-bold">
-                        <a href="../profile/${memberInfo.username}" class="text-black hover:text-sky-900">
-                            ${memberInfo.username}
-                        </a>
-                        ${isOwner ? '(Owner)' : ''}
-                    </h3>
-                </div>
-                <p class="text-sm text-gray-600">${memberInfo.bio || ''}</p>
+                </a>
+                <p class="text-sm text-gray-600">${memberInfo.bio || 'No bio available.'}</p>
             </div>
             ${canRemove ? `
                 <button type="button" onclick="openRemoveMemberMenu(${memberInfo.userid}, '${memberInfo.username}')" 

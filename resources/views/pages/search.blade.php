@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="flex flex-col items-center w-full bg-white" id="searchPage">
+    <div class="flex flex-col items-center w-full max-w-full bg-white" id="searchPage">
         <div id="messageContainer" class="fixed top-6 flex items-center z-40">
             <!--Used to append messages with JS -->
         </div>
@@ -24,7 +24,7 @@
         </header>
         
         <!-- Search Results -->
-        <section id="search-results" class="flex flex-col justify-items-center w-full max-w-full bg-white shadow-md pl-6 pr-6 pt-4">
+        <section id="search-results" class="flex flex-col w-full max-w-full bg-white">
             @if(empty($query))
                 <div class="flex justify-center items-center h-32">
                     <p class="text-gray-600 text-center">Please insert a search term.</p>
