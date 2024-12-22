@@ -76,6 +76,18 @@
                         <span class="hidden lg:block">Logout</span>
                     </a>
                 </li>
+                
+                
+                @if(!Auth::user()->isadmin)
+                    <li class="test-white font-medium text-lg">
+                    <button id="togglePostForm" class="flex flex-row items-center gap-3">
+                        <svg class="min-w-[20px]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="20" height="20">
+                            <path d="M12 0C5.383 0 0 5.383 0 12s5.383 12 12 12 12-5.383 12-12S18.617 0 12 0zm0 22C6.486 22 2 17.514 2 12S6.486 2 12 2s10 4.486 10 10-4.486 10-10 10zm5-11h-4V7a1 1 0 10-2 0v4H7a1 1 0 100 2h4v4a1 1 0 102 0v-4h4a1 1 0 100-2z" fill="currentColor"/>
+                        </svg>
+                        <span class="hidden lg:block">Post</span>
+                    </button>
+                    </li>
+                @endif
             @else
                 <li class = "test-white font-medium text-lg">
                     <a class = "flex flex-row items-center gap-3" href = "{{ route('login') }}">
@@ -102,5 +114,4 @@
             </li>
         </ul>
     </nav>
-
 </div>

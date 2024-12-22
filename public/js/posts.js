@@ -278,11 +278,11 @@ function updateFileList() {
 
   // Append new files to the list (preserve existing files)
   Array.from(fileInput.files).forEach(file => {
-    if (file.size > 1048576){
+    if (file.size > 1048576) {
       const messageContainer = document.getElementById('messageContainer');
       createAlert(messageContainer, "File is too big (>2Mb)", true);
     }
-    else{
+    else {
       selectedFiles.push(file);
     }
   });
@@ -321,6 +321,7 @@ const originalFormData = {};
 
 // Toggle the edit form visibility
 function toggleEditPost(postid) {
+  console.log(postid);
     event.stopPropagation();
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
@@ -337,6 +338,7 @@ function toggleEditPost(postid) {
     postContent.classList.toggle('hidden');
 
     // If showing the edit form, save original values
+    console.log(editForm);
     if (!editForm.classList.contains('hidden')) {
         if (!originalFormData[postid]) {
             // Store the original values in the object
@@ -388,7 +390,7 @@ function updateFileNameEdit(postId) {
       const messageContainer = document.getElementById('messageContainer');
       createAlert(messageContainer, "File is too big (>2Mb)", true);
     }
-    else{
+    else {
       selectedFilesEdit.push(file);
     }
   });
@@ -608,7 +610,7 @@ function insertPostMedia(post, mediaArray){
       newMedia.classList.add("w-full","mb-2");
     }
   
-    else{
+    else {
       newMedia = document.createElement('p');
       newMedia.classList.add("text-gray-500");
       newMedia.innerHTML = 'Unsupported media type';
@@ -704,7 +706,7 @@ function insertPostTopics(post, topics){
   const postheader = post.querySelector('.post-header');
   let postTopics = document.createElement('div');
   postTopics.setAttribute('id', 'postTopics');
-  postTopics.classList.add('flex', 'flex-row');
+  postTopics.setAttribute('class', "flex flex-row gap-2");
 
   for(let i = 0; i < topics.length; i++){
     let topic = document.createElement('p');
@@ -745,7 +747,7 @@ function removeSpecificFile(index) {
   }
 }
 
-function toggleAddPostTopics(postid, isedit){
+function toggleAddPostTopics(postid, isedit) {
   console.log(document.getElementById("addPostTopics"));
   if(document.getElementById("addPostTopics").classList.contains('hidden')){
     postTopicPage = 0;
@@ -753,7 +755,7 @@ function toggleAddPostTopics(postid, isedit){
     isEditPost = isedit;
     loadMorePostTopics();   
   }
-  else{
+  else {
     //remove the topics when we hide the the menu
     let topics = document.querySelectorAll('#postTopicsList .topicList li,#postTopicsList .topicList p ');
     topics.forEach(function (e) {e.remove()});
@@ -801,7 +803,7 @@ function loadMorePostTopics(){
     postTopicPage++;
     sendAjaxRequest('get', '/api/topics/search/all/'+ topicPostId + '?q=' + searchQuery + '&page=' + postTopicPage,null,insertMorePostTopics);
   }
-  else{
+  else {
     postTopicPage++;
     sendAjaxRequest('get', '/api/topics/all/' + topicPostId + '?page=' + postTopicPage,null,insertMorePostTopics);
   }
@@ -847,17 +849,17 @@ function insertMorePostTopics(){
     topicsList.appendChild(topic);
   }
 
-  if(topics.data.length > 0){
+  if(topics.data.length > 0) {
     if(postTopicPageMax > postTopicPage){
       //Show the button if there is more data to display
-      if(document.querySelector('#postTopicsList > button').classList.contains('hidden')){
+      if(document.querySelector('#postTopicsList > button').classList.contains('hidden')) {
         document.querySelector('#postTopicsList > button').classList.toggle('hidden');
       }
     }
   }
-  else{
+  else {
     //there are no topics in the list and we could not found new ones with the ajax request so a warning is displayed
-    if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null){
+    if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null) {
       let warning = document.createElement('p');
       warning.innerHTML='No topics found';
       topicsList.appendChild(warning);
@@ -893,17 +895,18 @@ function addTopicToPost(topicid, topicname, postid){
   //add the topic to the topic display
   let topicDisplay = document.getElementById(`topicDisplay-${postid}`);
 
-  const li = document.createElement('li');
-  li.classList.add('flex', 'items-center', 'gap-2');
-  li.setAttribute('id', `post-${postid}Topic-${topicid}`);
+  const div = document.createElement('div');
+  div.classList.add('flex', 'items-center', 'gap-2');
+  div.setAttribute('id', `post-${postid}Topic-${topicid}`);
 
-  li.innerHTML = `
-      <span class="text-sm text-gray-500 w-12 sm:w-full text-ellipsis overflow-hidden ...">${topicname}</span>
+  console.log("here")
+  div.innerHTML = `
+      <span class="text-sm text-gray-500">${topicname}</span>
   
       <button type="button" onclick="removeSpecificTopic(${topicid},${postid})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
   `;
 
-  topicDisplay.appendChild(li);
+  topicDisplay.appendChild(div);
 
   if(topicDisplay.classList.contains('hidden')){
     topicDisplay.classList.toggle('hidden');

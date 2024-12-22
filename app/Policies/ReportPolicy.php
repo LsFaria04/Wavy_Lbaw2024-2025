@@ -30,7 +30,7 @@ class ReportPolicy
                     ->first();
             return $report === null;
         }
-        else{
+        else {
             $report = Report::where('commentid', $contentId)
                 ->where('userid', $user->userid)
                 ->first();

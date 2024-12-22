@@ -40,12 +40,12 @@ class CommentController extends Controller {
             if (Auth::check()) {
                 $comments[$i]->liked = $comments[$i]->commentlikes()->where('userid', Auth::user()->userid)->exists();
             }
-            else{
+            else {
                 $comments[$i]->liked = false;
             }
         }
 
-        if($request->ajax()){
+        if($request->ajax()) {
             return response()->json($comments);
         }
 
@@ -173,6 +173,15 @@ class CommentController extends Controller {
 
         $comment->save();
 
+        $parentComment = Comment::find($request->parent_comment_id); //for notifications
+
+        if ($parentComment) {
+            $parentCommentUser = $parentComment->user; 
+    
+            // send a notification to the user who made the parent comment
+            event(new PostComment($comment->message, Auth::user(), $parentCommentUser->userid, true));
+        }
+
         $topcomment = $comment;
         while ($topcomment->parentcommentid != NULL){
             $topcomment = $topcomment->parentComment;
@@ -196,7 +205,7 @@ class CommentController extends Controller {
                         'path' => $mediaPath, // Store the image path
                     ]);
                 }
-                else{
+                else {
                     return redirect()->route('posts.show', $topcomment->postid)->with('error', 'Could not upload the file!');
                 }
             }
@@ -286,8 +295,8 @@ class CommentController extends Controller {
         }
 
         $mediaArray = Media::where('commentid', $comment->commentid)->get();
-        foreach($mediaArray as $media){
-            if (Storage::exists('public/'. $media->path)){
+        foreach($mediaArray as $media) {
+            if (Storage::exists('public/'. $media->path)) {
                 Storage::delete('public/'. $media->path);
             }
         }
@@ -295,7 +304,7 @@ class CommentController extends Controller {
         $comment->media()->delete();
         
         $topcomment = $comment;
-        while ($topcomment->parentcommentid != NULL){
+        while ($topcomment->parentcommentid != NULL) {
             $topcomment = $topcomment->parentComment;
         }
         

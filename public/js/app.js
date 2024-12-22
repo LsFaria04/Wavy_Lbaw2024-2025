@@ -102,10 +102,10 @@ function contactEmailSentConfirmation() {
   const sendButton = document.getElementById('submit');
   sendButton.disable = false;
 
-  if(response.response !== '200'){
+  if(response.response !== '200') {
     createAlert(messageDiv, response.message, true);
   }
-  else{
+  else {
     createAlert(messageDiv, response.message, false);
 
   }
@@ -133,12 +133,12 @@ function emailSentConfirmation() {
   const response = JSON.parse(this.responseText);
   const messageDiv = document.getElementById('messageContainer');
 
-  if(response.response !== '200'){
+  if(response.response !== '200') {
     recoveryEmail.classList.remove('hidden');
     recoveryEmail.classList.add('flex');
     createAlert(messageDiv, response.message, true);
   }
-  else{
+  else {
     const recoveryToken = document.getElementById('recoveryToken');
     recoveryToken.classList.remove('hidden');
     recoveryToken.classList.add('flex');
@@ -170,13 +170,13 @@ function tokenCheckConfirmation() {
   const response = JSON.parse(this.responseText);
   let messageDiv = document.getElementById('messageContainer');
 
-  if(response.response !== '200'){
+  if(response.response !== '200') {
     const recoveryToken = document.getElementById('recoveryToken');
     recoveryToken.classList.remove('hidden');
     recoveryToken.classList.add('flex');
     createAlert(messageDiv, response.message, true);
   }
-  else{
+  else {
     window.location.replace("/login");
       
   }

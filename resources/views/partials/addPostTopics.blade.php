@@ -1,5 +1,5 @@
 <!-- Add Topic To post -->
-<div id="addPostTopics" class = "w-full h-full fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden z-20">
+<div id="addPostTopics" class = "w-full h-full fixed inset-0 bg-black bg-opacity-50  items-center justify-center hidden z-40">
     <div class="bg-white w-full max-w-md p-6 rounded-lg shadow-lg">
         <header class = "grid grid-cols-3 justify-center w-full max-w-full mb-4">
             <button onclick = "toggleAddPostTopics()" class="col-start-1 col-span-1 justify-self-start">

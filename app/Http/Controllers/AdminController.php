@@ -115,23 +115,23 @@ class AdminController extends Controller
         try{
             $user = User::find($userid);
 
-            if($user->state === 'suspended'){
+            if($user->state === 'suspended') {
                 $user->state = 'active';
             }
-            else{
+            else {
                 $user->state = 'suspended';
                 $isban = true;
             }
 
             $user->save();
-        } catch(\Exception $e){
+        } catch(\Exception $e) {
             return response()->json(["message" => 'Server problem', 'response' => '500']);
         }
 
-        if($isban){
+        if($isban) {
             return response()->json(["message" => 'User banned successfully', 'response' => '200']);
         }
-        else{
+        else {
             return response()->json(["message" => 'User unbanned successfully', 'response' => '200']);
         }
 

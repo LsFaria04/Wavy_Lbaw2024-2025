@@ -166,16 +166,16 @@ function changeCategory(category) {
         let publicCheckBox = document.querySelectorAll('#publicCheck:checked');
         let privateCheckBox = document.querySelectorAll('#privateCheck:checked');
 
-        if(privateCheckBox.length > 0 && publicCheckBox.length > 0){
+        if(privateCheckBox.length > 0 && publicCheckBox.length > 0) {
           //no need to add a filter because we want all
         }
-        else if(privateCheckBox.length > 0){
+        else if(privateCheckBox.length > 0) {
           filters['visibilityPublic'] = false;
         }
-        else if(publicCheckBox.length > 0){
+        else if(publicCheckBox.length > 0) {
           filters['visibilityPublic'] = true;
         }
-        else{
+        else {
           //no need to add a filter because we want all
         }
         loadSearchContent(searchCategory, query, filters);
@@ -193,7 +193,7 @@ function changeCategory(category) {
         else if(publicCheckBoxUser.length > 0){
           filters['visibilityPublic'] = true;
         }
-        else{
+        else {
           //no need to add a filter because we want all
         }
         loadSearchContent(searchCategory, query, filters);

@@ -58,15 +58,15 @@ function closeModal() {
 }
 
 //opens the my topics menu in the profile
-function toggleMyTopics(){
+function toggleMyTopics() {
   const myTopicsMenu = document.getElementById('myTopics');
 
-  if(myTopicsMenu.classList.contains('hidden')){
+  if(myTopicsMenu.classList.contains('hidden')) {
     myTopicPage = 0;
     loadMoreTopics(true);
 
   }
-  else{
+  else {
 
     let topics = document.querySelectorAll('#myTopicsList .topicList li,#myTopicsList p ');
     topics.forEach(function (e) {e.remove()}); 
@@ -77,7 +77,7 @@ function toggleMyTopics(){
 }
 
 //opens the submenu add topic in the profile page
-function toggleAddTopics(){
+function toggleAddTopics() {
   //show add topics menu
   const addTopicsMenu = document.getElementById('addTopics');
 
@@ -86,7 +86,7 @@ function toggleAddTopics(){
     loadMoreTopics(false);
 
   }
-  else{
+  else {
     let topics = document.querySelectorAll('#topicsList .topicList li, #topicsList p');
     topics.forEach( function (e) {e.remove()});
   }
@@ -187,28 +187,28 @@ function loadMoreTopics(isMy){
   if(isMyTopics){
     topicsList = document.querySelector("#myTopicsList > ul");
   }
-  else{
+  else {
     topicsList = document.querySelector("#topicsList > ul");
   }
   insertLoadingCircle(topicsList);
 
   
-  if(isQuery){
-    if(isMyTopics){
+  if(isQuery) {
+    if(isMyTopics) {
       myTopicPage++;
       sendAjaxRequest('get', '/api/topics/search/' + userId +'?page=' + myTopicPage + '&q=' + searchQuery, null,insertMoreTopics);
     }
-    else{
+    else {
       addTopicPage++;
       sendAjaxRequest('get', '/api/topics/search/canAdd/' + userId + '?page=' + addTopicPage + '&q=' + searchQuery,null, insertMoreTopics);
     }   
   }
-  else{
+  else {
     if(isMyTopics){
       myTopicPage++;
       sendAjaxRequest('get', '/api/topics/' + userId +'?page=' + myTopicPage, null,insertMoreTopics);
     }
-    else{
+    else {
       addTopicPage++;
       sendAjaxRequest('get', '/api/topics/canAdd/' + userId + '?page=' + addTopicPage,null, insertMoreTopics);
     }
@@ -232,23 +232,23 @@ function insertMoreTopics(){
     }
 
     let topicsList = null;
-    if(isMyTopics){
+    if(isMyTopics) {
       myTopicPageMax = topics.last_page;
       topicsList = document.querySelector("#myTopicsList > ul");
       
       //already loaded everything from the db. Hide the button
-      if(myTopicPageMax == myTopicPage){
+      if(myTopicPageMax == myTopicPage) {
         if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')){
           document.querySelector('#myTopicsList > button').classList.toggle('hidden');
         }
       }
     }
-    else{
+    else {
       addTopicPageMax = topics.last_page;
       topicsList = document.querySelector("#topicsList > ul");
 
       //already loaded everything from the db. Hide the button
-      if(addTopicPageMax == addTopicPage){
+      if(addTopicPageMax == addTopicPage) {
         if(!document.querySelector('#topicsList > button').classList.toggle('hidden')){
           document.querySelector('#topicsList > button').classList.toggle('hidden');
         }
@@ -274,14 +274,14 @@ function insertMoreTopics(){
           document.querySelector('#myTopicsList > button').classList.toggle('hidden');
         }
       }
-      else if (!isMyTopics && (addTopicPageMax > addTopicPage)){
+      else if (!isMyTopics && (addTopicPageMax > addTopicPage)) {
         if(document.querySelector('#topicsList > button').classList.contains('hidden')){
           document.querySelector('#topicsList > button').classList.toggle('hidden');
         }
       }
         
     }
-    else{
+    else {
       //there are no topics in the list and we could not found new ones with the ajax request so a warning is displayed
       if(topicsList.querySelector('p') == null && topicsList.querySelector('li') == null){
         let warning = document.createElement('p');
@@ -290,12 +290,12 @@ function insertMoreTopics(){
       }
       
       //hide the button if it isn't hidden
-      if(isMyTopics){
+      if(isMyTopics) {
         if(!document.querySelector('#myTopicsList > button').classList.contains('hidden')){ 
         document.querySelector('#myTopicsList > button').classList.toggle('hidden');
         }
       }
-      else{
+      else {
         if(!document.querySelector('#topicsList > button').classList.contains('hidden')){
         document.querySelector('#topicsList > button').classList.toggle('hidden');
         }
@@ -310,7 +310,7 @@ function createTopic(topicInfo, isMyTopics, isFromPosts, postid){
   topic.classList.add("w-full","flex","justify-between", "p-2", "my-2", "shadow");
   topic.setAttribute('id',`topic-${topicInfo.topicid}`)
 
-  if(isMyTopics){
+  if(isMyTopics) {
     topic.innerHTML = `
       <p id = "topic-${topicInfo.topicid}" class="text-gray-800 font-semibold">${topicInfo.topicname}</p>
       <button onclick=removeTopicFromUser(${topicInfo.topicid}) class="text-red-500 hover:text-red-700 ml-2">
@@ -320,7 +320,7 @@ function createTopic(topicInfo, isMyTopics, isFromPosts, postid){
       </button>
     `;
   }
-  else{
+  else {
     topic.innerHTML = `
       <p id = "topic-${topicInfo.topicid}" class="text-gray-800 font-semibold">${topicInfo.topicname}</p>
       <button ${isFromPosts ? `onclick = "addTopicToPost(${topicInfo.topicid}, '${topicInfo.topicname}', ${postid})"` : `onclick=addTopicToUser(${topicInfo.topicid})`} class="text-green-500 hover:text-green-700 ml-2">
@@ -397,13 +397,13 @@ function insertMoreComments(element, comments){
 }
 
 //inserts more liked contents into an element
-function insertMoreLikedContent(element, likes){
+function insertMoreLikedContent(element, likes) {
   for(let i = 0; i < likes.data.length; i++){
     if(likes.data[i].post !== null){
       let post = createPost(likes.data[i].post);
       element.append(post);
     }
-    else{
+    else {
       let comment = createComment(likes.data[i].comment);
       element.append(comment);
     }
@@ -491,12 +491,12 @@ function addTopicToUser(topicId){
         topicsList.appendChild(warning);
 
         //hide button only if needed
-        if(!topicsList.nextElementSibling.classList.contains('hidden')){
+        if(!topicsList.nextElementSibling.classList.contains('hidden')) {
           topicsList.nextElementSibling.classList.toggle('hidden');
         }
       }
     }
-    else{
+    else {
       //Display a message 
       const messageContainer = document.getElementById("messageContainer");
       createAlert(messageContainer, response.message, true);
@@ -534,7 +534,7 @@ function removeTopicFromUser(topicId){
         }
       }
     }
-    else{
+    else {
      //Display a message 
       const messageContainer = document.getElementById("messageContainer");
       createAlert(messageContainer, response.message, true);
@@ -807,11 +807,11 @@ function closeImagePreview(){
 function updateFileProfile(isbanner) {
   let fileInput = null;
   let fileDisplay = null
-  if(isbanner){
+  if(isbanner) {
     fileInput = document.getElementById('bannerPic');
     fileDisplay = document.getElementById('bannerPicDisplay');
   }
-  else{
+  else {
     fileInput = document.getElementById('profilePic');
     fileDisplay = document.getElementById('profilePicDisplay');
   }
@@ -835,14 +835,14 @@ function updateFileProfile(isbanner) {
 }
 
 //removes the file that is being displayed
-function removeFileProfile(isbanner){
+function removeFileProfile(isbanner) {
   let fileInput = null;
   let fileDisplay = null
-  if(isbanner){
+  if(isbanner) {
     fileInput = document.getElementById('bannerPic');
     fileDisplay = document.getElementById('bannerPicDisplay');
   }
-  else{
+  else {
     fileInput = document.getElementById('profilePic');
     fileDisplay = document.getElementById('profilePicDisplay');
   }
@@ -852,7 +852,7 @@ function removeFileProfile(isbanner){
 
 }
 
-function insertShowMoreRequests(){
+function insertShowMoreRequests() {
   const section = document.querySelector("#requestsList > ul");  
   let showMore = document.createElement('button');
   showMore.classList.add("flex", "w-full", "justify-center", "items-center");
@@ -868,7 +868,7 @@ function insertShowMoreRequests(){
 }
 
 
-function toggleFollowRequests(){
+function toggleFollowRequests() {
   const followRequest = document.getElementById('followRequests');
   followRequest.classList.toggle('hidden');
   followRequest.classList.toggle('flex');
@@ -884,19 +884,19 @@ function toggleFollowRequests(){
 
 let currentFollowPage = 0;
 let maxFollowPage = -1;
-function loadFollowMoreRequests(){
+function loadFollowMoreRequests() {
   let followList = document.querySelector("#requestsList > ul");
   insertLoadingCircle(followList);
   currentFollowPage++;
   sendAjaxRequest('post', '/api/profile/followrequest/'+ userId + '?page=' + currentFollowPage ,null,insertMoreFollowRequests);
 }
 
-function insertMoreFollowRequests(){
+function insertMoreFollowRequests() {
   removeLoadingCircle();
   removeShowMoreFollow();
   let follows = JSON.parse(this.responseText);
 
-  if(follows.response !== undefined){
+  if(follows.response !== undefined) {
     const messageContainer = document.getElementById('messageContainer');
     createAlert(messageContainer, follows.message, true);
   }
@@ -905,7 +905,7 @@ function insertMoreFollowRequests(){
 
   maxFollowPage = follows.last_page;
 
-  for(let i = 0 ; i < follows.data.length; i++){
+  for(let i = 0 ; i < follows.data.length; i++) {
     let user = follows.data[i].follower;
     let li = document.createElement('li');
     li.setAttribute('id', 'request-' + follows.data[i].follower.userid);
@@ -932,11 +932,11 @@ function insertMoreFollowRequests(){
     followsList.appendChild(li);
   }
 
-  if(currentFollowPage < maxFollowPage){
+  if(currentFollowPage < maxFollowPage) {
     insertShowMoreRequests();
   }
 
-  if(followsList.firstChild === null){
+  if(followsList.firstChild === null) {
     let warning = document.createElement('p');
     warning.innerHTML='No requests found';
     followsList.appendChild(warning);
@@ -944,20 +944,20 @@ function insertMoreFollowRequests(){
 
 }
 
-function insertShowMoreFollow(){
+function insertShowMoreFollow() {
   let section = null
-  if(isFollower){
+  if(isFollower) {
     section = document.querySelector("#followersList > ul");  
   }
-  else{
+  else {
     section = document.querySelector("#followsList > ul");  
   }
   let showMore = document.createElement('button');
   showMore.classList.add("flex", "w-full", "justify-center", "items-center");
-  if(isFollower){
+  if(isFollower) {
     showMore.setAttribute('onclick', `loadMoreFollowers()`);
   } 
-  else{
+  else {
     showMore.setAttribute('onclick', `loadMoreFollows()`);
   }
   showMore.setAttribute('id', 'showMore');
@@ -999,17 +999,17 @@ function handleRejectFollow(){
   rejectButton.disable = true;
 
   const messageContainer = document.getElementById('messageContainer');
-  if(response.response === '200'){
+  if(response.response === '200') {
     document.getElementById("request-" + response.rejectedId).remove();
     createAlert(messageContainer,response.message, false);
   }
-  else{
+  else {
     createAlert(messageContainer,response.message, true);
   }
 
 }
 
-function acceptFollow(userid){
+function acceptFollow(userid) {
   userFollowId = userid;
   const acceptButton = document.getElementById('accept-' + userid);
   acceptButton.disable = true;
@@ -1022,7 +1022,7 @@ function acceptFollow(userid){
   sendAjaxRequest('post', '/api/profile/followrequest/accept/' + userid, null, handleAcceptFollow);
 }
 
-function handleAcceptFollow(){
+function handleAcceptFollow() {
   removeLoadingCircle();
   let response = JSON.parse(this.responseText);
 
@@ -1030,11 +1030,11 @@ function handleAcceptFollow(){
   acceptButton.disable = false;
 
   const messageContainer = document.getElementById('messageContainer');
-  if(response.response === '200'){
+  if(response.response === '200') {
     document.getElementById("request-" + response.acceptedId).remove();
     createAlert(messageContainer,response.message, false);
   }
-  else{
+  else {
     createAlert(messageContainer,response.message, true);
   }
 
@@ -1089,26 +1089,26 @@ function insertMoreFollows(){
   removeLoadingCircle();
   removeShowMoreFollow();
   let follows = JSON.parse(this.responseText);
-  if(follows.message !== undefined){
+  if(follows.message !== undefined) {
     const messageContainer = document.getElementById('messageContainer');
     createAlert(messageContainer, follows.message, true);
   }
 
   let followsList = null;
-  if(isFollower){
+  if(isFollower) {
     followsList = document.querySelector("#followersList > ul");
-  } else{
+  } else {
     followsList = document.querySelector("#followsList > ul");
   }
 
   maxFollowPage = follows.last_page;
   
-  for(let i = 0 ; i < follows.data.length; i++){
+  for(let i = 0 ; i < follows.data.length; i++) {
     let user = null;
-    if(isFollower){
+    if(isFollower) {
       user = follows.data[i].follower;
     }
-    else{
+    else {
       user = follows.data[i].followee;
     }
     console.log(user);
@@ -1129,17 +1129,17 @@ function insertMoreFollows(){
     followsList.appendChild(li);
   }
 
-  if(currentFollowPage < maxFollowPage){
+  if(currentFollowPage < maxFollowPage) {
     console.log("here");
     insertShowMoreFollow();
   }
 
-  if(followsList.firstChild === null){
+  if(followsList.firstChild === null) {
     let warning = document.createElement('p');
-    if(isFollower){
+    if(isFollower) {
       warning.innerHTML='No follows found';
     }
-    else{
+    else {
       warning.innerHTML='No followers found';
     }
     followsList.appendChild(warning);

@@ -226,23 +226,23 @@ function handleBan(){
       if(userState !== null){
         //ban was made from the profile page
         document.getElementById('profileBan').innerHTML=`${userState === "suspended" ? "Ban account" : "Unban account"}`
-        if(userState === "suspended"){
+        if(userState === "suspended") {
           userState = "active";
         }
-        else{
+        else {
           userState = "suspended";
         }
       }
-      else if(row.innerHTML === "suspended"){
+      else if(row.innerHTML === "suspended") {
         row.innerHTML = "active";
         document.querySelector('#User-' + window.userBan + ' .banButton').innerHTML = 'Ban';
       }
-      else{
+      else {
         row.innerHTML = "suspended";
         document.querySelector('#User-' + window.userBan + ' .banButton').innerHTML = 'Unban';
       }
     }
-    else{
+    else {
       createAlert(messageContainer, response.message,true);
     }
 
@@ -260,7 +260,7 @@ function handleCreateTopic(){
   confirmButton.disable = false;
 
   const messageContainer = document.getElementById("messageContainer");
-  if(response.response === '200'){
+  if(response.response === '200') {
     const section = document.getElementById('topics');  
     const sectionContentTable = section.querySelector('table');
     createAlert(messageContainer, response.message,false);
@@ -269,7 +269,7 @@ function handleCreateTopic(){
       sectionContentTable.appendChild(topic);
     }
   }
-  else{
+  else {
     createAlert(messageContainer, response.message,true);
   }
 
@@ -288,10 +288,10 @@ function handleCreateUser(){
   confirmButton.disable = false;
 
   const messageContainer = document.getElementById("messageContainer");
-  if(response.response === '200'){
+  if(response.response === '200') {
     createAlert(messageContainer, response.message,false);
   }
-  else{
+  else {
     createAlert(messageContainer, response.message,true);
   }
 }
@@ -308,11 +308,11 @@ function handleReportDelete(){
   confirmButton.disable = false;
     
     const messageContainer = document.getElementById("messageContainer");
-    if(response.response === '200'){
+    if(response.response === '200') {
       createAlert(messageContainer, response.message,false);
       document.getElementById('Report-' + window.elementToDelete).remove();
     }
-    else{
+    else {
       createAlert(messageContainer, response.message,true);
     }
 
@@ -329,11 +329,11 @@ function handleUserDelete(){
   confirmButton.disable = false;
 
   const messageContainer = document.getElementById("messageContainer");
-    if(response.response === '200'){
+    if(response.response === '200') {
       createAlert(messageContainer, response.message,false);
       document.getElementById('User-' + window.elementToDelete).remove();
     }
-    else{
+    else {
       createAlert(messageContainer, response.message,true);
     }
 
@@ -351,11 +351,11 @@ function handleTopicDelete(){
   confirmButton.disable = false;
     
   const messageContainer = document.getElementById("messageContainer");
-  if(response.response === '200'){
+  if(response.response === '200') {
     createAlert(messageContainer, response.message,false);
     document.getElementById('Topic-' + window.elementToDelete).remove()
   }
-  else{
+  else {
     createAlert(messageContainer, response.message,true);
   }
 
@@ -428,24 +428,24 @@ function toggleReasonDetails(reportid){
         if(userState === null){
           userState = state;
         }
-        if(userState === "suspended"){
+        if(userState === "suspended") {
           
           document.querySelector('#banMenuAdmin h2').innerHTML = "Unban User";
           document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to unban this user?"
           document.getElementById('confirmBanButtonAdmin').innerHTML = "Unban";
         }
-        else{
+        else {
           document.querySelector('#banMenuAdmin h2').innerHTML = "Ban User";
           document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to ban this user?"
           document.getElementById('confirmBanButtonAdmin').innerHTML = "Ban";
         }
       }
-      else if(row.innerHTML === "suspended"){
+      else if(row.innerHTML === "suspended") {
         document.querySelector('#banMenuAdmin h2').innerHTML = "Unban User";
         document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to unban this user?"
         document.getElementById('confirmBanButtonAdmin').innerHTML = "Unban";
       }
-      else{
+      else {
         document.querySelector('#banMenuAdmin h2').innerHTML = "Ban User";
         document.querySelector('#banMenuAdmin p').innerHTML= "Are you sure you want to ban this user?"
         document.getElementById('confirmBanButtonAdmin').innerHTML = "Ban";
@@ -687,28 +687,28 @@ function toggleReasonDetails(reportid){
       sectionContentTable.appendChild(loadingWrapper);
       currentAdminPage++;
 
-      switch(sectionId){
+      switch(sectionId) {
         case 'topics':
-          if(isQuery){
+          if(isQuery) {
             sendAjaxRequest('get', '/api/topics/search/all?page=' + currentAdminPage + "&q=" + searchQuery, null, insertMoreAdminTopics);
           }
-          else{
+          else {
             sendAjaxRequest('get', '/api/topics/all?page=' + currentAdminPage, null, insertMoreAdminTopics);
           }
           break;
         case 'reports':
-          if(isQuery){
+          if(isQuery) {
             sendAjaxRequest('get', '/api/reports/search/all?page=' + currentAdminPage +"&q=" + searchQuery, null, insertMoreReports);
           }
-          else{
+          else {
             sendAjaxRequest('get', '/api/reports/all?page=' + currentAdminPage, null, insertMoreReports);
           }
           break;
         case 'users':
-          if(isQuery){
+          if(isQuery) {
             sendAjaxRequest('get', '/api/admin/users/search/all?page=' + currentAdminPage +"&q=" + searchQuery, null, insertMoreAdminUsers);
           }
-          else{
+          else {
             sendAjaxRequest('get', '/api/admin/users/all?page=' + currentAdminPage, null, insertMoreAdminUsers);
           }
       }

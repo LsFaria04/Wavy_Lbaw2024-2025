@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Notification;
 use App\Models\User;
 use App\Models\Follow;
 use App\Events\FollowNotification;
@@ -290,8 +291,8 @@ class ProfileController extends Controller {
 
         if ($existingFollow->state === Follow::STATE_ACCEPTED) {
             Log::info("8");
-
             return $this->unfollow($request, $existingFollow->followeeid);
+
         } elseif ($existingFollow->state === Follow::STATE_PENDING) {
 
             Log::info("9");
@@ -306,7 +307,7 @@ class ProfileController extends Controller {
 
             return response()->json([
                 'success' => true,
-                'status' => 'Unfollowed',
+                'status' => 'follow-request-canceled',
                 'message' => 'Follow request canceled.'
             ]);
         }
@@ -327,12 +328,17 @@ class ProfileController extends Controller {
         ]);
         Log::info("11");
 
-        event(new FollowNotification($follower, $followee->followeeid, $status));
-        Log::info("12");
+        if ($status == Follow::STATE_ACCEPTED) {
+            $status = 'follow';
+        }
+        else if ($status == Follow::STATE_PENDING) {
+            $status = 'follow-request';
+        }
+        event(new FollowNotification($follower, $followee->userid, $status));
 
         return response()->json([
             'success' => true,
-            'status' => $status === Follow::STATE_ACCEPTED ? 'Accepted' : 'Pending'
+            'status' => $status === Follow::STATE_ACCEPTED ? 'follow' : 'follow-request'
         ]);
     }
 
@@ -420,9 +426,16 @@ class ProfileController extends Controller {
         }
         Log::info("22");
 
-        Follow::where('followerid', $followerId)
-            ->where('followeeid', $userid)
-            ->delete();
+        $existingFollow->delete();
+        Log::info("23");
+
+        $previousNotification = Notification::where('followid', $followerId)
+        ->where('receiverid', $userid)
+        ->first();
+
+        if ($previousNotification) {
+            $previousNotification->delete();
+        }
 
         $follower = User::findOrFail($existingFollow->followerid);
 

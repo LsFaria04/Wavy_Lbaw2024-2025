@@ -3,6 +3,8 @@ function addEventListeners() {
   document.addEventListener('DOMContentLoaded', switchGroupTab);
   window.addEventListener("scroll", infiniteScroll);
   //window.addEventListener("scroll",loadMoreComments);
+  syncButtonPostTopicsWithInputEventListener();
+  syncButtonPostFilesWithInputEventListener();
   
 }
 //removes the loading circle from the page
@@ -20,6 +22,7 @@ function addEventListeners() {
       
       //action to take place in the home page
       const timeline = document.querySelector("#timeline");
+      console.log(timeline);
       if((timeline !== null) && (maxPage > currentPage || (maxPage == -1) ) && (!loading) ){
         currentPage++;
         insertLoadingCircle(timeline);
@@ -93,13 +96,6 @@ function addEventListeners() {
       // Handle group page
       const groupPage = document.querySelector("#group-tab-content");
       if (groupPage !== null && (maxPage > currentPage || maxPage === -1)) {
-        /*
-        if (!isPublic && !isadmin) {
-          console.log("here2")
-            // Skip loading more for private groups
-            return;
-        }
-        */
 
         currentPage++;
         insertLoadingCircle(groupPage);
@@ -126,67 +122,34 @@ function addEventListeners() {
         currentPage++;
         loading = true;
         insertLoadingCircle(notificationsPage);
-        sendAjaxRequest('get', `/api/notifications?page=${currentPage}`, null, function(response) {
-          insertMoreNotifications(response);
-          loading = false;
-        });      
+        sendAjaxRequest('post', '/api/notifications?page=' + currentPage + '&category=' + notificationsTab, null, function() {
+            insertMoreNotifications(this.responseText);
+            loading = false;
+          });
+             
       }
     }
   }
-
-/*
-  async function loadMoreComments() {
-    if ((comments !== null) && (maxPage > currentPage || maxPage == -1) && (!loading)) {
-      currentPage++;
-      insertLoadingCircle(comments); // Function to insert the loading indicator
-      loading = true; // Set loading flag to true
-  
-      const postId = document.querySelector('input[name="postid"]').value;
-      
-      try {
-        const response = await fetch(`/api/comments/post/${postId}?page=${currentPage}`, {
-          headers: {
-            'Accept': 'application/json', // Tell the server that we expect JSON
-          },
-        });
-        
-        // Ensure the response is OK before proceeding
-        if (!response.ok) {
-          throw new Error(`Failed to fetch comments, status: ${response.status}`);
-        }
-  
-        const data = await response.json(); // Assuming the response is in JSON format
-  
-        // Pass the data to the function that will insert more comments
-        insertMoreCommentsPost(data);
-  
-      } catch (error) {
-        console.error('Error loading comments:', error);  // Log the error with more context
-      } finally {
-        loading = false; // Reset loading flag, regardless of success or failure
-      }
-    }
-}
-*/
   
 
   //inserts a loading circle when an ajax request starts (infinite scroll) 
 function insertLoadingCircle(element){
+  
   if(document.querySelector("#loading_circle") !== null){
+    console.log("here");
     //already exists a loading circle
     return;
   }
 
   let loadingCircle = document.createElement("div");
 
-  loadingCircle.classList.add("ml-auto", "mr-auto", "inline-block", "h-8", "w-8", "animate-spin", "rounded-full", "border-4", "border-solid", "border-current", "border-e-transparent", "align-[-0.125em]", "text-primary", "motion-reduce:animate-[spin_1.5s_linear_infinite]");
+  loadingCircle.classList.add("ml-auto", "mr-auto", "inline-block", "h-8", "w-8", "animate-spin", "rounded-full", "border-4", "border-solid", "border-current", "border-e-transparent", "align-[-0.125em]", "text-primary", "motion-reduce:animate-[spin_1.5s_linear_infinite]", "z-50");
   loadingCircle.setAttribute('role', "status");
   loadingCircle.setAttribute('id', "loading_circle");
   loadingCircle.innerHTML = `
               <spanclass="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
               </span>
   `
-
   element.appendChild(loadingCircle);
 }
 
@@ -219,8 +182,131 @@ function insertMoreCommentsPost(){
 
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    const togglePostFormButton = document.getElementById("togglePostForm");
+    const modalContainer = document.getElementById("modalContainer");
+    const closeModalButton = document.getElementById("closeModal");
+
+    // Show the modal
+    togglePostFormButton.addEventListener("click", () => {
+        modalContainer.classList.remove("hidden");
+    });
+
+    // Hide the modal
+    closeModalButton.addEventListener("click", () => {
+        modalContainer.classList.add("hidden");
+    });
+
+    // Optional: Hide modal when clicking outside of it
+    modalContainer.addEventListener("click", (e) => {
+        if (e.target === modalContainer) {
+            modalContainer.classList.add("hidden");
+        }
+    });
+});
 
 
+function updateFileButtonList(){
+  const fileInput = document.getElementById('imageButton');
+  const fileDisplay = document.getElementById('buttonFileDisplay');
+
+  // Append new files to the list (preserve existing files)
+  Array.from(fileInput.files).forEach(file => {
+    if (file.size > 1048576){
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "File is too big (>2Mb)", true);
+    }
+    else{
+      selectedFiles.push(file);
+    }
+  });
+
+  // Check if there are more than 4 files
+  if (selectedFiles.length > 4) {
+    const messageContainer = document.getElementById('messageContainer');
+    createAlert(messageContainer, 'You can only select up to 4 files', true);
+    // Remove the newly added files from the selectedFiles array
+    selectedFiles.splice(-fileInput.files.length);
+    return; 
+  }
+
+  // Clear previous file list
+  fileDisplay.innerHTML = '';
+
+  // Show updated list of file names
+  selectedFiles.forEach((file, index) => {
+    const li = document.createElement('li');
+    li.classList.add('flex', 'items-center', 'gap-2');
+
+    li.innerHTML = `
+        <span class="text-sm text-gray-500">${file.name}</span>
+        <button type="button" onclick="removeSpecificFileButton(${index})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+    `;
+    fileDisplay.appendChild(li);
+  });
+
+  fileDisplay.classList.remove('hidden');
+
+  // Reset the file input to allow adding more files
+  fileInput.value = '';
+}
+
+function syncButtonPostTopicsWithInputEventListener(){
+  document.querySelector('.addButtonPost form')?.addEventListener('submit', function (e) {
+    //update the values before sending the form
+    let topicInput = document.getElementById('topicInput-1');
+    topicInput.value = selectedTopics;
+  });
+}
+
+function syncButtonPostFilesWithInputEventListener(){
+  // Synchronize selectedFiles with the file input before form submission
+  document.querySelector('.addButtonPost form')?.addEventListener('submit', function (e) {
+    
+    if (selectedFiles.length > 4) {
+      e.preventDefault(); // Prevent the form from submitting
+      const messageContainer = document.getElementById('messageContainer');
+      createAlert(messageContainer, "You can only submit up to 4 files", true);
+      return; 
+    }
+
+    const fileInput = document.getElementById('imageButton');
+    const dataTransfer = new DataTransfer();
+
+    // Append all files from selectedFiles to the new DataTransfer object
+    selectedFiles.forEach(file => {
+        dataTransfer.items.add(file);
+    });
+
+    // Update the file input's files property
+    fileInput.files = dataTransfer.files;
+  });
+}
+
+function removeSpecificFileButton(index) {
+  const fileDisplay = document.getElementById('buttonFileDisplay');
+
+  // Remove file from the list
+  selectedFiles.splice(index, 1);
+
+  // Clear previous display and update with new list
+  fileDisplay.innerHTML = '';
+  selectedFiles.forEach((file, i) => {
+      const li = document.createElement('li');
+      li.classList.add('flex', 'items-center', 'gap-2');
+
+      li.innerHTML = `
+          <span class="text-sm text-gray-500 sm:w-12 text-ellipsis overflow-hidden ...">${file.name}</span>
+          <button type="button" onclick="removeSpecificFileButton(${i})" class="text-sm text-red-500 hover:text-red-700">Remove</button>
+      `;
+      fileDisplay.appendChild(li);
+  });
+
+  // Hide the display if no files remain
+  if (selectedFiles.length === 0) {
+      fileDisplay.classList.add('hidden');
+  }
+}
 
 
 addEventListeners();

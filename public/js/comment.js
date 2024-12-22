@@ -16,7 +16,7 @@ for(let i = 0; i < mediaArray.length; i++){
   let newMedia = document.createElement('img');
 
     
-    if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)){
+    if(['jpg', 'jpeg', 'png', 'gif'].includes(fileExtension)) {
       const imageDetailButton = document.createElement('button');
       imageDetailButton.setAttribute('onclick', `toggleImageDetails('${'/storage/' + media.path}')`);
       imageDetailButton.setAttribute("class", "h-60 w-60 sm:w-80 sm:h-80 overflow-hidden  rounded-md mb-2");
@@ -27,7 +27,7 @@ for(let i = 0; i < mediaArray.length; i++){
       continue;
     }
 
-    else if(['mp4', 'avi', 'mov'].includes(fileExtension)){
+    else if(['mp4', 'avi', 'mov'].includes(fileExtension)) {
       newMedia = document.createElement('video');
       newMedia.setAttribute("controls", "");
       let source = document.createElement('source');
@@ -39,7 +39,7 @@ for(let i = 0; i < mediaArray.length; i++){
     newMedia.classList.add("max-w-full", "max-h-96", "object-cover", "rounded-md", "mb-2", "mx-auto");
   }
 
-    else if(['mp3', 'wav', 'ogg'].includes(fileExtension)){
+    else if(['mp3', 'wav', 'ogg'].includes(fileExtension)) {
       newMedia = document.createElement('audio');
       let source = document.createElement('source');
     
@@ -50,7 +50,7 @@ for(let i = 0; i < mediaArray.length; i++){
     newMedia.classList.add("w-full","mb-2");
   }
 
-  else{
+  else {
     newMedia = document.createElement('p');
     newMedia.classList.add("text-gray-500");
     newMedia.innerHTML = 'Unsupported media type';
@@ -141,11 +141,11 @@ const newFileDisplay = document.getElementById(`newFiles-${commentId}`)
 
 
 Array.from(fileInput.files).forEach(file => {
-  if (file.size > 2097152){
+  if (file.size > 2097152) {
     const messageContainer = document.getElementById('messageContainer');
     createAlert(messageContainer, "File is too big (>2MB)", true);
   }
-  else{
+  else {
     selectedFilesEdit.push(file);
   }
 });
@@ -374,7 +374,7 @@ Array.from(fileInput.files).forEach(file => {
     const messageContainer = document.getElementById('messageContainer');
     createAlert(messageContainer, "File is too big (>2MB)", true);
   }
-  else{
+  else {
     selectedFiles.push(file);
   }
 });
@@ -778,7 +778,7 @@ if(!needReport){
       </button>
     </form>
   `
-}else{
+}else {
   options.innerHTML= `
     <button type="button" onclick="event.stopPropagation(); toggleReportForm('${id}', 'comment');" class="text-gray-500 hover:text-black">
         Report
