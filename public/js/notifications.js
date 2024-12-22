@@ -68,12 +68,13 @@ function initializePusher(userId) {
 
     // Handle "comment" notifications
     channel.bind('notification-postcomment', function(data) {
+        console.log('Received comment notification:', data);
         const timestamp = data.timestamp || new Date().toISOString();
 
         if (data.comment.parentcommentid) {
-            data.message = `${data.comment.user.username} replied to a comment: "${data.message}"`;
+            console.log('Reply message:', data.message);
         } else {
-            data.message = `${data.comment.user.username} commented: "${data.message}"`;
+            console.log('Comment message:', data.message);
         }
 
         triggerPopupNotification(data.message);
