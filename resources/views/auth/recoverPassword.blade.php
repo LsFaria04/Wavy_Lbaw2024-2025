@@ -2,7 +2,7 @@
 @section('content')
 <section class = "grow flex flex-col justify-center items-center" id = "recoverPassword" >
     <header class = "py-12">
-        <h1 class= "text-3xl font-bold">Password recovery<h1>
+        <h2 class= "text-3xl font-bold">Password recovery</h2>
     </header>
     <div id="messageContainer" class="flex items-center mt-6">
         <!--Used to append messages with JS -->
@@ -13,7 +13,7 @@
         <form id = "recoveryEmail" class = "flex flex-col max-w-xl grid-start-1 bg-slate-100 shadow-md rounded px-8 pt-6 pb-8 my-4" >
             <p class="mb-4">Insert your email account to receive a verification token</p>
             <label class="font-medium text-lg" for="email">E-mail</label>
-            <input class="shadow appearance-none border rounded w-full my-4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline shadow-sky-900" id="email" type="email" name="email" value="{{ old('email') }}" required autofocus>
+            <input class="shadow appearance-none border rounded w-full my-4 py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline shadow-sky-900" id="email" type="email" name="email" value="{{ old('email') }}">
             <button onclick ="passwordRecovery()" type="button" class="self-center bg-sky-800 rounded w-32 py-2  text-white font-bold shadow shadow-sky-900 hover:shadow-lg">Send</button>
         </form>
 

@@ -79,7 +79,7 @@ function createAlert(element,message, isError) {
 function contactEmail() {
   const email = document.getElementById('email');
   const name = document.getElementById('name');
-  const message = document.getElementById('message');
+  const message = document.getElementById('messageContacts');
   const sendButton = document.getElementById('submit');
   insertLoadingCircle(sendButton);
   sendButton.disable = true;

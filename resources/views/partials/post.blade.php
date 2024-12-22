@@ -154,7 +154,7 @@
                         <input type="hidden" name="groupname" value="{{ $group->groupname }}">
                     @endif
                     <div class="mb-4">
-                        <label for="message" class="block text-sm font-medium text-gray-700">Edit Message</label>
+                        <label class="block text-sm font-medium text-gray-700">Edit Message</label>
                         <textarea name="message"
                             class="mt-1 block w-full p-4 border rounded-xl focus:ring-2 focus:ring-sky-700 shadow-sm outline-none" 
                             placeholder="Edit your message" 

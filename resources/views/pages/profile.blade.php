@@ -4,7 +4,7 @@
         <div class="flex flex-col items-center w-full max-w-full bg-white">
             <!-- Profile Top Section -->
             <header id="profile-header" class="w-full max-w-full p-4 flex items-center sticky top-0 z-10 backdrop-blur shadow">
-                <h1 id = "profile-username" class="text-xl font-bold text-gray-800">{{ $user->username }}</h1>
+                <h2 id = "profile-username" class="text-xl font-bold text-gray-800">{{ $user->username }}</h2>
             </header>
 
         <!-- Edit Profile Messages -->
@@ -59,7 +59,7 @@
             <!-- Edit Profile only visible if Account owner -->
             <div class="pt-20 px-6 pb-4">
                 <div class="flex justify-between items-center">
-                    <h1 class="text-2xl font-bold">{{ $user->username }}</h1>
+                    <h2 class="text-2xl font-bold">{{ $user->username }}</h2>
                     @auth
                         @if (!Auth::user()->isadmin && auth()->id() !== $user->userid)
                             <button id="follow-btn" 
