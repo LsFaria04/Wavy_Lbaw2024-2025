@@ -34,9 +34,9 @@
                             <p class="text-gray-600">No notifications available.</p>
                         </div>
                     @else
-                        <div class="space-y-4">
+                        <div>
                             @foreach($notifications as $notification)
-                                <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+                                <div class="flex items-center p-4 bg-white rounded-lg shadow-sm border-b border-gray-300">
                                     <div class="flex-1">
                                         @if(isset($notification->comment) && isset($notification->comment->post))
                                             <div class="text-sm font-semibold text-gray-800">
@@ -49,7 +49,7 @@
                                                 <span class="italic text-gray-600">"{{ Str::limit($notification->comment->message, 50) }}"</span>
                                             </div>
                                             <div class="text-sm text-gray-500">
-                                                <a href="{{ route('posts.show', ['id' => $notification->comment->post->postid]) }}" class="text-blue-600 hover:underline">
+                                                <a href="{{ route('posts.show', ['id' => $notification->comment->post->postid]) }}" class="text-sky-600 hover:underline">
                                                     On post: "{{ Str::limit($notification->comment->post->message, 50) }}"
                                                 </a>
                                             </div>
@@ -58,14 +58,14 @@
                                                 {{ $notification->like->user->username }} liked your post
                                             </div>
                                             <div class="text-sm text-gray-500">
-                                                <a href="{{ route('posts.show', ['id' => $notification->like->post->postid]) }}" class="text-blue-600 hover:underline">
+                                                <a href="{{ route('posts.show', ['id' => $notification->like->post->postid]) }}" class="text-sky-600 hover:underline">
                                                     "{{ Str::limit($notification->like->post->message, 50) }}"
                                                 </a>
                                             </div>
                                         @elseif(isset($notification->follow) && isset($notification->follow->follower))
                                             <div class="text-sm font-semibold text-gray-800">
                                             <a href="{{ route('profile', ['username' => $notification->follow->follower->username]) }}" 
-                                                class="text-blue-600 hover:underline">
+                                                class="text-sky-600 hover:underline">
                                                 {{ $notification->follow->follower->username }}
                                             </a>
                                                 @if($notification->follow->state === \App\Models\Follow::STATE_PENDING)
@@ -94,7 +94,7 @@
                     @else
                         <div class="space-y-4">
                             @foreach($commentNotifications as $notification)
-                                <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+                                <div class="flex items-center p-4 bg-white rounded-lg shadow-sm border-b border-gray-300">
                                     <div class="flex-1">
                                         @if(isset($notification->comment) && isset($notification->comment->post))
                                             <div class="text-sm font-semibold text-gray-800">
@@ -107,7 +107,7 @@
                                                 <span class="italic text-gray-600">"{{ Str::limit($notification->comment->message, 50) }}"</span>
                                             </div>
                                             <div class="text-sm text-gray-500">
-                                                <a href="{{ route('posts.show', ['id' => $notification->comment->post->postid]) }}" class="text-blue-600 hover:underline">
+                                                <a href="{{ route('posts.show', ['id' => $notification->comment->post->postid]) }}" class="text-sky-600 hover:underline">
                                                     On post: "{{ Str::limit($notification->comment->post->message, 50) }}"
                                                 </a>
                                             </div>
@@ -131,14 +131,14 @@
                     @else
                         <div class="space-y-4">
                             @foreach($likeNotifications as $notification)
-                                <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+                                <div class="flex items-center p-4 bg-white rounded-lg shadow-sm border-b border-gray-300">
                                     <div class="flex-1">
                                         @if(isset($notification->like) && isset($notification->like->post))
                                             <div class="text-sm font-semibold text-gray-800">
                                                 {{ $notification->like->user->username }} liked your post
                                             </div>
                                             <div class="text-sm text-gray-500">
-                                                <a href="{{ route('posts.show', ['id' => $notification->like->post->postid]) }}" class="text-blue-600 hover:underline">
+                                                <a href="{{ route('posts.show', ['id' => $notification->like->post->postid]) }}" class="text-sky-600 hover:underline">
                                                     "{{ Str::limit($notification->like->post->message, 50) }}"
                                                 </a>
                                             </div>
@@ -163,11 +163,11 @@
                         <div class="space-y-4">
                             @foreach($followNotifications as $notification)
                                 @if(isset($notification->follow) && isset($notification->follow->follower))
-                                    <div class="flex items-center p-4 bg-gray-50 rounded-lg shadow-sm">
+                                    <div class="flex items-center p-4 bg-white rounded-lg shadow-sm border-b border-gray-300">
                                         <div class="flex-1">
                                             <div class="text-sm font-semibold text-gray-800">
                                                 <a href="{{ route('profile', ['username' => $notification->follow->follower->username]) }}" 
-                                                    class="text-blue-600 hover:underline">
+                                                    class="text-sky-600 hover:underline">
                                                     {{ $notification->follow->follower->username }}
                                                 </a>
                                                 @if($notification->follow->state === \App\Models\Follow::STATE_PENDING)

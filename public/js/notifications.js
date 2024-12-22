@@ -95,7 +95,7 @@ function createNotificationElement(type, message, timestamp, data) {
     }
 
     const notificationElement = document.createElement('div');
-    notificationElement.classList.add('flex', 'items-center', 'p-4', 'mb-4', 'bg-gray-50', 'rounded-lg', 'shadow-sm', 'space-y-4');
+    notificationElement.classList.add('flex', 'items-center', 'p-4', 'mb-4', 'bg-white', 'rounded-lg', 'shadow-sm', 'border-b', 'border-gray-300');
 
     const formattedDate = timestamp
 
@@ -130,10 +130,10 @@ function createNotificationElement(type, message, timestamp, data) {
             notificationContent = `
                 <div class="flex-1">
                     <div class="text-sm font-semibold text-gray-800">
-                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> liked your post
+                        <a href="${usernameUrl}" class="text-sky-600 hover:underline">${username}</a> liked your post
                     </div>
                     <div class="text-sm text-gray-500">
-                        <a href="${postUrl}" class="text-blue-600 hover:underline">"${limitText(message)}"</a>
+                        <a href="${postUrl}" class="text-sky-600 hover:underline">"${limitText(message)}"</a>
                     </div>
                 </div>
                 <div class="text-xs text-gray-400">
@@ -150,11 +150,11 @@ function createNotificationElement(type, message, timestamp, data) {
                 notificationContent = `
                     <div class="flex-1">
                         <div class="text-sm font-semibold text-gray-800">
-                            <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> replied to a comment:
+                            <a href="${usernameUrl}" class="text-sky-600 hover:underline">${username}</a> replied to a comment:
                             <span class="italic text-gray-600">"${commentMessage}"</span>
                         </div>
                         <div class="text-sm text-gray-500">
-                            <a href="${postUrl}" class="text-blue-600 hover:underline">
+                            <a href="${postUrl}" class="text-sky-600 hover:underline">
                                 On comment: "${limitText(data.comment.parent_comment.message)}"
                             </a>
                         </div>
@@ -167,11 +167,11 @@ function createNotificationElement(type, message, timestamp, data) {
                 notificationContent = `
                     <div class="flex-1">
                         <div class="text-sm font-semibold text-gray-800">
-                            <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a> commented:
+                            <a href="${usernameUrl}" class="text-sky-600 hover:underline">${username}</a> commented:
                             <span class="italic text-gray-600">"${commentMessage}"</span>
                         </div>
                         <div class="text-sm text-gray-500">
-                            <a href="${postUrl}" class="text-blue-600 hover:underline">
+                            <a href="${postUrl}" class="text-sky-600 hover:underline">
                                 On post: "${limitText(data.comment.post.message)}"
                             </a>
                         </div>
@@ -186,7 +186,7 @@ function createNotificationElement(type, message, timestamp, data) {
             notificationContent = `
                 <div class="flex-1">
                     <div class="text-sm font-semibold text-gray-800">
-                        <a href="${usernameUrl}" class="text-blue-600 hover:underline">${username}</a>
+                        <a href="${usernameUrl}" class="text-sky-600 hover:underline">${username}</a>
                         ${data.follow.state === 'pending' ? 'requested to follow you' : 'followed you'}
                     </div>
                 </div>
@@ -265,13 +265,13 @@ function toggleVisibility(activeId, groupSelector) {
 function toggleTabHighlight(activeTabId, groupSelector) {
     const tabs = document.querySelectorAll(groupSelector);
     tabs.forEach(tab => {
-        tab.classList.remove('text-blue-600');
+        tab.classList.remove('text-sky-600');
         tab.classList.add('text-gray-600');
     });
 
     const activeTab = document.getElementById(activeTabId);
     if (activeTab) {
-        activeTab.classList.add('text-blue-600');
+        activeTab.classList.add('text-sky-600');
         activeTab.classList.remove('text-gray-600');
     }
 }
