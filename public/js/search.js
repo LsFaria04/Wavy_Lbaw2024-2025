@@ -473,25 +473,38 @@ function createGroup(groupInfo) {
 function createUser(userInfo) {
   let user = document.createElement('div');
   user.classList.add("user", "border-b", "border-gray-300", "p-4", "bg-white");
-  
-    user.innerHTML= `
+
+  // Dynamically set profile picture path
+  const profilePicture = userInfo.profile_picture.length > 0
+      ? userInfo.profile_picture[0].path.includes('profile')
+          ? '/storage/' + userInfo.profile_picture[0].path
+          : userInfo.profile_picture.length > 1
+          ? '/storage/' + userInfo.profile_picture[1].path
+          : ''
+      : null;
+
+  user.innerHTML = `
       <div class="flex justify-between items-center">
           <div>
               <a href="${userInfo.state === 'deleted' ? '#' : '/profile/' + userInfo.username}">
-                <div class="flex flex-row gap-2">
-                    <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
-                      ${userInfo.profile_picture.length > 0 ? `<img h-full w-full object-cover rounded-md mb-2 mx-auto src=${userInfo.profile_picture[0].path.includes('profile') ? '/storage/' + userInfo.profile_picture[0].path : userInfo.profile_picture.length > 1 ? '/storage/' + userInfo.profile_picture[1].path : "" } alt="ProfilePicture">` : ""}
-                    </div>
-                    <h3 class="font-bold text-black hover:text-sky-900">
-                        ${userInfo.state === 'deleted' ? 'Deleted User' : userInfo.username}
-                    </h3>
-                </div>
+                  <div class="flex flex-row gap-2">
+                      <div class="h-8 w-8 rounded-full overflow-hidden bg-gray-300">
+                          ${profilePicture
+                              ? `<img class="h-full w-full object-cover rounded-md mb-2 mx-auto" 
+                                       src="${profilePicture}" 
+                                       alt="ProfilePicture">`
+                              : ''}
+                      </div>
+                      <h3 class="font-bold text-black hover:text-sky-900">
+                          ${userInfo.state === 'deleted' ? 'Deleted User' : userInfo.username}
+                      </h3>
+                  </div>
               </a>
               <p class="text-sm text-gray-600">${userInfo.bio || 'No bio available.'}</p>
           </div>
       </div>
-    `;
-  
+  `;
+
   return user;
 }
      
