@@ -1001,7 +1001,28 @@ VALUES
     (11, 'Let’s hope he brings us some trophies soon!', '2024-12-20 19:00:00', 33, NULL),
     (2, 'Old Trafford is a fortress!', '2024-12-21 12:00:00', 34, NULL),
     (3, 'Arsenal game predictions? 3-1 to United!', '2024-12-21 12:15:00', 35, NULL),
-    (4, 'We need to strengthen our midfield depth.', '2024-12-21 13:30:00', 36, NULL);
+    (4, 'We need to strengthen our midfield depth.', '2024-12-21 13:30:00', 36, NULL),
+    (2, 'That header was pure class! Casemiro is a beast in the air.', '2024-12-21 09:15:00', 36, NULL),
+    (3, 'His experience really shines in moments like that.', '2024-12-21 09:30:00', 36, NULL),
+    (4, 'We needed that goal so badly. What a player!', '2024-12-21 09:45:00', 36, NULL),
+    (5, 'Casemiro’s leadership is unmatched. He’s so reliable.', '2024-12-21 10:00:00', 36, NULL),
+    (6, 'Old Trafford truly feels like home for any United fan.', '2024-12-21 11:15:00', 37, NULL),
+    (7, 'The atmosphere there is unmatched. I can’t wait to visit again!', '2024-12-21 11:30:00', 37, NULL),
+    (8, 'Every match day at Old Trafford feels like a festival.', '2024-12-21 11:45:00', 37, NULL),
+    (9, 'I think we’ll win 2-1. Rashford and Bruno to score.', '2024-12-21 13:15:00', 38, NULL),
+    (10, 'This will be a tough game, but I believe in our squad.', '2024-12-21 13:30:00', 38, NULL),
+    (2, 'Arsenal is strong, but we can counter them effectively.', '2024-12-21 13:45:00', 38, NULL),
+    (3, 'I’m predicting a clean sheet for Onana. 1-0 United!', '2024-12-21 14:00:00', 38, NULL),
+    (4, 'As long as we stay compact defensively, we’ll win.', '2024-12-21 14:15:00', 38, NULL),
+    (5, 'Looking forward to Bruno bossing the midfield.', '2024-12-21 14:30:00', 38, NULL),
+    (6, 'This squad has so much potential. We’re just getting started!', '2024-12-21 15:15:00', 39, NULL),
+    (7, 'There have been some ups and downs, but the highs are worth it. Go Devils!', '2024-12-21 15:30:00', 39, NULL),
+    (8, 'The resilience of this team is inspiring. I’m so proud.', '2024-12-21 15:45:00', 39, NULL),
+    (9, 'We’ve had ups and downs, but the future looks bright.', '2024-12-21 16:00:00', 39, NULL),
+    (10, 'This squad just needs some time to gel. Patience is key.', '2024-12-21 16:15:00', 39, NULL),
+    (2, 'Ruben’s vision is slowly coming to life. Trust the process.', '2024-12-21 16:30:00', 39, NULL),
+    (3, 'No matter what, I’ll always back this team.', '2024-12-21 16:45:00', 39, NULL),
+    (4, 'This season is just the beginning of something special.', '2024-12-21 17:00:00', 39, NULL);
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -1127,10 +1148,10 @@ VALUES
     (8, NOW(), NULL, 35),
     (7, NOW(), NULL, 35),
     (4, NOW(), NULL, 35),
+    (10, NOW(), NULL, 35),
 
     (9, NOW(), NULL, 36),
     (2, NOW(), NULL, 36),
-    (7, NOW(), NULL, 36),
 
     (5, NOW(), NULL, 37),
     (6, NOW(), NULL, 37),
@@ -1139,6 +1160,8 @@ VALUES
     (3, NOW(), NULL, 38),
     (4, NOW(), NULL, 38),
     (6, NOW(), NULL, 38),
+    (10, NOW(), NULL, 38),
+    (9, NOW(), NULL, 38),
 
     (7, NOW(), NULL, 39),
     (8, NOW(), NULL, 39),
@@ -1147,6 +1170,7 @@ VALUES
     (5, NOW(), NULL, 40),
     (3, NOW(), NULL, 40),
     (6, NOW(), NULL, 40),
+    (10, NOW(), NULL, 40),
 
     (7, NOW(), NULL, 41),
     (8, NOW(), NULL, 41),
@@ -1155,6 +1179,7 @@ VALUES
     (4, NOW(), NULL, 42),
     (6, NOW(), NULL, 42),
     (3, NOW(), NULL, 42),
+    (10, NOW(), NULL, 42),
 
     (9, NOW(), NULL, 43),
     (10, NOW(), NULL, 43),
@@ -1176,7 +1201,71 @@ VALUES
     (7, NOW(), NULL, 47),
     (4, NOW(), NULL, 47),
     (6, NOW(), NULL, 47),
-    (9, NOW(), NULL, 47);
+    (9, NOW(), NULL, 47),
+
+    (3, NOW(), NULL, 48),
+    (5, NOW(), NULL, 48),
+    (7, NOW(), NULL, 48),
+    (4, NOW(), NULL, 48),
+
+    (3, NOW(), NULL, 49),
+
+    (3, NOW(), NULL, 50),
+    (5, NOW(), NULL, 50),
+    (7, NOW(), NULL, 50),
+
+    (3, NOW(), NULL, 51),
+    (5, NOW(), NULL, 51),
+    (7, NOW(), NULL, 51),
+    (4, NOW(), NULL, 51),
+    (6, NOW(), NULL, 51),
+    (9, NOW(), NULL, 51),
+
+    (7, NOW(), NULL, 52),
+    (8, NOW(), NULL, 52),
+    (9, NOW(), NULL, 54),
+    (4, NOW(), NULL, 54),
+    (5, NOW(), NULL, 54),
+    (6, NOW(), NULL, 54),
+    (7, NOW(), NULL, 55),
+    (8, NOW(), NULL, 55),
+
+    (3, NOW(), NULL, 56),
+    (5, NOW(), NULL, 56),
+    (6, NOW(), NULL, 57),
+    (8, NOW(), NULL, 58),
+    (9, NOW(), NULL, 58),
+    (10, NOW(), NULL, 58),
+
+    (6, NOW(), NULL, 59),
+    (8, NOW(), NULL, 60),
+    (9, NOW(), NULL, 60),
+    (3, NOW(), NULL, 60),
+    (7, NOW(), NULL, 61),
+    (10, NOW(), NULL, 62),
+    (2, NOW(), NULL, 62),
+    (4, NOW(), NULL, 62),
+    (5, NOW(), NULL, 63),
+    (6, NOW(), NULL, 63),
+
+    (5, NOW(), NULL, 64),
+    (6, NOW(), NULL, 64),
+    (7, NOW(), NULL, 65),
+    (8, NOW(), NULL, 65),
+    (9, NOW(), NULL, 65),
+    (3, NOW(), NULL, 66),
+    (10, NOW(), NULL, 67),
+    (2, NOW(), NULL, 68),
+    (4, NOW(), NULL, 69),
+    (5, NOW(), NULL, 69),
+    (6, NOW(), NULL, 70),
+    (7, NOW(), NULL, 70),
+    (8, NOW(), NULL, 70),
+    (9, NOW(), NULL, 70),
+    (10, NOW(), NULL, 71),
+    (3, NOW(), NULL, 72),
+    (2, NOW(), NULL, 72),
+    (4, NOW(), NULL, 72);
         
 
 INSERT INTO FOLLOW (followerID, followeeID, state, followDate) VALUES
