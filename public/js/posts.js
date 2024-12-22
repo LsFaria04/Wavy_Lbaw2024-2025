@@ -321,6 +321,7 @@ const originalFormData = {};
 
 // Toggle the edit form visibility
 function toggleEditPost(postid) {
+  console.log(postid);
     event.stopPropagation();
     const editForm = document.getElementById(`edit-post-${postid}`);
     const postContent = document.getElementById(`post-content-${postid}`);
@@ -337,6 +338,7 @@ function toggleEditPost(postid) {
     postContent.classList.toggle('hidden');
 
     // If showing the edit form, save original values
+    console.log(editForm);
     if (!editForm.classList.contains('hidden')) {
         if (!originalFormData[postid]) {
             // Store the original values in the object
