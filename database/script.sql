@@ -921,7 +921,7 @@ VALUES
     /*post id 28*/(11, 'Welcome, we can freely discuss everything related to United here.', TRUE, '2024-12-20 9:00:00', 10),
     (11, 'What a performance by Rashford last night! Truly world-class.', TRUE, '2024-12-20 10:00:00', 10),
     (11, 'We really need reinforcements in defense this January. Thoughts?', TRUE, '2024-12-20 12:30:00', 10),
-    (6, 'Ten Hag was terrible', TRUE, '2024-12-20 14:00:00', 10),
+    (6, 'Ruben is changing the culture!!', TRUE, '2024-12-20 14:00:00', 10),
     (7, 'Looking forward to the next match! Hoping to see more from Garnacho.', TRUE, '2024-12-20 16:45:00', 10),
     (4, 'Ruben’s tactics are starting to really show their worth. What do you guys think?', TRUE, '2024-12-20 18:00:00', 10),
     (5, 'Does anyone else think that Bruno deserves more credit for his leadership?', TRUE, '2024-12-20 19:30:00', 10),
