@@ -968,7 +968,7 @@ VALUES
     (8, 'Mewing tournament today at 3pm, do not miss', TRUE, '2024-12-28 14:30:00', NULL),
     (9, 'Had a fantastic time at the local food festival last night!', TRUE, '2024-12-28 20:00:00', NULL),
     (3, 'Looking for tips on traveling solo—any experiences to share?', TRUE, '2024-12-28 15:00:00', NULL),
-    (11, 'Based on Fabrizio’s latest comments about Spain, it looks like Rashford’s ideal destination is Barcelona. I also think Arsenal/Chelsea will be interested in January, especially with Martinelli and Sterling’s poor season and Mudryk’s recent suspension from football. Where do you guys think he’ll go?', TRUE, '2024-12-28 12:00:00', NULL),
+    (11, 'Fabrizio hints Rashford may prefer Barcelona. Arsenal or Chelsea could join the race in January, given Martinelli’s and Sterling’s struggles and Mudryk’s suspension. Where do you think he’ll end up?', TRUE, '2024-12-28 12:00:00', NULL),
     (11, '🚨 - Rúben Amorim’s latest press conference had ZERO questions about the game against Spurs tomorrow. Instead, there were 11 questions about Marcus Rashford.', TRUE, '2024-12-28 00:00:00', NULL),
     (11, '🚨🗣️ - Rúben Amorim: "My goal is to set STANDARDS, see if the players are able to meet them, and then prepare for the matches. I am focused on that."', TRUE, '2024-12-28 00:05:00', NULL),
     (11, '“Really good. Trained really well. He seems a little bit upset with me and that is perfect. I was really, really happy because I would do the same and he is ready for this game.”', TRUE, '2024-12-28 00:10:00', NULL),
