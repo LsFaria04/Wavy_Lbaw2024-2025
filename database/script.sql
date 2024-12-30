@@ -1073,7 +1073,6 @@ VALUES
     (5, 'Seems like Rashford is stealing the spotlight! That''s a lot of focus for one player before a big game.', '2024-12-29 18:00:00', 21, NULL),
     (6, 'Rashford''s future is certainly the talk of the town. Wonder if it''ll distract from the Spurs game?', '2024-12-29 17:21:00', 21, NULL),
     (7, 'Amorim must''ve been frustrated with all those questions! The game against Spurs should be the focus right now.', '2024-12-29 18:00:00', 21, NULL),
-<<<<<<< HEAD
     (5, 'That dish looks amazing! What ingredients did you use?', NOW(), 41, NULL),
     (6, 'I need to try this recipe! Can you share it?', NOW(), 41, NULL),
     (7, 'Amazing fight, champ! You’re an inspiration.', NOW(), 42, NULL),
@@ -1082,18 +1081,7 @@ VALUES
     (10, 'Your art is so inspiring, Charlie! What medium did you use?', NOW(), 2, NULL),
     (11, 'I’d love to see more of your pieces. Are they displayed somewhere?', NOW(), 2, NULL),
     (2, 'This is so creative! Can you share the inspiration behind it?', NOW(), 2, NULL),
-    (3, 'Your gallery visits always seem exciting! Any recommendations?', NOW(), 40, NULL);
-=======
-    (5, 'That dish looks amazing! What ingredients did you use?', NOW(), 40, NULL),
-    (6, 'I need to try this recipe! Can you share it?', NOW(), 40, NULL),
-    (7, 'Amazing fight, champ! You’re an inspiration.', NOW(), 41, NULL),
-    (8, 'When’s the next title defense? Can’t wait to watch!', NOW(), 41, NULL),
-    (9, 'What’s your favorite post-fight meal, Jonny?', NOW(), 41, NULL),
-    (10, 'Your art is so inspiring, Charlie! What medium did you use?', NOW(), 42, NULL),
-    (11, 'I’d love to see more of your pieces. Are they displayed somewhere?', NOW(), 42, NULL),
-    (2, 'This is so creative! Can you share the inspiration behind it?', NOW(), 42, NULL),
-    (3, 'Your gallery visits always seem exciting! Any recommendations?', NOW(), 42, NULL);
->>>>>>> bbab5775c42f7dd48e4e446ed1bc6f1e5a789e39
+    (6, 'Your gallery visits always seem exciting! Any recommendations?', NOW(), 40, NULL);
 
 INSERT INTO LIKES (userID, createdDate, postID, commentID) 
 VALUES 
@@ -1599,14 +1587,7 @@ VALUES
     (38, 14),
     (38, 13),
     (39, 14),
-<<<<<<< HEAD
     (39, 13),
-=======
-    (39, 13);
-    
-INSERT INTO POST_TOPICS (postID, topicID) 
-VALUES 
->>>>>>> bbab5775c42f7dd48e4e446ed1bc6f1e5a789e39
     (25, 1),
     (26, 1),
     (27, 1),
@@ -1617,11 +1598,8 @@ VALUES
     (41, 5), 
     (23, 13), 
     (22, 14);
-<<<<<<< HEAD
 
 
-=======
->>>>>>> bbab5775c42f7dd48e4e446ed1bc6f1e5a789e39
 
 INSERT INTO MEDIA (path, postID, commentID, userID) 
 VALUES 
