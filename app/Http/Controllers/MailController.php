@@ -10,8 +10,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Hash;
 use Mail;
 
-class MailController extends Controller
-{
+class MailController extends Controller {
     
     function sendPasswordReset(Request $request) {
 
@@ -20,7 +19,7 @@ class MailController extends Controller
         $token = Str::random(32); //creates a 32 char long token to send
 
         if($user === null) {
-            return response()->json(['message' => 'Email doens not exist', 'response' => '404']);
+            return response()->json(['message' => 'Email does not exist', 'response' => '404']);
         }
 
         $mailData = [
