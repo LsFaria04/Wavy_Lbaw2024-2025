@@ -1,5 +1,7 @@
 # lbaw24043 - Wavy 
 
+**Final grade:** 18/20.
+
 ## Description
 Wavy is a social network developed for the LBAW course and targets users that want to be part of a network that fits their needs and interests. It allows its' users to create content and connect with each other to share their experiences. Everybody that want to have a more refined control of their experience using a social network should try it out.
 
