@@ -26,7 +26,6 @@ To run our project, you can use this command:
 
 - administrator@example.com / Teste1234 (Administrator Account)
 - frank@example.com / Teste1234 (Normal Account)
-- up202207540@g.uporto.pt / lbaw2024 (Mail Trap)
 
 ## Authors and acknowledgment
 
